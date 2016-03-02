@@ -4,9 +4,49 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f85bb80d4d6f568ef1418fbd39727b3c",
-    "content-hash": "71f25c3cf0cf0ee4cf3e10b094bfaacd",
+    "hash": "457b181cc9e51ed9b71c12866f1cf9dd",
+    "content-hash": "0ec7f3515005d9c3380d456b54ac6b80",
     "packages": [
+        {
+            "name": "adurolms/lti-tool-provider",
+            "version": "v2.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adurolms/lti-tool-provider.git",
+                "reference": "9d764569a01fbef2fdd87964c505d6169eb79bfb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adurolms/lti-tool-provider/zipball/9d764569a01fbef2fdd87964c505d6169eb79bfb",
+                "reference": "9d764569a01fbef2fdd87964c505d6169eb79bfb",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "LTI_Tool_Provider.php",
+                    "OAuth.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Stephen P Vickers",
+                    "email": "stephen@spvsoftwareproducts.com",
+                    "homepage": "http://www.spvsoftwareproducts.com"
+                }
+            ],
+            "description": "PHP LTI Tool Provider",
+            "homepage": "http://projects.oscelot.org/gf/project/php-basic-lti",
+            "keywords": [
+                "LTI",
+                "tool provider"
+            ],
+            "time": "2015-12-03 03:18:35"
+        },
         {
             "name": "aura/installer-default",
             "version": "1.0.0",
