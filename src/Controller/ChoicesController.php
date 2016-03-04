@@ -61,7 +61,7 @@ class ChoicesController extends AppController
         //pr($tool);
         
         //Make sure that the user is Staff or Admin
-        if($tool->user->isStaff() && !$tool->user->isAdmin()) {
+        if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
             throw new ForbiddenException(__('Not permitted to create Choice link.'));
         }
         $this->autoRender = false;
