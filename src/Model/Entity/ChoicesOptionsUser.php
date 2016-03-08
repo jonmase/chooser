@@ -4,17 +4,19 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * LtiShareKey Entity.
+ * ChoicesOptionsUser Entity.
  *
- * @property string $share_key_id
- * @property \App\Model\Entity\ShareKey $share_key
- * @property string $primary_consumer_key
- * @property string $primary_context_id
- * @property \App\Model\Entity\LtiContext $lti_context
- * @property bool $auto_approve
- * @property \Cake\I18n\Time $expires
+ * @property int $id
+ * @property int $choices_option_id
+ * @property \App\Model\Entity\ChoicesOption $choices_option
+ * @property int $user_id
+ * @property \App\Model\Entity\User $user
+ * @property int $extra_field_id
+ * @property \App\Model\Entity\ExtraField $extra_field
+ * @property bool $editor
+ * @property bool $visible_to_students
  */
-class LtiShareKey extends Entity
+class ChoicesOptionsUser extends Entity
 {
 
     /**
@@ -28,6 +30,6 @@ class LtiShareKey extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'share_key_id' => false,
+        'id' => false,
     ];
 }

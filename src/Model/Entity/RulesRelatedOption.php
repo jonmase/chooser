@@ -4,22 +4,20 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * User Entity.
+ * RulesRelatedOption Entity.
  *
  * @property int $id
- * @property string $username
- * @property string $email
- * @property string $fullname
- * @property string $firstname
- * @property string $lastname
+ * @property int $choosing_instance_id
+ * @property \App\Model\Entity\ChoosingInstance $choosing_instance
+ * @property bool $force
+ * @property bool $hard
+ * @property int $option_a_id
+ * @property int $option_b_id
+ * @property \App\Model\Entity\Option $option
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\EditorPreference[] $editor_preferences
- * @property \App\Model\Entity\LtiUser[] $lti_user
- * @property \App\Model\Entity\Profile[] $profiles
- * @property \App\Model\Entity\ChoicesOption[] $choices_options
  */
-class User extends Entity
+class RulesRelatedOption extends Entity
 {
 
     /**

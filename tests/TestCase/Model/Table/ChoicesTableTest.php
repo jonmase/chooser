@@ -25,12 +25,18 @@ class ChoicesTableTest extends TestCase
      */
     public $fixtures = [
         'app.choices',
+        'app.choosing_instances',
+        'app.editing_instances',
+        'app.extra_fields',
+        'app.user_permissions',
         'app.lti_context',
         'app.lti_consumer',
         'app.lti_user',
         'app.lti_user_users',
         'app.users',
-        'app.choices_lti_context'
+        'app.choices_lti_context',
+        'app.options',
+        'app.choices_options'
     ];
 
     /**

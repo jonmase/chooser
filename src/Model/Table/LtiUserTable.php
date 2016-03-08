@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
  * LtiUser Model
  *
  * @property \Cake\ORM\Association\BelongsTo $LtiContext
- * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\HasOne $LtiUserUsers
  */
 class LtiUserTable extends Table
 {

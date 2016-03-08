@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UsersTable;
+use App\Model\Table\ChoicesOptionsUsersTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UsersTable Test Case
+ * App\Model\Table\ChoicesOptionsUsersTable Test Case
  */
-class UsersTableTest extends TestCase
+class ChoicesOptionsUsersTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UsersTable
+     * @var \App\Model\Table\ChoicesOptionsUsersTable
      */
-    public $Users;
+    public $ChoicesOptionsUsers;
 
     /**
      * Fixtures
@@ -24,21 +24,31 @@ class UsersTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.users',
-        'app.editor_preferences',
-        'app.lti_user',
+        'app.choices_options_users',
+        'app.choices_options',
+        'app.choices',
+        'app.choices_lti_context',
         'app.lti_context',
         'app.lti_consumer',
-        'app.choices_lti_context',
-        'app.choices',
-        'app.choices_options',
+        'app.lti_user',
+        'app.lti_user_users',
+        'app.users',
+        'app.approvers',
+        'app.options',
+        'app.selections',
+        'app.options_selections',
+        'app.allocations',
+        'app.shortlisted_options',
+        'app.publishers',
+        'app.editor_preferences',
+        'app.profiles',
+        'app.user_permissions',
         'app.choosing_instances',
         'app.editing_instances',
         'app.extra_fields',
-        'app.user_permissions',
-        'app.lti_user_users',
-        'app.profiles',
-        'app.choices_options_users'
+        'app.extra_field_options',
+        'app.rules',
+        'app.student_preference_categories'
     ];
 
     /**
@@ -49,8 +59,8 @@ class UsersTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('Users') ? [] : ['className' => 'App\Model\Table\UsersTable'];
-        $this->Users = TableRegistry::get('Users', $config);
+        $config = TableRegistry::exists('ChoicesOptionsUsers') ? [] : ['className' => 'App\Model\Table\ChoicesOptionsUsersTable'];
+        $this->ChoicesOptionsUsers = TableRegistry::get('ChoicesOptionsUsers', $config);
     }
 
     /**
@@ -60,7 +70,7 @@ class UsersTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Users);
+        unset($this->ChoicesOptionsUsers);
 
         parent::tearDown();
     }
@@ -91,16 +101,6 @@ class UsersTableTest extends TestCase
      * @return void
      */
     public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test process method
-     *
-     * @return void
-     */
-    public function testProcess()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

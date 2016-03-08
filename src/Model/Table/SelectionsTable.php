@@ -1,19 +1,21 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\LtiUserUser;
+use App\Model\Entity\Selection;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * LtiUserUsers Model
+ * Selections Model
  *
- * @property \Cake\ORM\Association\BelongsTo $LtiUser
+ * @property \Cake\ORM\Association\BelongsTo $ChoosingInstances
  * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\HasMany $Allocations
+ * @property \Cake\ORM\Association\HasMany $OptionsSelections
  */
-class LtiUserUsersTable extends Table
+class SelectionsTable extends Table
 {
 
     /**
@@ -26,15 +28,25 @@ class LtiUserUsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('lti_user_users');
+        $this->table('selections');
         $this->displayField('id');
         $this->primaryKey('id');
 
-        $this->belongsTo('LtiUser', [
-            'foreignKey' => ['lti_consumer_key', 'lti_context_id', 'lti_user_id'],
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('ChoosingInstances', [
+            'foreignKey' => 'choosing_instance_id',
+            'joinType' => 'INNER'
         ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Allocations', [
+            'foreignKey' => 'selection_id'
+        ]);
+        $this->hasMany('OptionsSelections', [
+            'foreignKey' => 'selection_id',
         ]);
     }
 
@@ -51,19 +63,22 @@ class LtiUserUsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('user_id', 'create');
+            ->boolean('archived')
+            ->requirePresence('archived', 'create')
+            ->notEmpty('archived');
 
         $validator
-            ->requirePresence('lti_consumer_key', 'create')
-            ->notEmpty('lti_consumer_key');
+            ->allowEmpty('comments');
 
         $validator
-            ->requirePresence('lti_context_id', 'create')
-            ->notEmpty('lti_context_id');
+            ->boolean('allocations_flag')
+            ->requirePresence('allocations_flag', 'create')
+            ->notEmpty('allocations_flag');
 
         $validator
-            ->requirePresence('lti_user_id', 'create')
-            ->notEmpty('lti_user_id');
+            ->boolean('allocations_hidden')
+            ->requirePresence('allocations_hidden', 'create')
+            ->notEmpty('allocations_hidden');
 
         return $validator;
     }
@@ -77,7 +92,7 @@ class LtiUserUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['lti_consumer_key', 'lti_context_id', 'lti_user_id'], 'LtiUser'));
+        $rules->add($rules->existsIn(['choosing_instance_id'], 'ChoosingInstances'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }

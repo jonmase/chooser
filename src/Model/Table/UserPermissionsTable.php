@@ -1,19 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\LtiUserUser;
+use App\Model\Entity\UserPermission;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * LtiUserUsers Model
+ * UserPermissions Model
  *
- * @property \Cake\ORM\Association\BelongsTo $LtiUser
  * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\BelongsTo $Choices
  */
-class LtiUserUsersTable extends Table
+class UserPermissionsTable extends Table
 {
 
     /**
@@ -26,15 +26,17 @@ class LtiUserUsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('lti_user_users');
+        $this->table('user_permissions');
         $this->displayField('id');
         $this->primaryKey('id');
 
-        $this->belongsTo('LtiUser', [
-            'foreignKey' => ['lti_consumer_key', 'lti_context_id', 'lti_user_id'],
-        ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Choices', [
+            'foreignKey' => 'choice_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -51,19 +53,29 @@ class LtiUserUsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('user_id', 'create');
+            ->boolean('editor')
+            ->requirePresence('editor', 'create')
+            ->notEmpty('editor');
 
         $validator
-            ->requirePresence('lti_consumer_key', 'create')
-            ->notEmpty('lti_consumer_key');
+            ->boolean('approver')
+            ->requirePresence('approver', 'create')
+            ->notEmpty('approver');
 
         $validator
-            ->requirePresence('lti_context_id', 'create')
-            ->notEmpty('lti_context_id');
+            ->boolean('reviewer')
+            ->requirePresence('reviewer', 'create')
+            ->notEmpty('reviewer');
 
         $validator
-            ->requirePresence('lti_user_id', 'create')
-            ->notEmpty('lti_user_id');
+            ->boolean('allocator')
+            ->requirePresence('allocator', 'create')
+            ->notEmpty('allocator');
+
+        $validator
+            ->boolean('admin')
+            ->requirePresence('admin', 'create')
+            ->notEmpty('admin');
 
         return $validator;
     }
@@ -77,8 +89,8 @@ class LtiUserUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['lti_consumer_key', 'lti_context_id', 'lti_user_id'], 'LtiUser'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['choice_id'], 'Choices'));
         return $rules;
     }
 }

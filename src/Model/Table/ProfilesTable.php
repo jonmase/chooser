@@ -1,19 +1,18 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\LtiUserUser;
+use App\Model\Entity\Profile;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * LtiUserUsers Model
+ * Profiles Model
  *
- * @property \Cake\ORM\Association\BelongsTo $LtiUser
  * @property \Cake\ORM\Association\BelongsTo $Users
  */
-class LtiUserUsersTable extends Table
+class ProfilesTable extends Table
 {
 
     /**
@@ -26,15 +25,15 @@ class LtiUserUsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('lti_user_users');
-        $this->displayField('id');
+        $this->table('profiles');
+        $this->displayField('title');
         $this->primaryKey('id');
 
-        $this->belongsTo('LtiUser', [
-            'foreignKey' => ['lti_consumer_key', 'lti_context_id', 'lti_user_id'],
-        ]);
+        $this->addBehavior('Timestamp');
+
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -51,19 +50,52 @@ class LtiUserUsersTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->allowEmpty('user_id', 'create');
+            ->requirePresence('sso', 'create')
+            ->notEmpty('sso');
 
         $validator
-            ->requirePresence('lti_consumer_key', 'create')
-            ->notEmpty('lti_consumer_key');
+            ->allowEmpty('title');
 
         $validator
-            ->requirePresence('lti_context_id', 'create')
-            ->notEmpty('lti_context_id');
+            ->allowEmpty('given_name');
 
         $validator
-            ->requirePresence('lti_user_id', 'create')
-            ->notEmpty('lti_user_id');
+            ->allowEmpty('last_name');
+
+        $validator
+            ->email('email')
+            ->allowEmpty('email');
+
+        $validator
+            ->allowEmpty('phone');
+
+        $validator
+            ->allowEmpty('department');
+
+        $validator
+            ->allowEmpty('college');
+
+        $validator
+            ->allowEmpty('address');
+
+        $validator
+            ->allowEmpty('biography');
+
+        $validator
+            ->allowEmpty('lab');
+
+        $validator
+            ->allowEmpty('image_url');
+
+        $validator
+            ->allowEmpty('personal_url');
+
+        $validator
+            ->allowEmpty('lab_url');
+
+        $validator
+            ->integer('revision_parent')
+            ->allowEmpty('revision_parent');
 
         return $validator;
     }
@@ -77,7 +109,7 @@ class LtiUserUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['lti_consumer_key', 'lti_context_id', 'lti_user_id'], 'LtiUser'));
+        $rules->add($rules->isUnique(['email']));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }

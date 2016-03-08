@@ -10,6 +10,7 @@ use Cake\Validation\Validator;
 /**
  * LtiConsumer Model
  *
+ * @property \Cake\ORM\Association\HasMany $LtiContext
  */
 class LtiConsumerTable extends Table
 {

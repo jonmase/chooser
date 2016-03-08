@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\LtiShareKeyTable;
+use App\Model\Table\ExtraFieldOptionsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\LtiShareKeyTable Test Case
+ * App\Model\Table\ExtraFieldOptionsTable Test Case
  */
-class LtiShareKeyTableTest extends TestCase
+class ExtraFieldOptionsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\LtiShareKeyTable
+     * @var \App\Model\Table\ExtraFieldOptionsTable
      */
-    public $LtiShareKey;
+    public $ExtraFieldOptions;
 
     /**
      * Fixtures
@@ -24,12 +24,27 @@ class LtiShareKeyTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'app.lti_share_key',
-        'app.share_keys',
+        'app.extra_field_options',
+        'app.extra_fields',
+        'app.choices',
+        'app.choices_lti_context',
         'app.lti_context',
-        'app.contexts',
-        'app.lti_contexts',
-        'app.lti_resources'
+        'app.lti_consumer',
+        'app.lti_user',
+        'app.lti_user_users',
+        'app.users',
+        'app.choices_options_users',
+        'app.approvers',
+        'app.publishers',
+        'app.editor_preferences',
+        'app.profiles',
+        'app.selections',
+        'app.shortlisted_options',
+        'app.user_permissions',
+        'app.choices_options',
+        'app.choosing_instances',
+        'app.editing_instances',
+        'app.student_preference_categories'
     ];
 
     /**
@@ -40,8 +55,8 @@ class LtiShareKeyTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('LtiShareKey') ? [] : ['className' => 'App\Model\Table\LtiShareKeyTable'];
-        $this->LtiShareKey = TableRegistry::get('LtiShareKey', $config);
+        $config = TableRegistry::exists('ExtraFieldOptions') ? [] : ['className' => 'App\Model\Table\ExtraFieldOptionsTable'];
+        $this->ExtraFieldOptions = TableRegistry::get('ExtraFieldOptions', $config);
     }
 
     /**
@@ -51,7 +66,7 @@ class LtiShareKeyTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->LtiShareKey);
+        unset($this->ExtraFieldOptions);
 
         parent::tearDown();
     }

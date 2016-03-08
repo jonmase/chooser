@@ -1,19 +1,20 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\LtiUserUser;
+use App\Model\Entity\ShortlistedOption;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * LtiUserUsers Model
+ * ShortlistedOptions Model
  *
- * @property \Cake\ORM\Association\BelongsTo $LtiUser
  * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\BelongsTo $ChoosingInstances
+ * @property \Cake\ORM\Association\BelongsTo $ChoicesOptions
  */
-class LtiUserUsersTable extends Table
+class ShortlistedOptionsTable extends Table
 {
 
     /**
@@ -26,15 +27,23 @@ class LtiUserUsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('lti_user_users');
+        $this->table('shortlisted_options');
         $this->displayField('id');
         $this->primaryKey('id');
 
-        $this->belongsTo('LtiUser', [
-            'foreignKey' => ['lti_consumer_key', 'lti_context_id', 'lti_user_id'],
-        ]);
+        $this->addBehavior('Timestamp');
+
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('ChoosingInstances', [
+            'foreignKey' => 'choosing_instance_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('ChoicesOptions', [
+            'foreignKey' => 'choices_option_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -50,21 +59,6 @@ class LtiUserUsersTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->allowEmpty('user_id', 'create');
-
-        $validator
-            ->requirePresence('lti_consumer_key', 'create')
-            ->notEmpty('lti_consumer_key');
-
-        $validator
-            ->requirePresence('lti_context_id', 'create')
-            ->notEmpty('lti_context_id');
-
-        $validator
-            ->requirePresence('lti_user_id', 'create')
-            ->notEmpty('lti_user_id');
-
         return $validator;
     }
 
@@ -77,8 +71,9 @@ class LtiUserUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['lti_consumer_key', 'lti_context_id', 'lti_user_id'], 'LtiUser'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['choosing_instance_id'], 'ChoosingInstances'));
+        $rules->add($rules->existsIn(['choices_option_id'], 'ChoicesOptions'));
         return $rules;
     }
 }

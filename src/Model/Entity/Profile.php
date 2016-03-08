@@ -4,22 +4,30 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * User Entity.
+ * Profile Entity.
  *
  * @property int $id
- * @property string $username
+ * @property int $user_id
+ * @property \App\Model\Entity\User $user
+ * @property string $sso
+ * @property string $title
+ * @property string $given_name
+ * @property string $last_name
  * @property string $email
- * @property string $fullname
- * @property string $firstname
- * @property string $lastname
+ * @property string $phone
+ * @property string $department
+ * @property string $college
+ * @property string $address
+ * @property string $biography
+ * @property string $lab
+ * @property string $image_url
+ * @property string $personal_url
+ * @property string $lab_url
+ * @property int $revision_parent
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\EditorPreference[] $editor_preferences
- * @property \App\Model\Entity\LtiUser[] $lti_user
- * @property \App\Model\Entity\Profile[] $profiles
- * @property \App\Model\Entity\ChoicesOption[] $choices_options
  */
-class User extends Entity
+class Profile extends Entity
 {
 
     /**

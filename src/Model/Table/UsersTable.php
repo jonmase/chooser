@@ -10,8 +10,15 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
- * @property \Cake\ORM\Association\HasMany $LtiUser
- * @property \Cake\ORM\Association\BelongsToMany $LtiUser
+ * @property \Cake\ORM\Association\HasMany $ChoicesOptionsUsers
+ * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Approvers)
+ * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Publishers)
+ * @property \Cake\ORM\Association\HasMany $EditorPreferences
+ * @property \Cake\ORM\Association\HasMany $LtiUserUsers
+ * @property \Cake\ORM\Association\HasMany $Profiles
+ * @property \Cake\ORM\Association\HasMany $Selections
+ * @property \Cake\ORM\Association\HasMany $ShortlistedOptions
+ * @property \Cake\ORM\Association\HasMany $UserPermissions
  */
 class UsersTable extends Table
 {
@@ -32,10 +39,36 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        $this->hasMany('ChoicesOptionsUsers', [
+            'foreignKey' => 'user_id',
+        ]);
+        $this->hasMany('Approvers', [
+            'className' => 'ChoicesOptions',
+            'foreignKey' => 'approver',
+        ]);
+        $this->hasMany('Publishers', [
+            'className' => 'ChoicesOptions',
+            'foreignKey' => 'publisher',
+        ]);
+        $this->hasMany('EditorPreferences', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->hasMany('LtiUserUsers', [
             'foreignKey' => 'user_id',
         ]);
-        //Note: lots of extra assoications to add here - save a copy then rebake when tables are all present
+        $this->hasOne('Profiles', [
+            'foreignKey' => 'user_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->hasMany('Selections', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('ShortlistedOptions', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('UserPermissions', [
+            'foreignKey' => 'user_id'
+        ]);
     }
 
     /**
@@ -55,6 +88,7 @@ class UsersTable extends Table
             ->notEmpty('username');
 
         $validator
+            ->email('email')
             ->allowEmpty('email');
 
         $validator
@@ -68,7 +102,27 @@ class UsersTable extends Table
 
         return $validator;
     }
+
+    /**
+     * Returns a rules checker object that will be used for validating
+     * application integrity.
+     *
+     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+     * @return \Cake\ORM\RulesChecker
+     */
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules->add($rules->isUnique(['username']));
+        $rules->add($rules->isUnique(['email']));
+        return $rules;
+    }
     
+    /**
+     * Processes the user data from an LTI Launch
+     * 
+     * @param $tool The LTI tool object, containing user and context information
+     * @return boolean True or false, depending on whether save succeeded
+     */
     public function process($tool = null) {
         if(!$tool) { return false; }
         

@@ -4,22 +4,17 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * User Entity.
+ * Allocation Entity.
  *
  * @property int $id
- * @property string $username
- * @property string $email
- * @property string $fullname
- * @property string $firstname
- * @property string $lastname
+ * @property int $selection_id
+ * @property \App\Model\Entity\Selection $selection
+ * @property int $choices_option_id
+ * @property \App\Model\Entity\ChoicesOption $choices_option
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\EditorPreference[] $editor_preferences
- * @property \App\Model\Entity\LtiUser[] $lti_user
- * @property \App\Model\Entity\Profile[] $profiles
- * @property \App\Model\Entity\ChoicesOption[] $choices_options
  */
-class User extends Entity
+class Allocation extends Entity
 {
 
     /**

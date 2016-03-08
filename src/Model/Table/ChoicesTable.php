@@ -10,7 +10,12 @@ use Cake\Validation\Validator;
 /**
  * Choices Model
  *
- * @property \Cake\ORM\Association\BelongsToMany $LtiContext
+ * @property \Cake\ORM\Association\HasMany $ChoicesLtiContext
+ * @property \Cake\ORM\Association\HasMany $ChoicesOptions
+ * @property \Cake\ORM\Association\HasMany $ChoosingInstances
+ * @property \Cake\ORM\Association\HasMany $EditingInstances
+ * @property \Cake\ORM\Association\HasMany $ExtraFields
+ * @property \Cake\ORM\Association\HasMany $UserPermissions
  */
 class ChoicesTable extends Table
 {
@@ -29,10 +34,24 @@ class ChoicesTable extends Table
         $this->displayField('name');
         $this->primaryKey('id');
 
-        $this->hasMany('LtiContext', [
+        $this->hasMany('ChoicesLtiContext', [
             'foreignKey' => 'choice_id',
         ]);
-        //Note: lots of extra assoications to add here - save a copy then rebake when tables are all present
+        $this->hasMany('ChoicesOptions', [
+            'foreignKey' => 'choice_id',
+        ]);
+        $this->hasMany('ChoosingInstances', [
+            'foreignKey' => 'choice_id'
+        ]);
+        $this->hasMany('EditingInstances', [
+            'foreignKey' => 'choice_id'
+        ]);
+        $this->hasMany('ExtraFields', [
+            'foreignKey' => 'choice_id'
+        ]);
+        $this->hasMany('UserPermissions', [
+            'foreignKey' => 'choice_id'
+        ]);
     }
 
     /**

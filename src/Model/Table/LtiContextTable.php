@@ -10,10 +10,9 @@ use Cake\Validation\Validator;
 /**
  * LtiContext Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Contexts
- * @property \Cake\ORM\Association\BelongsTo $LtiContexts
- * @property \Cake\ORM\Association\BelongsTo $LtiResources
- * @property \Cake\ORM\Association\BelongsTo $LtiContext
+ * @property \Cake\ORM\Association\BelongsTo $LtiConsumer
+ * @property \Cake\ORM\Association\HasMany $LtiUser
+ * @property \Cake\ORM\Association\HasOne $ChoicesLtiContext
  */
 class LtiContextTable extends Table
 {

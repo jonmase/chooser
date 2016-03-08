@@ -4,22 +4,26 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * User Entity.
+ * StudentPreferenceCategory Entity.
  *
  * @property int $id
- * @property string $username
- * @property string $email
- * @property string $fullname
- * @property string $firstname
- * @property string $lastname
+ * @property int $choosing_instance_id
+ * @property \App\Model\Entity\ChoosingInstance $choosing_instance
+ * @property string $name
+ * @property string $description
+ * @property string $type
+ * @property int $points
+ * @property int $min
+ * @property int $max
+ * @property int $extra_field_id
+ * @property \App\Model\Entity\ExtraField $extra_field
+ * @property int $extra_field_option_id
+ * @property \App\Model\Entity\ExtraFieldOption $extra_field_option
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\EditorPreference[] $editor_preferences
- * @property \App\Model\Entity\LtiUser[] $lti_user
- * @property \App\Model\Entity\Profile[] $profiles
- * @property \App\Model\Entity\ChoicesOption[] $choices_options
+ * @property \App\Model\Entity\OptionsSelection[] $options_selections
  */
-class User extends Entity
+class StudentPreferenceCategory extends Entity
 {
 
     /**

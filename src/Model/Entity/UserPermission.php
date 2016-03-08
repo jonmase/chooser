@@ -4,13 +4,20 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * LtiNonce Entity.
+ * UserPermission Entity.
  *
- * @property string $consumer_key
- * @property string $value
- * @property \Cake\I18n\Time $expires
+ * @property int $id
+ * @property int $user_id
+ * @property \App\Model\Entity\User $user
+ * @property int $choice_id
+ * @property \App\Model\Entity\Choice $choice
+ * @property bool $editor
+ * @property bool $approver
+ * @property bool $reviewer
+ * @property bool $allocator
+ * @property bool $admin
  */
-class LtiNonce extends Entity
+class UserPermission extends Entity
 {
 
     /**
@@ -24,7 +31,6 @@ class LtiNonce extends Entity
      */
     protected $_accessible = [
         '*' => true,
-        'consumer_key' => false,
-        'value' => false,
+        'id' => false,
     ];
 }

@@ -4,22 +4,16 @@ namespace App\Model\Entity;
 use Cake\ORM\Entity;
 
 /**
- * User Entity.
+ * ExtraFieldOption Entity.
  *
  * @property int $id
- * @property string $username
- * @property string $email
- * @property string $fullname
- * @property string $firstname
- * @property string $lastname
- * @property \Cake\I18n\Time $created
- * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\EditorPreference[] $editor_preferences
- * @property \App\Model\Entity\LtiUser[] $lti_user
- * @property \App\Model\Entity\Profile[] $profiles
- * @property \App\Model\Entity\ChoicesOption[] $choices_options
+ * @property int $extra_field_id
+ * @property \App\Model\Entity\ExtraField $extra_field
+ * @property string $value
+ * @property string $label
+ * @property \App\Model\Entity\StudentPreferenceCategory[] $student_preference_categories
  */
-class User extends Entity
+class ExtraFieldOption extends Entity
 {
 
     /**

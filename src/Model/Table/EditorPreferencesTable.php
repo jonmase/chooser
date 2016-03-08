@@ -1,19 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\LtiShareKey;
+use App\Model\Entity\EditorPreference;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * LtiShareKey Model
+ * EditorPreferences Model
  *
- * @property \Cake\ORM\Association\BelongsTo $ShareKeys
- * @property \Cake\ORM\Association\BelongsTo $LtiContext
+ * @property \Cake\ORM\Association\BelongsTo $Users
+ * @property \Cake\ORM\Association\BelongsTo $OptionsSelections
  */
-class LtiShareKeyTable extends Table
+class EditorPreferencesTable extends Table
 {
 
     /**
@@ -26,16 +26,18 @@ class LtiShareKeyTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('lti_share_key');
-        $this->displayField('share_key_id');
-        $this->primaryKey('share_key_id');
+        $this->table('editor_preferences');
+        $this->displayField('id');
+        $this->primaryKey('id');
 
-        $this->belongsTo('ShareKeys', [
-            'foreignKey' => 'share_key_id',
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
-        $this->belongsTo('LtiContext', [
-            'foreignKey' => 'primary_context_id',
+        $this->belongsTo('OptionsSelections', [
+            'foreignKey' => 'options_selection_id',
             'joinType' => 'INNER'
         ]);
     }
@@ -49,18 +51,24 @@ class LtiShareKeyTable extends Table
     public function validationDefault(Validator $validator)
     {
         $validator
-            ->requirePresence('primary_consumer_key', 'create')
-            ->notEmpty('primary_consumer_key');
+            ->integer('id')
+            ->allowEmpty('id', 'create');
 
         $validator
-            ->boolean('auto_approve')
-            ->requirePresence('auto_approve', 'create')
-            ->notEmpty('auto_approve');
+            ->integer('rank')
+            ->allowEmpty('rank');
 
         $validator
-            ->dateTime('expires')
-            ->requirePresence('expires', 'create')
-            ->notEmpty('expires');
+            ->integer('points')
+            ->allowEmpty('points');
+
+        $validator
+            ->boolean('prefer')
+            ->allowEmpty('prefer');
+
+        $validator
+            ->boolean('prefer_not')
+            ->allowEmpty('prefer_not');
 
         return $validator;
     }
@@ -74,8 +82,8 @@ class LtiShareKeyTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['share_key_id'], 'ShareKeys'));
-        $rules->add($rules->existsIn(['primary_context_id'], 'LtiContext'));
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['options_selection_id'], 'OptionsSelections'));
         return $rules;
     }
 }

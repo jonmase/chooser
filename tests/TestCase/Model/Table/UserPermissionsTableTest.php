@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UsersTable;
+use App\Model\Table\UserPermissionsTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UsersTable Test Case
+ * App\Model\Table\UserPermissionsTable Test Case
  */
-class UsersTableTest extends TestCase
+class UserPermissionsTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UsersTable
+     * @var \App\Model\Table\UserPermissionsTable
      */
-    public $Users;
+    public $UserPermissions;
 
     /**
      * Fixtures
@@ -24,8 +24,13 @@ class UsersTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
+        'app.user_permissions',
         'app.users',
+        'app.choices_options_users',
+        'app.approvers',
+        'app.publishers',
         'app.editor_preferences',
+        'app.lti_user_users',
         'app.lti_user',
         'app.lti_context',
         'app.lti_consumer',
@@ -35,10 +40,9 @@ class UsersTableTest extends TestCase
         'app.choosing_instances',
         'app.editing_instances',
         'app.extra_fields',
-        'app.user_permissions',
-        'app.lti_user_users',
         'app.profiles',
-        'app.choices_options_users'
+        'app.selections',
+        'app.shortlisted_options'
     ];
 
     /**
@@ -49,8 +53,8 @@ class UsersTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('Users') ? [] : ['className' => 'App\Model\Table\UsersTable'];
-        $this->Users = TableRegistry::get('Users', $config);
+        $config = TableRegistry::exists('UserPermissions') ? [] : ['className' => 'App\Model\Table\UserPermissionsTable'];
+        $this->UserPermissions = TableRegistry::get('UserPermissions', $config);
     }
 
     /**
@@ -60,7 +64,7 @@ class UsersTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Users);
+        unset($this->UserPermissions);
 
         parent::tearDown();
     }
@@ -91,16 +95,6 @@ class UsersTableTest extends TestCase
      * @return void
      */
     public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test process method
-     *
-     * @return void
-     */
-    public function testProcess()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

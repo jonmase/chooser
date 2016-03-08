@@ -12,7 +12,12 @@ use Cake\ORM\Entity;
  * @property string $instructor_default_roles
  * @property bool $notify_additional_permissions
  * @property string $notify_additional_permissions_custom
+ * @property \App\Model\Entity\ChoosingInstance[] $choosing_instances
+ * @property \App\Model\Entity\EditingInstance[] $editing_instances
+ * @property \App\Model\Entity\ExtraField[] $extra_fields
+ * @property \App\Model\Entity\UserPermission[] $user_permissions
  * @property \App\Model\Entity\LtiContext[] $lti_context
+ * @property \App\Model\Entity\Option[] $options
  */
 class Choice extends Entity
 {

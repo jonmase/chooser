@@ -1,22 +1,22 @@
 <?php
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\UsersTable;
+use App\Model\Table\ProfilesTable;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\UsersTable Test Case
+ * App\Model\Table\ProfilesTable Test Case
  */
-class UsersTableTest extends TestCase
+class ProfilesTableTest extends TestCase
 {
 
     /**
      * Test subject
      *
-     * @var \App\Model\Table\UsersTable
+     * @var \App\Model\Table\ProfilesTable
      */
-    public $Users;
+    public $Profiles;
 
     /**
      * Fixtures
@@ -24,6 +24,7 @@ class UsersTableTest extends TestCase
      * @var array
      */
     public $fixtures = [
+        'app.profiles',
         'app.users',
         'app.editor_preferences',
         'app.lti_user',
@@ -37,7 +38,6 @@ class UsersTableTest extends TestCase
         'app.extra_fields',
         'app.user_permissions',
         'app.lti_user_users',
-        'app.profiles',
         'app.choices_options_users'
     ];
 
@@ -49,8 +49,8 @@ class UsersTableTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $config = TableRegistry::exists('Users') ? [] : ['className' => 'App\Model\Table\UsersTable'];
-        $this->Users = TableRegistry::get('Users', $config);
+        $config = TableRegistry::exists('Profiles') ? [] : ['className' => 'App\Model\Table\ProfilesTable'];
+        $this->Profiles = TableRegistry::get('Profiles', $config);
     }
 
     /**
@@ -60,7 +60,7 @@ class UsersTableTest extends TestCase
      */
     public function tearDown()
     {
-        unset($this->Users);
+        unset($this->Profiles);
 
         parent::tearDown();
     }
@@ -91,16 +91,6 @@ class UsersTableTest extends TestCase
      * @return void
      */
     public function testBuildRules()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test process method
-     *
-     * @return void
-     */
-    public function testProcess()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
