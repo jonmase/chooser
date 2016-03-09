@@ -123,7 +123,7 @@ class UsersTable extends Table
      * @param $tool The LTI tool object, containing user and context information
      * @return boolean True or false, depending on whether save succeeded
      */
-    public function process($tool = null) {
+    public function register($tool = null) {
         if(!$tool) { return false; }
         
         $consumerKey = $tool->consumer->getKey();

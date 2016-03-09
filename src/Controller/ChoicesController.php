@@ -45,7 +45,7 @@ class ChoicesController extends AppController
     }
     
     /**
-     * Link method
+     * Add method
      * Allows Staff to link a Choice to this LTI Context
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
      * User can choose an available Choice, create a new one
@@ -53,7 +53,7 @@ class ChoicesController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
      */
-    public function link()
+    public function add()
     {
         // Get the tool from the session
         $session = $this->request->session();
@@ -73,7 +73,7 @@ class ChoicesController extends AppController
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $choice = $this->Choices->newEntity();
         if ($this->request->is('post')) {
@@ -87,7 +87,7 @@ class ChoicesController extends AppController
         }
         $this->set(compact('choice'));
         $this->set('_serialize', ['choice']);
-    }
+    }*/
 
     /**
      * Edit method

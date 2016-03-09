@@ -58,8 +58,8 @@ class LtiConsumerController extends AppController
                 $session = $this->request->session();
                 $session->write('tool', $tool);
                 
-                //Process the user
-                if($this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->process($tool)) {
+                //Register the user
+                if($this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->register($tool)) {
                     //Look up whether there is a Choice already associated with this link
                     $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
                     
@@ -69,7 +69,7 @@ class LtiConsumerController extends AppController
                     }
                     //If there is no associated Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/associate a Choice
                     else if($tool->user->isStaff() || $tool->user->isAdmin()) {
-                        $this->redirect(['controller' => 'choices', 'action' => 'link']);
+                        $this->redirect(['controller' => 'choices', 'action' => 'add']);
                     }
                     //Otherwise, there is no associated Choice, and user is Learner, so throw error, as link has not been configured
                     else {
