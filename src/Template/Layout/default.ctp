@@ -41,7 +41,7 @@
     </main>
     <footer>
     </footer>
-    <?= $this->Html->script('app'); ?>
+    <?= $this->Html->script('dist/bundle'); ?>
     <?= $this->fetch('script') ?>
 </body>
 </html>

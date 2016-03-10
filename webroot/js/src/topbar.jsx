@@ -5,9 +5,16 @@ var MenuItem = require('material-ui/lib/menus/menu-item');
 var IconButton = require('material-ui/lib/icon-button');
 var FontIcon = require('material-ui/lib/font-icon');
 
+const styles = {
+  subtitle: {
+    'fontSize': '80%',
+    'marginLeft': '10px',
+  },
+};
+
 const TopBar = () => (
     <AppBar
-        title="Chooser"
+        title={<span>Chooser<span style={styles.subtitle}>Name of Choice/Choosing Instance</span></span>}
         iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
         iconElementRight={
             <IconMenu
