@@ -3,6 +3,7 @@ var ColorManipulator = require('material-ui/lib/utils/color-manipulator');
 var Spacing = require('material-ui/lib/styles/spacing');
 var zIndex = require('material-ui/lib/styles/zIndex');
 
+//http://www.material-ui.com/#/customization/colors
 module.exports = {
   spacing: Spacing,
   zIndex: zIndex,

@@ -25,6 +25,7 @@
     </title>
     <?= $this->Html->meta('icon') ?>
 
+    <?= $this->Html->css('base'); ?>
     <?= $this->Html->css('https://fonts.googleapis.com/css?family=Roboto:400,300,500,700'); //Roboto font ?>
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
     <?= $this->Html->css('chooser'); ?>
