@@ -4,3 +4,7 @@ body {
     padding: 0;
     border: none;
 }
+/* Remove default margin-bottom on buttons set by base.css */
+button, .button {
+    margin-bottom: 0px;
+}
