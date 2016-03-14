@@ -8,3 +8,17 @@ body {
 button, .button {
     margin-bottom: 0px;
 }
+/* Override row width limit set by base.css */
+.row {
+    max-width: 100%;
+}
+/* Override heading font-family set by base.css */
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/* HEADINGS */
+.page-title {
+    font-size: 2rem;
+}

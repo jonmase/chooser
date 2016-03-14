@@ -31,6 +31,7 @@ const TopBar = React.createClass({
         return (
             <AppBar
                 title={<span>Chooser<span style={styles.subtitle}>Name of Choice/Choosing Instance</span></span>}
+                showMenuIconButton={false}
                 iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
                 iconElementRight={
                     <IconMenu
