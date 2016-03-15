@@ -43,6 +43,22 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
+		
+        $this->loadComponent('Auth', [
+			'loginAction' => [
+				'controller' => 'Users',
+				'action' => 'forbidden',
+			],
+			'loginRedirect' => [
+				'controller' => 'Choices',
+				'action' => 'view'
+			],
+			'logoutRedirect' => [
+				'controller' => 'Pages',
+				'action' => 'display',
+				'home'
+			]
+		]);
     }
 
     /**

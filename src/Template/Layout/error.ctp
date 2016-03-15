@@ -20,36 +20,34 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <head>
     <?= $this->Html->charset() ?>
     <title>
-        <?= $cakeDescription ?>:
+        Chooser:
         <?= $this->fetch('title') ?>
     </title>
     <?= $this->Html->meta('icon') ?>
 
-    <?= $this->Html->css('base.css') ?>
-    <?= $this->Html->css('cake.css') ?>
+    <?= $this->Html->css('base'); ?>
+    <?= $this->Html->css('https://fonts.googleapis.com/css?family=Roboto:400,300,500,700'); //Roboto font ?>
+    <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
+    <?= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
+    <?= $this->Html->css('chooser'); ?>
 
+    <!--[if lt IE 9]>
+        <script src="node_modules/html5shiv/dist/html5shiv.min.js"></script>
+    <![endif]-->
+    
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
-    <?= $this->fetch('script') ?>
 </head>
 <body>
-    <div id="container">
-        <div id="header">
-            <h1><?= $this->Html->link($cakeDescription, 'http://cakephp.org') ?></h1>
-        </div>
-        <div id="content">
-            <?= $this->Flash->render() ?>
-
-            <?= $this->fetch('content') ?>
-        </div>
-        <div id="footer">
-            <?= $this->Html->link(
-                    $this->Html->image('cake.power.gif', ['alt' => $cakeDescription, 'border' => '0']),
-                    'http://www.cakephp.org/',
-                    ['target' => '_blank', 'escape' => false]
-                )
-            ?>
-        </div>
-    </div>
+    <nav id="topbar">
+    </nav>
+    <main class="container-fluid clearfix">
+        <?= $this->Flash->render() ?>
+        <?= $this->fetch('content') ?>
+    </main>
+    <footer>
+    </footer>
+    <?= $this->Html->script('dist/bundle'); ?>
+    <?= $this->fetch('script') ?>
 </body>
 </html>

@@ -188,7 +188,9 @@ class UsersTable extends Table
         
         //pr($userData); //exit;    //Debugging
         if($this->save($userData)) {
-            return true;
+            //Send back just the user record - used for logging in
+            unset($userData->lti_user_users);
+            return $userData;
         }
         else {
             return false;

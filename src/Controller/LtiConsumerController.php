@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
+use Cake\Event\Event;
 
 /**
  * LtiConsumer Controller
@@ -13,6 +14,11 @@ use Cake\Network\Exception\InternalErrorException;
  */
 class LtiConsumerController extends AppController
 {
+	public function beforeFilter(Event $event) {
+        parent::beforeFilter($event);
+		$this->Auth->allow('launch');
+	}
+	
     /**
      * Launch method
      *
@@ -59,7 +65,10 @@ class LtiConsumerController extends AppController
                 $session->write('tool', $tool);
                 
                 //Register the user
-                if($this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->register($tool)) {
+                if($user = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->register($tool)) {
+                    //Log the user in
+                    $this->Auth->setUser($user->toArray());
+                    
                     //Look up whether there is a Choice already associated with this link
                     $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
                     
