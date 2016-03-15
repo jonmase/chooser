@@ -106,9 +106,15 @@ class ChoicesTable extends Table
         if($role === 'view') {
             //Don't need any conditions, as anyone who is associated with the Choice has view role
         }
-        //For other roles, just need to check that the specified role is set to 1
+        else if($role === 'admin') {
+            $conditions['admin'] = 1;
+        }
+        //For other roles, just need to check that the specified role, or admin, is set to 1
         else {
-            $conditions[$role] = 1;
+            $conditions['or'] = [
+                $role => 1,
+                'admin' => 1,
+            ];
         }
         
         $choicesQuery = $this->ChoicesUsers->find('all', [

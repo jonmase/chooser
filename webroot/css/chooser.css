@@ -3,25 +3,48 @@ body {
     margin: 0;
     padding: 0;
     border: none;
+    font-weight: 400;
 }
 /* Remove default margin-bottom on buttons set by base.css */
-button, .button {
+/*button, .button {
     margin-bottom: 0px;
-}
+}*/
 /* Override row width limit set by base.css */
-.row {
+/*.row {
     max-width: 100%;
-}
+}*/
 /* Override heading font-family set by base.css */
-h1,h2,h3,h4,h5,h6 {
+/*h1,h2,h3,h4,h5,h6 {
     font-family: 'Roboto', sans-serif;
-}
+}*/
 
+/* GENERAL STYLES */
+.no-top-margin {
+    margin-top: 0;
+}
 
 /* HEADINGS */
+h1,h2,h3,h4,h5,h6 {
+    font-weight: 400;
+}
 h1 {
     font-size: 2rem;
 }
 h2 {
     font-size: 1.6rem;
+}
+h3 {
+    font-size: 1.4rem;
+}
+h4 {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+h5 {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+h6 {
+    font-size: 1rem;
+    font-weight: 500;
 }

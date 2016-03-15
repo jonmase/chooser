@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/jonmase/chooser#readme",
   "dependencies": {
+    "formsy-material-ui": "^0.3.8",
+    "formsy-react": "^0.17.0",
     "html5shiv": "^3.7.3",
     "material-ui": "^0.15.0-alpha.1",
     "react": "^0.14.7",
@@ -29,6 +31,7 @@
     "react-tap-event-plugin": "^0.2.2"
   },
   "devDependencies": {
+    "babelify": "^7.2.0",
     "browserify": "^13.0.0",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",

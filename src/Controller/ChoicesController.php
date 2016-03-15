@@ -58,15 +58,34 @@ class ChoicesController extends AppController
         // Get the tool from the session
         $session = $this->request->session();
         $tool = $session->read('tool');
-        //pr($tool);
         
         //Make sure that the user is Staff or Admin
         if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
             throw new ForbiddenException(__('Not permitted to create Choice link.'));
         }
-        //$this->autoRender = false;
-        //pr("Choice setup");
-        
+      
+        if ($this->request->is('post')) {
+            $choice = $this->Choices->newEntity($this->request->data());
+            
+            if($choice->indirect_access === 'on') {
+                $choice->private = false;
+            }
+            else {
+                $choice->private = true;
+            }
+            $choice->notify_additional_permissions = false;
+            
+            //Associate the new Choice with the current user, with Admin permissions
+            
+            
+            //Associate the new Choice with the LTI context
+            
+            
+            //Save everything
+            $this->Choices->save($choice);
+            
+            //Redirect to the Choice
+        }
         //Get the existing Choices that this user has Admin rights on
         $userId = $this->Auth->user('id');
         $choices = $this->Choices->getChoices($userId, 'admin');
