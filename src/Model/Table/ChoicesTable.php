@@ -12,10 +12,10 @@ use Cake\Validation\Validator;
  *
  * @property \Cake\ORM\Association\HasMany $ChoicesLtiContext
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions
+ * @property \Cake\ORM\Association\HasMany $ChoicesUsers
  * @property \Cake\ORM\Association\HasMany $ChoosingInstances
  * @property \Cake\ORM\Association\HasMany $EditingInstances
  * @property \Cake\ORM\Association\HasMany $ExtraFields
- * @property \Cake\ORM\Association\HasMany $UserPermissions
  */
 class ChoicesTable extends Table
 {
@@ -40,6 +40,9 @@ class ChoicesTable extends Table
         $this->hasMany('ChoicesOptions', [
             'foreignKey' => 'choice_id',
         ]);
+        $this->hasMany('ChoicesUsers', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->hasMany('ChoosingInstances', [
             'foreignKey' => 'choice_id'
         ]);
@@ -47,9 +50,6 @@ class ChoicesTable extends Table
             'foreignKey' => 'choice_id'
         ]);
         $this->hasMany('ExtraFields', [
-            'foreignKey' => 'choice_id'
-        ]);
-        $this->hasMany('UserPermissions', [
             'foreignKey' => 'choice_id'
         ]);
     }
@@ -87,5 +87,37 @@ class ChoicesTable extends Table
             ->allowEmpty('notify_additional_permissions_custom');
 
         return $validator;
+    }
+    
+    /**
+     * Default validation rules.
+     *
+     * @param int $userId The DB ID of the logged in user
+     * @param string $role The minimum role the user must have on the Choices that are returned
+     * @return Cake\ORM\ResultSet
+     */
+    public function getChoices($userId = null, $role = 'view') {
+        if(!$userId) {
+            return false;
+        }
+        
+        $conditions['user_id'] = $userId;
+        
+        if($role === 'view') {
+            //Don't need any conditions, as anyone who is associated with the Choice has view role
+        }
+        //For other roles, just need to check that the specified role is set to 1
+        else {
+            $conditions[$role] = 1;
+        }
+        
+        $choicesQuery = $this->ChoicesUsers->find('all', [
+            'conditions' => $conditions,
+            'contain' => ['Choices'],
+        ]);
+        
+        $choices = $choicesQuery->all();
+        
+        return $choices;
     }
 }

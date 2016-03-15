@@ -5,7 +5,7 @@ var MenuItem = require('material-ui/lib/menus/menu-item');
 var IconButton = require('material-ui/lib/icon-button');
 var FontIcon = require('material-ui/lib/font-icon');
 
-var ThemeManager = require('material-ui/lib/styles/theme-manager');
+var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('./theme.jsx');
 
 const styles = {
@@ -23,7 +23,7 @@ const TopBar = React.createClass({
 
     getChildContext() {
         return {
-            muiTheme: ThemeManager.getMuiTheme(ChooserTheme),
+            muiTheme: GetMuiTheme(ChooserTheme),
         };
     },
 

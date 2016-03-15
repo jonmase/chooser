@@ -66,6 +66,13 @@ class ChoicesController extends AppController
         }
         //$this->autoRender = false;
         //pr("Choice setup");
+        
+        //Get the existing Choices that this user has Admin rights on
+        //$userId = $this->Auth->user('id');
+        $userId = 1;
+        $choices = $this->Choices->getChoices($userId, 'admin');
+        //pr($choices);
+        $this->set(compact('choices'));
     }
 
     /**

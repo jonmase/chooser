@@ -13,12 +13,12 @@ use Cake\Validation\Validator;
  * @property \Cake\ORM\Association\HasMany $ChoicesOptionsUsers
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Approvers)
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Publishers)
+ * @property \Cake\ORM\Association\HasMany $ChoicesUsers
  * @property \Cake\ORM\Association\HasMany $EditorPreferences
  * @property \Cake\ORM\Association\HasMany $LtiUserUsers
  * @property \Cake\ORM\Association\HasMany $Profiles
  * @property \Cake\ORM\Association\HasMany $Selections
  * @property \Cake\ORM\Association\HasMany $ShortlistedOptions
- * @property \Cake\ORM\Association\HasMany $UserPermissions
  */
 class UsersTable extends Table
 {
@@ -50,6 +50,9 @@ class UsersTable extends Table
             'className' => 'ChoicesOptions',
             'foreignKey' => 'publisher',
         ]);
+        $this->hasMany('ChoicesUsers', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->hasMany('EditorPreferences', [
             'foreignKey' => 'user_id'
         ]);
@@ -64,9 +67,6 @@ class UsersTable extends Table
             'foreignKey' => 'user_id'
         ]);
         $this->hasMany('ShortlistedOptions', [
-            'foreignKey' => 'user_id'
-        ]);
-        $this->hasMany('UserPermissions', [
             'foreignKey' => 'user_id'
         ]);
     }
