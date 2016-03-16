@@ -34,14 +34,10 @@ class ChoicesController extends AppController
      */
     public function view($id = null)
     {
-        $this->autoRender = false;
-        pr("Choice view: " . $id);
-        /*$choice = $this->Choices->get($id, [
-            'contain' => ['LtiContext']
-        ]);
+        $choice = $this->Choices->get($id);
 
         $this->set('choice', $choice);
-        $this->set('_serialize', ['choice']);*/
+        //$this->set('_serialize', ['choice']);
     }
     
     /**
