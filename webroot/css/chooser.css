@@ -51,3 +51,12 @@ h6 {
     font-size: 1rem;
     font-weight: 500;
 }
+
+
+/* FORMS */
+form > div {
+    margin-bottom: 30px;
+}
+form > div:last-child {
+    margin-bottom: 0;
+}

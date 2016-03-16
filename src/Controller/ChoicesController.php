@@ -46,9 +46,8 @@ class ChoicesController extends AppController
     
     /**
      * Add method
-     * Allows Staff to link a Choice to this LTI Context
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
-     * User can choose an available Choice, create a new one
+     * User can choose an available Choice (which then uses link method), create a new one
      * 
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
@@ -98,8 +97,48 @@ class ChoicesController extends AppController
         //Get the existing Choices that this user has Admin rights on
         $userId = $this->Auth->user('id');
         $choices = $this->Choices->getChoices($userId, 'admin');
-        //pr($choices);
+        //pr(json_encode($choices));
         $this->set(compact('choices'));
+    }
+
+    /**
+     * Link method
+     * Link a Choice to the LTI Context
+     * 
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
+     */
+    public function link()
+    {
+        // Get the tool from the session
+        $session = $this->request->session();
+        $tool = $session->read('tool');
+        
+        //Make sure that the user is Staff or Admin
+        if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
+            throw new ForbiddenException(__('Not permitted to create Choice link.'));
+        }
+      
+        if ($this->request->is('post')) {
+            //Associate the Choice with the LTI context
+            $data = [
+                'lti_consumer_key' => $tool->consumer->getKey(),
+                'lti_context_id' => $tool->context->getId(),
+                'choice_id' => $this->request->data['choice'],
+            ];
+
+            //Save everything
+            $choiceContext = $this->Choices->ChoicesLtiContext->newEntity($data);
+
+            if($this->Choices->ChoicesLtiContext->save($choiceContext)) {
+                //Redirect to the Choice
+                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+            }
+            $this->Flash->error('The Choice could not be linked. Please try again', ['key' => 'link-choice-error']);
+        }
+        else {
+            $this->redirect(['controller' => 'choices', 'action' => 'add']);
+        }
     }
 
     /**

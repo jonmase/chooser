@@ -127,13 +127,14 @@ class ChoicesTable extends Table
             ];
         }
         
-        $choicesQuery = $this->ChoicesUsers->find('all', [
+        //Get the Choices
+        $choicesUsersQuery = $this->ChoicesUsers->find('all', [
             'conditions' => $conditions,
             'contain' => ['Choices'],
+            'fields' => ['Choices.id', 'Choices.name'],
         ]);
-        
-        $choices = $choicesQuery->all()->toArray();
-        
+        $choices = $choicesUsersQuery->all();
+
         return $choices;
     }
 }
