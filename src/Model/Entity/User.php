@@ -17,7 +17,10 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\EditorPreference[] $editor_preferences
  * @property \App\Model\Entity\LtiUser[] $lti_user
  * @property \App\Model\Entity\Profile[] $profiles
+ * @property \App\Model\Entity\Selection[] $selections
+ * @property \App\Model\Entity\ShortlistedOption[] $shortlisted_options
  * @property \App\Model\Entity\ChoicesOption[] $choices_options
+ * @property \App\Model\Entity\Choice[] $choices
  */
 class User extends Entity
 {

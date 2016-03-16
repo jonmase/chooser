@@ -10,8 +10,8 @@ use Cake\Validation\Validator;
 /**
  * ChoicesUsers Model
  *
- * @property \Cake\ORM\Association\BelongsTo $Users
  * @property \Cake\ORM\Association\BelongsTo $Choices
+ * @property \Cake\ORM\Association\BelongsTo $Users
  */
 class ChoicesUsersTable extends Table
 {
@@ -30,12 +30,12 @@ class ChoicesUsersTable extends Table
         $this->displayField('id');
         $this->primaryKey('id');
 
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
-        ]);
         $this->belongsTo('Choices', [
             'foreignKey' => 'choice_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
             'joinType' => 'INNER'
         ]);
     }
@@ -52,30 +52,31 @@ class ChoicesUsersTable extends Table
             ->integer('id')
             ->allowEmpty('id', 'create');
 
+        //Do not require values for these, as will be set to 0 by default in DB
         $validator
-            ->boolean('editor')
-            ->requirePresence('editor', 'create')
-            ->notEmpty('editor');
+            ->boolean('editor');
+            //->requirePresence('editor', 'create')
+            //->notEmpty('editor');
 
         $validator
-            ->boolean('approver')
-            ->requirePresence('approver', 'create')
-            ->notEmpty('approver');
+            ->boolean('approver');
+            //->requirePresence('approver', 'create')
+            //->notEmpty('approver');
 
         $validator
-            ->boolean('reviewer')
-            ->requirePresence('reviewer', 'create')
-            ->notEmpty('reviewer');
+            ->boolean('reviewer');
+            //->requirePresence('reviewer', 'create')
+            //->notEmpty('reviewer');
 
         $validator
-            ->boolean('allocator')
-            ->requirePresence('allocator', 'create')
-            ->notEmpty('allocator');
+            ->boolean('allocator');
+            //->requirePresence('allocator', 'create')
+            //->notEmpty('allocator');
 
         $validator
-            ->boolean('admin')
-            ->requirePresence('admin', 'create')
-            ->notEmpty('admin');
+            ->boolean('admin');
+            //->requirePresence('admin', 'create')
+            //->notEmpty('admin');
 
         return $validator;
     }
@@ -89,8 +90,8 @@ class ChoicesUsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->existsIn(['user_id'], 'Users'));
         $rules->add($rules->existsIn(['choice_id'], 'Choices'));
+        $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
 }

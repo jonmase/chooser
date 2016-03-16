@@ -10,15 +10,18 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
- * @property \Cake\ORM\Association\HasMany $ChoicesOptionsUsers
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Approvers)
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions (Publishers)
+ * @property \Cake\ORM\Association\HasMany $ChoicesOptionsUsers
  * @property \Cake\ORM\Association\HasMany $ChoicesUsers
  * @property \Cake\ORM\Association\HasMany $EditorPreferences
  * @property \Cake\ORM\Association\HasMany $LtiUserUsers
- * @property \Cake\ORM\Association\HasMany $Profiles
  * @property \Cake\ORM\Association\HasMany $Selections
  * @property \Cake\ORM\Association\HasMany $ShortlistedOptions
+ * @property \Cake\ORM\Association\HasOne $Profiles
+ * //@property \Cake\ORM\Association\BelongsToMany $ChoicesOptions
+ * @property \Cake\ORM\Association\BelongsToMany $Choices
+ * //@property \Cake\ORM\Association\BelongsToMany $LtiUser
  */
 class UsersTable extends Table
 {
@@ -39,9 +42,6 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('ChoicesOptionsUsers', [
-            'foreignKey' => 'user_id',
-        ]);
         $this->hasMany('Approvers', [
             'className' => 'ChoicesOptions',
             'foreignKey' => 'approver',
@@ -50,18 +50,14 @@ class UsersTable extends Table
             'className' => 'ChoicesOptions',
             'foreignKey' => 'publisher',
         ]);
-        $this->hasMany('ChoicesUsers', [
-            'foreignKey' => 'user_id'
+        $this->hasMany('ChoicesOptionsUsers', [
+            'foreignKey' => 'user_id',
         ]);
         $this->hasMany('EditorPreferences', [
             'foreignKey' => 'user_id'
         ]);
         $this->hasMany('LtiUserUsers', [
-            'foreignKey' => 'user_id',
-        ]);
-        $this->hasOne('Profiles', [
-            'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'foreignKey' => 'user_id'
         ]);
         $this->hasMany('Selections', [
             'foreignKey' => 'user_id'
@@ -69,6 +65,29 @@ class UsersTable extends Table
         $this->hasMany('ShortlistedOptions', [
             'foreignKey' => 'user_id'
         ]);
+        $this->hasOne('Profiles', [
+            'foreignKey' => 'user_id'
+        ]);
+        /*$this->belongsToMany('ChoicesOptions', [
+            'foreignKey' => 'user_id',
+            'targetForeignKey' => 'choices_option_id',
+            'joinTable' => 'choices_options_users'
+        ]);*/
+        //Create belongsToMany assocation with Choices and hasMany association with ChoicesUsers
+        $this->hasMany('ChoicesUsers', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->belongsToMany('Choices', [
+            'foreignKey' => 'user_id',
+            'targetForeignKey' => 'choice_id',
+            'joinTable' => 'choices_users',
+            'through' => 'ChoicesUsers',
+        ]);
+        /*$this->belongsToMany('LtiUser', [
+            'foreignKey' => 'user_id',
+            'targetForeignKey' => 'lti_user_id',
+            'joinTable' => 'lti_user_users'
+        ]);*/
     }
 
     /**

@@ -7,10 +7,10 @@ use Cake\ORM\Entity;
  * ChoicesUser Entity.
  *
  * @property int $id
- * @property int $user_id
- * @property \App\Model\Entity\User $user
  * @property int $choice_id
  * @property \App\Model\Entity\Choice $choice
+ * @property int $user_id
+ * @property \App\Model\Entity\User $user
  * @property bool $editor
  * @property bool $approver
  * @property bool $reviewer

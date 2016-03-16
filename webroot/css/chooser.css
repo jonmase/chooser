@@ -5,22 +5,25 @@ body {
     border: none;
     font-weight: 400;
 }
-/* Remove default margin-bottom on buttons set by base.css */
-/*button, .button {
-    margin-bottom: 0px;
-}*/
-/* Override row width limit set by base.css */
-/*.row {
-    max-width: 100%;
-}*/
-/* Override heading font-family set by base.css */
-/*h1,h2,h3,h4,h5,h6 {
-    font-family: 'Roboto', sans-serif;
-}*/
 
 /* GENERAL STYLES */
+.hidden {
+    display: none !important;
+}
 .no-top-margin {
     margin-top: 0;
+}
+
+/* FLASH STYLES */
+/* These will be replaced with snackbars/toasts at some point */
+.message.error {
+    color: blue;
+}
+.message.error {
+    color: red;
+}
+.message.success {
+    color: green;
 }
 
 /* HEADINGS */

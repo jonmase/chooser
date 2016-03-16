@@ -58,6 +58,7 @@ class ChoicesController extends AppController
         // Get the tool from the session
         $session = $this->request->session();
         $tool = $session->read('tool');
+        //pr($tool);
         
         //Make sure that the user is Staff or Admin
         if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
@@ -65,26 +66,34 @@ class ChoicesController extends AppController
         }
       
         if ($this->request->is('post')) {
-            $choice = $this->Choices->newEntity($this->request->data());
-            
-            if($choice->indirect_access === 'on') {
-                $choice->private = false;
-            }
-            else {
-                $choice->private = true;
-            }
-            $choice->notify_additional_permissions = false;
+            $data = $this->request->data;
+            $data['private'] = $data['indirect_access'] === 'on'?false:true;
             
             //Associate the new Choice with the current user, with Admin permissions
-            
+            $data['users'] = [
+                [
+                    'id' => $this->Auth->user('id'),
+                    '_joinData' => ['admin' => true],
+                ]
+            ];
             
             //Associate the new Choice with the LTI context
-            
-            
+            $data['choices_lti_context'] = [
+                [
+                    'lti_consumer_key' => $tool->consumer->getKey(),
+                    'lti_context_id' => $tool->context->getId(),
+                ]
+            ];
+
             //Save everything
-            $this->Choices->save($choice);
-            
-            //Redirect to the Choice
+            $choice = $this->Choices->newEntity($data, [
+                'associated' => ['Users._joinData', 'ChoicesLtiContext']
+            ]);
+            if($this->Choices->save($choice)) {
+                //Redirect to the Choice
+                $this->redirect(['controller' => 'choices', 'action' => 'view', $choice->id]);
+            }
+            $this->Flash->error('The new Choice could not be saved. Please try again', ['key' => 'new-choice-error']);
         }
         //Get the existing Choices that this user has Admin rights on
         $userId = $this->Auth->user('id');

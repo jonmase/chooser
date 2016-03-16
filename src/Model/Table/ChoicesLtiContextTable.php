@@ -89,7 +89,7 @@ class ChoicesLtiContextTable extends Table
         ]);
         
         $choice = $choiceQuery->first();
-        pr($choice);
+        //pr($choice);
         return $choice;
     }
 }

@@ -12,10 +12,11 @@ use Cake\Validation\Validator;
  *
  * @property \Cake\ORM\Association\HasMany $ChoicesLtiContext
  * @property \Cake\ORM\Association\HasMany $ChoicesOptions
- * @property \Cake\ORM\Association\HasMany $ChoicesUsers
+ * //@property \Cake\ORM\Association\HasMany $ChoicesUsers
  * @property \Cake\ORM\Association\HasMany $ChoosingInstances
  * @property \Cake\ORM\Association\HasMany $EditingInstances
  * @property \Cake\ORM\Association\HasMany $ExtraFields
+ * @property \Cake\ORM\Association\BelongsToMany $Users
  */
 class ChoicesTable extends Table
 {
@@ -40,9 +41,6 @@ class ChoicesTable extends Table
         $this->hasMany('ChoicesOptions', [
             'foreignKey' => 'choice_id',
         ]);
-        $this->hasMany('ChoicesUsers', [
-            'foreignKey' => 'user_id'
-        ]);
         $this->hasMany('ChoosingInstances', [
             'foreignKey' => 'choice_id'
         ]);
@@ -51,6 +49,16 @@ class ChoicesTable extends Table
         ]);
         $this->hasMany('ExtraFields', [
             'foreignKey' => 'choice_id'
+        ]);
+        //Create belongsToMany assocation with Users and hasMany association with ChoicesUsers
+        $this->hasMany('ChoicesUsers', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->belongsToMany('Users', [
+            'foreignKey' => 'choice_id',
+            'targetForeignKey' => 'user_id',
+            'joinTable' => 'choices_users',
+            'through' => 'ChoicesUsers',
         ]);
     }
 
@@ -70,18 +78,20 @@ class ChoicesTable extends Table
             ->requirePresence('name', 'create')
             ->notEmpty('name');
 
+        //Do not require values for this, as will be set to 0 by default in DB
         $validator
-            ->boolean('private')
-            ->requirePresence('private', 'create')
-            ->notEmpty('private');
+            ->boolean('private');
+            //->requirePresence('private', 'create')
+            //->notEmpty('private');
 
         $validator
             ->allowEmpty('instructor_default_roles');
 
+        //Do not require values for this, as will be set to 0 by default in DB
         $validator
-            ->boolean('notify_additional_permissions')
-            ->requirePresence('notify_additional_permissions', 'create')
-            ->notEmpty('notify_additional_permissions');
+            ->boolean('notify_additional_permissions');
+            //->requirePresence('notify_additional_permissions', 'create')
+            //->notEmpty('notify_additional_permissions');
 
         $validator
             ->allowEmpty('notify_additional_permissions_custom');
@@ -122,7 +132,7 @@ class ChoicesTable extends Table
             'contain' => ['Choices'],
         ]);
         
-        $choices = $choicesQuery->all();
+        $choices = $choicesQuery->all()->toArray();
         
         return $choices;
     }
