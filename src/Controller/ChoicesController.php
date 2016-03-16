@@ -41,6 +41,23 @@ class ChoicesController extends AppController
     }
     
     /**
+     * Manage method
+     *
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function manage($id = null)
+    {
+        //Make sure user is Admin for this Choice
+        
+        $choice = $this->Choices->get($id);
+
+        $this->set('choice', $choice);
+        //$this->set('_serialize', ['choice']);
+    }
+    
+    /**
      * Add method
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
      * User can choose an available Choice (which then uses link method), create a new one
