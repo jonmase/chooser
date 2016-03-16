@@ -87,9 +87,11 @@ class ChoicesLtiContextTable extends Table
                 'lti_context_id' => $contextId,                
             ]
         ]);
-        
-        $choice = $choiceQuery->first();
-        //pr($choice);
-        return $choice;
+        if(!$choiceQuery->isEmpty()) {
+            return $choiceQuery->first();
+        }
+        else {
+            return false;
+        }
     }
 }

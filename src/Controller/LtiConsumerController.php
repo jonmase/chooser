@@ -70,11 +70,11 @@ class LtiConsumerController extends AppController
                     $this->Auth->setUser($user->toArray());
                     
                     //Look up whether there is a Choice already associated with this link
-                    $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
+                    $choiceContext = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
                     
                     //If there is an associated Choice, go to it
-                    if(!empty($choice)) {
-                        $this->redirect(['controller' => 'choices', 'action' => 'view', $choice->id]);
+                    if(!empty($choiceContext)) {
+                        $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
                     }
                     //If there is no associated Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/associate a Choice
                     else if($tool->user->isStaff() || $tool->user->isAdmin()) {

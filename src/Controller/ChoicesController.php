@@ -59,6 +59,11 @@ class ChoicesController extends AppController
         $tool = $session->read('tool');
         //pr($tool);
         
+        //Check that there is not already a Choice associated with this context
+        if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
+            $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+        }
+        
         //Make sure that the user is Staff or Admin
         if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
             throw new ForbiddenException(__('Not permitted to create Choice link.'));
@@ -66,7 +71,7 @@ class ChoicesController extends AppController
       
         if ($this->request->is('post')) {
             $data = $this->request->data;
-            $data['private'] = $data['indirect_access'] === 'on'?false:true;
+            $data['private'] = (isset($data['indirect_access']) && $data['indirect_access'] === 'on')?false:true;
             
             //Associate the new Choice with the current user, with Admin permissions
             $data['users'] = [
@@ -94,10 +99,10 @@ class ChoicesController extends AppController
             }
             $this->Flash->error('The new Choice could not be saved. Please try again', ['key' => 'new-choice-error']);
         }
+        
         //Get the existing Choices that this user has Admin rights on
         $userId = $this->Auth->user('id');
         $choices = $this->Choices->getChoices($userId, 'admin');
-        //pr(json_encode($choices));
         $this->set(compact('choices'));
     }
 
@@ -113,6 +118,11 @@ class ChoicesController extends AppController
         // Get the tool from the session
         $session = $this->request->session();
         $tool = $session->read('tool');
+        
+        //Check that there is not already a Choice associated with this context
+        if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
+            $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+        }
         
         //Make sure that the user is Staff or Admin
         if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
