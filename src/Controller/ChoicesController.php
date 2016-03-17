@@ -107,8 +107,8 @@ class ChoicesController extends AppController
                 'associated' => ['Users._joinData', 'ChoicesLtiContext']
             ]);
             if($this->Choices->save($choice)) {
-                //Redirect to the Choice
-                $this->redirect(['controller' => 'choices', 'action' => 'view', $choice->id]);
+                //Redirect to the Choice Management page
+                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choice->id]);
             }
             $this->Flash->error('The new Choice could not be saved. Please try again', ['key' => 'new-choice-error']);
         }
