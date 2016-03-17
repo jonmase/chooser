@@ -35,6 +35,8 @@ class ChoicesTable extends Table
         $this->displayField('name');
         $this->primaryKey('id');
 
+        $this->addBehavior('Timestamp');
+
         $this->hasMany('ChoicesLtiContext', [
             'foreignKey' => 'choice_id',
         ]);

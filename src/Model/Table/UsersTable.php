@@ -173,12 +173,12 @@ class UsersTable extends Table
         
         if(empty($savedUser)) {
             //No user matches this consumer_key and user_id, so create a new User
-            $userData = $this->newEntity();
+            $user = $this->newEntity();
         }
         else {
             //User already exists, so get their ID and basic details
             $userId = $savedUser->user_id;
-            $userData = $savedUser->user;
+            $user = $savedUser->user;
 
             //Is there an LtiUserUsers record for this consumer_key, user_id and context_id
             $contextUserQuery = $this->LtiUserUsers->find('all', [
@@ -194,22 +194,22 @@ class UsersTable extends Table
 
         //Add or Update the user details
         //Get username from displayid or lti_result_sourcedid
-        if(isset($tool->user->displayid)) { $userData->username = $tool->user->displayid; }
-        else { $userData->username = $tool->user->lti_result_sourcedid; }
+        if(isset($tool->user->displayid)) { $user->username = $tool->user->displayid; }
+        else { $user->username = $tool->user->lti_result_sourcedid; }
         //Add the remaining user details if set
-        if(isset($tool->user->email)) { $userData->email = $tool->user->email; }
-        if(isset($tool->user->fullname)) { $userData->fullname = $tool->user->fullname; }
-        if(isset($tool->user->firstname)) { $userData->firstname = $tool->user->firstname; }
-        if(isset($tool->user->lastname)) { $userData->lastname = $tool->user->lastname; }
+        if(isset($tool->user->email)) { $user->email = $tool->user->email; }
+        if(isset($tool->user->fullname)) { $user->fullname = $tool->user->fullname; }
+        if(isset($tool->user->firstname)) { $user->firstname = $tool->user->firstname; }
+        if(isset($tool->user->lastname)) { $user->lastname = $tool->user->lastname; }
         
-        //If the LtiUserUsers data is set, add it to the $userData object
-        if($ltiUserUsersData) { $userData->lti_user_users = [$ltiUserUsersData]; }
+        //If the LtiUserUsers data is set, add it to the $user object
+        if($ltiUserUsersData) { $user->lti_user_users = [$ltiUserUsersData]; }
         
-        //pr($userData); //exit;    //Debugging
-        if($this->save($userData)) {
+        //pr($user); //exit;    //Debugging
+        if($this->save($user)) {
             //Send back just the user record - used for logging in
-            unset($userData->lti_user_users);
-            return $userData;
+            unset($user->lti_user_users);
+            return $user;
         }
         else {
             return false;

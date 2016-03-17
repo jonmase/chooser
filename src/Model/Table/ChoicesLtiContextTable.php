@@ -85,7 +85,7 @@ class ChoicesLtiContextTable extends Table
             'conditions' => [
                 'lti_consumer_key' => $consumerKey,
                 'lti_context_id' => $contextId,                
-            ]
+            ],
         ]);
         if(!$choiceQuery->isEmpty()) {
             return $choiceQuery->first();

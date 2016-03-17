@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use App\Controller\Entity;
 use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
@@ -24,7 +25,7 @@ class LtiConsumerController extends AppController
      *
      * Verifies LTI Launch, processes user information and then redirects appropriately
      *
-     * @return \Cake\Network\Response|void Redirects to Choice view (if Choice is associated) or Choice link action
+     * @return \Cake\Network\Response|void Redirects to Choice view (if Choice is linked) or Choice link action
      * @throws \Cake\Network\Exception\ForbiddenException When not an LTI request, or LTI request fails.
      * @throws \Cake\Network\Exception\InternalErrorException When user cannot be saved.
      * @throws \Cake\Network\Exception\ForbiddenException When choice is not found and user does not have permission to configure it.
@@ -69,25 +70,56 @@ class LtiConsumerController extends AppController
                     //Log the user in
                     $this->Auth->setUser($user->toArray());
                     
-                    //Look up whether there is a Choice already associated with this link
+                    //Look up whether there is a Choice already linked with this Context
                     $choiceContext = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
                     
                     $staffOrAdmin = $tool->user->isStaff() || $tool->user->isAdmin();
                     
-                    //If there is an associated Choice, go to it
+                    //If there is a Choice linked with this Context, make sure the user is associated with it, then go to it
                     if(!empty($choiceContext)) {
-                        if($staffOrAdmin) {
-                            $this->redirect(['controller' => 'choices', 'action' => 'manage', $choiceContext->choice_id]);
+                        //Get the Choice
+                        $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->get($choiceContext->choice_id);
+                        
+                        //Get the user's existing roles for this Choice
+                        $choicesUsers = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->ChoicesUsers->findAllByChoiceIdAndUserId($choice->id, $this->Auth->user('id'));
+                        
+                        if($choicesUsers->isEmpty()) {
+                            //If $choicesUsers, create _joinData as new ChoicesUsers Entity
+                            $user->_joinData = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->ChoicesUsers->newEntity([]);
                         }
                         else {
-                            $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+                            //Otherwise, use first (and only) result for _joinData
+                            $user->_joinData = $choicesUsers->first();
+                        }
+                        
+                        //If User is staff or admin, add the instructor_default_roles to _joinData
+                        if($staffOrAdmin) {
+                            $instructorDefaultRoles = explode(',', $choice->instructor_default_roles);
+
+                            if(!empty($instructorDefaultRoles)) {
+                                foreach($instructorDefaultRoles as $role) {
+                                    $user->_joinData->$role = true;
+                                }
+                            }
+                        }
+                        
+                        //Link the User to the Choice
+                        if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->Users->link($choice, [$user])) {
+                            if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->hasAdditionalRoles($choice->id, $this->Auth->user('id'))) {
+                                //If user has additional roles, redirect to the Choice Management page
+                                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choice->id]);
+                            }
+                            else {
+                                //Otherwise, just redirect to the view page
+                                $this->redirect(['controller' => 'choices', 'action' => 'view', $choice->id]);
+                            }
                         }
                     }
-                    //If there is no associated Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/associate a Choice
+                    //If there is no linked Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/link a Choice
                     else if($staffOrAdmin ) {
                         $this->redirect(['controller' => 'choices', 'action' => 'add']);
                     }
-                    //Otherwise, there is no associated Choice, and user is Learner, so throw error, as link has not been configured
+                    //Otherwise, there is no linked Choice, and user is Learner, so throw error, as Context has not been configured
                     else {
                         throw new ForbiddenException(__('There is no Choice associated with this link.'));
                     }

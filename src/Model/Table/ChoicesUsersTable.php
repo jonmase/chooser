@@ -96,14 +96,15 @@ class ChoicesUsersTable extends Table
     }
     
     /**
-     * getChoiceRoles method
+     * getRoles method
      * Looks up the User's roles for a Choice
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param boolean $includeView Whether or not include 'view' as one of the roles
      * @return array $roles array of the User's roles (or empty array if not associated)
      */
-    public function getChoiceRoles($choiceId = null, $userId = null) {
+    public function getRoles($choiceId = null, $userId = null, $includeView = false) {
         //If either choiceId or userId isn't set, return empty array (i.e. no role)
         if(!$choiceId || !$userId) {
             $roles = [];
@@ -112,16 +113,17 @@ class ChoicesUsersTable extends Table
         //Look up user's permissions over this Choice in the ChoicesUsers table
         $choicesUsersQuery = $this->find('all', [
             'conditions' => ['choice_id' => $choiceId, 'user_id' => $userId],
-            'contain' => ['Choices']
         ]);
-        //pr($choicesUsersQuery->first());
         
+        $roles = [];
         //If the user is not associated with this Choice, return empty array, i.e. no role
         if($choicesUsersQuery->isEmpty()) {
             $roles = [];
         }
         else {
+            if($includeView)
             //Anyone associated with a Choice has the view role
+            
             $roles = ['view'];
             
             $additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
@@ -151,10 +153,11 @@ class ChoicesUsersTable extends Table
             return false;
         }
         
-        $roles = $this->getChoiceRoles($choiceId, $userId);
+        //Get the user's roles, omitting view
+        $roles = $this->getRoles($choiceId, $userId);
         
-        //If the user has more than one role (as the first role will always be view), they have additional permissions
-        if(count($roles) > 1) {
+        //If the user has more than one role, they have additional permissions
+        if(!empty($roles)) {
             return true;
         }
         else {
