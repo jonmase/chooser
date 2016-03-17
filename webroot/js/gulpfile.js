@@ -96,7 +96,7 @@ function makeWatcher(src, dst) {
 }
 
 gulp.task('js', function() {
-    var files = ['choices-add.jsx', 'choices-manage.jsx'];
+    var files = ['choices-add.jsx', 'choices-manage.jsx', 'choices-view.jsx'];
     
     files.forEach(function (entry, i, entries) {
         // Get the destination for this bundle.
@@ -105,29 +105,6 @@ gulp.task('js', function() {
         // Make a watcher
         makeWatcher(entry, bundleDest);
     });
-
-    // filesWithWatchers will be an array of simple objects that each contain a
-    // filename and a boolean that determines whether the file is currently being watched.
-    //var filesWithWatchers = [];
-    
-    //for (var i = 0; i < files.length; i++) {
-    //    filesWithWatchers.push({ file: files[i], watching: false });
-    //}
-
-    // Loop over all the files in the directory.
-    /*filesWithWatchers.forEach(function (entry, i, entries) {
-        // Don't let this loop finish.
-        entries.remaining = entries.remaining || entries.length;
-
-        // Get the destination for this bundle.
-        var bundleDest = ('dist/' + entry.file).split('.')[0] + '/bundle.js';
-
-        // Make a watcher unless the entry already has one.
-        if (!entry.watching) {
-            makeWatcher(entry.file, bundleDest);
-            entry.watching = true;
-        }
-    });*/
 
     return;
 });
