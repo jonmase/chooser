@@ -6,7 +6,7 @@ var IconButton = require('material-ui/lib/icon-button');
 var FontIcon = require('material-ui/lib/font-icon');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('./theme.jsx');
+var ChooserTheme = require('../theme.jsx');
 
 const styles = {
   subtitle: {
@@ -30,7 +30,7 @@ const TopBar = React.createClass({
     render () {
         return (
             <AppBar
-                title={<span>Chooser<span style={styles.subtitle}>Name of Choice/Choosing Instance</span></span>}
+                title={<span>Chooser<span style={styles.subtitle}>{this.props.subtitle}</span></span>}
                 showMenuIconButton={false}
                 iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
                 iconElementRight={

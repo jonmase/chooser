@@ -1,5 +1,7 @@
 //Gulp recipe for "Fast browserify builds with watchify"
 //https://github.com/gulpjs/gulp/blob/master/docs/recipes/fast-browserify-builds-with-watchify.md
+//For using multiple sources and destinations, have a look at:
+//https://www.madetech.com/blog/making-multiple-browserify-bundles-with-gulp
 'use strict';
 
 var watchify = require('watchify');
@@ -15,8 +17,9 @@ var gulpLoadPlugins = require('gulp-load-plugins');
 var plugins = gulpLoadPlugins();
 
 // add custom browserify options here
-var customOpts = {
-  entries: ['./src/main.jsx'],
+/*var customOpts = {
+  //entries: ['src/choices-add.jsx', 'src/choices-manage.jsx'],
+  entries: ['src/choices-add.jsx'],
   debug: true
 };
 var opts = assign({}, watchify.args, customOpts);
@@ -43,5 +46,91 @@ function bundle() {
     .pipe(gulp.dest('./dist'))
     .pipe(plugins.livereload({ start: true })); //Need start: true to auto start livereload listening
 }
+
+*/
+// Makes the bundle, logs errors, and saves to the destination.
+function makeBundle(src, watcher, dst) {
+    // This must return a function for watcher.on('update').
+    return function() {
+        // Logs the compilation.
+        console.log('Compiling ' + src + ' -> ' + dst)
+
+        // Bundles the example!, which then:
+        return watcher.bundle()
+            // Logs errors
+            .on('error', plugins.util.log.bind(plugins.util, 'Browserify Error'))
+
+            // Uses our new bundle as the source for the sourcemaps.
+            .pipe(source(dst))
+            .pipe(buffer())
+
+            // Creates the sourcemaps.
+            //.pipe(sourcemaps.init({ loadMaps: true }))
+            //.pipe(sourcemaps.write('.'))
+
+            // And writes them to the destination too.
+            .pipe(gulp.dest(''))
+            .pipe(plugins.livereload({ start: true })); //Need start: true to auto start livereload listening
+    }
+}
+
+// Watchifies the examples and their local import trees for bundling.
+function makeWatcher(src, dst) {
+    // add custom browserify options here
+    var customOpts = {
+      entries: ['src/' + src],
+      debug: true
+    };
+    var opts = assign({}, watchify.args, customOpts);
+    var watcher = watchify(browserify(opts)); 
+    watcher.transform(reactify);
+
+    // `bundle` becomes a function that will be called on update.
+    var bundle = makeBundle(src, watcher, dst);
+
+    // Listens for updates.
+    watcher.on('update', bundle);
+    watcher.on('log', plugins.util.log); // output build logs to terminal
+    
+    return bundle();
+}
+
+gulp.task('js', function() {
+    var files = ['choices-add.jsx', 'choices-manage.jsx'];
+    
+    files.forEach(function (entry, i, entries) {
+        // Get the destination for this bundle.
+        var bundleDest = ('dist/' + entry).split('.')[0] + '-bundle.js';
+
+        // Make a watcher
+        makeWatcher(entry, bundleDest);
+    });
+
+    // filesWithWatchers will be an array of simple objects that each contain a
+    // filename and a boolean that determines whether the file is currently being watched.
+    //var filesWithWatchers = [];
+    
+    //for (var i = 0; i < files.length; i++) {
+    //    filesWithWatchers.push({ file: files[i], watching: false });
+    //}
+
+    // Loop over all the files in the directory.
+    /*filesWithWatchers.forEach(function (entry, i, entries) {
+        // Don't let this loop finish.
+        entries.remaining = entries.remaining || entries.length;
+
+        // Get the destination for this bundle.
+        var bundleDest = ('dist/' + entry.file).split('.')[0] + '/bundle.js';
+
+        // Make a watcher unless the entry already has one.
+        if (!entry.watching) {
+            makeWatcher(entry.file, bundleDest);
+            entry.watching = true;
+        }
+    });*/
+
+    return;
+});
+
 
 gulp.task('default', ['js']);

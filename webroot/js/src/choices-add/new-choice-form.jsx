@@ -2,19 +2,14 @@ var React = require('react');
 var TextField = require('material-ui/lib/text-field');
 var Toggle = require('material-ui/lib/toggle');
 var Formsy = require('formsy-react');
-var FormsyRadioGroup = require('formsy-material-ui/lib/FormsyRadioGroup');
-var FormsyRadio = require('formsy-material-ui/lib/FormsyRadio');
+var FormsyText = require('formsy-material-ui/lib/FormsyText');
+var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var RaisedButton = require('material-ui/lib/raised-button');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('./theme.jsx');
+var ChooserTheme = require('../theme.jsx');
 
-const style = {
-    marginBottom: 30,
-};
-
-const LinkChoiceForm = React.createClass({
-    
+const NewChoiceForm = React.createClass({
     //the key passed through context must be called "muiTheme"
     childContextTypes : {
         muiTheme: React.PropTypes.object,
@@ -46,38 +41,36 @@ const LinkChoiceForm = React.createClass({
 
     submitForm: function (model) {
         // Submit your validated form
-        document.forms["link_choice_form"].submit();
+        document.forms["new_choice_form"].submit();
         //console.log("Model: ", model);
     },
 
     render () {
-        var radioNodes = this.props.data.map(function(choice) {
-            return (
-                <FormsyRadio
-                    key={choice.Choices.id}
-                    value={choice.Choices.id}
-                    label={choice.Choices.name}
-                />
-            );
-        });
-
         return (
             <Formsy.Form
-                id="link_choice_form"
+                id="new_choice_form"
                 method="POST"
-                action="link"
                 onValid={this.enableButton}
                 onInvalid={this.disableButton}
                 onValidSubmit={this.submitForm}
+                noValidate
             >
-                <FormsyRadioGroup 
-                    name="choice"
+                <FormsyText 
+                    name="name"
+                    hintText="Enter Choice name" 
+                    floatingLabelText="Choice name (required)"
+                    validations="minLength:1"
+                    validationError="Please give your Choice a name"
                     required
-                >
-                    {radioNodes}
-                </FormsyRadioGroup>
+                />
+                <FormsyToggle
+                    label="Allow indirect access to this Choice (need to expand on what this means)"
+                    defaultToggled={true}
+                    labelPosition="right"
+                    name="indirect_access"
+                />
                 <RaisedButton 
-                    label="Select" 
+                    label="Create" 
                     primary={true} 
                     type="submit"
                     disabled={!this.state.canSubmit}
@@ -87,4 +80,4 @@ const LinkChoiceForm = React.createClass({
     }
 });
 
-module.exports = LinkChoiceForm;
+module.exports = NewChoiceForm;

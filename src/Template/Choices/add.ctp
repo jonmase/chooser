@@ -15,5 +15,7 @@
     </div>
 </div>
 <?= $this->Html->scriptStart(['block' => true]); ?>
-    var adminChoicesList = <?= json_encode($choices); ?>
+    var data = {};
+    data.adminChoicesList = <?= json_encode($choices); ?>
 <?= $this->Html->scriptEnd(); ?>
+<?= $this->Html->script('dist/choices-add-bundle', ['block' => 'script']); ?>
