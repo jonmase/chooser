@@ -9,4 +9,4 @@ injectTapEventPlugin();
 
 ReactDOM.render(<TopBar />, document.getElementById('topbar'));
 ReactDOM.render(<NewChoiceForm />, document.getElementById('new_choice_form'));
-ReactDOM.render(<LinkChoiceForm data={data} />, document.getElementById('link_choice_form'));
+ReactDOM.render(<LinkChoiceForm data={adminChoicesList} />, document.getElementById('link_choice_form'));
