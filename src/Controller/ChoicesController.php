@@ -74,7 +74,14 @@ class ChoicesController extends AppController
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+            //Redirect users with more than view role to Choice management page
+            if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
+                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choiceContext->choice_id]);
+            }
+            //Redirect users with view role to Choice view page
+            else {
+                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+            }
         }
         
         //Make sure that the user is Staff or Admin
@@ -134,7 +141,14 @@ class ChoicesController extends AppController
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+            //Redirect users with more than view role to Choice management page
+            if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
+                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choiceContext->choice_id]);
+            }
+            //Redirect users with view role to Choice view page
+            else {
+                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+            }
         }
         
         //Make sure that the user is Staff or Admin

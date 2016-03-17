@@ -94,4 +94,71 @@ class ChoicesUsersTable extends Table
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
+    
+    /**
+     * getChoiceRoles method
+     * Looks up the User's roles for a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @return array $roles array of the User's roles (or empty array if not associated)
+     */
+    public function getChoiceRoles($choiceId = null, $userId = null) {
+        //If either choiceId or userId isn't set, return empty array (i.e. no role)
+        if(!$choiceId || !$userId) {
+            $roles = [];
+        }
+        
+        //Look up user's permissions over this Choice in the ChoicesUsers table
+        $choicesUsersQuery = $this->find('all', [
+            'conditions' => ['choice_id' => $choiceId, 'user_id' => $userId],
+            'contain' => ['Choices']
+        ]);
+        //pr($choicesUsersQuery->first());
+        
+        //If the user is not associated with this Choice, return empty array, i.e. no role
+        if($choicesUsersQuery->isEmpty()) {
+            $roles = [];
+        }
+        else {
+            //Anyone associated with a Choice has the view role
+            $roles = ['view'];
+            
+            $additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
+            $choicesUser = $choicesUsersQuery->first();
+            
+            foreach($additionalRoles as $role) {
+                if($choicesUser->$role) {
+                    $roles[] = $role;
+                }
+            }
+        }
+
+        return $roles;
+    }
+    
+    /**
+     * hasAdditionalRoles method
+     * Checks whether a User has additional roles (i.e. more than view) over a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @return boolean True if the User has additional roles, false if not
+     */
+    public function hasAdditionalRoles($choiceId = null, $userId = null) {
+        //If either choiceId or userId isn't set, return false (i.e. no role)
+        if(!$choiceId || !$userId) {
+            return false;
+        }
+        
+        $roles = $this->getChoiceRoles($choiceId, $userId);
+        
+        //If the user has more than one role (as the first role will always be view), they have additional permissions
+        if(count($roles) > 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
