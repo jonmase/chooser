@@ -30,7 +30,8 @@ const cardsData = [
     {
         title: 'Permissions',
         //icon: 'verified_user',
-        icon: 'block',
+        //icon: 'block',
+        icon: 'lock_open',
     },
     {
         title: 'Options Form',
