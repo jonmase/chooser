@@ -9,4 +9,4 @@
     var data = {};
     data.subtitle = "<?= $choice->name; ?>";
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/choices-manage-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/choices-view-bundle', ['block' => 'script']); ?>

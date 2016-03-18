@@ -106,8 +106,8 @@ class LtiConsumerController extends AppController
                         //Link the User to the Choice
                         if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->Users->link($choice, [$user])) {
                             if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->hasAdditionalRoles($choice->id, $this->Auth->user('id'))) {
-                                //If user has additional roles, redirect to the Choice Management page
-                                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choice->id]);
+                                //If user has additional roles, redirect to the Choice dashboard page
+                                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choice->id]);
                             }
                             else {
                                 //Otherwise, just redirect to the view page

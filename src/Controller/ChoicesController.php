@@ -41,13 +41,14 @@ class ChoicesController extends AppController
     }
     
     /**
-     * Manage method
+     * Dashboard method
+     * Displays Choice management options that are available to this user
      *
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function manage($id = null)
+    public function dashboard($id = null)
     {
         //Make sure user is Admin for this Choice
         
@@ -74,9 +75,9 @@ class ChoicesController extends AppController
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            //Redirect users with more than view role to Choice management page
+            //Redirect users with more than view role to Choice dashboard page
             if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
-                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }
             //Redirect users with view role to Choice view page
             else {
@@ -114,8 +115,8 @@ class ChoicesController extends AppController
                 'associated' => ['Users._joinData', 'ChoicesLtiContext']
             ]);
             if($this->Choices->save($choice)) {
-                //Redirect to the Choice Management page
-                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choice->id]);
+                //Redirect to the Choice dashboard page
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choice->id]);
             }
             $this->Flash->error('The new Choice could not be saved. Please try again', ['key' => 'new-choice-error']);
         }
@@ -141,9 +142,9 @@ class ChoicesController extends AppController
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            //Redirect users with more than view role to Choice management page
+            //Redirect users with more than view role to Choice dashboard page
             if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
-                $this->redirect(['controller' => 'choices', 'action' => 'manage', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }
             //Redirect users with view role to Choice view page
             else {
