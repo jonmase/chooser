@@ -10,6 +10,10 @@ var IconButton = require('material-ui/lib/icon-button');
 var FlatButton  = require('material-ui/lib/flat-button');
 var VerifiedUser = require('material-ui/lib/svg-icons/action/verified-user');
 
+var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
+var ChooserTheme = require('../theme.jsx');
+
+
 const styles = {
     cardContainer: {
         display: 'inline-block',
@@ -44,26 +48,23 @@ const styles = {
 const cardsData = [
     {
         title: 'Permissions',
-        //icon: 'verified_user',
-        //icon: 'block',
-        icon: 'lock_open',
+        icon: 'lock_open',  //icon: 'verified_user',//icon: 'block',
         actions: [
             {
                 label: 'Edit',
             }
-        ]
+        ],
+        roles: ['admin'],
     },
     {
         title: 'Options Form',
-        //icon: 'input',
-        //icon: 'format_list_bulleted',
-        //icon: 'reorder',
-        icon: 'playlist_add',
+        icon: 'playlist_add',   //icon: 'input',//icon: 'format_list_bulleted',//icon: 'reorder',
         actions: [
             {
                 label: 'Edit',
             }
-        ]
+        ],
+        roles: ['admin'],
     },
     {
         title: 'Editing Schedules',
@@ -75,34 +76,32 @@ const cardsData = [
             {
                 label: 'New',
             }
-        ]
+        ],
+        roles: ['admin'],
     },
     {
         title: 'Notifications',
-        //icon: 'announcement',
-        //icon: 'priority_high',
-        icon: 'mail_outline',
+        icon: 'mail_outline',   //icon: 'announcement',//icon: 'priority_high',
         actions: [
             {
                 label: 'Edit',
             }
-        ]
+        ],
+        roles: ['admin'],
     },
     {
         title: 'Profile',
-        //icon: 'account_circle',
-        icon: 'perm_identity',
+        icon: 'perm_identity',  //icon: 'account_circle',
         actions: [
             {
                 label: 'Edit',
             }
-        ]
+        ],
+        roles: ['admin', 'editor'],
     },
     {
         title: 'Options',
-        //icon: 'view_list',
-        icon: 'list',
-        //icon: 'format_list_numbered',
+        icon: 'list',   //icon: 'view_list',//icon: 'format_list_numbered',
         actions: [
             {
                 label: 'Edit Yours',
@@ -110,12 +109,12 @@ const cardsData = [
             {
                 label: 'View All',
             }
-        ]
+        ],
+        roles: ['admin', 'editor', 'approver'],
     },
     {
         title: 'Choosing Schedules',
-        icon: 'schedule',
-        //icon: 'timer',
+        icon: 'schedule',   //icon: 'timer',
         actions: [
             {
                 label: 'Edit',
@@ -123,13 +122,12 @@ const cardsData = [
             {
                 label: 'New',
             }
-        ]
+        ],
+        roles: ['admin'],
     },
     {
         title: 'Results',
-        //icon: 'show_chart',
-        //icon: 'insert_chart',
-        icon: 'equalizer',
+        icon: 'equalizer',//icon: 'show_chart',//icon: 'insert_chart',
         actions: [
             {
                 label: 'View',
@@ -137,7 +135,8 @@ const cardsData = [
             {
                 label: 'Quick Download',
             }
-        ]
+        ],
+        roles: ['admin', 'reviewer', 'allocator'],
     },
     {
         title: 'Allocations',
@@ -149,44 +148,76 @@ const cardsData = [
             {
                 label: 'Quick Download',
             }
-        ]
+        ],
+        roles: ['admin', 'allocator'],
     },
 ];
 
-const SectionsCards = () => (
-  <div style={styles.root} className="row">
-        {cardsData.map(card => (
-            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
-                <Card style={styles.card}>
-                    <CardTitle 
-                        title={
-                            <span style={styles.cardTitleSpan}>
-                                <FontIcon 
-                                    className="material-icons"
-                                    style={styles.icon}
-                                >
-                                    {card.icon}
-                                </FontIcon> 
-                                {card.title}
-                            </span>
-                        }
-                        style={styles.cardTitle}
-                    />
-                    <CardText style={styles.cardText}>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-                        Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-                        Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-                    </CardText>
-                    <CardActions>
-                        {card.actions.map(action => (
-                            <FlatButton label={action.label} key={action.label} />
-                        ))}
-                    </CardActions>
-                </Card>
+
+const SectionsCards = React.createClass({
+    //the key passed through context must be called "muiTheme"
+    childContextTypes : {
+        muiTheme: React.PropTypes.object,
+    },
+
+    getChildContext: function() {
+        return {
+            muiTheme: GetMuiTheme(ChooserTheme),
+        };
+    },
+
+    getUserCards: function() {
+        var userRoles = this.props.roles;
+        var userCards = [];
+        cardsData.forEach(function(card) {
+            if(card.roles.some(function(cardRole) {
+                return userRoles.indexOf(cardRole) > -1;
+            })) {
+                userCards.push(card);
+            }
+        });
+        return userCards;
+    },
+
+    render: function() {
+        return (
+            <div style={styles.root} className="row">
+                {this.getUserCards().map(function(card) {
+                    return (
+                        <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
+                            <Card style={styles.card}>
+                                <CardTitle 
+                                    title={
+                                        <span style={styles.cardTitleSpan}>
+                                            <FontIcon 
+                                                className="material-icons"
+                                                style={styles.icon}
+                                            >
+                                                {card.icon}
+                                            </FontIcon> 
+                                            {card.title}
+                                        </span>
+                                    }
+                                    style={styles.cardTitle}
+                                />
+                                <CardText style={styles.cardText}>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                    Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
+                                    Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
+                                    Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+                                </CardText>
+                                <CardActions>
+                                    {card.actions.map(function(action) {
+                                        return (<FlatButton label={action.label} key={action.label} />);
+                                    })}
+                                </CardActions>
+                            </Card>
+                        </div>
+                    );
+                })}
             </div>
-        ))}
-    </div>
-);
+        );
+    }
+});
 
 module.exports = SectionsCards;

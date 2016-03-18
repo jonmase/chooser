@@ -47,14 +47,20 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
      */
     public function dashboard($id = null)
     {
-        //Make sure user is Admin for this Choice
+        //Get user's roles for this Choice
+        $roles = $this->Choices->ChoicesUsers->getRoles($id, $this->Auth->user('id'));
+        //Make sure user has additional permissions for this Choice
+        if(empty($roles)) {
+            throw new ForbiddenException(__('Not permitted to view Choice dashboard.'));
+        }
         
         $choice = $this->Choices->get($id);
 
-        $this->set('choice', $choice);
+        $this->set(compact('choice', 'roles'));
         //$this->set('_serialize', ['choice']);
     }
     

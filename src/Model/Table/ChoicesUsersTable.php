@@ -156,7 +156,7 @@ class ChoicesUsersTable extends Table
         //Get the user's roles, omitting view
         $roles = $this->getRoles($choiceId, $userId);
         
-        //If the user has more than one role, they have additional permissions
+        //If the user has any role (view is omitted), they have additional permissions
         if(!empty($roles)) {
             return true;
         }

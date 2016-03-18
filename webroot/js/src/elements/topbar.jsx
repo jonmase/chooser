@@ -17,17 +17,17 @@ const styles = {
 
 const TopBar = React.createClass({
     //the key passed through context must be called "muiTheme"
-    childContextTypes : {
+    childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
 
-    getChildContext() {
+    getChildContext: function() {
         return {
             muiTheme: GetMuiTheme(ChooserTheme),
         };
     },
 
-    render () {
+    render: function() {
         return (
             <AppBar
                 title={<span>Chooser<span style={styles.subtitle}>{this.props.subtitle}</span></span>}

@@ -16,11 +16,11 @@ const style = {
 const LinkChoiceForm = React.createClass({
     
     //the key passed through context must be called "muiTheme"
-    childContextTypes : {
+    childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
 
-    getChildContext() {
+    getChildContext: function() {
         return {
             muiTheme: GetMuiTheme(ChooserTheme),
         };
@@ -50,7 +50,7 @@ const LinkChoiceForm = React.createClass({
         //console.log("Model: ", model);
     },
 
-    render () {
+    render: function() {
         var radioNodes = this.props.data.map(function(choice) {
             return (
                 <FormsyRadio

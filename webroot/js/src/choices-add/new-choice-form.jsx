@@ -15,7 +15,7 @@ const NewChoiceForm = React.createClass({
         muiTheme: React.PropTypes.object,
     },
 
-    getChildContext() {
+    getChildContext: function() {
         return {
             muiTheme: GetMuiTheme(ChooserTheme),
         };
@@ -45,7 +45,7 @@ const NewChoiceForm = React.createClass({
         //console.log("Model: ", model);
     },
 
-    render () {
+    render: function() {
         return (
             <Formsy.Form
                 id="new_choice_form"
