@@ -4,8 +4,10 @@ var CardHeader = require('material-ui/lib/card/card-header');
 var CardMedia  = require('material-ui/lib/card/card-media');
 var CardTitle  = require('material-ui/lib/card/card-title');
 var CardText  = require('material-ui/lib/card/card-text');
+var CardActions  = require('material-ui/lib/card/card-actions');
 var FontIcon = require('material-ui/lib/font-icon');
 var IconButton = require('material-ui/lib/icon-button');
+var FlatButton  = require('material-ui/lib/flat-button');
 var VerifiedUser = require('material-ui/lib/svg-icons/action/verified-user');
 
 const styles = {
@@ -14,16 +16,29 @@ const styles = {
         paddingBottom: '1rem'
     },
     card: {
-        //width: '23%',
         display: 'inline-block',
-        //marginBottom: '2%',
-        //marginRight: '2%',
+    },
+    cardTitle: {
+        lineHeight: '30px !important',
+    },
+    cardTitleSpan: {
+        fontSize: '20px',
+        lineHeight: '30px',
     },
     icon: {
-        fontSize: '36px',
-        verticalAlign: 'bottom',
+        fontSize: '30px',
+        lineHeight: '30px',
+        verticalAlign: '-25%',
         marginRight: '10px'
-    }
+    },
+    cardText: {
+        height: '51px', //17px per line
+        overflowY: 'hidden',
+        //Replace bottom padding with margin, so overflow is hidden
+        paddingBottom: '0',
+        marginBottom: '15px',
+        
+    },
 };
 
 const cardsData = [
@@ -32,6 +47,11 @@ const cardsData = [
         //icon: 'verified_user',
         //icon: 'block',
         icon: 'lock_open',
+        actions: [
+            {
+                label: 'Edit',
+            }
+        ]
     },
     {
         title: 'Options Form',
@@ -39,56 +59,108 @@ const cardsData = [
         //icon: 'format_list_bulleted',
         //icon: 'reorder',
         icon: 'playlist_add',
+        actions: [
+            {
+                label: 'Edit',
+            }
+        ]
     },
     {
-        title: 'Editing Setup',
+        title: 'Editing Schedules',
         icon: 'mode_edit',
+        actions: [
+            {
+                label: 'Edit',
+            },
+            {
+                label: 'New',
+            }
+        ]
     },
     {
         title: 'Notifications',
         //icon: 'announcement',
         //icon: 'priority_high',
         icon: 'mail_outline',
+        actions: [
+            {
+                label: 'Edit',
+            }
+        ]
     },
     {
         title: 'Profile',
         //icon: 'account_circle',
         icon: 'perm_identity',
+        actions: [
+            {
+                label: 'Edit',
+            }
+        ]
     },
     {
         title: 'Options',
         //icon: 'view_list',
         icon: 'list',
         //icon: 'format_list_numbered',
+        actions: [
+            {
+                label: 'Edit Yours',
+            },
+            {
+                label: 'View All',
+            }
+        ]
     },
     {
-        title: 'Schedules',
+        title: 'Choosing Schedules',
         icon: 'schedule',
         //icon: 'timer',
+        actions: [
+            {
+                label: 'Edit',
+            },
+            {
+                label: 'New',
+            }
+        ]
     },
     {
         title: 'Results',
         //icon: 'show_chart',
         //icon: 'insert_chart',
         icon: 'equalizer',
+        actions: [
+            {
+                label: 'View',
+            },
+            {
+                label: 'Quick Download',
+            }
+        ]
     },
     {
         title: 'Allocations',
         icon: 'compare_arrows',
+        actions: [
+            {
+                label: 'View/Edit',
+            },
+            {
+                label: 'Quick Download',
+            }
+        ]
     },
 ];
 
 const SectionsCards = () => (
   <div style={styles.root} className="row">
         {cardsData.map(card => (
-            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer}>
-                <Card 
-                    key={card.title} 
-                    style={styles.card}
-                >
+            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
+                <Card style={styles.card}>
                     <CardTitle 
                         title={
-                            <span>
+                            <span style={styles.cardTitleSpan}>
                                 <FontIcon 
                                     className="material-icons"
                                     style={styles.icon}
@@ -98,13 +170,19 @@ const SectionsCards = () => (
                                 {card.title}
                             </span>
                         }
+                        style={styles.cardTitle}
                     />
-                    <CardText>
+                    <CardText style={styles.cardText}>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                         Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
                         Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
                         Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
                     </CardText>
+                    <CardActions>
+                        {card.actions.map(action => (
+                            <FlatButton label={action.label} key={action.label} />
+                        ))}
+                    </CardActions>
                 </Card>
             </div>
         ))}
