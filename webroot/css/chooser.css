@@ -60,3 +60,10 @@ form > div {
 form > div:last-child {
     margin-bottom: 0;
 }
+
+
+/* BUTTONS */
+/* Make sure text is centralised in buttons with short labels */
+a[type="button"] {  
+    text-align: center;
+}

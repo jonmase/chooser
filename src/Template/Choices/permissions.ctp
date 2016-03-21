@@ -1,10 +1,9 @@
-<h1 class="page-title">Dashboard</h1>
+<h1 class="page-title">Dashboard - Permissions</h1>
 <div id="grid">
 </div>
 <?= $this->Html->scriptStart(['block' => true]); ?>
     var data = {};
     data.choiceId = "<?= $choice->id; ?>";
     data.subtitle = "<?= $choice->name; ?>";
-    data.roles = <?= json_encode($roles); ?>;
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/choices-dashboard-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/choices-permissions-bundle', ['block' => 'script']); ?>

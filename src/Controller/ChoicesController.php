@@ -46,8 +46,8 @@ class ChoicesController extends AppController
      *
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function dashboard($id = null)
     {
@@ -63,6 +63,30 @@ class ChoicesController extends AppController
         $this->set(compact('choice', 'roles'));
         //$this->set('_serialize', ['choice']);
     }
+    
+    /**
+     * Permissions method
+     * Displays, and allows editing of, additional permissions for this Choice 
+     *
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function permissions($id = null)
+    {
+        //Get user's roles for this Choice
+        $roles = $this->Choices->ChoicesUsers->getRoles($id, $this->Auth->user('id'));
+        //Make sure user has additional permissions for this Choice
+        if(empty($roles)) {
+            throw new ForbiddenException(__('Not permitted to view/exit Choice permissions.'));
+        }
+        
+        $choice = $this->Choices->get($id);
+
+        $this->set(compact('choice', 'roles'));
+        //$this->set('_serialize', ['choice']);
+    }    
     
     /**
      * Add method
