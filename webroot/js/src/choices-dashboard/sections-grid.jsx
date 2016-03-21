@@ -5,7 +5,7 @@ var FontIcon = require('material-ui/lib/font-icon');
 var IconButton = require('material-ui/lib/icon-button');
 var VerifiedUser = require('material-ui/lib/svg-icons/action/verified-user');
 
-const styles = {
+var styles = {
   root: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -26,7 +26,7 @@ const styles = {
   }
 };
 
-const tilesData = [
+var tilesData = [
   {
     title: 'Permissions',
     icon: 'verified_user',
@@ -65,7 +65,7 @@ const tilesData = [
   },
 ];
 
-const SectionsGrid = () => (
+var SectionsGrid = () => (
   <div style={styles.root}>
     <GridList
       cellHeight={200}

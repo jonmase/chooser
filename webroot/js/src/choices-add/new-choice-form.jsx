@@ -9,7 +9,7 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
-const NewChoiceForm = React.createClass({
+var NewChoiceForm = React.createClass({
     //the key passed through context must be called "muiTheme"
     childContextTypes : {
         muiTheme: React.PropTypes.object,

@@ -8,14 +8,14 @@ var FontIcon = require('material-ui/lib/font-icon');
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
-const styles = {
+var styles = {
   subtitle: {
     'fontSize': '80%',
     'marginLeft': '10px',
   },
 };
 
-const TopBar = React.createClass({
+var TopBar = React.createClass({
     //the key passed through context must be called "muiTheme"
     childContextTypes: {
         muiTheme: React.PropTypes.object,

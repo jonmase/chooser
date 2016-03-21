@@ -14,7 +14,7 @@ var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
 
-const styles = {
+var styles = {
     cardContainer: {
         display: 'inline-block',
         paddingBottom: '1rem'
@@ -45,7 +45,7 @@ const styles = {
     },
 };
 
-const cardsData = [
+var cardsData = [
     {
         title: 'Permissions',
         icon: 'lock_open',  //icon: 'verified_user',//icon: 'block',
@@ -154,7 +154,7 @@ const cardsData = [
 ];
 
 
-const SectionsCards = React.createClass({
+var SectionsCards = React.createClass({
     //the key passed through context must be called "muiTheme"
     childContextTypes : {
         muiTheme: React.PropTypes.object,

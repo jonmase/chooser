@@ -9,11 +9,11 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
-const style = {
+var style = {
     marginBottom: 30,
 };
 
-const LinkChoiceForm = React.createClass({
+var LinkChoiceForm = React.createClass({
     
     //the key passed through context must be called "muiTheme"
     childContextTypes: {
