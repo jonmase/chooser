@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  */
 class ChoicesUsersTable extends Table
 {
-    private $_additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
+    //private $_additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
     private $_nonAdminRoles = ['editor', 'approver', 'reviewer', 'allocator'];
 
     /**
@@ -98,6 +98,17 @@ class ChoicesUsersTable extends Table
     }
     
     /**
+     * getNonAdminRoles method
+     * Returns the array of additional roles, except admin
+     *
+     * @return array $nonAdminRoles array of additional roles, except admin
+     */
+    public function getNonAdminRoles() {
+        $nonAdminRoles = $this->_nonAdminRoles;
+        return $nonAdminRoles;
+    }
+
+    /**
      * getRoles method
      * Looks up the User's roles for a Choice
      *
@@ -179,4 +190,31 @@ class ChoicesUsersTable extends Table
             return false;
         }
     }
+    
+    /**
+     * isAdmin method
+     * Checks whether a User is an admin for a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @return boolean True if the User is an admin, false if not
+     */
+    public function isAdmin($choiceId = null, $userId = null) {
+        //If either choiceId or userId isn't set, return false (i.e. no role)
+        if(!$choiceId || !$userId) {
+            return false;
+        }
+        
+        //Get the user's roles, omitting view
+        $roles = $this->getRoles($choiceId, $userId);
+
+        //If the user has any role (view is omitted), they have additional permissions
+        if(in_array('admin', $roles)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
 }

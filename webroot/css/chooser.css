@@ -54,10 +54,10 @@ h6 {
 
 
 /* FORMS */
-form > div {
+form > div, form > div.row > div {
     margin-bottom: 30px;
 }
-form > div:last-child {
+form > div:last-child, form > div.row {
     margin-bottom: 0;
 }
 

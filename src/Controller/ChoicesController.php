@@ -75,10 +75,9 @@ class ChoicesController extends AppController
      */
     public function roles($id = null)
     {
-        //Get user's roles for this Choice
-        $roles = $this->Choices->ChoicesUsers->getRoles($id, $this->Auth->user('id'));
-        //Make sure user has additional roles for this Choice
-        if(empty($roles)) {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
         }
 
@@ -95,10 +94,15 @@ class ChoicesController extends AppController
                 $user->current = true;
             }
         }
+        
+        $choice->instructor_default_roles = explode(',', $choice->instructor_default_roles);
+        
         //pr($choice);
         //pr(json_encode($choice->users));
         
-        $this->set(compact('choice', 'roles'));
+        $additionalRoles = $this->Choices->ChoicesUsers->getNonAdminRoles();
+        
+        $this->set(compact('choice', 'additionalRoles'));
         //$this->set('_serialize', ['choice']);
     }    
     
