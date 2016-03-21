@@ -5,28 +5,14 @@ var TableRow = require('material-ui/lib/table/table-row');
 var TableHeader = require('material-ui/lib/table/table-header');
 var TableRowColumn = require('material-ui/lib/table/table-row-column');
 var TableBody = require('material-ui/lib/table/table-body');
-var FontIcon = require('material-ui/lib/font-icon');
-var IconButton = require('material-ui/lib/icon-button');
-var FlatButton  = require('material-ui/lib/flat-button');
+var UsersRole = require('./users-role.jsx');
+//var FontIcon = require('material-ui/lib/font-icon');
+//var IconButton = require('material-ui/lib/icon-button');
+//var FlatButton  = require('material-ui/lib/flat-button');
 
 var styles = {
     tableRowColumn: {
         whiteSpace: 'normal',
-    },
-    roleContainer: {
-        whiteSpace: 'normal',
-        display: 'inline-block',
-    },
-    roleText: {
-        lineHeight: '48px',
-        fontSize: '14px',
-        verticalAlign: '-2px',
-    },
-    roleRemoveButton: {
-        marginLeft: '-10px',
-    },
-    roleRemoveIcon: {
-        //fontSize: '20px',
     },
 };
     
@@ -55,6 +41,7 @@ var UsersTable = React.createClass({
                 </TableHeader>
                 <TableBody 
                     //displayRowCheckbox={false}
+                    deselectOnClickaway={false}
                 >
                     {this.getUsers().map(function(user) {
                         return (
@@ -64,33 +51,8 @@ var UsersTable = React.createClass({
                                 <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
                                 <TableRowColumn style={styles.tableRowColumn}>
                                     {user.roles.map(function(role) {
-                                        /*return (
-                                            <FlatButton
-                                                key={user.username + '_' + role}
-                                                label={role}
-                                                labelPosition="before"
-                                                linkButton={true}
-                                                href="javascript:void(0)"
-                                                //secondary={true}
-                                                icon={<FontIcon className="material-icons" >close</FontIcon>}
-                                            />
-                                        );*/
                                         return (
-                                            <span key={user.username + '_' + role} style={styles.roleContainer}>
-                                                <span style={styles.roleText}>
-                                                    {role.toUpperCase()}
-                                                </span>
-                                                <IconButton 
-                                                    style={styles.roleRemoveButton} 
-                                                    iconStyle={styles.roleRemoveIcon} 
-                                                    linkButton={true} 
-                                                    href="javascript:void(0)"
-                                                >
-                                                    <FontIcon className="material-icons">
-                                                        close
-                                                    </FontIcon>
-                                                </IconButton>
-                                            </span>
+                                            <UsersRole key={user.username + '_' + role} user={user} role={role} />
                                         );
                                     })}
                                 </TableRowColumn>

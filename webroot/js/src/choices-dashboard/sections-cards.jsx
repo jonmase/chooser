@@ -59,12 +59,12 @@ var SectionsCards = React.createClass({
     getCardsData: function() {
         var cardsData = [
             {
-                title: 'Permissions',
+                title: 'User Roles',
                 icon: 'lock_open',  //icon: 'verified_user',//icon: 'block',
                 actions: [
                     {
                         label: 'Edit',
-                        url: '../permissions/' + this.props.choiceId
+                        url: '../roles/' + this.props.choiceId
                     }
                 ],
                 roles: ['admin'],

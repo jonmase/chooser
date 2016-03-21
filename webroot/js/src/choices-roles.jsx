@@ -2,7 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var injectTapEventPlugin = require('react-tap-event-plugin');
 var TopBar = require('./elements/topbar.jsx');
-var UsersTable = require('./choices-permissions/users-table.jsx');
+var UsersTable = require('./choices-roles/users-table.jsx');
 
 injectTapEventPlugin();
 

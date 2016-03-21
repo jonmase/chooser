@@ -65,21 +65,21 @@ class ChoicesController extends AppController
     }
     
     /**
-     * Permissions method
-     * Displays, and allows editing of, additional permissions for this Choice 
+     * Roles method
+     * Displays, and allows editing of, additional roles for this Choice 
      *
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function permissions($id = null)
+    public function roles($id = null)
     {
         //Get user's roles for this Choice
         $roles = $this->Choices->ChoicesUsers->getRoles($id, $this->Auth->user('id'));
-        //Make sure user has additional permissions for this Choice
+        //Make sure user has additional roles for this Choice
         if(empty($roles)) {
-            throw new ForbiddenException(__('Not permitted to view/exit Choice permissions.'));
+            throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
         }
 
         $choice = $this->Choices->get($id, [
@@ -90,10 +90,14 @@ class ChoicesController extends AppController
             //Get roles from _joinData, including view role
             $user->roles = $this->Choices->ChoicesUsers->processRoles($user->_joinData, true);  
             unset($user->_joinData);
+            
+            if($user->id === $this->Auth->user('id')) {
+                $user->current = true;
+            }
         }
         //pr($choice);
         //pr(json_encode($choice->users));
-
+        
         $this->set(compact('choice', 'roles'));
         //$this->set('_serialize', ['choice']);
     }    
