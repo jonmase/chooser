@@ -22,15 +22,47 @@ var RolesSettingsForm = React.createClass({
         };
     },
 
-    submitForm: function (model) {
-        // Submit your validated form
-        //document.forms["roles_settings_form"].submit();
+    getInitialState: function () {
+        return {
+            settingsButtonDisabled: false,
+        };
+    },
+
+    //Submit the setting forms
+    submitForm: function (settings) {
+        this.setState({
+            settingsButtonDisabled: true
+        });
+
+        console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
         
-        console.log("Model: ", model);
+        //Save the settings
+        var url = '../settings/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: settings,
+            success: function(data) {
+                console.log(data.response);
+                this.setState({
+                    settingsButtonDisabled: false
+                });
+                //Add snackbar
+            }.bind(this),
+            error: function(xhr, status, err) {
+                alert("save error");    //Replace this with snackbar
+                
+                this.setState({
+                    settingsButtonDisabled: false,
+                });
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });  
     },
 
     render: function() {
-        var defaultRoles = this.props.defaultRoles;
+        var defaultRoles = this.props.choice.instructor_default_roles;
     
         var roleNodes = this.props.roleOptions.map(function(role) {
             var defaultChecked = false;
@@ -76,7 +108,7 @@ var RolesSettingsForm = React.createClass({
                                 <FormsyCheckbox
                                     name="notify"
                                     label={<span><span>Notify users by email when they are given additional roles</span><br /><span>(default setting that can be overridden when additional roles are given)</span></span>}
-                                    defaultChecked={false}
+                                    defaultChecked={this.props.choice.notify_additional_permissions}
                                 />
                             </div>
                         </div>
@@ -84,6 +116,7 @@ var RolesSettingsForm = React.createClass({
                             label="Save" 
                             primary={true} 
                             type="submit"
+                            disabled={this.state.settingsButtonDisabled}
                         />
                     </Formsy.Form>
                 </CardText>

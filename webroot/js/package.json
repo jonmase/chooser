@@ -25,6 +25,7 @@
     "formsy-material-ui": "^0.3.8",
     "formsy-react": "^0.17.0",
     "html5shiv": "^3.7.3",
+    "jquery": "^2.2.2",
     "material-ui": "^0.15.0-alpha.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",

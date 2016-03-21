@@ -47,6 +47,7 @@
     </main>
     <footer>
     </footer>
+    <?= $this->Html->script('node_modules/jquery/dist/jquery.min', ['block' => 'script']); ?>
     <?= $this->fetch('script') ?>
 </body>
 </html>

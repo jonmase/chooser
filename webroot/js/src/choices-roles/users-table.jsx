@@ -43,7 +43,7 @@ var UsersTable = React.createClass({
             >
                 <CardHeader
                     title="User Roles"
-                    subtitle="Give specific users additional roles for this Choice"
+                    subtitle="Give additional roles to specific users"
                     //actAsExpander={true}
                     //showExpandableButton={true}
                 />
