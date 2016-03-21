@@ -10,7 +10,7 @@ var IconButton = require('material-ui/lib/icon-button');
 var FlatButton  = require('material-ui/lib/flat-button');
 
 var styles = {
-    TableRowColumn: {
+    tableRowColumn: {
         whiteSpace: 'normal',
     },
     roleContainer: {
@@ -38,8 +38,14 @@ var UsersTable = React.createClass({
     
     render: function() {
         return (
-            <Table selectable={false}>
-                <TableHeader adjustForCheckbox={false} displaySelectAll={false}>
+            <Table 
+                //selectable={false}
+                multiSelectable={true}
+            >
+                <TableHeader 
+                    //adjustForCheckbox={false} 
+                    //displaySelectAll={false}
+                >
                     <TableRow>
                         <TableHeaderColumn>Username</TableHeaderColumn>
                         <TableHeaderColumn>Name</TableHeaderColumn>
@@ -47,14 +53,16 @@ var UsersTable = React.createClass({
                         <TableHeaderColumn>Roles</TableHeaderColumn>
                     </TableRow>
                 </TableHeader>
-                <TableBody displayRowCheckbox={false}>
+                <TableBody 
+                    //displayRowCheckbox={false}
+                >
                     {this.getUsers().map(function(user) {
                         return (
                             <TableRow key={user.username}>
-                                <TableRowColumn style={styles.TableRowColumn}>{user.username}</TableRowColumn>
-                                <TableRowColumn style={styles.TableRowColumn}>{user.fullname}</TableRowColumn>
-                                <TableRowColumn style={styles.TableRowColumn}>{user.email}</TableRowColumn>
-                                <TableRowColumn style={styles.TableRowColumn}>
+                                <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
+                                <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
+                                <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
+                                <TableRowColumn style={styles.tableRowColumn}>
                                     {user.roles.map(function(role) {
                                         /*return (
                                             <FlatButton
