@@ -15,6 +15,8 @@ use Cake\Validation\Validator;
  */
 class ChoicesUsersTable extends Table
 {
+    private $_additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
+    private $_nonAdminRoles = ['editor', 'approver', 'reviewer', 'allocator'];
 
     /**
      * Initialize method
@@ -115,27 +117,40 @@ class ChoicesUsersTable extends Table
             'conditions' => ['choice_id' => $choiceId, 'user_id' => $userId],
         ]);
         
+        $choicesUser = $choicesUsersQuery->first();
+        $roles = $this->processRoles($choicesUser, $includeView);
+
+        return $roles;
+    }
+    
+    /**
+     * processRoles method
+     * Takes a ChoicesUsers record and process the roles into an array
+     *
+     * @param array $choicesUser ChoicesUsers record
+     * @param boolean $includeView Whether or not include 'view' as one of the roles
+     * @return array $roles array of the User's roles (or empty array if not associated)
+     */
+    function processRoles($choicesUser = null, $includeView = false) {
         $roles = [];
         //If the user is not associated with this Choice, return empty array, i.e. no role
-        if($choicesUsersQuery->isEmpty()) {
-            $roles = [];
-        }
-        else {
-            if($includeView)
-            //Anyone associated with a Choice has the view role
-            
-            $roles = ['view'];
-            
-            $additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
-            $choicesUser = $choicesUsersQuery->first();
-            
-            foreach($additionalRoles as $role) {
-                if($choicesUser->$role) {
-                    $roles[] = $role;
+        if(!empty($choicesUser)) {
+            //If admin, don't need to return any other roles for this user
+            if($choicesUser->admin) {
+                $roles[] = 'admin';
+            }
+            else {
+                foreach($this->_nonAdminRoles as $role) {
+                    if($choicesUser->$role) {
+                        $roles[] = $role;
+                    }
                 }
             }
+            
+            //Anyone associated with a Choice, and without additional permissions, still has the view role
+            if(empty($roles) && $includeView) { $roles[] = 'view'; }
         }
-
+        
         return $roles;
     }
     

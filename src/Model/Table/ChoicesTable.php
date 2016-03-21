@@ -54,7 +54,7 @@ class ChoicesTable extends Table
         ]);
         //Create belongsToMany assocation with Users and hasMany association with ChoicesUsers
         $this->hasMany('ChoicesUsers', [
-            'foreignKey' => 'user_id'
+            'foreignKey' => 'choice_id'
         ]);
         $this->belongsToMany('Users', [
             'foreignKey' => 'choice_id',

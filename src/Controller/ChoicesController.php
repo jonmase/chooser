@@ -81,8 +81,18 @@ class ChoicesController extends AppController
         if(empty($roles)) {
             throw new ForbiddenException(__('Not permitted to view/exit Choice permissions.'));
         }
+
+        $choice = $this->Choices->get($id, [
+            'contain' => ['Users']
+        ]);
         
-        $choice = $this->Choices->get($id);
+        foreach($choice->users as $user) {
+            //Get roles from _joinData, including view role
+            $user->roles = $this->Choices->ChoicesUsers->processRoles($user->_joinData, true);  
+            unset($user->_joinData);
+        }
+        //pr($choice);
+        //pr(json_encode($choice->users));
 
         $this->set(compact('choice', 'roles'));
         //$this->set('_serialize', ['choice']);
