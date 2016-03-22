@@ -37,7 +37,7 @@ var RolesSettingsForm = React.createClass({
         console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
         
         //Save the settings
-        var url = '../settings/' + this.props.choice.id;
+        var url = '../role_settings/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',

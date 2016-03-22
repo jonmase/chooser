@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\MethodNotAllowedException;
 
 /**
  * Choices Controller
@@ -106,13 +107,15 @@ class ChoicesController extends AppController
     }
     
     /**
-     * Settings method
+     * role_settings method
+     * 
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
-    public function settings($id = null)
+    public function role_settings($id = null)
     {
         $this->viewBuilder()->layout('ajax');
         
@@ -145,15 +148,16 @@ class ChoicesController extends AppController
             $choice = $this->Choices->patchEntity($choice, $data);
 
             if ($this->Choices->save($choice)) {
-                $this->set('response', 'Choice settings saved');
-                
-            } else {
-                throw new InternalErrorException(__('Problem with saving the Choice settings.'));
+                $this->set('response', 'Role settings saved');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving role settings'));
             }
         }
+        else {
+            throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));
+        }
     }
-
-    
     
     /**
      * Add method
