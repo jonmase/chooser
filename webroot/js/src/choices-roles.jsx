@@ -8,5 +8,5 @@ var UsersTable = require('./choices-roles/users-table.jsx');
 injectTapEventPlugin();
 
 ReactDOM.render(<TopBar subtitle={data.choice.name} />, document.getElementById('topbar'));
-ReactDOM.render(<RolesSettingsForm choice={data.choice} roleOptions={data.roleOptions} defaultRoles={data.choice.instructor_default_roles} />, document.getElementById('roles_settings'));
-ReactDOM.render(<UsersTable choiceId={data.choice.id} users={data.users} />, document.getElementById('table'));
+ReactDOM.render(<RolesSettingsForm choice={data.choice} roleOptions={data.roleOptions} />, document.getElementById('roles_settings'));
+ReactDOM.render(<UsersTable choice={data.choice} users={data.users} roleOptions={data.roleOptions} />, document.getElementById('roles_table'));

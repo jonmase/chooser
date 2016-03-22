@@ -107,7 +107,7 @@ class ChoicesController extends AppController
     }
     
     /**
-     * role_settings method
+     * roleSettings method
      * 
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
@@ -115,7 +115,7 @@ class ChoicesController extends AppController
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
-    public function role_settings($id = null)
+    public function roleSettings($id = null)
     {
         $this->viewBuilder()->layout('ajax');
         

@@ -4,7 +4,9 @@
 </p-->
 <div id="roles_settings"></div>
 <br />
-<div id="table"></div>
+<div id="roles_table"></div>
+<br />
+<div id="roles_add_user"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>
     var data = {};

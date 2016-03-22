@@ -13,6 +13,9 @@ body {
 .no-top-margin {
     margin-top: 0;
 }
+.no-bottom-margin {
+    margin-bottom: 0;
+}
 
 /* FLASH STYLES */
 /* These will be replaced with snackbars/toasts at some point */

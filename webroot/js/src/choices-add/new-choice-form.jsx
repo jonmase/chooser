@@ -1,6 +1,4 @@
 var React = require('react');
-var TextField = require('material-ui/lib/text-field');
-var Toggle = require('material-ui/lib/toggle');
 var Formsy = require('formsy-react');
 var FormsyText = require('formsy-material-ui/lib/FormsyText');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');

@@ -1,12 +1,14 @@
 var React = require('react');
 var Formsy = require('formsy-react');
 var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
+var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var RaisedButton = require('material-ui/lib/raised-button');
 var Snackbar = require('material-ui/lib/snackbar');
 var Card  = require('material-ui/lib/card/card');
 var CardHeader = require('material-ui/lib/card/card-header');
 var CardText  = require('material-ui/lib/card/card-text');
 //var CardActions  = require('material-ui/lib/card/card-actions');
+var RoleCheckboxes = require('./role-checkboxes.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -26,7 +28,7 @@ var RolesSettingsForm = React.createClass({
         return {
             settingsButtonDisabled: false,
             snackbarOpen: false,
-            snackbarMessage: null,
+            snackbarMessage: '',
         };
     },
 
@@ -67,29 +69,11 @@ var RolesSettingsForm = React.createClass({
     handleRequestClose: function() {
         this.setState({
             snackbarOpen: false,
-            snackbarMessage: null,
+            snackbarMessage: '',
         });
     },
   
     render: function() {
-        var defaultRoles = this.props.choice.instructor_default_roles;
-    
-        var roleNodes = this.props.roleOptions.map(function(role) {
-            var defaultChecked = false;
-            if(defaultRoles.indexOf(role) > -1) {
-                defaultChecked = true;
-            }
-        
-            return (
-                <FormsyCheckbox
-                    key={role}
-                    name={role}
-                    label={role.charAt(0).toUpperCase() + role.substring(1)}
-                    defaultChecked={defaultChecked}
-                />
-            );
-        });
-
         return (
             <Card 
                 //initiallyExpanded={false}
@@ -106,19 +90,19 @@ var RolesSettingsForm = React.createClass({
                     <Formsy.Form
                         id="roles_settings_form"
                         method="POST"
-                        action="./link"
                         onValidSubmit={this.submitForm}
                     >
                         <div className="row">
                             <div className="col-xs-12 col-sm-6">
                                 <div>Default role(s) for new 'Instructors' (i.e. maintainers and contributors in WebLearn):</div>
-                                {roleNodes}
+                                <RoleCheckboxes defaultRoles={this.props.choice.instructor_default_roles} roleOptions={this.props.roleOptions} />
                             </div>
                             <div className="col-xs-12 col-sm-6">
-                                <FormsyCheckbox
-                                    name="notify"
+                                <FormsyToggle
                                     label={<span><span>Notify users by email when they are given additional roles</span><br /><span>(default setting that can be overridden when additional roles are given)</span></span>}
-                                    defaultChecked={this.props.choice.notify_additional_permissions}
+                                    defaultToggled={this.props.choice.notify_additional_permissions}
+                                    labelPosition="right"
+                                    name="notify"
                                 />
                             </div>
                         </div>
@@ -127,11 +111,12 @@ var RolesSettingsForm = React.createClass({
                             primary={true} 
                             type="submit"
                             disabled={this.state.settingsButtonDisabled}
+                            className="no-bottom-margin"
                         />
                         <Snackbar
                             open={this.state.snackbarOpen}
                             message={this.state.snackbarMessage}
-                            autoHideDuration={5000}
+                            autoHideDuration={3000}
                             onRequestClose={this.handleRequestClose}
                         />
                     </Formsy.Form>

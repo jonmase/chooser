@@ -9,6 +9,7 @@ var TableHeader = require('material-ui/lib/table/table-header');
 var TableRowColumn = require('material-ui/lib/table/table-row-column');
 var TableBody = require('material-ui/lib/table/table-body');
 var UsersRole = require('./users-role.jsx');
+var AddUser = require('./add-user.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -49,6 +50,7 @@ var UsersTable = React.createClass({
                 <CardText 
                     //expandable={true}
                 >
+                    <AddUser choice={this.props.choice} roleOptions={this.props.roleOptions} />
                     <Table 
                         //selectable={false}
                         multiSelectable={true}
