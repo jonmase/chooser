@@ -12,11 +12,10 @@ var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
 var RolesSettingsForm = React.createClass({
-    //the key passed through context must be called "muiTheme"
+    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
     childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
-
     getChildContext: function() {
         return {
             muiTheme: GetMuiTheme(ChooserTheme),

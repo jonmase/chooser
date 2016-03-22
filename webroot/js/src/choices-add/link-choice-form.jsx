@@ -14,12 +14,10 @@ var style = {
 };
 
 var LinkChoiceForm = React.createClass({
-    
-    //the key passed through context must be called "muiTheme"
+    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
     childContextTypes: {
         muiTheme: React.PropTypes.object,
     },
-
     getChildContext: function() {
         return {
             muiTheme: GetMuiTheme(ChooserTheme),
