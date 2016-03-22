@@ -30,10 +30,6 @@ var AddUser = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            dialogOpen: false,
-            userButtonDisabled: false,
-            //snackbarOpen: false,
-            //snackbarMessage: null,
         };
     },
 
@@ -50,59 +46,18 @@ var AddUser = React.createClass({
     },
 
     //Submit the user form
-    handleSubmit: function (settings) {
-        alert('submitted user form');
-        /*this.setState({
-            settingsButtonDisabled: true
-        });
-
-        console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
-        
-        //Save the settings
-        var url = '../add_user/' + this.props.choice.id;
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: settings,
-            success: function(data) {
-                console.log(data.response);
-                this.setState({
-                    settingsButtonDisabled: false,
-                    snackbarOpen: true,
-                    snackbarMessage: data.response,
-                });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.setState({
-                    settingsButtonDisabled: false,
-                    snackbarOpen: true,
-                    snackbarMessage: 'Save error (' + err.toString() + ')',
-                });
-                console.error(url, status, err.toString());
-            }.bind(this)
-        });*/
+    handleSubmit: function (user) {
+        this.props.onUserSubmit(user);
     },
     
     handleDialogOpen: function() {
-        this.setState({
-            dialogOpen: true,
-        });
+        this.props.onUserDialogOpen();
     },
     
     handleDialogClose: function() {
-        this.setState({
-            dialogOpen: false,
-        });
+        this.props.onUserDialogClose();
     },
     
-    /*handleRequestClose: function() {
-        this.setState({
-            snackbarOpen: false,
-            snackbarMessage: null,
-        });
-    },*/
-  
     render: function() {
         var actions = [
             <FlatButton
@@ -124,14 +79,13 @@ var AddUser = React.createClass({
                 <RaisedButton 
                     label="Add User" 
                     primary={true} 
-                    disabled={this.state.userButtonDisabled}
                     onTouchTap={this.handleDialogOpen}
                 />
                 <Dialog
                     title="Add User with additional roles"
                     actions={actions}
                     modal={true}
-                    open={this.state.dialogOpen}
+                    open={this.props.state.userDialogOpen}
                 >
                     <Formsy.Form
                         id="add_user_form"
@@ -148,17 +102,16 @@ var AddUser = React.createClass({
                             validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
                             required
                         />
-
                         <div>
                             <div>Which additional roles should this user have (this will override the default role(s) that they would be given when they first access the Choice):</div>
-                            <RoleCheckboxes defaultRoles={this.props.choice.instructor_default_roles} roleOptions={this.props.roleOptions} />
+                            <RoleCheckboxes roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                         </div>
                         <FormsyToggle
-                                label="Notify this user of their additional roles by email"
-                                defaultToggled={this.props.choice.notify_additional_permissions}
-                                labelPosition="right"
-                                name="notify"
-                            />
+                            label="Notify this user of their additional roles by email"
+                            defaultToggled={this.props.state.notify}
+                            labelPosition="right"
+                            name="notify"
+                        />
                     </Formsy.Form>
                 </Dialog>
             </div>

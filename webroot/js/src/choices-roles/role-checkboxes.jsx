@@ -17,20 +17,14 @@ var RoleCheckboxes = React.createClass({
     },
 
     render: function() {
-        var defaultRoles = this.props.defaultRoles;
-    
+        var roleStates = this.props.roleStates;
         var roleNodes = this.props.roleOptions.map(function(role) {
-            var defaultChecked = false;
-            if(defaultRoles.indexOf(role) > -1) {
-                defaultChecked = true;
-            }
-        
             return (
                 <FormsyCheckbox
                     key={role}
-                    name={role}
+                    name={'defaultRoles.' + role}
                     label={role.charAt(0).toUpperCase() + role.substring(1)}
-                    defaultChecked={defaultChecked}
+                    defaultChecked={roleStates[role]}
                 />
             );
         });

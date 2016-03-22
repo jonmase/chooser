@@ -98,11 +98,17 @@ class ChoicesController extends AppController
             }
         }
         
-        $choice->instructor_default_roles = explode(',', $choice->instructor_default_roles);
+        $defaultRolesArray = explode(',', $choice->instructor_default_roles);
+        $roleOptions = $this->Choices->ChoicesUsers->getAllRoles();
         
-        $additionalRoles = $this->Choices->ChoicesUsers->getNonAdminRoles();
+        $defaultRolesObject = [];
+        foreach($roleOptions as $role) {
+            $defaultRolesObject[$role] = in_array($role, $defaultRolesArray);
+        }
+        $choice->instructor_default_roles = $defaultRolesObject;
+        //pr($choice); exit;
         
-        $this->set(compact('choice', 'users', 'additionalRoles'));
+        $this->set(compact('choice', 'users', 'roleOptions'));
         //$this->set('_serialize', ['choice']);
     }
     
@@ -134,11 +140,10 @@ class ChoicesController extends AppController
             
             //Set the notify value
             $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
-            unset($this->request->data['notify']);
             
             //Set the default roles value
             $defaultRoles = [];
-            foreach($this->request->data as $role => $default) {
+            foreach($this->request->data['defaultRoles'] as $role => $default) {
                 if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
                     $defaultRoles[] = $role;
                 }
@@ -153,6 +158,58 @@ class ChoicesController extends AppController
             else {
                 throw new InternalErrorException(__('Problem with saving role settings'));
             }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));
+        }
+    }
+    
+    /**
+     * addUser method
+     * 
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     */
+    public function addUser($id = null)
+    {
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
+        }
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            /*$choice = $this->Choices->get($id, [
+                'contain' => []
+            ]);
+            
+            $data = [];
+            
+            //Set the notify value
+            $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+            
+            //Set the default roles value
+            $defaultRoles = [];
+            foreach($this->request->data['defaultRoles'] as $role => $default) {
+                if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
+                    $defaultRoles[] = $role;
+                }
+            }
+            $data['instructor_default_roles'] = implode(',', $defaultRoles);
+            
+            $choice = $this->Choices->patchEntity($choice, $data);
+
+            if ($this->Choices->save($choice)) {*/
+                $this->set('response', 'User saved');
+            /*} 
+            else {
+                throw new InternalErrorException(__('Problem with saving role settings'));
+            }*/
         }
         else {
             throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));

@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  */
 class ChoicesUsersTable extends Table
 {
-    //private $_additionalRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
+    private $_allRoles = ['editor', 'approver', 'reviewer', 'allocator', 'admin'];
     private $_nonAdminRoles = ['editor', 'approver', 'reviewer', 'allocator'];
 
     /**
@@ -97,6 +97,17 @@ class ChoicesUsersTable extends Table
         return $rules;
     }
     
+    /**
+     * getAllRoles method
+     * Returns the array of additional roles
+     *
+     * @return array $allRoles array of additional roles
+     */
+    public function getAllRoles() {
+        $allRoles = $this->_allRoles;
+        return $allRoles;
+    }
+
     /**
      * getNonAdminRoles method
      * Returns the array of additional roles, except admin

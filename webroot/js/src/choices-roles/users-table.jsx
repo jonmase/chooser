@@ -31,11 +31,6 @@ var UsersTable = React.createClass({
         };
     },
 
-    getUsers: function() {
-        var users = this.props.users;
-        return users;
-    },
-    
     render: function() {
         return (
             <Card 
@@ -50,7 +45,7 @@ var UsersTable = React.createClass({
                 <CardText 
                     //expandable={true}
                 >
-                    <AddUser choice={this.props.choice} roleOptions={this.props.roleOptions} />
+                    <AddUser state={this.props.state} roleOptions={this.props.roleOptions} onUserSubmit={this.props.onUserSubmit} onUserDialogOpen={this.props.onUserDialogOpen} onUserDialogClose={this.props.onUserDialogClose} />
                     <Table 
                         //selectable={false}
                         multiSelectable={true}
@@ -70,7 +65,7 @@ var UsersTable = React.createClass({
                             //displayRowCheckbox={false}
                             deselectOnClickaway={false}
                         >
-                            {this.getUsers().map(function(user) {
+                            {this.props.state.users.map(function(user) {
                                 return (
                                     <TableRow key={user.username}>
                                         <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
