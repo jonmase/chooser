@@ -2,6 +2,7 @@ var React = require('react');
 var Formsy = require('formsy-react');
 var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
 var RaisedButton = require('material-ui/lib/raised-button');
+var Snackbar = require('material-ui/lib/snackbar');
 var Card  = require('material-ui/lib/card/card');
 var CardHeader = require('material-ui/lib/card/card-header');
 var CardText  = require('material-ui/lib/card/card-text');
@@ -25,6 +26,8 @@ var RolesSettingsForm = React.createClass({
     getInitialState: function () {
         return {
             settingsButtonDisabled: false,
+            snackbarOpen: false,
+            snackbarMessage: null,
         };
     },
 
@@ -46,21 +49,29 @@ var RolesSettingsForm = React.createClass({
             success: function(data) {
                 console.log(data.response);
                 this.setState({
-                    settingsButtonDisabled: false
+                    settingsButtonDisabled: false,
+                    snackbarOpen: true,
+                    snackbarMessage: data.response,
                 });
-                //Add snackbar
             }.bind(this),
             error: function(xhr, status, err) {
-                alert("save error");    //Replace this with snackbar
-                
                 this.setState({
                     settingsButtonDisabled: false,
+                    snackbarOpen: true,
+                    snackbarMessage: 'Save error (' + err.toString() + ')',
                 });
                 console.error(url, status, err.toString());
             }.bind(this)
         });  
     },
 
+    handleRequestClose: function() {
+        this.setState({
+            snackbarOpen: false,
+            snackbarMessage: null,
+        });
+    },
+  
     render: function() {
         var defaultRoles = this.props.choice.instructor_default_roles;
     
@@ -117,6 +128,12 @@ var RolesSettingsForm = React.createClass({
                             primary={true} 
                             type="submit"
                             disabled={this.state.settingsButtonDisabled}
+                        />
+                        <Snackbar
+                            open={this.state.snackbarOpen}
+                            message={this.state.snackbarMessage}
+                            autoHideDuration={5000}
+                            onRequestClose={this.handleRequestClose}
                         />
                     </Formsy.Form>
                 </CardText>
