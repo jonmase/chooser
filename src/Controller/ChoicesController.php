@@ -116,7 +116,7 @@ class ChoicesController extends AppController
      * roleSettings method
      * 
      *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
@@ -128,7 +128,7 @@ class ChoicesController extends AppController
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
         if(empty($isAdmin)) {
-            throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
+            throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -164,13 +164,14 @@ class ChoicesController extends AppController
         }
     }
     
+    
+
+
     /**
      * addUser method
      * 
-     *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
     public function addUser($id = null)
@@ -180,39 +181,63 @@ class ChoicesController extends AppController
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
         if(empty($isAdmin)) {
-            throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
+            throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            /*$choice = $this->Choices->get($id, [
-                'contain' => []
-            ]);
+        if ($this->request->is('post')) {
+            //pr($this->request->data);
             
-            $data = [];
+            //If user ID is not set in the data (it can be set to false), User has not yet been searched for
+            if(!isset($this->request->data['id'])) {
+                $user = $this->Choices->Users->findByUsernameThenEmail($this->request->data['username']);
+            }
+            //User has already been searched for and found
+            else if($this->request->data['id']) {
+                $user = $this->Choices->Users->get($this->request->data['id']);
+            }
+            //Otherwise, user does not exist in the system
+            //else {
+            //}
             
-            //Set the notify value
-            $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+            //If we don't have a user yet, create one from the username in the request data
+            if(empty($user)) {
+                $user = $this->Choices->Users->newEntity();
+                $user->username = $this->request->data['username'];
+            }
             
+            $choice = $this->Choices->get($id);
+            $choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
+            //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
             //Set the default roles value
             $defaultRoles = [];
             foreach($this->request->data['defaultRoles'] as $role => $default) {
-                if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
-                    $defaultRoles[] = $role;
-                }
+                $choice->_joinData->$role = filter_var($default, FILTER_VALIDATE_BOOLEAN);
             }
-            $data['instructor_default_roles'] = implode(',', $defaultRoles);
             
-            $choice = $this->Choices->patchEntity($choice, $data);
+            $user->choices = [$choice];
+            
+            //pr($user);
+            ///pr($choice);
+            //exit;
+            
+            //there is a user ID, 
+            //if(isset($user->id)
 
-            if ($this->Choices->save($choice)) {*/
+            //if ($this->Choices->Users->link($choice, [$user])) {
+            if ($this->Choices->Users->save($user)) {
+                //Get roles from _joinData, including view role
+                $user->roles = $this->Choices->ChoicesUsers->processRoles($choice->_joinData, true);  
+                unset($user->choices);
+
                 $this->set('response', 'User saved');
-            /*} 
+                $this->set('user', $user);
+            } 
             else {
                 throw new InternalErrorException(__('Problem with saving role settings'));
-            }*/
+            }
         }
         else {
-            throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));
+            throw new MethodNotAllowedException(__('Adding users requires POST'));
         }
     }
     

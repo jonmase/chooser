@@ -25,17 +25,18 @@ var RolesSettingsForm = React.createClass({
 
     handleChange: function(currentValues, isChanged) {
         if(typeof(currentValues.notify) !== 'undefined' && isChanged) {
-            this.props.onSettingsChange();
+            this.props.handlers.change();
         }
     },
     
     handleSubmit: function(data) {
-        this.props.onSettingsSubmit(data);
+        this.props.handlers.submit(data);
     },
   
     render: function() {
         return (
             <Card 
+                className="page-card"
                 //initiallyExpanded={false}
             >
                 <CardHeader

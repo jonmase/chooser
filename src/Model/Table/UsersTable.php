@@ -215,4 +215,36 @@ class UsersTable extends Table
             return false;
         }
     }
+    
+    /**
+     * findByUsernameThenEmail method
+     * Looks for a user, firstly by the username, then by the email if not found
+     * 
+     * @param $searchValue The username/email to search on
+     * @return App\Model\Entity\User $user User entity
+     */
+    public function findByUsernameThenEmail($searchValue) {
+        if(!$searchValue) {
+            return false;
+        }
+        
+        $user = $this->findAllByUsername($searchValue);
+        
+        if($user->isEmpty()) {
+            $user = $this->findByEmail($searchValue);
+            if(!$user->isEmpty()) {
+                $foundBy = 'email';
+            }
+        }
+        else {
+            $foundBy = 'username';
+        }
+        
+        $user = $user->first();
+        if(!empty($user)) {
+            $user->foundBy = $foundBy;
+        }
+        
+        return $user;
+    }
 }

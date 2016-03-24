@@ -34,6 +34,7 @@ var UsersTable = React.createClass({
     render: function() {
         return (
             <Card 
+                className="page-card"
                 //initiallyExpanded={true}
             >
                 <CardHeader
@@ -45,7 +46,11 @@ var UsersTable = React.createClass({
                 <CardText 
                     //expandable={true}
                 >
-                    <AddUser state={this.props.state} roleOptions={this.props.roleOptions} onUserSubmit={this.props.onUserSubmit} onUserDialogOpen={this.props.onUserDialogOpen} onUserDialogClose={this.props.onUserDialogClose} />
+                    <AddUser 
+                        state={this.props.state} 
+                        roleOptions={this.props.roleOptions} 
+                        handlers={this.props.addUserHandlers} 
+                    />
                     <Table 
                         //selectable={false}
                         multiSelectable={true}

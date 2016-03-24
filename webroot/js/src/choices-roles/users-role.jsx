@@ -38,7 +38,7 @@ var UsersRole = React.createClass({
     render: function() {
         var closeButton;
         
-        if(this.props.role !== 'admin' && !this.props.user.current) {
+        if(this.props.role !== 'admin' || !this.props.user.current) {
             closeButton = <IconButton 
                 style={styles.roleRemoveButton} 
                 iconStyle={styles.roleRemoveIcon} 

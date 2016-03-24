@@ -30,49 +30,95 @@ var AddUser = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
+            userChecked: false,
         };
     },
 
-    enableButton: function () {
+    enableSubmitButton: function () {
         this.setState({
             canSubmit: true
         });
     },
 
-    disableButton: function () {
+    disableSubmitButton: function () {
         this.setState({
             canSubmit: false
         });
     },
 
-    //Submit the user form
+    //Check whether user is already associated with this Choice
+    checkUserAssociation: function(searchValue) {
+        var userAlreadyAssociated = this.props.handlers.checkUserAssociation(searchValue);
+        //Set userChecked to true, so can't recheck
+        this.setState({
+            userChecked: true,
+        });
+        //If user is associated, disable the submit button
+        if(userAlreadyAssociated) {
+            this.disableSubmitButton();
+        }
+        return userAlreadyAssociated;
+    },
+
+    //Checks whether we can get the user details
+    handleFindUser: function() {
+        var searchValue = this.getUserSearchValueFromInput();
+        //If user is not already associated, try to find them in the system
+        if(!this.checkUserAssociation(searchValue)) {
+            this.props.handlers.findUser(searchValue);
+        }
+    },
+    
+    //Submit the user form (if using action inside Form)
     handleSubmit: function (user) {
-        this.props.onUserSubmit(user);
+        if(!this.state.userChecked) {
+            if(this.checkUserAssociation(user.username)) {
+                return false;
+            }
+        }
+    
+        this.props.handlers.submit(user);
     },
     
     handleDialogOpen: function() {
-        this.props.onUserDialogOpen();
+        this.props.handlers.dialogOpen();
     },
     
     handleDialogClose: function() {
-        this.props.onUserDialogClose();
+        this.props.handlers.dialogClose();
+    },
+    
+    handleUserChange: function() {
+        this.props.handlers.change();
+        this.setState({
+            userChecked: false,
+        });
+    },
+    
+    getUserSearchValueFromInput() {
+        var usernameInput = $('#add_username');
+        var searchValue = usernameInput[0].value;
+        return searchValue;
     },
     
     render: function() {
         var actions = [
             <FlatButton
+                key="cancel"
                 label="Cancel"
                 secondary={true}
                 onTouchTap={this.handleDialogClose}
             />,
             <FlatButton
+                key="submit"
                 label="Submit"
                 primary={true}
                 type="submit"
                 disabled={!this.state.canSubmit}
-                onTouchTap={this.handleSubmit}
+                //onTouchTap={this.handleSubmit}    //This doesn't work - can't get data
             />,
         ];
+        
         
         return (
             <div>
@@ -83,25 +129,37 @@ var AddUser = React.createClass({
                 />
                 <Dialog
                     title="Add User with additional roles"
-                    actions={actions}
-                    modal={true}
-                    open={this.props.state.userDialogOpen}
+                    //actions={actions}
+                    //modal={false}
+                    open={this.props.state.addUserDialogOpen}
+                    onRequestClose={this.handleDialogClose}
                 >
                     <Formsy.Form
                         id="add_user_form"
                         method="POST"
-                        onValid={this.enableButton}
-                        onInvalid={this.disableButton}
+                        onValid={this.enableSubmitButton}
+                        onInvalid={this.disableSubmitButton}
+                        onValidSubmit={this.handleSubmit}
                         noValidate
                     >
                         <FormsyText 
                             name="username"
+                            id="add_username"
                             hintText="Email address or SSO username" 
                             floatingLabelText="Email/Username (required)"
                             validations="minLength:1"
                             validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
                             required
+                            onChange={this.handleUserChange}
                         />
+                        <FlatButton
+                            label="Check User"
+                            type="button"
+                            disabled={!this.state.canSubmit || this.state.userChecked}
+                            onTouchTap={this.handleFindUser}
+                            style={{marginLeft: '10px'}}
+                        />
+                        <div>{this.props.state.findUserMessage}</div>
                         <div>
                             <div>Which additional roles should this user have (this will override the default role(s) that they would be given when they first access the Choice):</div>
                             <RoleCheckboxes roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
@@ -112,6 +170,9 @@ var AddUser = React.createClass({
                             labelPosition="right"
                             name="notify"
                         />
+                        <div style={{textAlign: 'right'}}>
+                            {actions}
+                        </div>
                     </Formsy.Form>
                 </Dialog>
             </div>

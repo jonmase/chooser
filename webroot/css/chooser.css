@@ -55,6 +55,11 @@ h6 {
     font-weight: 500;
 }
 
+/* PAGE LAYOUT */
+.page-card {
+    margin-bottom: 2rem;
+}
+
 
 /* FORMS */
 form > div, form > div.row > div {
