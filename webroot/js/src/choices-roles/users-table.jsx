@@ -46,11 +46,13 @@ var UsersTable = React.createClass({
                 <CardText 
                     //expandable={true}
                 >
-                    <AddUser 
-                        state={this.props.state} 
-                        roleOptions={this.props.roleOptions} 
-                        handlers={this.props.addUserHandlers} 
-                    />
+                    <div>
+                        <AddUser 
+                            state={this.props.state} 
+                            roleOptions={this.props.roleOptions} 
+                            handlers={this.props.addUserHandlers} 
+                        />
+                    </div>
                     <Table 
                         //selectable={false}
                         multiSelectable={true}

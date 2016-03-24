@@ -37,16 +37,16 @@ var RolesSettingsForm = React.createClass({
         return (
             <Card 
                 className="page-card"
-                //initiallyExpanded={false}
+                initiallyExpanded={false}
             >
                 <CardHeader
                     title="Default Settings"
                     subtitle="Change the default role settings for this Choice"
-                    //actAsExpander={true}
-                    //showExpandableButton={true}
+                    actAsExpander={true}
+                    showExpandableButton={true}
                 />
                 <CardText 
-                    //expandable={true}
+                    expandable={true}
                 >
                     <Formsy.Form
                         id="roles_settings_form"
