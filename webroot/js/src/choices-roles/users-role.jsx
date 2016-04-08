@@ -10,14 +10,17 @@ var styles = {
     roleContainer: {
         whiteSpace: 'normal',
         display: 'inline-block',
+        height: '32px',
     },
     roleText: {
-        lineHeight: '48px',
+        lineHeight: '32px',
         fontSize: '14px',
         verticalAlign: '-2px',
     },
     roleRemoveButton: {
         marginLeft: '-10px',
+        padding: '4px',
+        height: '32px',
     },
     roleRemoveIcon: {
         //fontSize: '20px',
