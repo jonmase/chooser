@@ -1,16 +1,10 @@
 var React = require('react');
 var Formsy = require('formsy-react');
-var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
 var FormsyText = require('formsy-material-ui/lib/FormsyText');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var RaisedButton = require('material-ui/lib/raised-button');
 var FlatButton = require('material-ui/lib/flat-button');
-var Snackbar = require('material-ui/lib/snackbar');
 var Dialog = require('material-ui/lib/dialog');
-//var Card = require('material-ui/lib/card/card');
-//var CardHeader = require('material-ui/lib/card/card-header');
-//var CardText = require('material-ui/lib/card/card-text');
-//var CardActions  = require('material-ui/lib/card/card-actions');
 var RoleCheckboxes = require('./role-checkboxes.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
@@ -162,7 +156,7 @@ var AddUser = React.createClass({
                         <div>{this.props.state.findUserMessage}</div>
                         <div>
                             <div>Which additional roles should this user have (this will override the default role(s) that they would be given when they first access the Choice):</div>
-                            <RoleCheckboxes roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
+                            <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                         </div>
                         <FormsyToggle
                             label="Notify this user of their additional roles by email"

@@ -10,6 +10,7 @@ var TableRowColumn = require('material-ui/lib/table/table-row-column');
 var TableBody = require('material-ui/lib/table/table-body');
 var UsersRole = require('./users-role.jsx');
 var AddUser = require('./add-user.jsx');
+var UserFilters = require('./user-filters.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -32,6 +33,8 @@ var UsersTable = React.createClass({
     },
 
     render: function() {
+        var filterRoles = this.props.state.filterRoles;
+        var noRoleFilters = this.props.roleOptions.every(function(role) { return !filterRoles[role]; });
         return (
             <Card 
                 className="page-card"
@@ -51,6 +54,13 @@ var UsersTable = React.createClass({
                             state={this.props.state} 
                             roleOptions={this.props.roleOptions} 
                             handlers={this.props.addUserHandlers} 
+                        />
+                    </div>
+                    <div>
+                        <UserFilters
+                            state={this.props.state} 
+                            roleOptions={this.props.roleOptions} 
+                            handlers={this.props.filterUsersHandlers} 
                         />
                     </div>
                     <Table 
@@ -73,20 +83,23 @@ var UsersTable = React.createClass({
                             deselectOnClickaway={false}
                         >
                             {this.props.state.users.map(function(user) {
-                                return (
-                                    <TableRow key={user.username}>
-                                        <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>
-                                            {user.roles.map(function(role) {
-                                                return (
-                                                    <UsersRole key={user.username + '_' + role} user={user} role={role} />
-                                                );
-                                            })}
-                                        </TableRowColumn>
-                                    </TableRow>
-                                );
+                                //If there are no role filters, or the user has one of the filtered roles, show them
+                                if(noRoleFilters || user.roles.some(function(role) { return filterRoles[role]; })) {
+                                    return (
+                                        <TableRow key={user.username}>
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>
+                                                {user.roles.map(function(role) {
+                                                    return (
+                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
+                                                    );
+                                                })}
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    );
+                                }
                             })}
                         </TableBody>
                     </Table>

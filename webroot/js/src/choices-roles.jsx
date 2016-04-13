@@ -17,6 +17,7 @@ ReactDOM.render(
         initialNotify={data.choice.notify_additional_permissions} 
         initialDefaultRoles={data.choice.instructor_default_roles} 
         initialUsers={data.users} 
+        initialUserSort={data.userSort} 
         roleOptions={data.roleOptions} 
     />, 
     document.getElementById('roles')

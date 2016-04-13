@@ -57,7 +57,7 @@ var RolesSettingsForm = React.createClass({
                         <div className="row">
                             <div className="col-xs-12 col-sm-6">
                                 <div>Default role(s) for new 'Instructors' (i.e. maintainers and contributors in WebLearn):</div>
-                                <RoleCheckboxes roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
+                                <RoleCheckboxes nameBase="defaultRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                             </div>
                             <div className="col-xs-12 col-sm-6">
                                 <FormsyToggle

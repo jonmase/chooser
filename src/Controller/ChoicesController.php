@@ -83,8 +83,9 @@ class ChoicesController extends AppController
             throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
         }
 
+        $userSort = 'username';
         $choice = $this->Choices->get($id, [
-            'contain' => ['Users']
+            'contain' => ['Users' => ['sort' => ['Users.' . $userSort => 'ASC']]]
         ]);
         $users = $choice->users;
         unset($choice->users);
@@ -108,7 +109,7 @@ class ChoicesController extends AppController
         $choice->instructor_default_roles = $defaultRolesObject;
         //pr($choice); exit;
         
-        $this->set(compact('choice', 'users', 'roleOptions'));
+        $this->set(compact('choice', 'users', 'roleOptions', 'userSort'));
         //$this->set('_serialize', ['choice']);
     }
     
@@ -210,7 +211,7 @@ class ChoicesController extends AppController
             //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
             //Set the default roles value
             $defaultRoles = [];
-            foreach($this->request->data['defaultRoles'] as $role => $default) {
+            foreach($this->request->data['addRoles'] as $role => $default) {
                 $choice->_joinData->$role = filter_var($default, FILTER_VALIDATE_BOOLEAN);
             }
             
