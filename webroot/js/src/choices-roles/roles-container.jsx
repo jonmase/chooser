@@ -7,10 +7,16 @@ var blankFindUserMessage = '\u00A0';
 
 var RolesContainer = React.createClass({
     getInitialState: function () {
+        var filterRoles = {};
+        this.props.roleOptions.forEach(function(role) {
+            filterRoles[role] = false;
+        });
+    
         return {
             addUserDialogOpen: false,
             defaultRoles: this.props.initialDefaultRoles,
             editUserDialogOpen: false,
+            filterRoles: filterRoles,
             findUserMessage: {blankFindUserMessage},
             foundUser: {},
             notify: this.props.initialNotify,
@@ -71,9 +77,20 @@ var RolesContainer = React.createClass({
                 console.log(data.response);
                 console.log(data.user);
                 
-                //TODO: Add user to state.users
-                var currentUsers = this.state.users;
-                currentUsers.push(data.user);
+                var currentUsers = this.state.users;    //Get the current users
+                currentUsers.push(data.user);   //Add the new user to current users
+                //Sort the current users alphabetically
+                currentUsers.sort(function (a, b) {
+                    if (a.username > b.username) {
+                        return 1;
+                    }
+                    if (a.username < b.username) {
+                        return -1;
+                    }
+                    // a must be equal to b
+                    return 0;
+                });
+                //Update state with the new users array
                 this.setState({
                     users: currentUsers,
                 });
@@ -160,6 +177,23 @@ var RolesContainer = React.createClass({
         return userAlreadyAssociated;
     },
     
+    //
+    handleFilterUserChange: function(event) {
+        console.log("User Role Filter changed");
+        console.log(this.state.filterRoles);
+        
+        var filterRoles = this.state.filterRoles;
+        //Get the filtered roles
+        var targetSplit = event.target.name.split('.');
+        var role = targetSplit[1];
+        filterRoles[role] = event.target.checked;
+        this.setState({
+            filterRoles: filterRoles
+        });
+        console.log(this.state.filterRoles);
+        return false;
+    },
+    
     //Look up a user in the DB based on their username/email
     handleFindUser: function(searchValue) {
         console.log("Attempting to find User: ", searchValue);
@@ -226,6 +260,10 @@ var RolesContainer = React.createClass({
             submit: this.handleAddUserSubmit,
         };
     
+        var filterUsersHandlers={
+            change: this.handleFilterUserChange,
+        };
+    
         return (
             <div>
                 <RolesSettingsForm 
@@ -238,6 +276,7 @@ var RolesContainer = React.createClass({
                     state={this.state} 
                     roleOptions={this.props.roleOptions} 
                     addUserHandlers={addUserHandlers}
+                    filterUsersHandlers={filterUsersHandlers}
                 />
                 <Snackbar
                     open={this.state.snackbar.open}
