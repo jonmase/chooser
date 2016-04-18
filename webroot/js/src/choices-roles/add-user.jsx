@@ -6,6 +6,8 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var FlatButton = require('material-ui/lib/flat-button');
 var Dialog = require('material-ui/lib/dialog');
 var RoleCheckboxes = require('./role-checkboxes.jsx');
+var FloatingActionButton = require('material-ui/lib/floating-action-button');
+var ContentAdd = require('material-ui/lib/svg-icons/content/add');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -116,11 +118,14 @@ var AddUser = React.createClass({
         
         return (
             <div>
-                <RaisedButton 
+                {/*<RaisedButton 
                     label="Add User" 
                     primary={true} 
                     onTouchTap={this.handleDialogOpen}
-                />
+                />*/}
+                <FloatingActionButton onTouchTap={this.handleDialogOpen}>
+                    <ContentAdd />
+                </FloatingActionButton>
                 <Dialog
                     title="Add User with additional roles"
                     //actions={actions}

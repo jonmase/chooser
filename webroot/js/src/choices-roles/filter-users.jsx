@@ -1,11 +1,5 @@
 var React = require('react');
 var Formsy = require('formsy-react');
-var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
-var FlatButton = require('material-ui/lib/flat-button');
-var Dialog = require('material-ui/lib/dialog');
 var RoleCheckboxes = require('./role-checkboxes.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
@@ -32,7 +26,9 @@ var UserFilters = React.createClass({
                     method="POST"
                     noValidate
                 >
-                    <RoleCheckboxes nameBase={this.nameBase} roleStates={this.props.state.filterRoles} roleOptions={this.props.roleOptions} onChange={this.props.handlers.change} id="filter_roles" />
+                    {/* TODO: Add clear filters link */}
+                    <span style={this.props.titleStyle}>Filter Roles:</span> 
+                    <RoleCheckboxes nameBase={this.nameBase} roleStates={this.props.state.filterRoles} roleOptions={this.props.roleOptions} onChange={this.props.handlers.change} arrange='horizontal' id="filter_roles" />
                 </Formsy.Form>
             </div>
         );

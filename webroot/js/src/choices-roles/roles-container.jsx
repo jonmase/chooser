@@ -17,6 +17,7 @@ var RolesContainer = React.createClass({
             defaultRoles: this.props.initialDefaultRoles,
             editUserDialogOpen: false,
             filterRoles: filterRoles,
+            sortUsersField: this.props.initialUserSortField,
             findUserMessage: {blankFindUserMessage},
             foundUser: {},
             notify: this.props.initialNotify,
@@ -79,17 +80,8 @@ var RolesContainer = React.createClass({
                 
                 var currentUsers = this.state.users;    //Get the current users
                 currentUsers.push(data.user);   //Add the new user to current users
-                //Sort the current users alphabetically
-                currentUsers.sort(function (a, b) {
-                    if (a.username > b.username) {
-                        return 1;
-                    }
-                    if (a.username < b.username) {
-                        return -1;
-                    }
-                    // a must be equal to b
-                    return 0;
-                });
+                
+                currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
                 //Update state with the new users array
                 this.setState({
                     users: currentUsers,
@@ -178,7 +170,7 @@ var RolesContainer = React.createClass({
     },
     
     //
-    handleFilterUserChange: function(event) {
+    handleFilterUsersChange: function(event) {
         console.log("User Role Filter changed");
         console.log(this.state.filterRoles);
         
@@ -191,6 +183,21 @@ var RolesContainer = React.createClass({
             filterRoles: filterRoles
         });
         console.log(this.state.filterRoles);
+        return false;
+    },
+    
+    handleSortUsersChange: function(currentValues, isChanged) {
+        if(isChanged) {
+            console.log("User Sort changed to " + currentValues.sort);
+            
+            currentUsers = this.sortUsers(this.state.users, currentValues.sort);
+           
+           //Update state with the sorted users array and sortField
+            this.setState({
+                sortUsersField: currentValues.sort,
+                users: currentUsers,
+            });
+        }
         return false;
     },
     
@@ -244,6 +251,24 @@ var RolesContainer = React.createClass({
             },
         });
     },
+    
+    sortUsers: function(users, sortField) {
+        users.sort(function (a, b) {
+            var aField = a[sortField];
+            var bField = b[sortField];
+            var aString = (aField === null) ? "" : "" + aField;
+            var bString = (bField === null) ? "" : "" + bField;
+            if (aString > bString) {
+                return 1;
+            }
+            if (aString < bString) {
+                return -1;
+            }
+            //values are equal
+            return 0;
+        });
+        return users;
+    },
 
     render: function() {
         var settingsHandlers={
@@ -261,7 +286,11 @@ var RolesContainer = React.createClass({
         };
     
         var filterUsersHandlers={
-            change: this.handleFilterUserChange,
+            change: this.handleFilterUsersChange,
+        };
+    
+        var sortUsersHandlers={
+            change: this.handleSortUsersChange,
         };
     
         return (
@@ -277,6 +306,7 @@ var RolesContainer = React.createClass({
                     roleOptions={this.props.roleOptions} 
                     addUserHandlers={addUserHandlers}
                     filterUsersHandlers={filterUsersHandlers}
+                    sortUsersHandlers={sortUsersHandlers}
                 />
                 <Snackbar
                     open={this.state.snackbar.open}

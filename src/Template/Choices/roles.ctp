@@ -9,6 +9,6 @@
     data.choice = <?= json_encode($choice); ?>;
     data.roleOptions = <?= json_encode($roleOptions); ?>;
     data.users = <?= json_encode($users); ?>;
-    data.userSort = "<?= $userSort; ?>";
+    data.userSortField = "<?= $userSortField; ?>";
 <?= $this->Html->scriptEnd(); ?>
 <?= $this->Html->script('dist/choices-roles-bundle', ['block' => 'script']); ?>

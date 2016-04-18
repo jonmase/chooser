@@ -10,7 +10,8 @@ var TableRowColumn = require('material-ui/lib/table/table-row-column');
 var TableBody = require('material-ui/lib/table/table-body');
 var UsersRole = require('./users-role.jsx');
 var AddUser = require('./add-user.jsx');
-var UserFilters = require('./user-filters.jsx');
+var FilterUsers = require('./filter-users.jsx');
+var SortUsers = require('./sort-users.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -19,6 +20,12 @@ var styles = {
     tableRowColumn: {
         whiteSpace: 'normal',
     },
+    sortFilterTitles: {
+        verticalAlign: '30%', 
+        display: 'inline-block', 
+        fontWeight: '500',
+        width: '120px',
+    }
 };
     
 var UsersTable = React.createClass({
@@ -46,22 +53,32 @@ var UsersTable = React.createClass({
                     //actAsExpander={true}
                     //showExpandableButton={true}
                 />
+                
                 <CardText 
                     //expandable={true}
+                    style={{paddingTop: '0'}}
                 >
-                    <div>
-                        <AddUser 
-                            state={this.props.state} 
-                            roleOptions={this.props.roleOptions} 
-                            handlers={this.props.addUserHandlers} 
-                        />
-                    </div>
-                    <div>
-                        <UserFilters
-                            state={this.props.state} 
-                            roleOptions={this.props.roleOptions} 
-                            handlers={this.props.filterUsersHandlers} 
-                        />
+                    <div style={{width: '100%', minHeight: '60px', marginBottom: '20px'}}>
+                        <div style={{float: 'right'}}>
+                            <AddUser 
+                                state={this.props.state} 
+                                roleOptions={this.props.roleOptions} 
+                                handlers={this.props.addUserHandlers} 
+                            />
+                        </div>
+                        <div style={{marginRight: '100px'}}>
+                            <SortUsers 
+                                state={this.props.state}
+                                handlers={this.props.sortUsersHandlers} 
+                                titleStyle={styles.sortFilterTitles}
+                            />
+                            <FilterUsers
+                                state={this.props.state} 
+                                roleOptions={this.props.roleOptions} 
+                                handlers={this.props.filterUsersHandlers} 
+                                titleStyle={styles.sortFilterTitles}
+                            />
+                        </div>
                     </div>
                     <Table 
                         //selectable={false}

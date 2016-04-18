@@ -18,9 +18,10 @@ var styles = {
         verticalAlign: '-2px',
     },
     roleRemoveButton: {
-        marginLeft: '-10px',
+        marginLeft: '-2px',
         padding: '4px',
         height: '32px',
+        width: '32px',
     },
     roleRemoveIcon: {
         //fontSize: '20px',

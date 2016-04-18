@@ -5,6 +5,12 @@ var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
+var horizontalStyle = {
+    width: 'auto', 
+    display: 'inline-block', 
+    marginRight: '35px',
+};
+
 var RoleCheckboxes = React.createClass({
     //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
     childContextTypes: {
@@ -20,6 +26,12 @@ var RoleCheckboxes = React.createClass({
         var nameBase = this.props.nameBase;
         var onChange = this.props.onChange;
         var roleStates = this.props.roleStates;
+        
+        var style = {};
+        if(this.props.arrange === 'horizontal') {
+            style = horizontalStyle;
+        }
+        
         var roleNodes = this.props.roleOptions.map(function(role) {
             return (
                 <FormsyCheckbox
@@ -28,14 +40,15 @@ var RoleCheckboxes = React.createClass({
                     label={role.charAt(0).toUpperCase() + role.substring(1)}
                     defaultChecked={roleStates[role]}
                     onChange={onChange}
+                    style={style}
                 />
             );
         });
 
         return (
-            <div>
+            <span>
                 {roleNodes}
-            </div>
+            </span>
         );
     }
 });
