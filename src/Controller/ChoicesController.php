@@ -209,10 +209,10 @@ class ChoicesController extends AppController
             $choice = $this->Choices->get($id);
             $choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
             //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
-            //Set the default roles value
+            //Set the roles values
             $defaultRoles = [];
-            foreach($this->request->data['addRoles'] as $role => $default) {
-                $choice->_joinData->$role = filter_var($default, FILTER_VALIDATE_BOOLEAN);
+            foreach($this->request->data['addRoles'] as $role => $value) {
+                $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
             }
             
             $user->choices = [$choice];
@@ -234,8 +234,69 @@ class ChoicesController extends AppController
                 $this->set('user', $user);
             } 
             else {
-                throw new InternalErrorException(__('Problem with saving role settings'));
+                throw new InternalErrorException(__('Problem with adding user'));
             }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Adding users requires POST'));
+        }
+    }
+    
+    /**
+     * editUser method
+     * 
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     */
+    public function editUser($id = null)
+    {
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
+        }
+
+        if ($this->request->is('post')) {
+            //pr($this->request->data);
+            $users = [];
+            
+            $choice = $this->Choices->get($id); //Get the choice
+            $choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
+            
+            //Set the roles
+            $defaultRoles = [];
+            foreach($this->request->data['editRoles'] as $role => $value) {
+                $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+
+            foreach($this->request->data['users'] as $userId) { //Loop through the submitted users
+                $user = $this->Choices->Users->get($userId);    //Get the user from the DB
+                
+                $user->choices = [$choice]; //Add the choice to the user
+                $users[] = $user;   //Add the user to the users array
+            }
+            
+            //Save each user, adding them to the savedUsers array that will be sent back to the view
+            //TODO: make this transactional??
+            $savedUsers = [];
+            foreach($users as $user) {
+                if($this->Choices->Users->save($user)) {
+                    $savedUsers[] = $user->id;
+                }
+                else {
+                    //TODO: Send back a warning about any users that were not saved successfully
+                    //throw new InternalErrorException(__('Problem with editing user roles'));
+                }
+            }
+            $this->set('response', 'User roles updated');
+            $this->set('users', $savedUsers);   //Pass the saved users to the view
+           
+            //Process the roles that have been given the users and pass them to the view
+            $roles = $this->Choices->ChoicesUsers->processRoles($choice->_joinData, true);
+            $this->set('roles', $roles);
         }
         else {
             throw new MethodNotAllowedException(__('Adding users requires POST'));

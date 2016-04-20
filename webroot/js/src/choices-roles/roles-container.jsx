@@ -142,35 +142,43 @@ var RolesContainer = React.createClass({
     },
 
     //Submit the edit user form
-    handleEditUserSubmit: function (user) {
-        console.log("Saving User for Choice " + this.props.choiceId + ": ", user);
+    handleEditUserSubmit: function (data) {
+        console.log("Editing User for Choice " + this.props.choiceId + ": ", data);
         
-        //If user was found, add the ID to the user data
-        if(typeof(this.state.foundUser.id) !== "undefined") {
-            user.id = this.state.foundUser.id;
-        }
-        //If user was looked for and not found, add set the user ID to false
-        else if(this.state.foundUser === false) {
-            user.id = 0;
-        }
+        var users = this.state.users;
+        var usersBeingEdited = this.state.usersBeingEdited;
+        var userIndexesByUsername = this.state.userIndexesByUsername;
+        var userIndexesBeingEdited = [];
+        data.users = [];
+        usersBeingEdited.forEach(function(username) {
+            var userIndex = userIndexesByUsername[username];
+            data.users.push(users[userIndex].id);
+            userIndexesBeingEdited.push(userIndex);
+        });
         
-        //Save the settings
-        var url = '../add_user/' + this.props.choiceId;
+        //Save the users' roles
+        var url = '../edit_user/' + this.props.choiceId;
         $.ajax({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: user,
+            data: data,
             success: function(data) {
                 console.log(data.response);
-                console.log(data.user);
                 
-                var currentUsers = this.state.users;    //Get the current users
-                currentUsers.push(data.user);   //Add the new user to current users
+                userIndexesBeingEdited.forEach(function(userIndex) {
+                    //Update the roles of the users being edited, to update state
+                    //currentUsers[userIndex]....
+                    
+                    //User id will only be in data.users array if user was successfully updated
+                    if(data.users.indexOf(users[userIndex].id) !== -1) { 
+                        users[userIndex].roles = data.roles;
+                    }
+                });
                 
                 //Update state with the new users array
                 this.setState({
-                    users: currentUsers,
+                    users: users,
                 });
                 this.handleEditUserDialogClose();
             }.bind(this),

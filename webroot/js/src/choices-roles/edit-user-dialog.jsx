@@ -56,34 +56,35 @@ var EditSelectedUsers = React.createClass({
                 open={this.props.state.editUserDialogOpen}
                 onRequestClose={this.handleDialogClose}
             >
-                <div>
-                    The additional roles will be edited for the following user{multipleUsersBeingEdited?"s":""}:
-                    <ul>
-                        {this.props.state.usersBeingEdited.map(function(username) {
-                            var user = users[userIndexesByUsername[username]];
-                            var fullname = user.fullname;
-                            var email = user.email;
-                            var nameOrEmail = fullname || email;
-                            var nameAndEmail = fullname && email;
-                            return (
-                                <li key={username}>
-                                    {username} 
-                                    {nameOrEmail?" (":""}
-                                    {fullname}
-                                    {nameAndEmail?", ":""}
-                                    {email}
-                                    {nameOrEmail?")":""}
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
                 <Formsy.Form
                     id="edit_users_form"
                     method="POST"
                     onValidSubmit={this.props.handlers.submit}
                     noValidate
                 >
+                    <div>
+                        The additional roles will be edited for the following user{multipleUsersBeingEdited?"s":""}:
+                        <ul>
+                            {this.props.state.usersBeingEdited.map(function(username, index) {
+                                var user = users[userIndexesByUsername[username]];
+                                var fullname = user.fullname;
+                                var email = user.email;
+                                var nameOrEmail = fullname || email;
+                                var nameAndEmail = fullname && email;
+                                var inputName = "users." + index;
+                                return (
+                                    <li key={username}>
+                                        {username} 
+                                        {nameOrEmail?" (":""}
+                                        {fullname}
+                                        {nameAndEmail?", ":""}
+                                        {email}
+                                        {nameOrEmail?")":""}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
                     <div>
                         <p>
                             Which additional roles should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
