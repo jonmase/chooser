@@ -7,16 +7,18 @@ var blankFindUserMessage = '\u00A0';
 
 var RolesContainer = React.createClass({
     getInitialState: function () {
-        var filterRoles = {};
+        /*var filterRoles = {};
         this.props.roleOptions.forEach(function(role) {
             filterRoles[role] = false;
-        });
+        });*/
     
         return {
             addUserDialogOpen: false,
             defaultRoles: this.props.initialDefaultRoles,
+            editSelectedUsersDialogOpen: false,
             editUserDialogOpen: false,
-            filterRoles: filterRoles,
+            //filterRoles: filterRoles,
+            filterRoles: [],
             sortUsersField: this.props.initialUserSortField,
             findUserMessage: {blankFindUserMessage},
             foundUser: {},
@@ -94,6 +96,125 @@ var RolesContainer = React.createClass({
         });
     },
     
+    //Check whether user is already associated with this Choice
+    handleCheckUserAssociation: function(searchValue) {
+        console.log("Checking whether User is associated: ", searchValue);
+        
+        var userAlreadyAssociated = this.state.users.some(function(user) {
+            return user.username === searchValue || user.email === searchValue;
+        });
+        if(userAlreadyAssociated) {
+            this.setState({
+                findUserMessage: 'User already associated. [[LINK: Edit their permissions]]',
+                foundUser: 'error',
+            });
+        }
+        return userAlreadyAssociated;
+    },
+    
+    handleEditSelectedUsersDialogOpen: function() {
+        this.setState({
+            editSelectedUsersDialogOpen: true,
+        });
+    },
+
+    handleEditSelectedUsersDialogClose: function() {
+        this.setState({
+            editSelectedUsersDialogOpen: false,
+        });
+    },
+
+    //Submit the edit users form
+    handleEditSelectedUsersSubmit: function (user) {
+        console.log("Saving User for Choice " + this.props.choiceId + ": ", user);
+        
+        //If user was found, add the ID to the user data
+        if(typeof(this.state.foundUser.id) !== "undefined") {
+            user.id = this.state.foundUser.id;
+        }
+        //If user was looked for and not found, add set the user ID to false
+        else if(this.state.foundUser === false) {
+            user.id = 0;
+        }
+        
+        //Save the settings
+        var url = '../add_user/' + this.props.choiceId;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: user,
+            success: function(data) {
+                console.log(data.response);
+                console.log(data.user);
+                
+                var currentUsers = this.state.users;    //Get the current users
+                currentUsers.push(data.user);   //Add the new user to current users
+                
+                currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
+                //Update state with the new users array
+                this.setState({
+                    users: currentUsers,
+                });
+                this.handleEditSelectedUsersDialogClose();
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    
+    handleEditUserDialogOpen: function() {
+        this.setState({
+            editUserDialogOpen: true,
+        });
+    },
+
+    handleEditUserDialogClose: function() {
+        this.setState({
+            editUserDialogOpen: false,
+        });
+    },
+
+    //Submit the edit user form
+    handleEditUserSubmit: function (user) {
+        console.log("Saving User for Choice " + this.props.choiceId + ": ", user);
+        
+        //If user was found, add the ID to the user data
+        if(typeof(this.state.foundUser.id) !== "undefined") {
+            user.id = this.state.foundUser.id;
+        }
+        //If user was looked for and not found, add set the user ID to false
+        else if(this.state.foundUser === false) {
+            user.id = 0;
+        }
+        
+        //Save the settings
+        var url = '../add_user/' + this.props.choiceId;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: user,
+            success: function(data) {
+                console.log(data.response);
+                console.log(data.user);
+                
+                var currentUsers = this.state.users;    //Get the current users
+                currentUsers.push(data.user);   //Add the new user to current users
+                
+                //Update state with the new users array
+                this.setState({
+                    users: currentUsers,
+                });
+                this.handleEditUserDialogClose();
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    
     handleSettingsChange: function() {
         this.setState({
             settingsButton: {
@@ -153,51 +274,30 @@ var RolesContainer = React.createClass({
         }); 
     },
 
-    //Check whether user is already associated with this Choice
-    handleCheckUserAssociation: function(searchValue) {
-        console.log("Checking whether User is associated: ", searchValue);
-        
-        var userAlreadyAssociated = this.state.users.some(function(user) {
-            return user.username === searchValue || user.email === searchValue;
-        });
-        if(userAlreadyAssociated) {
-            this.setState({
-                findUserMessage: 'User already associated. [[LINK: Edit their permissions]]',
-                foundUser: 'error',
-            });
-        }
-        return userAlreadyAssociated;
-    },
-    
     //
-    handleFilterUsersChange: function(event) {
+    //handleFilterUsersChange: function(event) {
+    handleFilterUsersChange: function(event, value) {
         console.log("User Role Filter changed");
-        console.log(this.state.filterRoles);
         
-        var filterRoles = this.state.filterRoles;
-        //Get the filtered roles
-        var targetSplit = event.target.name.split('.');
-        var role = targetSplit[1];
-        filterRoles[role] = event.target.checked;
         this.setState({
-            filterRoles: filterRoles
+            filterRoles: value
         });
-        console.log(this.state.filterRoles);
         return false;
     },
     
-    handleSortUsersChange: function(currentValues, isChanged) {
-        if(isChanged) {
-            console.log("User Sort changed to " + currentValues.sort);
+    //handleSortUsersChange: function(currentValues, isChanged) {
+    handleSortUsersChange: function(event, value) {
+        //if(isChanged) {
+            console.log("User Sort changed to " + value);
             
-            currentUsers = this.sortUsers(this.state.users, currentValues.sort);
+            currentUsers = this.sortUsers(this.state.users, value);
            
-           //Update state with the sorted users array and sortField
+            //Update state with the sorted users array and sortField
             this.setState({
-                sortUsersField: currentValues.sort,
+                sortUsersField: value,
                 users: currentUsers,
             });
-        }
+        //}
         return false;
     },
     
@@ -285,6 +385,18 @@ var RolesContainer = React.createClass({
             submit: this.handleAddUserSubmit,
         };
     
+        var editSelectedUsersHandlers={
+            dialogOpen: this.handleEditSelectedUsersDialogOpen,
+            dialogClose: this.handleEditSelectedUsersDialogClose,
+            submit: this.handleEditSelectedUsersSubmit,
+        };
+    
+        var editUserHandlers={
+            dialogOpen: this.handleEditUserDialogOpen,
+            dialogClose: this.handleEditUserDialogClose,
+            submit: this.handleEditUserSubmit,
+        };
+    
         var filterUsersHandlers={
             change: this.handleFilterUsersChange,
         };
@@ -305,6 +417,8 @@ var RolesContainer = React.createClass({
                     state={this.state} 
                     roleOptions={this.props.roleOptions} 
                     addUserHandlers={addUserHandlers}
+                    editUserHandlers={editUserHandlers}
+                    editSelectedUsersHandlers={editSelectedUsersHandlers}
                     filterUsersHandlers={filterUsersHandlers}
                     sortUsersHandlers={sortUsersHandlers}
                 />

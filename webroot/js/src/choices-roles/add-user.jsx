@@ -4,6 +4,7 @@ var FormsyText = require('formsy-material-ui/lib/FormsyText');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var RaisedButton = require('material-ui/lib/raised-button');
 var FlatButton = require('material-ui/lib/flat-button');
+var IconButton = require('material-ui/lib/icon-button');
 var Dialog = require('material-ui/lib/dialog');
 var RoleCheckboxes = require('./role-checkboxes.jsx');
 var FloatingActionButton = require('material-ui/lib/floating-action-button');
@@ -117,15 +118,22 @@ var AddUser = React.createClass({
         
         
         return (
-            <div>
+            <span>
                 {/*<RaisedButton 
                     label="Add User" 
                     primary={true} 
                     onTouchTap={this.handleDialogOpen}
-                />*/}
+                />
                 <FloatingActionButton onTouchTap={this.handleDialogOpen}>
                     <ContentAdd />
-                </FloatingActionButton>
+                </FloatingActionButton>*/}
+                <IconButton
+                    tooltip="Add User"
+                    onTouchTap={this.handleDialogOpen}
+                    iconClassName="material-icons"
+                >
+                    add
+                </IconButton>         
                 <Dialog
                     title="Add User with additional roles"
                     //actions={actions}
@@ -174,7 +182,7 @@ var AddUser = React.createClass({
                         </div>
                     </Formsy.Form>
                 </Dialog>
-            </div>
+            </span>
         );
     }
 });
