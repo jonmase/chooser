@@ -24,7 +24,6 @@ var EditSelectedUsers = React.createClass({
             <IconButton
                 onTouchTap={this.handleDialogOpen}
                 iconClassName="material-icons"
-                style={{padding: '12px 0', width: '24px'}}
             >
                 edit
             </IconButton>         

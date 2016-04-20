@@ -27,7 +27,9 @@ var styles = {
     },
     actionsTableRowColumn: {
         whiteSpace: 'normal',
-        width: '24px',
+        width: '48px',
+        paddingLeft: '12px',
+        paddingRight: '12px',
     },
     sortFilterTitles: {
         verticalAlign: '30%', 
