@@ -49,129 +49,119 @@ var UsersTable = React.createClass({
             muiTheme: GetMuiTheme(ChooserTheme),
         };
     },
-
+    _onRowSelection: function(selectedRows){
+        this.props.selectUserHandlers.change(selectedRows);
+    },
     render: function() {
         var props = this.props;
         var filterRoles = this.props.state.filterRoles;
         return (
-            <Card 
-                className="page-card"
-                //initiallyExpanded={true}
-            >
-                <CardHeader
-                    title="User Roles"
-                    subtitle="Give additional roles to specific users"
-                    //actAsExpander={true}
-                    //showExpandableButton={true}
+            <div>
+                <Card 
+                    className="page-card"
+                    //initiallyExpanded={true}
                 >
-                    <div style={{float: 'right'}}>
-                        <SortUsers 
-                            state={this.props.state}
-                            handlers={this.props.sortUsersHandlers} 
-                            titleStyle={styles.sortFilterTitles}
-                        />
-                        <FilterUsers
-                            state={this.props.state} 
-                            roleOptions={this.props.roleOptions} 
-                            handlers={this.props.filterUsersHandlers} 
-                            titleStyle={styles.sortFilterTitles}
-                        />
-                        <AddUser 
-                            state={this.props.state} 
-                            roleOptions={this.props.roleOptions} 
-                            handlers={this.props.addUserHandlers} 
-                        />
-                        <EditSelectedUsers
-                            state={this.props.state} 
-                            roleOptions={this.props.roleOptions} 
-                            handlers={this.props.editSelectedUsersHandlers} 
-                        />
-                        {/*<UsersActionMenu
-                        
-                        />*/}
-                    </div>
-                </CardHeader>
-                <CardText 
-                    //expandable={true}
-                    style={{paddingTop: '0'}}
-                >
-                    {/*<div style={{width: '100%', minHeight: '60px', marginBottom: '20px'}}>
-                        <div style={{float: 'right'}}>
-                            <AddUser 
-                                state={this.props.state} 
-                                roleOptions={this.props.roleOptions} 
-                                handlers={this.props.addUserHandlers} 
-                            />
-                        </div>
-                        <div style={{marginRight: '100px'}}>
-                            <SortUsers 
-                                state={this.props.state}
-                                handlers={this.props.sortUsersHandlers} 
-                                titleStyle={styles.sortFilterTitles}
-                            />
-                            <FilterUsers
-                                state={this.props.state} 
-                                roleOptions={this.props.roleOptions} 
-                                handlers={this.props.filterUsersHandlers} 
-                                titleStyle={styles.sortFilterTitles}
-                            />
-                        </div>
-                    </div>*/}
-                    <Table 
-                        //selectable={false}
-                        multiSelectable={true}
+                    <CardHeader
+                        title="User Roles"
+                        subtitle="Give additional roles to specific users"
+                        //actAsExpander={true}
+                        //showExpandableButton={true}
                     >
-                        <TableHeader 
-                            //adjustForCheckbox={false} 
-                            //displaySelectAll={false}
+                        <div style={{float: 'right'}}>
+                            <SortUsers 
+                                state={props.state}
+                                handlers={props.sortUsersHandlers} 
+                                titleStyle={styles.sortFilterTitles}
+                            />&nbsp;
+                            <FilterUsers
+                                state={props.state} 
+                                roleOptions={props.roleOptions} 
+                                handlers={props.filterUsersHandlers} 
+                                titleStyle={styles.sortFilterTitles}
+                            />&nbsp;
+                            <EditSelectedUsers
+                                state={props.state} 
+                                roleOptions={props.roleOptions} 
+                                handlers={props.editUserHandlers} 
+                            />&nbsp;
+                            <AddUser 
+                                state={props.state} 
+                                roleOptions={props.roleOptions} 
+                                handlers={props.addUserHandlers} 
+                            />
+                            {/*<UsersActionMenu
+                            
+                            />*/}
+                        </div>
+                    </CardHeader>
+                    <CardText 
+                        //expandable={true}
+                        style={{paddingTop: '0'}}
+                    >
+                        <Table 
+                            //selectable={false}
+                            multiSelectable={true}
+                            //onRowSelection={props.selectUserHandlers.change}
+                            onRowSelection={this._onRowSelection}
                         >
-                            <TableRow>
-                                <TableHeaderColumn>Username</TableHeaderColumn>
-                                <TableHeaderColumn>Name</TableHeaderColumn>
-                                <TableHeaderColumn>Email</TableHeaderColumn>
-                                <TableHeaderColumn>Roles</TableHeaderColumn>
-                                <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody 
-                            //displayRowCheckbox={false}
-                            deselectOnClickaway={false}
-                        >
-                            {this.props.state.users.map(function(user) {
-                                //If there are no role filters, or the user has one of the filtered roles, show them
-                                if(filterRoles.length === 0 || user.roles.some(function(role) { 
-                                    return filterRoles.indexOf(role) > -1; 
-                                })) {
-                                    return (
-                                        <TableRow key={user.username}>
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>
-                                                {user.roles.map(function(role) {
-                                                    return (
-                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
-                                                    );
-                                                })}
-                                            </TableRowColumn>
-                                            <TableRowColumn style={styles.actionsTableRowColumn}>
-                                                <EditUser
-                                                    handlers={props.editUserHandlers} 
-                                                />
-                                            </TableRowColumn>
-                                        </TableRow>
-                                    );
-                                }
-                            })}
-                        </TableBody>
-                    </Table>
-                    <EditUserDialog 
-                        state={props.state} 
-                        roleOptions={props.roleOptions} 
-                        handlers={props.editUserHandlers} 
-                    />
-                </CardText>
-            </Card>
+                            <TableHeader 
+                                //adjustForCheckbox={false} 
+                                //displaySelectAll={false}
+                            >
+                                <TableRow>
+                                    <TableHeaderColumn>Username</TableHeaderColumn>
+                                    <TableHeaderColumn>Name</TableHeaderColumn>
+                                    <TableHeaderColumn>Email</TableHeaderColumn>
+                                    <TableHeaderColumn>Roles</TableHeaderColumn>
+                                    <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody 
+                                //displayRowCheckbox={false}
+                                deselectOnClickaway={false}
+                            >
+                                {props.state.users.map(function(user, index) {
+                                    //If there are no role filters, or the user has one of the filtered roles, show them
+                                    if(filterRoles.length === 0 || user.roles.some(function(role) { 
+                                        return filterRoles.indexOf(role) > -1; 
+                                    })) {
+                                        var indexOfResult = props.state.usersSelected.indexOf(user.username);
+                                        var selected = props.state.usersSelected.indexOf(user.username) !== -1;
+                                        return (
+                                            <TableRow 
+                                                key={user.username} 
+                                                selected={props.state.usersSelected.indexOf(user.username) !== -1}
+                                            >
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>
+                                                    {user.roles.map(function(role) {
+                                                        return (
+                                                            <UsersRole key={user.username + '_' + role} user={user} role={role} />
+                                                        );
+                                                    })}
+                                                </TableRowColumn>
+                                                <TableRowColumn style={styles.actionsTableRowColumn}>
+                                                    <EditUser
+                                                        handlers={props.editUserHandlers} 
+                                                        user={user}
+                                                    />
+                                                </TableRowColumn>
+                                            </TableRow>
+                                        );
+                                    }
+                                })}
+                            </TableBody>
+                        </Table>
+                    </CardText>
+                </Card>
+                <EditUserDialog 
+                    state={props.state} 
+                    roleOptions={props.roleOptions} 
+                    handlers={props.editUserHandlers} 
+                />
+            </div>
         );
     }
 });

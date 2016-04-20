@@ -68,7 +68,10 @@ form > div, form > div.row > div {
 form > div:last-child, form > div.row {
     margin-bottom: 0;
 }
-
+.sublabel {
+    font-size: 85%;
+    opacity: 0.8;
+}
 
 /* BUTTONS */
 /* Make sure text is centralised in buttons with short labels */

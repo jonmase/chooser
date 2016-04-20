@@ -11,6 +11,11 @@ var RolesContainer = React.createClass({
         this.props.roleOptions.forEach(function(role) {
             filterRoles[role] = false;
         });*/
+        var users = this.props.initialUsers;
+        var userIndexesByUsername = {};
+        users.forEach(function(user, index) {
+            userIndexesByUsername[user.username] = index;
+        });
     
         return {
             addUserDialogOpen: false,
@@ -31,7 +36,10 @@ var RolesContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            users: this.props.initialUsers,
+            users: users,
+            userIndexesByUsername: userIndexesByUsername,
+            usersBeingEdited: [],
+            usersSelected: [],
         };
     },
     
@@ -81,12 +89,19 @@ var RolesContainer = React.createClass({
                 console.log(data.user);
                 
                 var currentUsers = this.state.users;    //Get the current users
-                currentUsers.push(data.user);   //Add the new user to current users
                 
+                currentUsers.push(data.user);   //Add the new user to current users
                 currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
+                
+                var userIndexesByUsername = {};
+                currentUsers.forEach(function(user, index) {
+                    userIndexesByUsername[user.username] = index;
+                });
+                
                 //Update state with the new users array
                 this.setState({
                     users: currentUsers,
+                    userIndexesByUsername: userIndexesByUsername,
                 });
                 this.handleAddUserDialogClose();
             }.bind(this),
@@ -112,67 +127,17 @@ var RolesContainer = React.createClass({
         return userAlreadyAssociated;
     },
     
-    handleEditSelectedUsersDialogOpen: function() {
-        this.setState({
-            editSelectedUsersDialogOpen: true,
-        });
-    },
-
-    handleEditSelectedUsersDialogClose: function() {
-        this.setState({
-            editSelectedUsersDialogOpen: false,
-        });
-    },
-
-    //Submit the edit users form
-    handleEditSelectedUsersSubmit: function (user) {
-        console.log("Saving User for Choice " + this.props.choiceId + ": ", user);
-        
-        //If user was found, add the ID to the user data
-        if(typeof(this.state.foundUser.id) !== "undefined") {
-            user.id = this.state.foundUser.id;
-        }
-        //If user was looked for and not found, add set the user ID to false
-        else if(this.state.foundUser === false) {
-            user.id = 0;
-        }
-        
-        //Save the settings
-        var url = '../add_user/' + this.props.choiceId;
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: user,
-            success: function(data) {
-                console.log(data.response);
-                console.log(data.user);
-                
-                var currentUsers = this.state.users;    //Get the current users
-                currentUsers.push(data.user);   //Add the new user to current users
-                
-                currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
-                //Update state with the new users array
-                this.setState({
-                    users: currentUsers,
-                });
-                this.handleEditSelectedUsersDialogClose();
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    
-    handleEditUserDialogOpen: function() {
+    handleEditUserDialogOpen: function(users) {
         this.setState({
             editUserDialogOpen: true,
+            usersBeingEdited: users,
         });
     },
 
     handleEditUserDialogClose: function() {
         this.setState({
             editUserDialogOpen: false,
+            usersBeingEdited: [],
         });
     },
 
@@ -211,6 +176,59 @@ var RolesContainer = React.createClass({
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    
+    //
+    //handleFilterUsersChange: function(event) {
+    handleFilterUsersChange: function(event, value) {
+        console.log("User Role Filter changed");
+        
+        this.setState({
+            filterRoles: value
+        });
+        return false;
+    },
+    
+    //Look up a user in the DB based on their username/email
+    handleFindUser: function(searchValue) {
+        console.log("Attempting to find User: ", searchValue);
+        
+        //Look the user up
+        var url = '../../users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+                    
+                var message = 'User found: '
+                if(data.user.fullname === null) {
+                    message += data.user.username;
+                }
+                else {
+                    message += data.user.fullname;
+                    message += ' (';
+                    message += data.user.username;
+                    if(data.user.email !== null && data.user.username !== data.user.email) {
+                        message += ', ' + data.user.email;
+                    }
+                    message += ')';
+                }
+
+                this.setState({
+                    findUserMessage: message,
+                    foundUser: data.user,
+                });
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                this.setState({
+                    findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
+                    foundUser: false,
+                });
             }.bind(this)
         });
     },
@@ -274,15 +292,49 @@ var RolesContainer = React.createClass({
         }); 
     },
 
-    //
-    //handleFilterUsersChange: function(event) {
-    handleFilterUsersChange: function(event, value) {
-        console.log("User Role Filter changed");
-        
+    handleRequestClose: function() {
         this.setState({
-            filterRoles: value
+            snackbar: {
+                open: false,
+                message: '',
+            },
         });
-        return false;
+    },
+    
+    handleSelectUserChange: function(userIndexes) {
+        //Special case when all rows are selected, users = "all"
+        if(userIndexes === "all") {
+            userIndexes = [];
+            this.state.users.forEach(function(user, index) {
+                userIndexes.push(index);
+            });
+        }
+        //Special case when all rows are selected, users = "all"
+        else if(userIndexes === "none") {
+            userIndexes = [];
+        }
+    
+        //Sort as numbers rather than strings
+        userIndexes.sort(function(a, b) {
+            return a - b;
+        });
+        console.log(userIndexes);
+        
+        var users = [];
+        this.state.users.forEach(function(user, index) {
+            if(userIndexes.indexOf(index) !== -1) {
+                users.push(user.username);
+            }
+        });
+        
+        //Leaves last item selected on select none if don't use setTimeout
+        //See https://github.com/callemall/material-ui/issues/1897
+        var thisThis = this;
+        setTimeout(function() {
+            thisThis.setState({
+                usersSelected: users,
+            });
+        }, 1);
     },
     
     //handleSortUsersChange: function(currentValues, isChanged) {
@@ -299,57 +351,6 @@ var RolesContainer = React.createClass({
             });
         //}
         return false;
-    },
-    
-    //Look up a user in the DB based on their username/email
-    handleFindUser: function(searchValue) {
-        console.log("Attempting to find User: ", searchValue);
-        
-        //Look the user up
-        var url = '../../users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'GET',
-            success: function(data) {
-                console.log(data);
-                    
-                var message = 'User found: '
-                if(data.user.fullname === null) {
-                    message += data.user.username;
-                }
-                else {
-                    message += data.user.fullname;
-                    message += ' (';
-                    message += data.user.username;
-                    if(data.user.email !== null && data.user.username !== data.user.email) {
-                        message += ', ' + data.user.email;
-                    }
-                    message += ')';
-                }
-
-                this.setState({
-                    findUserMessage: message,
-                    foundUser: data.user,
-                });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                this.setState({
-                    findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
-                    foundUser: false,
-                });
-            }.bind(this)
-        });
-    },
-    
-    handleRequestClose: function() {
-        this.setState({
-            snackbar: {
-                open: false,
-                message: '',
-            },
-        });
     },
     
     sortUsers: function(users, sortField) {
@@ -385,12 +386,6 @@ var RolesContainer = React.createClass({
             submit: this.handleAddUserSubmit,
         };
     
-        var editSelectedUsersHandlers={
-            dialogOpen: this.handleEditSelectedUsersDialogOpen,
-            dialogClose: this.handleEditSelectedUsersDialogClose,
-            submit: this.handleEditSelectedUsersSubmit,
-        };
-    
         var editUserHandlers={
             dialogOpen: this.handleEditUserDialogOpen,
             dialogClose: this.handleEditUserDialogClose,
@@ -399,6 +394,10 @@ var RolesContainer = React.createClass({
     
         var filterUsersHandlers={
             change: this.handleFilterUsersChange,
+        };
+    
+        var selectUserHandlers={
+            change: this.handleSelectUserChange,
         };
     
         var sortUsersHandlers={
@@ -418,8 +417,8 @@ var RolesContainer = React.createClass({
                     roleOptions={this.props.roleOptions} 
                     addUserHandlers={addUserHandlers}
                     editUserHandlers={editUserHandlers}
-                    editSelectedUsersHandlers={editSelectedUsersHandlers}
                     filterUsersHandlers={filterUsersHandlers}
+                    selectUserHandlers={selectUserHandlers}
                     sortUsersHandlers={sortUsersHandlers}
                 />
                 <Snackbar

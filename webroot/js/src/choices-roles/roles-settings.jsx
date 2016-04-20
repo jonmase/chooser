@@ -61,7 +61,7 @@ var RolesSettingsForm = React.createClass({
                             </div>
                             <div className="col-xs-12 col-sm-6">
                                 <FormsyToggle
-                                    label={<span><span>Notify users by email when they are given additional roles</span><br /><span>(default setting that can be overridden when additional roles are given)</span></span>}
+                                    label={<span><span>Notify users by email when they are given additional roles</span><br /><span className="sublabel">Default setting that can be overridden when additional roles are given</span></span>}
                                     defaultToggled={this.props.state.notify}
                                     labelPosition="right"
                                     name="notify"

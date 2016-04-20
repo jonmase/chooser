@@ -119,14 +119,6 @@ var AddUser = React.createClass({
         
         return (
             <span>
-                {/*<RaisedButton 
-                    label="Add User" 
-                    primary={true} 
-                    onTouchTap={this.handleDialogOpen}
-                />
-                <FloatingActionButton onTouchTap={this.handleDialogOpen}>
-                    <ContentAdd />
-                </FloatingActionButton>*/}
                 <IconButton
                     tooltip="Add User"
                     onTouchTap={this.handleDialogOpen}

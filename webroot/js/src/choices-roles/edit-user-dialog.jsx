@@ -24,6 +24,12 @@ var EditSelectedUsers = React.createClass({
     },
     
     render: function() {
+        var users = this.props.state.users;
+        var userIndexesByUsername = this.props.state.userIndexesByUsername;
+        var multipleUsersBeingEdited = this.props.state.usersBeingEdited.length > 1;
+        var toggleLabel = "Notify the user";
+        toggleLabel += multipleUsersBeingEdited?"s":"";
+        toggleLabel += " of the changes to their additional roles by email";
         var actions = [
             <FlatButton
                 key="cancel"
@@ -44,12 +50,34 @@ var EditSelectedUsers = React.createClass({
         
         return (
             <Dialog
-                title="Edit User with additional roles"
+                title="Edit Additional Roles"
                 //actions={actions}
                 //modal={false}
                 open={this.props.state.editUserDialogOpen}
                 onRequestClose={this.handleDialogClose}
             >
+                <div>
+                    The additional roles will be edited for the following user{multipleUsersBeingEdited?"s":""}:
+                    <ul>
+                        {this.props.state.usersBeingEdited.map(function(username) {
+                            var user = users[userIndexesByUsername[username]];
+                            var fullname = user.fullname;
+                            var email = user.email;
+                            var nameOrEmail = fullname || email;
+                            var nameAndEmail = fullname && email;
+                            return (
+                                <li key={username}>
+                                    {username} 
+                                    {nameOrEmail?" (":""}
+                                    {fullname}
+                                    {nameAndEmail?", ":""}
+                                    {email}
+                                    {nameOrEmail?")":""}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
                 <Formsy.Form
                     id="edit_users_form"
                     method="POST"
@@ -57,11 +85,14 @@ var EditSelectedUsers = React.createClass({
                     noValidate
                 >
                     <div>
-                        <div>Which additional roles should this user have (this will override the default role(s) that they would be given when they first access the Choice):</div>
+                        <p>
+                            Which additional roles should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
+                            <span className="sublabel">This will replace their current additional roles, and will override the default role(s) that they would be given when they first access the Choice</span>
+                        </p>
                         <RoleCheckboxes nameBase="editRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                     </div>
                     <FormsyToggle
-                        label="Notify the users of the changes to their additional roles by email"
+                        label={toggleLabel}
                         defaultToggled={this.props.state.notify}
                         labelPosition="right"
                         name="notify"

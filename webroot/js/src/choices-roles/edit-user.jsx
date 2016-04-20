@@ -16,7 +16,7 @@ var EditSelectedUsers = React.createClass({
     },
 
     handleDialogOpen: function() {
-        this.props.handlers.dialogOpen();
+        this.props.handlers.dialogOpen([this.props.user.username]);
     },
     
     render: function() {
