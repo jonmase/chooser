@@ -80,14 +80,20 @@ class ChoicesController extends AppController
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
         if(empty($isAdmin)) {
-            throw new ForbiddenException(__('Not permitted to view/exit Choice roles.'));
+            throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
         $userSortField = 'username';
         $choice = $this->Choices->get($id, [
-            'contain' => ['Users' => ['sort' => ['Users.' . $userSortField => 'ASC']]]
+            'contain' => [
+                'Users' => [    //Include the users
+                    'sort' => ['Users.' . $userSortField => 'ASC'], 
+                    //'conditions' => ['Users.id <>' => $this->Auth->user('id')]  //exclude self
+                ]
+            ]
         ]);
         $users = $choice->users;
+
         unset($choice->users);
         foreach($users as $user) {
             //Get roles from _joinData, including view role
@@ -256,40 +262,39 @@ class ChoicesController extends AppController
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
         if(empty($isAdmin)) {
-            throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
         if ($this->request->is('post')) {
             //pr($this->request->data);
-            $users = [];
-            
             $choice = $this->Choices->get($id); //Get the choice
-            $choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
+            //$choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
             
             //Set the roles
-            $defaultRoles = [];
+            $roles = [];
             foreach($this->request->data['editRoles'] as $role => $value) {
-                $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            }
-
-            foreach($this->request->data['users'] as $userId) { //Loop through the submitted users
-                $user = $this->Choices->Users->get($userId);    //Get the user from the DB
-                
-                $user->choices = [$choice]; //Add the choice to the user
-                $users[] = $user;   //Add the user to the users array
+                $roles[$role] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
             }
             
             $savedUsers = [];
             $failedUsers = [];
-            //Save each user, adding them to the savedUsers array that will be sent back to the view
-            foreach($users as $user) {
+            foreach($this->request->data['users'] as $userId) { //Loop through the submitted users
+                $user = $this->Choices->Users->get($userId);    //Get the user from the DB
+
+                //Create a new ChoicesUsers entity for the _joinData, so we don't keep the data from the previous save
+                $choice->_joinData = $this->Choices->ChoicesUsers->newEntity($roles);
+                $user->choices = [$choice]; //Add the choice to the user, as the first and member of a choices array
+
+                //Save each user, adding them to the savedUsers array that will be sent back to the view
                 if($this->Choices->Users->save($user)) {
                     $savedUsers[] = $user->id;
                 }
+                //Add any users that failed to save to the failedUsers array
                 else {
                     $failedUsers[] = $user->id;
                 }
             }
+            
             $this->set('response', 'User roles updated');
             $this->set('savedUsers', $savedUsers);   //Pass the saved users to the view
             $this->set('failedUsers', $failedUsers);   //Pass the failed users to the view
@@ -299,7 +304,7 @@ class ChoicesController extends AppController
             $this->set('roles', $roles);
         }
         else {
-            throw new MethodNotAllowedException(__('Adding users requires POST'));
+            throw new MethodNotAllowedException(__('Editing users requires POST'));
         }
     }
     

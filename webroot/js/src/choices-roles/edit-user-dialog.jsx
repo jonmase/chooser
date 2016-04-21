@@ -30,6 +30,17 @@ var EditSelectedUsers = React.createClass({
         var toggleLabel = "Notify the user";
         toggleLabel += multipleUsersBeingEdited?"s":"";
         toggleLabel += " of the changes to their additional roles by email";
+        
+        var rolesSelected = this.props.state.defaultRoles;   //Use default roles from state for selected Roles
+        //If only one user is being edited, show their existing roles, rather than the default roles
+        if(this.props.state.usersBeingEdited.length === 1) {
+            rolesSelected = {};
+            var user = users[userIndexesByUsername[this.props.state.usersBeingEdited[0]]];
+            user.roles.map(function(role) {
+                rolesSelected[role] = true;
+            });
+        }
+        
         var actions = [
             <FlatButton
                 key="cancel"
@@ -88,9 +99,9 @@ var EditSelectedUsers = React.createClass({
                     <div>
                         <p>
                             Which additional roles should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
-                            <span className="sublabel">This will replace their current additional roles, and will override the default role(s) that they would be given when they first access the Choice</span>
+                            <span className="sublabel">This will replace their current additional roles, and will add to, but not replace, the default role(s) (see "Default Settings", above) that are based on their permissions in WebLearn</span>
                         </p>
-                        <RoleCheckboxes nameBase="editRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
+                        <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
                     </div>
                     <FormsyToggle
                         label={toggleLabel}

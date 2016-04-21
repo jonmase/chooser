@@ -52,6 +52,9 @@ var UsersTable = React.createClass({
     _onRowSelection: function(selectedRows){
         this.props.selectUserHandlers.change(selectedRows);
     },
+    _onSelectAll: function(selectedRows){
+        this.props.selectUserHandlers.change(selectedRows);
+    },
     render: function() {
         var props = this.props;
         var filterRoles = this.props.state.filterRoles;
@@ -103,10 +106,11 @@ var UsersTable = React.createClass({
                             multiSelectable={true}
                             //onRowSelection={props.selectUserHandlers.change}
                             onRowSelection={this._onRowSelection}
+                            //allRowsSelected={props.state.selectAllSelected}
                         >
                             <TableHeader 
                                 //adjustForCheckbox={false} 
-                                //displaySelectAll={false}
+                                displaySelectAll={false}
                             >
                                 <TableRow>
                                     <TableHeaderColumn>Username</TableHeaderColumn>
@@ -120,37 +124,35 @@ var UsersTable = React.createClass({
                                 //displayRowCheckbox={false}
                                 deselectOnClickaway={false}
                             >
-                                {props.state.users.map(function(user, index) {
-                                    //If there are no role filters, or the user has one of the filtered roles, show them
-                                    if(filterRoles.length === 0 || user.roles.some(function(role) { 
-                                        return filterRoles.indexOf(role) > -1; 
-                                    })) {
-                                        var indexOfResult = props.state.usersSelected.indexOf(user.username);
-                                        var selected = props.state.usersSelected.indexOf(user.username) !== -1;
-                                        return (
-                                            <TableRow 
-                                                key={user.username} 
-                                                selected={props.state.usersSelected.indexOf(user.username) !== -1}
-                                            >
-                                                <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
-                                                <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
-                                                <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
-                                                <TableRowColumn style={styles.tableRowColumn}>
-                                                    {user.roles.map(function(role) {
-                                                        return (
-                                                            <UsersRole key={user.username + '_' + role} user={user} role={role} />
-                                                        );
-                                                    })}
-                                                </TableRowColumn>
-                                                <TableRowColumn style={styles.actionsTableRowColumn}>
+                                {props.state.filteredUserIndexes.map(function(userIndex) {
+                                    var user = props.state.users[userIndex];
+                                    return (
+                                        <TableRow 
+                                            key={user.username} 
+                                            className={user.current?"self":""}
+                                            selectable={!user.current}
+                                            selected={props.state.usersSelected.indexOf(user.username) !== -1}
+                                        >
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
+                                            <TableRowColumn style={styles.tableRowColumn}>
+                                                {user.roles.map(function(role) {
+                                                    return (
+                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
+                                                    );
+                                                })}
+                                            </TableRowColumn>
+                                            <TableRowColumn style={styles.actionsTableRowColumn}>
+                                                {!user.current?
                                                     <EditUser
                                                         handlers={props.editUserHandlers} 
                                                         user={user}
                                                     />
-                                                </TableRowColumn>
-                                            </TableRow>
-                                        );
-                                    }
+                                                :""}
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    );
                                 })}
                             </TableBody>
                         </Table>

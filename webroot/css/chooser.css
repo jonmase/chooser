@@ -78,3 +78,8 @@ form > div:last-child, form > div.row {
 a[type="button"] {  
     text-align: center;
 }
+
+/* ROLES PAGE */
+tr.self td:first-child div {
+    display: none;  /*Hide the checkbox for the current user's row*/
+}

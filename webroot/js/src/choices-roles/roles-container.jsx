@@ -13,8 +13,10 @@ var RolesContainer = React.createClass({
         });*/
         var users = this.props.initialUsers;
         var userIndexesByUsername = {};
+        var filteredUserIndexes = [];
         users.forEach(function(user, index) {
             userIndexesByUsername[user.username] = index;
+            filteredUserIndexes.push(index);
         });
     
         return {
@@ -24,10 +26,12 @@ var RolesContainer = React.createClass({
             editUserDialogOpen: false,
             //filterRoles: filterRoles,
             filterRoles: [],
+            filteredUserIndexes: filteredUserIndexes,
             sortUsersField: this.props.initialUserSortField,
             findUserMessage: {blankFindUserMessage},
             foundUser: {},
             notify: this.props.initialNotify,
+            selectAllSelected: true,
             settingsButton: {
                 disabled: true,
                 label: 'Saved',
@@ -84,13 +88,12 @@ var RolesContainer = React.createClass({
             dataType: 'json',
             type: 'POST',
             data: user,
-            success: function(data) {
-                console.log(data.response);
-                console.log(data.user);
+            success: function(returnedData) {
+                //console.log(returnedData.response);
                 
                 var currentUsers = this.state.users;    //Get the current users
                 
-                currentUsers.push(data.user);   //Add the new user to current users
+                currentUsers.push(returnedData.user);   //Add the new user to current users
                 currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
                 
                 var userIndexesByUsername = {};
@@ -98,10 +101,17 @@ var RolesContainer = React.createClass({
                     userIndexesByUsername[user.username] = index;
                 });
                 
+                //Show the snackbar
+                var snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                
                 //Update state with the new users array
                 this.setState({
                     users: currentUsers,
                     userIndexesByUsername: userIndexesByUsername,
+                    snackbar: snackbar,
                 });
                 this.handleAddUserDialogClose();
             }.bind(this),
@@ -143,17 +153,22 @@ var RolesContainer = React.createClass({
 
     //Submit the edit user form
     handleEditUserSubmit: function (data) {
-        console.log("Editing User for Choice " + this.props.choiceId + ": ", data);
+        console.log("Editing User(s) for Choice " + this.props.choiceId + ": ", data);
         
+        //Get the state
         var users = this.state.users;
         var usersBeingEdited = this.state.usersBeingEdited;
         var userIndexesByUsername = this.state.userIndexesByUsername;
-        var userIndexesBeingEdited = [];
-        data.users = [];
+        var filterRoles = this.state.filterRoles;
+        
+        var userIndexesBeingEdited = [];    //Keep track of the indexes of the users we are editing
+        data.users = [];    //Create array for adding the users to the data that will be sent
+        
+        //Loop through the users being edited...
         usersBeingEdited.forEach(function(username) {
-            var userIndex = userIndexesByUsername[username];
-            data.users.push(users[userIndex].id);
-            userIndexesBeingEdited.push(userIndex);
+            var userIndex = userIndexesByUsername[username];    //Get the index of the user
+            data.users.push(users[userIndex].id);   //Add the user ID to the data.users array
+            userIndexesBeingEdited.push(userIndex); //Add the index to userIndexesBeingEdited array
         });
         
         //Save the users' roles
@@ -164,10 +179,11 @@ var RolesContainer = React.createClass({
             type: 'POST',
             data: data,
             success: function(returnedData) {
-                console.log(data.response);
+                console.log(returnedData.response);
                 
+                //Loop through the indexes of the users being edited
                 userIndexesBeingEdited.forEach(function(userIndex) {
-                    //User id will only be in returnedData.savedUsers array if user was successfully updated
+                    //User ID will only be in returnedData.savedUsers array if user was successfully updated
                     if(returnedData.savedUsers.indexOf(users[userIndex].id) !== -1) { 
                         //Update the roles of the users being edited, to update state
                         users[userIndex].roles = returnedData.roles;
@@ -176,9 +192,21 @@ var RolesContainer = React.createClass({
                     //TODO: Deal with users that were not saved (in returnedData.failedUsers)
                 });
                 
-                //Update state with the new users array
+                //Refilter the users to account for new roles
+                var filteredUserIndexes = this.filterUsers(users, filterRoles);
+                
+                //Show the snackbar
+                var snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                
+                //Update state with the new users array and filteredIndexes
                 this.setState({
                     users: users,
+                    filteredUserIndexes: filteredUserIndexes,
+                    usersSelected: [],  //Unselect users - otherwise it will be confusing if users are no longer shown as they don't match the filters, but remain selected.
+                    snackbar: snackbar,
                 });
                 this.handleEditUserDialogClose();
             }.bind(this),
@@ -188,17 +216,33 @@ var RolesContainer = React.createClass({
         });
     },
     
-    //
-    //handleFilterUsersChange: function(event) {
-    handleFilterUsersChange: function(event, value) {
+    //Update state when user role filter is changed
+    handleFilterUsersChange: function(event, roles) {
         console.log("User Role Filter changed");
         
+        var filteredUserIndexes = this.filterUsers(this.state.users, roles);
+        
         this.setState({
-            filterRoles: value
+            filterRoles: roles,
+            filteredUserIndexes: filteredUserIndexes,
+            selectAllSelected: false,
         });
-        return false;
     },
     
+    filterUsers: function(users, roles) {
+        var filteredUserIndexes = [];
+        
+        users.forEach(function(user, index) {
+            if(roles.length === 0 || user.roles.some(function(role) { 
+                return roles.indexOf(role) > -1; 
+            })) {
+                filteredUserIndexes.push(index);
+            }
+        });
+        
+        return filteredUserIndexes;
+    },
+
     //Look up a user in the DB based on their username/email
     handleFindUser: function(searchValue) {
         console.log("Attempting to find User: ", searchValue);
@@ -241,6 +285,71 @@ var RolesContainer = React.createClass({
         });
     },
     
+    handleRequestClose: function() {
+        this.setState({
+            snackbar: {
+                open: false,
+                message: '',
+            },
+        });
+    },
+    
+    handleSelectUserChange: function(rowIndexes) {
+        var userIndexes = [];
+        var filteredUserIndexes = this.state.filteredUserIndexes;
+        
+        rowIndexes.forEach(function(index) {
+            userIndexes.push(filteredUserIndexes[index]);
+        });
+        
+        //Special case when all rows are selected, users = "all"
+        //Caused issues in combination with filters, so disabled
+        //TODO: Check whether Material-UI updates have fixed issues
+        //Problem came when selecting all filtered, then removing filters, all of the users would be selected not just those that were visible when filtered
+        /*if(rowIndexes === "all") {
+            filteredUserIndexes.forEach(function(userIndex) {
+                userIndexes.push(userIndex);
+            });
+            this.setState({
+                selectAllSelected: true,
+            });
+        }
+        //Special case when nno rows are selected, users = "none"
+        else if(rowIndexes === "none") {
+            this.setState({
+                selectAllSelected: false,
+            });
+            //Leave userIndexes empty
+        }
+        else {
+            rowIndexes.forEach(function(index) {
+                userIndexes.push(filteredUserIndexes[index]);
+            });
+        }*/
+    
+        //Sort as numbers rather than strings
+        userIndexes.sort(function(a, b) {
+            return a - b;
+        });
+        console.log(userIndexes);
+        
+        var usersSelected = [];
+        this.state.users.forEach(function(user, index) {
+            if(userIndexes.indexOf(index) !== -1) {
+                usersSelected.push(user.username);
+            }
+        });
+        
+        //Leaves last item selected on select none if don't use setTimeout
+        //See https://github.com/callemall/material-ui/issues/1897
+        var thisThis = this;
+        setTimeout(function() {
+            thisThis.setState({
+                usersSelected: usersSelected,
+            });
+        }, 1);
+    },
+    
     handleSettingsChange: function() {
         this.setState({
             settingsButton: {
@@ -268,8 +377,8 @@ var RolesContainer = React.createClass({
             dataType: 'json',
             type: 'POST',
             data: settings,
-            success: function(data) {
-                console.log(data.response);
+            success: function(returnedData) {
+                console.log(returnedData.response);
                 //Update the state with the updated data, and set 
                 var stateData = settings;
                 stateData.settingsButton = {
@@ -278,11 +387,10 @@ var RolesContainer = React.createClass({
                 };
                 stateData.snackbar = {
                     open: true,
-                    message: data.response,
+                    message: returnedData.response,
                 }
                 
                 this.setState(stateData);
-                console.log('done');
             }.bind(this),
             error: function(xhr, status, err) {
                 this.setState({
@@ -300,64 +408,16 @@ var RolesContainer = React.createClass({
         }); 
     },
 
-    handleRequestClose: function() {
-        this.setState({
-            snackbar: {
-                open: false,
-                message: '',
-            },
-        });
-    },
-    
-    handleSelectUserChange: function(userIndexes) {
-        //Special case when all rows are selected, users = "all"
-        if(userIndexes === "all") {
-            userIndexes = [];
-            this.state.users.forEach(function(user, index) {
-                userIndexes.push(index);
-            });
-        }
-        //Special case when all rows are selected, users = "all"
-        else if(userIndexes === "none") {
-            userIndexes = [];
-        }
-    
-        //Sort as numbers rather than strings
-        userIndexes.sort(function(a, b) {
-            return a - b;
-        });
-        console.log(userIndexes);
-        
-        var users = [];
-        this.state.users.forEach(function(user, index) {
-            if(userIndexes.indexOf(index) !== -1) {
-                users.push(user.username);
-            }
-        });
-        
-        //Leaves last item selected on select none if don't use setTimeout
-        //See https://github.com/callemall/material-ui/issues/1897
-        var thisThis = this;
-        setTimeout(function() {
-            thisThis.setState({
-                usersSelected: users,
-            });
-        }, 1);
-    },
-    
-    //handleSortUsersChange: function(currentValues, isChanged) {
     handleSortUsersChange: function(event, value) {
-        //if(isChanged) {
-            console.log("User Sort changed to " + value);
-            
-            currentUsers = this.sortUsers(this.state.users, value);
-           
-            //Update state with the sorted users array and sortField
-            this.setState({
-                sortUsersField: value,
-                users: currentUsers,
-            });
-        //}
+        console.log("User Sort changed to " + value);
+        
+        currentUsers = this.sortUsers(this.state.users, value);
+       
+        //Update state with the sorted users array and sortField
+        this.setState({
+            sortUsersField: value,
+            users: currentUsers,
+        });
         return false;
     },
     

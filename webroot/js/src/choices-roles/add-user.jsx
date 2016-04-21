@@ -160,7 +160,10 @@ var AddUser = React.createClass({
                         />
                         <div>{this.props.state.findUserMessage}</div>
                         <div>
-                            <div>Which additional roles should this user have (this will override the default role(s) that they would be given when they first access the Choice):</div>
+                            <p>
+                                Which additional roles should this user have? <br />
+                                <span className="sublabel">Additional roles will add to, but not replace, the default role(s) (see "Default Settings", above) that are based on their permissions in WebLearn</span>
+                            </p>
                             <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                         </div>
                         <FormsyToggle
