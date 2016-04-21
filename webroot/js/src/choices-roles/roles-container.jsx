@@ -163,17 +163,17 @@ var RolesContainer = React.createClass({
             dataType: 'json',
             type: 'POST',
             data: data,
-            success: function(data) {
+            success: function(returnedData) {
                 console.log(data.response);
                 
                 userIndexesBeingEdited.forEach(function(userIndex) {
-                    //Update the roles of the users being edited, to update state
-                    //currentUsers[userIndex]....
-                    
-                    //User id will only be in data.users array if user was successfully updated
-                    if(data.users.indexOf(users[userIndex].id) !== -1) { 
-                        users[userIndex].roles = data.roles;
+                    //User id will only be in returnedData.savedUsers array if user was successfully updated
+                    if(returnedData.savedUsers.indexOf(users[userIndex].id) !== -1) { 
+                        //Update the roles of the users being edited, to update state
+                        users[userIndex].roles = returnedData.roles;
                     }
+                    
+                    //TODO: Deal with users that were not saved (in returnedData.failedUsers)
                 });
                 
                 //Update state with the new users array

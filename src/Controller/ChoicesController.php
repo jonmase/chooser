@@ -279,20 +279,20 @@ class ChoicesController extends AppController
                 $users[] = $user;   //Add the user to the users array
             }
             
-            //Save each user, adding them to the savedUsers array that will be sent back to the view
-            //TODO: make this transactional??
             $savedUsers = [];
+            $failedUsers = [];
+            //Save each user, adding them to the savedUsers array that will be sent back to the view
             foreach($users as $user) {
                 if($this->Choices->Users->save($user)) {
                     $savedUsers[] = $user->id;
                 }
                 else {
-                    //TODO: Send back a warning about any users that were not saved successfully
-                    //throw new InternalErrorException(__('Problem with editing user roles'));
+                    $failedUsers[] = $user->id;
                 }
             }
             $this->set('response', 'User roles updated');
-            $this->set('users', $savedUsers);   //Pass the saved users to the view
+            $this->set('savedUsers', $savedUsers);   //Pass the saved users to the view
+            $this->set('failedUsers', $failedUsers);   //Pass the failed users to the view
            
             //Process the roles that have been given the users and pass them to the view
             $roles = $this->Choices->ChoicesUsers->processRoles($choice->_joinData, true);
