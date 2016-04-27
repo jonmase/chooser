@@ -107,10 +107,14 @@ var RolesContainer = React.createClass({
                     message: returnedData.response,
                 }
                 
+                //Refilter the users to account for new roles/removed users
+                var filteredUserIndexes = this.filterUsers(currentUsers, this.state.filterRoles);
+                
                 //Update state with the new users array
                 this.setState({
                     users: currentUsers,
                     userIndexesByUsername: userIndexesByUsername,
+                    filteredUserIndexes: filteredUserIndexes,
                     snackbar: snackbar,
                 });
                 this.handleAddUserDialogClose();
@@ -156,7 +160,7 @@ var RolesContainer = React.createClass({
         console.log("Editing User(s) for Choice " + this.props.choiceId + ": ", data);
         
         //Get the state
-        var users = this.state.users;
+        var currentUsers = this.state.users;
         var usersBeingEdited = this.state.usersBeingEdited;
         var userIndexesByUsername = this.state.userIndexesByUsername;
         var filterRoles = this.state.filterRoles;
@@ -167,7 +171,7 @@ var RolesContainer = React.createClass({
         //Loop through the users being edited...
         usersBeingEdited.forEach(function(username) {
             var userIndex = userIndexesByUsername[username];    //Get the index of the user
-            data.users.push(users[userIndex].id);   //Add the user ID to the data.users array
+            data.users.push(currentUsers[userIndex].id);   //Add the user ID to the data.users array
             userIndexesBeingEdited.push(userIndex); //Add the index to userIndexesBeingEdited array
         });
         
@@ -182,18 +186,28 @@ var RolesContainer = React.createClass({
                 console.log(returnedData.response);
                 
                 //Loop through the indexes of the users being edited
-                userIndexesBeingEdited.forEach(function(userIndex) {
-                    //User ID will only be in returnedData.savedUsers array if user was successfully updated
-                    if(returnedData.savedUsers.indexOf(users[userIndex].id) !== -1) { 
-                        //Update the roles of the users being edited, to update state
-                        users[userIndex].roles = returnedData.roles;
+                //Have to loop backwards to avoid changing the indexes when splicing
+                var userIndex = currentUsers.length;
+                while(userIndex--) {    //Loop through the users array backwards
+                    if(userIndexesBeingEdited.indexOf(userIndex) !== -1) {  //Is this user being edited?
+                        //User ID will only be in returnedData.deletedUsers array if user was successfully deleted
+                        if(returnedData.deletedUsers.indexOf(currentUsers[userIndex].id) !== -1) { 
+                            //Remove the user from the users array
+                            currentUsers.splice(userIndex, 1);
+                        }
+                        
+                        //User ID will only be in returnedData.savedUsers array if user was successfully updated
+                        if(returnedData.savedUsers.indexOf(currentUsers[userIndex].id) !== -1) { 
+                            //Update the roles of the users being edited, to update state
+                            currentUsers[userIndex].roles = returnedData.roles;
+                        }
+                        
+                        //TODO: Deal with users that were not saved (in returnedData.failedUsers)
                     }
-                    
-                    //TODO: Deal with users that were not saved (in returnedData.failedUsers)
-                });
+                }
                 
-                //Refilter the users to account for new roles
-                var filteredUserIndexes = this.filterUsers(users, filterRoles);
+                //Refilter the users to account for new roles/removed users
+                var filteredUserIndexes = this.filterUsers(currentUsers, filterRoles);
                 
                 //Show the snackbar
                 var snackbar = {
@@ -203,8 +217,9 @@ var RolesContainer = React.createClass({
                 
                 //Update state with the new users array and filteredIndexes
                 this.setState({
-                    users: users,
+                    users: currentUsers,
                     filteredUserIndexes: filteredUserIndexes,
+                    usersBeingEdited: [],
                     usersSelected: [],  //Unselect users - otherwise it will be confusing if users are no longer shown as they don't match the filters, but remain selected.
                     snackbar: snackbar,
                 });
@@ -234,7 +249,7 @@ var RolesContainer = React.createClass({
         
         users.forEach(function(user, index) {
             if(roles.length === 0 || user.roles.some(function(role) { 
-                return roles.indexOf(role) > -1; 
+                return roles.indexOf(role.id) > -1; 
             })) {
                 filteredUserIndexes.push(index);
             }

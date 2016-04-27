@@ -240,7 +240,7 @@ class ChoicesController extends AppController
                 $user->roles = $this->Choices->ChoicesUsers->processRoles($choice->_joinData, true);  
                 unset($user->choices);
 
-                $this->set('response', 'User saved');
+                $this->set('response', 'Additional permissions granted');
                 $this->set('user', $user);
             } 
             else {
@@ -270,47 +270,75 @@ class ChoicesController extends AppController
         }
 
         if ($this->request->is('post')) {
-            //pr($this->request->data);
+            //pr($this->request->data); exit;
             $choice = $this->Choices->get($id); //Get the choice
             //$choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
             
             //Set the roles
             $roles = [];
+            $noRoles = true;    //Test whether there are any additional roles
             foreach($this->request->data['editRoles'] as $role => $value) {
-                $roles[$role] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                $boolValue = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                $roles[$role] = $boolValue;
+                if($boolValue) { $noRoles = false; }
             }
             
+            $userCount = 0;
             $savedUsers = [];
+            $deletedUsers = [];
             $failedUsers = [];
+            
             foreach($this->request->data['users'] as $userId) { //Loop through the submitted users
-                //Get the user record from the DB
-                $user = $this->Choices->Users->get($userId);
-                
+                $userId += 0;   //Make sure userId is integer
                 //Get the ChoicesUsers record for this choice/user
-                $choicesUser = $this->Choices->ChoicesUsers->find('all', [
+                $choicesUserQuery = $this->Choices->ChoicesUsers->find('all', [
                     'fields' => ['id', 'user_id', 'choice_id'],
                     'conditions' => [
                         'ChoicesUsers.choice_id' => $id,
                         'ChoicesUsers.user_id' => $userId,
                     ],
                 ]);
-
-                //Patch the ChoicesUsers entity with the new roles, for the _joinData
-                $choice->_joinData = $this->Choices->ChoicesUsers->patchEntity($choicesUser->first(), $roles);
-                $user->choices = [$choice]; //Add the choice to the user, as the first and member of a choices array
-
-                //Save the user, adding them to the savedUsers array that will be sent back to the view
-                if($this->Choices->Users->save($user)) {
-                    $savedUsers[] = $user->id;
+                $choicesUser = $choicesUserQuery->first();
+                //If no roles are set for this user, delete them from the ChoicesUsers table
+                if($noRoles) {
+                    if($this->Choices->ChoicesUsers->delete($choicesUser)) {
+                        $deletedUsers[] = $userId;
+                        $userCount++;
+                    }
+                    else {
+                        $failedUsers[] = $userId;
+                    }
                 }
-                //Add any users that failed to save to the failedUsers array
                 else {
-                    $failedUsers[] = $user->id;
+                    //Get the user record from the DB
+                    $user = $this->Choices->Users->get($userId);
+
+                    //Patch the ChoicesUsers entity with the new roles, for the _joinData
+                    $choice->_joinData = $this->Choices->ChoicesUsers->patchEntity($choicesUser, $roles);
+                    $user->choices = [$choice]; //Add the choice to the user, as the first and member of a choices array
+
+                    //Save the user, adding them to the savedUsers array that will be sent back to the view
+                    if($this->Choices->Users->save($user)) {
+                        $savedUsers[] = $user->id;
+                        $userCount++;
+                    }
+                    //Add any users that failed to save to the failedUsers array
+                    else {
+                        $failedUsers[] = $user->id;
+                    }
                 }
             }
             
-            $this->set('response', 'User roles updated');
+            $s = $userCount>1?'s':'';
+            if($noRoles) {
+                $response = 'Additional permissions removed for ' . $userCount . ' user' . $s;
+            }
+            else {
+                $response = 'Additional permissions updated for ' . $userCount . ' user' . $s;
+            }
+            $this->set('response', $response);
             $this->set('savedUsers', $savedUsers);   //Pass the saved users to the view
+            $this->set('deletedUsers', $deletedUsers);   //Pass the deleted users to the view
             $this->set('failedUsers', $failedUsers);   //Pass the failed users to the view
            
             //Process the roles that have been given the users and pass them to the view
