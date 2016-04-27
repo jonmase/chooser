@@ -54,7 +54,7 @@ class ChoicesController extends AppController
     public function dashboard($id = null)
     {
         //Get user's roles for this Choice
-        $roles = $this->Choices->ChoicesUsers->getRoles($id, $this->Auth->user('id'));
+        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
         //Make sure user has additional permissions for this Choice
         if(empty($roles)) {
             throw new ForbiddenException(__('Not permitted to view Choice dashboard.'));
