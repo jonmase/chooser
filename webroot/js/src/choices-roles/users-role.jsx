@@ -11,6 +11,7 @@ var styles = {
         whiteSpace: 'normal',
         display: 'inline-block',
         height: '32px',
+        marginRight: '15px',
     },
     roleText: {
         lineHeight: '32px',
@@ -60,7 +61,7 @@ var UsersRole = React.createClass({
                 <span style={styles.roleText}>
                     {this.props.role.title.toUpperCase()}
                 </span>
-                {closeButton}
+                {/*{closeButton}*/}
             </span>
         );
         /*return (
