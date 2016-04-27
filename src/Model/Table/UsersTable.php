@@ -82,6 +82,7 @@ class UsersTable extends Table
             'targetForeignKey' => 'choice_id',
             'joinTable' => 'choices_users',
             'through' => 'ChoicesUsers',
+            'saveStrategy' => 'append', //Use append strategy, so links between a user and other choices are not removed when adding/updating a user->choice link
         ]);
         /*$this->belongsToMany('LtiUser', [
             'foreignKey' => 'user_id',

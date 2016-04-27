@@ -214,6 +214,8 @@ class ChoicesController extends AppController
                 $user->username = $this->request->data['username'];
             }
             
+            //TODO: Make sure there isn't already a ChoicesUsers record for this user and Choice
+            
             $choice = $this->Choices->get($id);
             $choice->_joinData = $this->Choices->ChoicesUsers->newEntity();
             //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
@@ -281,13 +283,23 @@ class ChoicesController extends AppController
             $savedUsers = [];
             $failedUsers = [];
             foreach($this->request->data['users'] as $userId) { //Loop through the submitted users
-                $user = $this->Choices->Users->get($userId);    //Get the user from the DB
+                //Get the user record from the DB
+                $user = $this->Choices->Users->get($userId);
+                
+                //Get the ChoicesUsers record for this choice/user
+                $choicesUser = $this->Choices->ChoicesUsers->find('all', [
+                    'fields' => ['id', 'user_id', 'choice_id'],
+                    'conditions' => [
+                        'ChoicesUsers.choice_id' => $id,
+                        'ChoicesUsers.user_id' => $userId,
+                    ],
+                ]);
 
-                //Create a new ChoicesUsers entity for the _joinData, so we don't keep the data from the previous save
-                $choice->_joinData = $this->Choices->ChoicesUsers->newEntity($roles);
+                //Patch the ChoicesUsers entity with the new roles, for the _joinData
+                $choice->_joinData = $this->Choices->ChoicesUsers->patchEntity($choicesUser->first(), $roles);
                 $user->choices = [$choice]; //Add the choice to the user, as the first and member of a choices array
 
-                //Save each user, adding them to the savedUsers array that will be sent back to the view
+                //Save the user, adding them to the savedUsers array that will be sent back to the view
                 if($this->Choices->Users->save($user)) {
                     $savedUsers[] = $user->id;
                 }
