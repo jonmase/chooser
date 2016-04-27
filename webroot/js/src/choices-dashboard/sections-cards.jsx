@@ -74,6 +74,7 @@ var SectionsCards = React.createClass({
                 actions: [
                     {
                         label: 'Edit',
+                        url: '../form/' + this.props.choiceId
                     }
                 ],
                 roles: ['admin'],

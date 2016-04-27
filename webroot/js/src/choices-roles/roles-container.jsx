@@ -300,7 +300,7 @@ var RolesContainer = React.createClass({
         });
     },
     
-    handleRequestClose: function() {
+    handleSnackbarClose: function() {
         this.setState({
             snackbar: {
                 open: false,
@@ -508,7 +508,7 @@ var RolesContainer = React.createClass({
                     open={this.state.snackbar.open}
                     message={this.state.snackbar.message}
                     autoHideDuration={3000}
-                    onRequestClose={this.handleRequestClose}
+                    onRequestClose={this.handleSnackbarClose}
                 />
             </div>
         );

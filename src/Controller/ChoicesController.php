@@ -172,9 +172,6 @@ class ChoicesController extends AppController
             throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));
         }
     }
-    
-    
-
 
     /**
      * addUser method
@@ -349,7 +346,33 @@ class ChoicesController extends AppController
             throw new MethodNotAllowedException(__('Editing users requires POST'));
         }
     }
-    
+
+    /**
+     * form method
+     * Create the options form for the Choice
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function form($id = null) {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+        
+        $choice = $this->Choices->get($id, [
+            'contain' => [
+                'ExtraFields' => ['ExtraFieldOptions']
+            ]
+        ]);
+        //pr($choice);
+        $this->set(compact('choice'));
+    }
+
+
     /**
      * Add method
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
