@@ -65,8 +65,8 @@ var UsersTable = React.createClass({
                     //initiallyExpanded={true}
                 >
                     <CardHeader
-                        title="User Roles"
-                        subtitle="Give additional roles to specific users"
+                        title="Additional Permissions"
+                        subtitle="Give additional permissions to specific users"
                         //actAsExpander={true}
                         //showExpandableButton={true}
                     >
@@ -84,7 +84,6 @@ var UsersTable = React.createClass({
                             />&nbsp;
                             <EditSelectedUsers
                                 state={props.state} 
-                                roleOptions={props.roleOptions} 
                                 handlers={props.editUserHandlers} 
                             />&nbsp;
                             <AddUser 
@@ -139,7 +138,7 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.tableRowColumn}>
                                                 {user.roles.map(function(role) {
                                                     return (
-                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
+                                                        <UsersRole key={user.username + '_' + role.id} user={user} role={role} />
                                                     );
                                                 })}
                                             </TableRowColumn>

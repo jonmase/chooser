@@ -42,7 +42,7 @@ var UsersRole = React.createClass({
     render: function() {
         var closeButton;
         
-        if(this.props.role !== 'admin' || !this.props.user.current) {
+        if(this.props.role.id !== 'admin' || !this.props.user.current) {
             closeButton = <IconButton 
                 style={styles.roleRemoveButton} 
                 iconStyle={styles.roleRemoveIcon} 
@@ -56,17 +56,17 @@ var UsersRole = React.createClass({
         }
         
         return (
-            <span key={this.props.user.username + '_' + this.props.role} style={styles.roleContainer}>
+            <span key={this.props.user.username + '_' + this.props.role.id} style={styles.roleContainer}>
                 <span style={styles.roleText}>
-                    {this.props.role.toUpperCase()}
+                    {this.props.role.title.toUpperCase()}
                 </span>
                 {closeButton}
             </span>
         );
         /*return (
             <FlatButton
-                key={user.username + '_' + role}
-                label={role}
+                key={user.username + '_' + role.id}
+                label={role.title}
                 labelPosition="before"
                 linkButton={true}
                 href="javascript:void(0)"

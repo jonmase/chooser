@@ -127,7 +127,7 @@ var AddUser = React.createClass({
                     add
                 </IconButton>         
                 <Dialog
-                    title="Add User with additional roles"
+                    title="Add User with Additional Roles"
                     //actions={actions}
                     //modal={false}
                     open={this.props.state.addUserDialogOpen}
@@ -162,7 +162,7 @@ var AddUser = React.createClass({
                         <div>
                             <p>
                                 Which additional roles should this user have? <br />
-                                <span className="sublabel">Additional roles will add to, but not replace, the default role(s) (see "Default Settings", above) that are based on their permissions in WebLearn</span>
+                                <span className="sublabel">Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn</span>
                             </p>
                             <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                         </div>

@@ -25,9 +25,9 @@ var UserFilters = React.createClass({
         var menuItems = this.props.roleOptions.map(function(role) {
             return (
                 <MenuItem
-                    value={role}
-                    primaryText={role.charAt(0).toUpperCase() + role.substr(1,role.length)}
-                    key={role}
+                    value={role.id}
+                    primaryText={role.id.charAt(0).toUpperCase() + role.id.substr(1,role.length)}
+                    key={role.id}
                 />
             );
         });

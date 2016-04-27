@@ -40,8 +40,8 @@ var RolesSettingsForm = React.createClass({
                 initiallyExpanded={false}
             >
                 <CardHeader
-                    title="Default Settings"
-                    subtitle="Change the default role settings for this Choice"
+                    title="Default Permissions"
+                    subtitle="Change the default permission settings for this Choice"
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
@@ -55,7 +55,7 @@ var RolesSettingsForm = React.createClass({
                         onChange={this.handleChange}
                     >
                         {/*<div className="row">*/}
-                            <p className="no-top-margin">Please note that 'Instructors' means anyone who has maintain or contribute permissions on a WebLearn site from which this Choice is linked.</p>
+                            <p className="no-top-margin">Please note that 'Instructors' means anyone who has the maintain or contribute role in a WebLearn site from which this Choice is linked.</p>
                             {/*<div className="col-xs-12 col-sm-6">*/}
                                 {/*<p>
                                     Default permissions for 'Instructors' (i.e. maintainers and contributors in WebLearn):<br />
@@ -64,18 +64,18 @@ var RolesSettingsForm = React.createClass({
                                 {/*<RoleCheckboxes nameBase="defaultRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />*/}
                                 <FormsyCheckbox
                                     name="defaultRoles.editor"
-                                    label="Allow Instructors to create/edit their own options and profile (in most situations, you would want this ticked)"
+                                    label="Instructors are Editors, so they can create/edit their own options and profile (in most situations, you would want this ticked)"
                                     defaultChecked={this.props.state.defaultRoles['editor']}
                                 />
                                 <FormsyCheckbox
                                     name="defaultRoles.reviewer"
-                                    label="Allow Instructors to view all the students selections (normally they would only see who has selected their own options)"
+                                    label="Instructors are Reviewers, so they can view all the results and selections (normally they would only see who has selected their own options)"
                                     defaultChecked={this.props.state.defaultRoles['reviewer']}
                                 />
                             {/*</div>
                             <div className="col-xs-12 col-sm-6">*/}
                                 <FormsyToggle
-                                    label={<span><span>Notify users by email when they are given additional roles</span><br /><span className="sublabel">Default setting that can be overridden when additional roles are given</span></span>}
+                                    label={<span><span>Notify users by email when they are given additional permissions</span><br /><span className="sublabel">This can be overridden when additional permissions are given</span></span>}
                                     defaultToggled={this.props.state.notify}
                                     labelPosition="right"
                                     name="notify"

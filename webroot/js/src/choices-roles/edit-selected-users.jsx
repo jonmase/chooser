@@ -1,10 +1,5 @@
 var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var FlatButton = require('material-ui/lib/flat-button');
 var IconButton = require('material-ui/lib/icon-button');
-var Dialog = require('material-ui/lib/dialog');
-var RoleCheckboxes = require('./role-checkboxes.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');

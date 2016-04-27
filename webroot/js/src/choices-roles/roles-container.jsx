@@ -9,7 +9,7 @@ var RolesContainer = React.createClass({
     getInitialState: function () {
         /*var filterRoles = {};
         this.props.roleOptions.forEach(function(role) {
-            filterRoles[role] = false;
+            filterRoles[role.id] = false;
         });*/
         var users = this.props.initialUsers;
         var userIndexesByUsername = {};

@@ -110,12 +110,14 @@ class ChoicesController extends AppController
         
         $defaultRolesObject = [];
         foreach($roleOptions as $role) {
-            $defaultRolesObject[$role] = in_array($role, $defaultRolesArray);
+            $defaultRolesObject[$role['id']] = in_array($role['id'], $defaultRolesArray);
         }
         $choice->instructor_default_roles = $defaultRolesObject;
-        //pr($choice); exit;
+        //pr($roleOptions); 
+        //pr($defaultRolesObject); 
+        //exit;
         
-        $this->set(compact('choice', 'users', 'roleOptions', 'userSortField'));
+        $this->set(compact('choice', 'users', 'roleOptions', 'roleDescriptions', 'userSortField'));
         //$this->set('_serialize', ['choice']);
     }
     

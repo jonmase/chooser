@@ -35,10 +35,11 @@ var RoleCheckboxes = React.createClass({
         var roleNodes = this.props.roleOptions.map(function(role) {
             return (
                 <FormsyCheckbox
-                    key={role}
-                    name={nameBase + '.' + role}
-                    label={role.charAt(0).toUpperCase() + role.substring(1)}
-                    defaultChecked={roleStates[role]}
+                    key={role.id}
+                    name={nameBase + '.' + role.id}
+                    //label={role.id.charAt(0).toUpperCase() + role.id.substring(1)}
+                    label={role.title + ' - ' + role.description}
+                    defaultChecked={roleStates[role.id]}
                     onChange={onChange}
                     style={style}
                 />

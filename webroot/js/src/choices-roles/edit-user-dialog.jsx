@@ -37,7 +37,7 @@ var EditSelectedUsers = React.createClass({
             rolesSelected = {};
             var user = users[userIndexesByUsername[this.props.state.usersBeingEdited[0]]];
             user.roles.map(function(role) {
-                rolesSelected[role] = true;
+                rolesSelected[role.id] = true;
             });
         }
         
@@ -61,7 +61,7 @@ var EditSelectedUsers = React.createClass({
         
         return (
             <Dialog
-                title="Edit Additional Roles"
+                title="Edit Additional Permissions"
                 //actions={actions}
                 //modal={false}
                 open={this.props.state.editUserDialogOpen}
@@ -74,7 +74,7 @@ var EditSelectedUsers = React.createClass({
                     noValidate
                 >
                     <div>
-                        The additional roles will be edited for the following user{multipleUsersBeingEdited?"s":""}:
+                        The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:
                         <ul>
                             {this.props.state.usersBeingEdited.map(function(username, index) {
                                 var user = users[userIndexesByUsername[username]];
@@ -98,8 +98,8 @@ var EditSelectedUsers = React.createClass({
                     </div>
                     <div>
                         <p>
-                            Which additional roles should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
-                            <span className="sublabel">This will replace their current additional roles, and will add to, but not replace, the default role(s) (see "Default Settings", above) that are based on their permissions in WebLearn</span>
+                            Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
+                            <span className="sublabel">This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn</span>
                         </p>
                         <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
                     </div>
