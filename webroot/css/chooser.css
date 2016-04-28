@@ -17,6 +17,29 @@ body {
     margin-bottom: 0;
 }
 
+/* ALLOY EDITOR */
+.ae-toolbar, .ae-toolbar-styles, .ae-toolbar-add {
+    z-index: 2000;
+}
+.alloy-label {
+    line-height: 22px; 
+    z-index: 1; 
+    color: rgba(0, 0, 0, 0.298039); 
+    -webkit-user-select: none;
+}
+.alloy-container {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.alloy-container > div > p:first-child {
+    margin-top: 0;
+}
+.alloy-container > div > p:last-child {
+    margin-bottom: 0;
+}
+.alloy-container > div:focus {
+    outline: none;
+}
+
 /* FLASH STYLES */
 /* These will be replaced with snackbars/toasts at some point */
 .message.error {
@@ -63,7 +86,7 @@ h6 {
 
 /* FORMS */
 form > div, form > div.row > div {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 form > div:last-child, form > div.row {
     margin-bottom: 0;

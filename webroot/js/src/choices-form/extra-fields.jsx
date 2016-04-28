@@ -6,6 +6,7 @@ var Formsy = require('formsy-react');
 //var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var RaisedButton = require('material-ui/lib/raised-button');
+var AlloyEditorComponent = require('../elements/alloy.jsx');
 var AddField = require('./add-field.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
@@ -38,7 +39,6 @@ var ExtraFields = React.createClass({
                     </div>
                 </CardHeader>
                 <CardText>
-                    
                 </CardText>
             </Card>
         );

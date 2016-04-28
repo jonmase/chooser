@@ -2,17 +2,20 @@ var React = require('react');
 var Formsy = require('formsy-react');
 var FormsyText = require('formsy-material-ui/lib/FormsyText');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
+var FormsySelect = require('formsy-material-ui/lib/FormsySelect');
 var RaisedButton = require('material-ui/lib/raised-button');
 var FlatButton = require('material-ui/lib/flat-button');
 var IconButton = require('material-ui/lib/icon-button');
 var Dialog = require('material-ui/lib/dialog');
+var MenuItem = require('material-ui/lib/menus/menu-item');
 var FloatingActionButton = require('material-ui/lib/floating-action-button');
 var ContentAdd = require('material-ui/lib/svg-icons/content/add');
+var CommonFields = require('./common-fields.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
 
-var AddUser = React.createClass({
+var AddField = React.createClass({
     //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
     childContextTypes: {
         muiTheme: React.PropTypes.object,
@@ -26,6 +29,7 @@ var AddUser = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
+            type: null,
         };
     },
 
@@ -41,7 +45,44 @@ var AddUser = React.createClass({
         });
     },
 
+    typeSelectChange: function (event, value) {
+        console.log("Field type changed to " + value);
+    },
+
     render: function() {
+        var fieldTypes = [
+            {
+                type: 'text',
+                label: 'Simple Text',
+            },
+            {
+                type: 'wysiwyg',
+                label: 'Rich Text',
+            },
+            {
+                type: 'list',
+                label: 'Option List',
+            },
+            {
+                type: 'number',
+                label: 'Number',
+            },
+            {
+                type: 'email',
+                label: 'Email',
+            },
+            {
+                type: 'url',
+                label: 'URL',
+            },
+        ];
+        
+        var typeMenuItems = fieldTypes.map(function(field) {
+            return (
+                <MenuItem value={field.type} key={field.type} primaryText={field.label} />
+            );
+        });
+    
         var actions = [
             <FlatButton
                 key="cancel"
@@ -57,7 +98,6 @@ var AddUser = React.createClass({
                 disabled={!this.state.canSubmit}
             />,
         ];
-        
         
         return (
             <span>
@@ -81,8 +121,17 @@ var AddUser = React.createClass({
                         onValidSubmit={this.props.handlers.submit}
                         noValidate
                     >
-                        
-                    
+                        <FormsySelect
+                            name="type"
+                            required
+                            floatingLabelText="Field type"
+                            onChange={this.typeSelectChange}
+                        >
+                            {typeMenuItems}
+                        </FormsySelect>                        
+                        <CommonFields>
+                            
+                        </CommonFields>
                         <div style={{textAlign: 'right'}}>
                             {actions}
                         </div>
@@ -93,4 +142,4 @@ var AddUser = React.createClass({
     }
 });
 
-module.exports = AddUser;
+module.exports = AddField;
