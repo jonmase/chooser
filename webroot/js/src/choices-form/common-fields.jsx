@@ -57,6 +57,12 @@ var CommonFields = React.createClass({
                     name="show_to_students"
                 />
                 <FormsyToggle
+                    label="Allow sorting by this field"
+                    defaultToggled={false}
+                    labelPosition="right"
+                    name="sortable"
+                />
+                <FormsyToggle
                     label="Include in form for student-defined options (where available)"
                     defaultToggled={false}
                     labelPosition="right"

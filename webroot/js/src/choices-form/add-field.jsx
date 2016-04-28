@@ -129,9 +129,10 @@ var AddField = React.createClass({
                         >
                             {typeMenuItems}
                         </FormsySelect>                        
-                        <CommonFields>
-                            
-                        </CommonFields>
+                        <CommonFields
+                            state={this.props.state}
+                        />
+                        
                         <div style={{textAlign: 'right'}}>
                             {actions}
                         </div>
