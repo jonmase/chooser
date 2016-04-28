@@ -7,6 +7,7 @@ var FormContainer = React.createClass({
     getInitialState: function () {
         return {
             extraDialogOpen: false,
+            extraFields: [],
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,

@@ -85,15 +85,15 @@ h6 {
 
 
 /* FORMS */
-form > div, form > div.row > div {
+form div.section {
     margin-bottom: 20px;
-}
-form > div:last-child, form > div.row {
-    margin-bottom: 0;
 }
 .sublabel {
     font-size: 85%;
     opacity: 0.8;
+}
+textarea {
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* BUTTONS */

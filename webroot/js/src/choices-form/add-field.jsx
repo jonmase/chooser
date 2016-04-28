@@ -1,16 +1,19 @@
 var React = require('react');
+
 var Formsy = require('formsy-react');
 var FormsyText = require('formsy-material-ui/lib/FormsyText');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
 var FormsySelect = require('formsy-material-ui/lib/FormsySelect');
-var RaisedButton = require('material-ui/lib/raised-button');
+
 var FlatButton = require('material-ui/lib/flat-button');
 var IconButton = require('material-ui/lib/icon-button');
+
 var Dialog = require('material-ui/lib/dialog');
 var MenuItem = require('material-ui/lib/menus/menu-item');
-var FloatingActionButton = require('material-ui/lib/floating-action-button');
-var ContentAdd = require('material-ui/lib/svg-icons/content/add');
+
 var CommonFields = require('./common-fields.jsx');
+var ListFields = require('./list-fields.jsx');
+var NumberFields = require('./number-fields.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -47,6 +50,9 @@ var AddField = React.createClass({
 
     typeSelectChange: function (event, value) {
         console.log("Field type changed to " + value);
+        this.setState({
+            type: value,
+        });
     },
 
     render: function() {
@@ -112,6 +118,7 @@ var AddField = React.createClass({
                     title="Add Extra Field"
                     open={this.props.state.extraDialogOpen}
                     onRequestClose={this.props.handlers.dialogClose}
+                    autoScrollBodyContent={true}
                 >
                     <Formsy.Form
                         id="add_user_form"
@@ -131,8 +138,16 @@ var AddField = React.createClass({
                         </FormsySelect>                        
                         <CommonFields
                             state={this.props.state}
+                            type={this.state.type}
                         />
-                        
+                        <ListFields
+                            state={this.props.state}
+                            type={this.state.type}
+                        />
+                        <NumberFields
+                            state={this.props.state}
+                            type={this.state.type}
+                        />
                         <div style={{textAlign: 'right'}}>
                             {actions}
                         </div>

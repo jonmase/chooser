@@ -41,7 +41,7 @@ var DefaultFields = React.createClass({
                         onValidSubmit={this.props.handlers.submit}
                         onChange={this.props.handlers.change}
                     >
-                        <div className="row">
+                        <div className="row section">
                             <div className="col-xs-12 col-sm-6">
                                 <FormsyToggle
                                     label={<span>Code</span>}
