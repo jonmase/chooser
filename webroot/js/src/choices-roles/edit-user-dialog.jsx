@@ -1,24 +1,14 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var FlatButton = require('material-ui/lib/flat-button');
-var Dialog = require('material-ui/lib/dialog');
-var RoleCheckboxes = require('./role-checkboxes.jsx');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Formsy from 'formsy-react';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+
+import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
+
+import RoleCheckboxes from './role-checkboxes.jsx';
 
 var EditSelectedUsers = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     handleDialogClose: function() {
         this.props.handlers.dialogClose();
     },

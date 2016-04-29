@@ -1,32 +1,21 @@
-var React = require('react');
-var Card  = require('material-ui/lib/card/card');
-var CardHeader = require('material-ui/lib/card/card-header');
-var CardText  = require('material-ui/lib/card/card-text');
-var Formsy = require('formsy-react');
-//var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
+import React from 'react';
 
-var CodeField = require('../options-form/code.jsx');
-var TitleField = require('../options-form/title.jsx');
-var DescriptionField = require('../options-form/description.jsx');
-var MinPlacesField = require('../options-form/min_places.jsx');
-var MaxPlacesField = require('../options-form/max_places.jsx');
-var PointsField = require('../options-form/points.jsx');
+import Card  from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardText  from 'material-ui/Card/CardText';
+import RaisedButton from 'material-ui/RaisedButton';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Formsy from 'formsy-react';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+
+import CodeField from '../options-form/code.jsx';
+import TitleField from '../options-form/title.jsx';
+import DescriptionField from '../options-form/description.jsx';
+import MinPlacesField from '../options-form/min_places.jsx';
+import MaxPlacesField from '../options-form/max_places.jsx';
+import PointsField from '../options-form/points.jsx';
 
 var DefaultFields = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     render: function() {
         var toggles = [
             {

@@ -1,7 +1,11 @@
-var React = require('react');
-var Snackbar = require('material-ui/lib/snackbar');
-var DefaultFields = require('./default-fields.jsx');
-var ExtraFields = require('./extra-fields.jsx');
+import React from 'react';
+
+import Snackbar from 'material-ui/Snackbar';
+import DefaultFields from './default-fields.jsx';
+import ExtraFields from './extra-fields.jsx';
+
+import ChooserTheme from '../theme.jsx';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var FormContainer = React.createClass({
     getInitialState: function () {
@@ -168,25 +172,27 @@ var FormContainer = React.createClass({
         };
         
         return (
-            <div>
-                <p>This is where you can define the fields that you want to appear on the form for creating/editing options. </p>
-                <DefaultFields 
-                    choice={this.props.choice}
-                    state={this.state}
-                    handlers={defaultsHandlers}
-                />
-                <ExtraFields 
-                    choice={this.props.choice}
-                    state={this.state}
-                    handlers={extrasHandlers}
-                />
-                <Snackbar
-                    open={this.state.snackbar.open}
-                    message={this.state.snackbar.message}
-                    autoHideDuration={3000}
-                    onRequestClose={this.handleSnackbarClose}
-                />
-            </div>
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <div>
+                    <p>This is where you can define the fields that you want to appear on the form for creating/editing options. </p>
+                    <DefaultFields 
+                        choice={this.props.choice}
+                        state={this.state}
+                        handlers={defaultsHandlers}
+                    />
+                    <ExtraFields 
+                        choice={this.props.choice}
+                        state={this.state}
+                        handlers={extrasHandlers}
+                    />
+                    <Snackbar
+                        open={this.state.snackbar.open}
+                        message={this.state.snackbar.message}
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleSnackbarClose}
+                    />
+                </div>
+            </MuiThemeProvider>
         );
     }
 });

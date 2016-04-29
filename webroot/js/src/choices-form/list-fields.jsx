@@ -1,27 +1,14 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsySelect = require('formsy-material-ui/lib/FormsySelect');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
+import React from 'react';
 
-var RaisedButton = require('material-ui/lib/raised-button');
-var MenuItem = require('material-ui/lib/menus/menu-item');
+import FormsySelect from 'formsy-material-ui/lib/FormsySelect';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-var FilteringToggle = require('./filtering-toggle.jsx');
-var Textarea = require('../fields/textarea.jsx');
+import MenuItem from 'material-ui/MenuItem';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import FilteringToggle from './filtering-toggle.jsx';
+import Textarea from '../fields/textarea.jsx';
 
 var CommonFields = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     render: function() {
         var listTypes = [
             {

@@ -1,10 +1,6 @@
-var React = require('react');
-var FontIcon = require('material-ui/lib/font-icon');
-var IconButton = require('material-ui/lib/icon-button');
-var FlatButton  = require('material-ui/lib/flat-button');
-
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import React from 'react';
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 
 var styles = {
     roleContainer: {
@@ -30,16 +26,6 @@ var styles = {
 };
     
 var UsersRole = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-    
     render: function() {
         var closeButton;
         
@@ -64,17 +50,6 @@ var UsersRole = React.createClass({
                 {/*{closeButton}*/}
             </span>
         );
-        /*return (
-            <FlatButton
-                key={user.username + '_' + role.id}
-                label={role.title}
-                labelPosition="before"
-                linkButton={true}
-                href="javascript:void(0)"
-                //secondary={true}
-                icon={<FontIcon className="material-icons" >close</FontIcon>}
-            />
-        );*/
     }
 });
 

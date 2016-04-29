@@ -1,12 +1,13 @@
-var React = require('react');
-var AppBar = require('material-ui/lib/app-bar');
-var IconMenu = require('material-ui/lib/menus/icon-menu');
-var MenuItem = require('material-ui/lib/menus/menu-item');
-var IconButton = require('material-ui/lib/icon-button');
-var FontIcon = require('material-ui/lib/font-icon');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import AppBar from 'material-ui/AppBar';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import ChooserTheme from '../theme.jsx';
 
 var styles = {
   subtitle: {
@@ -16,36 +17,30 @@ var styles = {
 };
 
 var TopBar = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     render: function() {
         return (
-            <AppBar
-                title={<span>Chooser<span style={styles.subtitle}>{this.props.subtitle}</span></span>}
-                showMenuIconButton={false}
-                iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
-                iconElementRight={
-                    <IconMenu
-                        iconButtonElement={ <IconButton><FontIcon className="material-icons">more_vert</FontIcon></IconButton> }
-                        targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                        anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                    >
-                        <MenuItem primaryText="Refresh" />
-                        <MenuItem primaryText="Help" />
-                        <MenuItem primaryText="Sign out" />
-                    </IconMenu>
-                }
-            />
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <AppBar
+                    title={<span>Chooser<span style={styles.subtitle}>{this.props.subtitle}</span></span>}
+                    showMenuIconButton={false}
+                    iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
+                    iconElementRight={
+                        <IconMenu
+                            iconButtonElement={ <IconButton><FontIcon className="material-icons">more_vert</FontIcon></IconButton> }
+                            targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                            anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
+                        >
+                            <MenuItem primaryText="Refresh" />
+                            <MenuItem primaryText="Help" />
+                            <MenuItem primaryText="Sign out" />
+                        </IconMenu>
+                    }
+                />
+            </MuiThemeProvider>
         );
     }
 });
+
+
 
 module.exports = TopBar;

@@ -1,5 +1,5 @@
-var React = require('react');
-var AlloyEditor = require('alloyeditor');
+import React from 'react';
+import AlloyEditor from 'alloyeditor';
 
 var selections = [
     {

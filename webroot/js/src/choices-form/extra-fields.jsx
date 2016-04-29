@@ -1,23 +1,12 @@
-var React = require('react');
-var Card  = require('material-ui/lib/card/card');
-var CardHeader = require('material-ui/lib/card/card-header');
-var CardText  = require('material-ui/lib/card/card-text');
+import React from 'react';
 
-var AddField = require('./add-field.jsx');
+import Card  from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardText  from 'material-ui/Card/CardText';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import AddField from './add-field.jsx';
 
 var ExtraFields = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     render: function() {
         return (
             <Card 

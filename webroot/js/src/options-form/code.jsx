@@ -1,5 +1,5 @@
-var React = require('react');
-var TextField = require('../fields/text.jsx');
+import React from 'react';
+import TextField from '../fields/text.jsx';
 
 var CodeField = React.createClass({
     render: function() {

@@ -1,23 +1,13 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
+import React from 'react';
+import Formsy from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+import RaisedButton from 'material-ui/RaisedButton';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import ChooserTheme from '../theme.jsx';
 
 var NewChoiceForm = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes : {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     getInitialState: function () {
         return {
             canSubmit: false
@@ -44,35 +34,41 @@ var NewChoiceForm = React.createClass({
 
     render: function() {
         return (
-            <Formsy.Form
-                id="new_choice_form"
-                method="POST"
-                onValid={this.enableButton}
-                onInvalid={this.disableButton}
-                onValidSubmit={this.submitForm}
-                noValidate
-            >
-                <FormsyText 
-                    name="name"
-                    hintText="Enter Choice name" 
-                    floatingLabelText="Choice name (required)"
-                    validations="minLength:1"
-                    validationError="Please give your Choice a name"
-                    required
-                />
-                <FormsyToggle
-                    label="Allow indirect access to this Choice (need to expand on what this means)"
-                    defaultToggled={true}
-                    labelPosition="right"
-                    name="indirect_access"
-                />
-                <RaisedButton 
-                    label="Create" 
-                    primary={true} 
-                    type="submit"
-                    disabled={!this.state.canSubmit}
-                />
-            </Formsy.Form>
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <Formsy.Form
+                    id="new_choice_form"
+                    method="POST"
+                    onValid={this.enableButton}
+                    onInvalid={this.disableButton}
+                    onValidSubmit={this.submitForm}
+                    noValidate
+                >
+                    <div className="section">
+                        <FormsyText 
+                            name="name"
+                            hintText="Enter Choice name" 
+                            floatingLabelText="Choice name (required)"
+                            validations="minLength:1"
+                            validationError="Please give your Choice a name"
+                            required
+                        />
+                    </div>
+                    <div className="section">
+                        <FormsyToggle
+                            label="Allow indirect access to this Choice (need to expand on what this means)"
+                            defaultToggled={true}
+                            labelPosition="right"
+                            name="indirect_access"
+                        />
+                    </div>
+                    <RaisedButton 
+                        label="Create" 
+                        primary={true} 
+                        type="submit"
+                        disabled={!this.state.canSubmit}
+                    />
+                </Formsy.Form>
+            </MuiThemeProvider>
         );
     }
 });

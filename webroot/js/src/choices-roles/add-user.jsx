@@ -1,29 +1,18 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
-var FlatButton = require('material-ui/lib/flat-button');
-var IconButton = require('material-ui/lib/icon-button');
-var Dialog = require('material-ui/lib/dialog');
-var RoleCheckboxes = require('./role-checkboxes.jsx');
-var FloatingActionButton = require('material-ui/lib/floating-action-button');
-var ContentAdd = require('material-ui/lib/svg-icons/content/add');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Formsy from 'formsy-react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+
+import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+
+import Dialog from 'material-ui/Dialog';
+
+import RoleCheckboxes from './role-checkboxes.jsx';
 
 var AddUser = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     getInitialState: function () {
         return {
             canSubmit: false,

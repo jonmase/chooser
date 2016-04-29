@@ -1,5 +1,5 @@
-var React = require('react');
-var Wysiwyg = require('../fields/wysiwyg.jsx');
+import React from 'react';
+import Wysiwyg from'../fields/wysiwyg.jsx';
 
 var DescriptionField = React.createClass({
     render: function() {

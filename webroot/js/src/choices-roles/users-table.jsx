@@ -1,25 +1,24 @@
-var React = require('react');
-var Card  = require('material-ui/lib/card/card');
-var CardHeader = require('material-ui/lib/card/card-header');
-var CardText  = require('material-ui/lib/card/card-text');
-var Table = require('material-ui/lib/table/table');
-var TableHeaderColumn = require('material-ui/lib/table/table-header-column');
-var TableRow = require('material-ui/lib/table/table-row');
-var TableHeader = require('material-ui/lib/table/table-header');
-var TableRowColumn = require('material-ui/lib/table/table-row-column');
-var TableBody = require('material-ui/lib/table/table-body');
-var IconButton = require('material-ui/lib/icon-button');
-var UsersRole = require('./users-role.jsx');
-var SortUsers = require('./sort-users.jsx');
-var FilterUsers = require('./filter-users.jsx');
-var AddUser = require('./add-user.jsx');
-var EditUser = require('./edit-user.jsx');
-var EditUserDialog = require('./edit-user-dialog.jsx');
-var EditSelectedUsers = require('./edit-selected-users.jsx');
-var UsersActionMenu = require('./users-action-menu.jsx');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Card  from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardText  from 'material-ui/Card/CardText';
+
+import Table from 'material-ui/Table/Table';
+import TableHeader from 'material-ui/Table/TableHeader';
+import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn';
+import TableBody from 'material-ui/Table/TableBody';
+import TableRow from 'material-ui/Table/TableRow';
+import TableRowColumn from 'material-ui/Table/TableRowColumn';
+
+import UsersRole from './users-role.jsx';
+import SortUsers from './sort-users.jsx';
+import FilterUsers from './filter-users.jsx';
+import AddUser from './add-user.jsx';
+import EditUser from './edit-user.jsx';
+import EditUserDialog from './edit-user-dialog.jsx';
+import EditSelectedUsers from './edit-selected-users.jsx';
+import UsersActionMenu from './users-action-menu.jsx';
 
 var styles = {
     tableRowColumn: {
@@ -36,19 +35,13 @@ var styles = {
         display: 'inline-block', 
         fontWeight: '500',
         width: '120px',
+    },
+    cardText: {
+        paddingTop: '0px',
     }
 };
     
 var UsersTable = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     _onRowSelection: function(selectedRows){
         this.props.selectUserHandlers.change(selectedRows);
     },
@@ -98,14 +91,12 @@ var UsersTable = React.createClass({
                     </CardHeader>
                     <CardText 
                         //expandable={true}
-                        style={{paddingTop: '0'}}
+                        style={styles.cardText}
                     >
                         <Table 
                             //selectable={false}
                             multiSelectable={true}
-                            //onRowSelection={props.selectUserHandlers.change}
                             onRowSelection={this._onRowSelection}
-                            //allRowsSelected={props.state.selectAllSelected}
                         >
                             <TableHeader 
                                 //adjustForCheckbox={false} 

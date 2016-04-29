@@ -1,17 +1,16 @@
-var React = require('react');
-var Card  = require('material-ui/lib/card/card');
-var CardHeader = require('material-ui/lib/card/card-header');
-var CardMedia  = require('material-ui/lib/card/card-media');
-var CardTitle  = require('material-ui/lib/card/card-title');
-var CardText  = require('material-ui/lib/card/card-text');
-var CardActions  = require('material-ui/lib/card/card-actions');
-var FontIcon = require('material-ui/lib/font-icon');
-var IconButton = require('material-ui/lib/icon-button');
-var FlatButton  = require('material-ui/lib/flat-button');
-var VerifiedUser = require('material-ui/lib/svg-icons/action/verified-user');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Card  from 'material-ui/Card/Card';
+import CardTitle  from 'material-ui/Card/CardTitle';
+import CardText  from 'material-ui/Card/CardText';
+import CardActions  from 'material-ui/Card/CardActions';
+
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
+import FlatButton  from 'material-ui/FlatButton';
+
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import ChooserTheme from '../theme.jsx';
 
 var styles = {
     cardContainer: {
@@ -38,23 +37,13 @@ var styles = {
         height: '51px', //17px per line
         overflowY: 'hidden',
         //Replace bottom padding with margin, so overflow is hidden
-        paddingBottom: '0',
+        paddingBottom: '0px',
         marginBottom: '15px',
         
     },
 };
 
 var SectionsCards = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes : {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     getCardsData: function() {
         var cardsData = [
             {
@@ -184,48 +173,50 @@ var SectionsCards = React.createClass({
 
     render: function() {
         return (
-            <div style={styles.root} className="row">
-                {this.getUserCards().map(function(card) {
-                    return (
-                        <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
-                            <Card style={styles.card}>
-                                <CardTitle 
-                                    title={
-                                        <span style={styles.cardTitleSpan}>
-                                            <FontIcon 
-                                                className="material-icons"
-                                                style={styles.icon}
-                                            >
-                                                {card.icon}
-                                            </FontIcon> 
-                                            {card.title}
-                                        </span>
-                                    }
-                                    style={styles.cardTitle}
-                                />
-                                <CardText style={styles.cardText}>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                    Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-                                    Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-                                    Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-                                </CardText>
-                                <CardActions>
-                                    {card.actions.map(function(action) {
-                                        return (
-                                            <FlatButton 
-                                                label={action.label} 
-                                                key={action.label} 
-                                                linkButton={true}
-                                                href={action.url} 
-                                            />
-                                        );
-                                    })}
-                                </CardActions>
-                            </Card>
-                        </div>
-                    );
-                })}
-            </div>
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <div style={styles.root} className="row">
+                    {this.getUserCards().map(function(card) {
+                        return (
+                            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
+                                <Card style={styles.card}>
+                                    <CardTitle 
+                                        title={
+                                            <span style={styles.cardTitleSpan}>
+                                                <FontIcon 
+                                                    className="material-icons"
+                                                    style={styles.icon}
+                                                >
+                                                    {card.icon}
+                                                </FontIcon> 
+                                                {card.title}
+                                            </span>
+                                        }
+                                        style={styles.cardTitle}
+                                    />
+                                    <CardText style={styles.cardText}>
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                        Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
+                                        Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
+                                        Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+                                    </CardText>
+                                    <CardActions>
+                                        {card.actions.map(function(action) {
+                                            return (
+                                                <FlatButton 
+                                                    label={action.label} 
+                                                    key={action.label} 
+                                                    linkButton={true}
+                                                    href={action.url} 
+                                                />
+                                            );
+                                        })}
+                                    </CardActions>
+                                </Card>
+                            </div>
+                        );
+                    })}
+                </div>
+            </MuiThemeProvider>
         );
     }
 });

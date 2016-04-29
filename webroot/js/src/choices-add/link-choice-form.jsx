@@ -1,29 +1,17 @@
-var React = require('react');
-var TextField = require('material-ui/lib/text-field');
-var Toggle = require('material-ui/lib/toggle');
-var Formsy = require('formsy-react');
-var FormsyRadioGroup = require('formsy-material-ui/lib/FormsyRadioGroup');
-var FormsyRadio = require('formsy-material-ui/lib/FormsyRadio');
-var RaisedButton = require('material-ui/lib/raised-button');
+import React from 'react';
+import Formsy from 'formsy-react';
+import FormsyRadioGroup from 'formsy-material-ui/lib/FormsyRadioGroup';
+import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
+import RaisedButton from 'material-ui/RaisedButton';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import ChooserTheme from '../theme.jsx';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var style = {
     marginBottom: 30,
 };
 
 var LinkChoiceForm = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     getInitialState: function () {
         return {
             canSubmit: false
@@ -60,27 +48,31 @@ var LinkChoiceForm = React.createClass({
         });
 
         return (
-            <Formsy.Form
-                id="link_choice_form"
-                method="POST"
-                action="link"
-                onValid={this.enableButton}
-                onInvalid={this.disableButton}
-                onValidSubmit={this.submitForm}
-            >
-                <FormsyRadioGroup 
-                    name="choice"
-                    required
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <Formsy.Form
+                    id="link_choice_form"
+                    method="POST"
+                    action="link"
+                    onValid={this.enableButton}
+                    onInvalid={this.disableButton}
+                    onValidSubmit={this.submitForm}
                 >
-                    {radioNodes}
-                </FormsyRadioGroup>
-                <RaisedButton 
-                    label="Select" 
-                    primary={true} 
-                    type="submit"
-                    disabled={!this.state.canSubmit}
-                />
-            </Formsy.Form>
+                    <div className="section">
+                        <FormsyRadioGroup 
+                            name="choice"
+                            required
+                        >
+                            {radioNodes}
+                        </FormsyRadioGroup>
+                    </div>
+                    <RaisedButton 
+                        label="Select" 
+                        primary={true} 
+                        type="submit"
+                        disabled={!this.state.canSubmit}
+                    />
+                </Formsy.Form>
+            </MuiThemeProvider>
         );
     }
 });

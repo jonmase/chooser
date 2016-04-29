@@ -1,7 +1,12 @@
-var React = require('react');
-var RolesSettingsForm = require('./roles-settings.jsx');
-var UsersTable = require('./users-table.jsx');
-var Snackbar = require('material-ui/lib/snackbar');
+import React from 'react';
+
+import Snackbar from 'material-ui/Snackbar';
+
+import RolesSettingsForm from './roles-settings.jsx';
+import UsersTable from './users-table.jsx';
+
+import ChooserTheme from '../theme.jsx';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var blankFindUserMessage = '\u00A0';
 
@@ -426,7 +431,7 @@ var RolesContainer = React.createClass({
     handleSortUsersChange: function(event, value) {
         console.log("User Sort changed to " + value);
         
-        currentUsers = this.sortUsers(this.state.users, value);
+        var currentUsers = this.sortUsers(this.state.users, value);
        
         //Update state with the sorted users array and sortField
         this.setState({
@@ -488,29 +493,31 @@ var RolesContainer = React.createClass({
         };
     
         return (
-            <div>
-                <RolesSettingsForm 
-                    state={this.state} 
-                    roleOptions={this.props.roleOptions} 
-                    handlers={settingsHandlers}
-                />
-                <UsersTable 
-                    choiceId={this.props.choiceId} 
-                    state={this.state} 
-                    roleOptions={this.props.roleOptions} 
-                    addUserHandlers={addUserHandlers}
-                    editUserHandlers={editUserHandlers}
-                    filterUsersHandlers={filterUsersHandlers}
-                    selectUserHandlers={selectUserHandlers}
-                    sortUsersHandlers={sortUsersHandlers}
-                />
-                <Snackbar
-                    open={this.state.snackbar.open}
-                    message={this.state.snackbar.message}
-                    autoHideDuration={3000}
-                    onRequestClose={this.handleSnackbarClose}
-                />
-            </div>
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <div>
+                    <RolesSettingsForm 
+                        state={this.state} 
+                        roleOptions={this.props.roleOptions} 
+                        handlers={settingsHandlers}
+                    />
+                    <UsersTable 
+                        choiceId={this.props.choiceId} 
+                        state={this.state} 
+                        roleOptions={this.props.roleOptions} 
+                        addUserHandlers={addUserHandlers}
+                        editUserHandlers={editUserHandlers}
+                        filterUsersHandlers={filterUsersHandlers}
+                        selectUserHandlers={selectUserHandlers}
+                        sortUsersHandlers={sortUsersHandlers}
+                    />
+                    <Snackbar
+                        open={this.state.snackbar.open}
+                        message={this.state.snackbar.message}
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleSnackbarClose}
+                    />
+                </div>
+            </MuiThemeProvider>
         );
     }
 });

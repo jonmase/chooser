@@ -1,9 +1,5 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
-
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import React from 'react';
+import FormsyCheckbox from 'formsy-material-ui/lib/FormsyCheckbox';
 
 var horizontalStyle = {
     width: 'auto', 
@@ -12,16 +8,6 @@ var horizontalStyle = {
 };
 
 var RoleCheckboxes = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     render: function() {
         var nameBase = this.props.nameBase;
         var onChange = this.props.onChange;

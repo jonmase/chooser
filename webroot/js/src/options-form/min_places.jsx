@@ -1,5 +1,5 @@
-var React = require('react');
-var NumberField = require('../fields/numeric.jsx');
+import React from 'react';
+import NumberField from '../fields/numeric.jsx';
 
 var MinPlacesField = React.createClass({
     render: function() {

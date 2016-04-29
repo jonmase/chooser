@@ -1,7 +1,7 @@
-var React = require('react');
+import React from 'react';
 
-var FilteringToggle = require('./filtering-toggle.jsx');
-var NumericField = require('../fields/numeric.jsx');
+import FilteringToggle from './filtering-toggle.jsx';
+import NumericField from '../fields/numeric.jsx';
 
 var CommonFields = React.createClass({
     render: function() {

@@ -1,20 +1,7 @@
-var React = require('react');
-var IconButton = require('material-ui/lib/icon-button');
-
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import React from 'react';
+import IconButton from 'material-ui/IconButton';
 
 var EditSelectedUsers = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     handleDialogOpen: function() {
         //Call the handler (handleEditUserDialogOpen in roles-container.jsx), passing through the user, as the only value in an array
         this.props.handlers.dialogOpen([this.props.user.username]);

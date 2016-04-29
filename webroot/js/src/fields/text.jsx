@@ -1,19 +1,7 @@
-var React = require('react');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
-
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import React from 'react';
+import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 var TextField = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     render: function() {
         var required=this.props.required?true:false;
         return (

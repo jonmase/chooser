@@ -7,6 +7,7 @@
 var watchify = require('watchify');
 var browserify = require('browserify');
 var reactify = require('reactify');
+var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var assign = require('lodash.assign');
@@ -83,7 +84,7 @@ function makeWatcher(src, dst) {
     };
     var opts = assign({}, watchify.args, customOpts);
     var watcher = watchify(browserify(opts)); 
-    watcher.transform(reactify);
+    watcher.transform("babelify", {presets: ["es2015", "react"]});
 
     // `bundle` becomes a function that will be called on update.
     var bundle = makeBundle(src, watcher, dst);

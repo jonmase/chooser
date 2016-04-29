@@ -1,9 +1,9 @@
-var React = require('react');
-var ReactDOM = require('react-dom');
-var injectTapEventPlugin = require('react-tap-event-plugin');
-var TopBar = require('./elements/topbar.jsx');
-var NewChoiceForm = require('./choices-add/new-choice-form.jsx');
-var LinkChoiceForm = require('./choices-add/link-choice-form.jsx');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import TopBar from './elements/topbar.jsx';
+import NewChoiceForm from './choices-add/new-choice-form.jsx';
+import LinkChoiceForm from './choices-add/link-choice-form.jsx';
 
 injectTapEventPlugin();
 

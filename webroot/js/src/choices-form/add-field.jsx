@@ -1,34 +1,18 @@
-var React = require('react');
+import React from 'react';
 
-var Formsy = require('formsy-react');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var FormsySelect = require('formsy-material-ui/lib/FormsySelect');
+import Formsy from 'formsy-react';
+import FormsySelect from 'formsy-material-ui/lib/FormsySelect';
 
-var FlatButton = require('material-ui/lib/flat-button');
-var IconButton = require('material-ui/lib/icon-button');
+import FlatButton from 'material-ui/FlatButton';
+import IconButton from 'material-ui/IconButton';
+import Dialog from 'material-ui/Dialog';
+import MenuItem from 'material-ui/MenuItem';
 
-var Dialog = require('material-ui/lib/dialog');
-var MenuItem = require('material-ui/lib/menus/menu-item');
-
-var CommonFields = require('./common-fields.jsx');
-var ListFields = require('./list-fields.jsx');
-var NumberFields = require('./number-fields.jsx');
-
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import CommonFields from './common-fields.jsx';
+import ListFields from './list-fields.jsx';
+import NumberFields from './number-fields.jsx';
 
 var AddField = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
     getInitialState: function () {
         return {
             canSubmit: false,

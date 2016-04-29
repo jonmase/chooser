@@ -1,38 +1,15 @@
-var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
-var Card  = require('material-ui/lib/card/card');
-var CardHeader = require('material-ui/lib/card/card-header');
-var CardText  = require('material-ui/lib/card/card-text');
-//var CardActions  = require('material-ui/lib/card/card-actions');
-var RoleCheckboxes = require('./role-checkboxes.jsx');
+import React from 'react';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Formsy from 'formsy-react';
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+
+import Card from 'material-ui/Card/Card';
+import CardHeader from 'material-ui/Card/CardHeader';
+import CardText  from 'material-ui/Card/CardText';
+
+import RaisedButton from 'material-ui/RaisedButton';
 
 var RolesSettingsForm = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
-
-    handleChange: function(currentValues, isChanged) {
-        if(typeof(currentValues.notify) !== 'undefined' && isChanged) {
-            this.props.handlers.change();
-        }
-    },
-    
-    handleSubmit: function(data) {
-        this.props.handlers.submit(data);
-    },
-  
     render: function() {
         return (
             <Card 
@@ -51,37 +28,37 @@ var RolesSettingsForm = React.createClass({
                     <Formsy.Form
                         id="roles_settings_form"
                         method="POST"
-                        onValidSubmit={this.handleSubmit}
-                        onChange={this.handleChange}
+                        onValidSubmit={this.props.handlers.submit}
                     >
-                        {/*<div className="row">*/}
-                            <p className="no-top-margin">Please note that 'Instructors' means anyone who has the maintain or contribute role in a WebLearn site from which this Choice is linked.</p>
-                            {/*<div className="col-xs-12 col-sm-6">*/}
-                                {/*<p>
-                                    Default permissions for 'Instructors' (i.e. maintainers and contributors in WebLearn):<br />
-                                    <span className="sublabel">You can give users further permissions in the "Additional Permissions" section below.</span>
-                                </p>*/}
-                                {/*<RoleCheckboxes nameBase="defaultRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />*/}
-                                <FormsyCheckbox
-                                    name="defaultRoles.editor"
-                                    label="Instructors are Editors, so they can create/edit their own options and profile (in most situations, you would want this ticked)"
-                                    defaultChecked={this.props.state.defaultRoles['editor']}
-                                />
-                                <FormsyCheckbox
-                                    name="defaultRoles.reviewer"
-                                    label="Instructors are Reviewers, so they can view all the results and selections (normally they would only see who has selected their own options)"
-                                    defaultChecked={this.props.state.defaultRoles['reviewer']}
-                                />
-                            {/*</div>
-                            <div className="col-xs-12 col-sm-6">*/}
-                                <FormsyToggle
-                                    label={<span><span>Notify users by email when they are given additional permissions</span><br /><span className="sublabel">This can be overridden when additional permissions are given</span></span>}
-                                    defaultToggled={this.props.state.notify}
-                                    labelPosition="right"
-                                    name="notify"
-                                />
-                            {/*</div>
-                        </div>*/}
+                        <p className="no-top-margin">Please note that 'Instructors' means anyone who has the maintain or contribute role in a WebLearn site from which this Choice is linked.</p>
+                        <div className="section">
+                            <FormsyToggle
+                                name="defaultRoles.editor"
+                                label="Instructors are Editors, so they can create/edit their own options and profile (in most situations, you would want this ticked)"
+                                defaultToggled={this.props.state.defaultRoles['editor']}
+                                labelPosition="right"
+                                onChange={this.props.handlers.change}
+                            />
+                        </div>
+                        <div className="section">
+                            <FormsyToggle
+                                name="defaultRoles.reviewer"
+                                label="Instructors are Reviewers, so they can view all the results and selections (normally they would only see who has selected their own options)"
+                                defaultToggled={this.props.state.defaultRoles['reviewer']}
+                                labelPosition="right"
+                                onChange={this.props.handlers.change}
+                            />
+                        </div>
+                        <div className="section">
+                            <FormsyToggle
+                                name="notify"
+                                //label={<span><span>Notify users by email when they are given additional permissions</span><br /><span className="sublabel">This can be overridden when additional permissions are given</span></span>}
+                                label="Notify users by email when they are given additional permissions (can be overridden)"
+                                defaultToggled={this.props.state.notify}
+                                labelPosition="right"
+                                onChange={this.props.handlers.change}
+                            />
+                        </div>
                         <RaisedButton 
                             label={this.props.state.settingsButton.label} 
                             primary={true} 

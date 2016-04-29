@@ -1,23 +1,11 @@
-var React = require('react');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
+import React from 'react';
 
-var Wysiwyg = require('../fields/wysiwyg.jsx');
-var Textarea = require('../fields/textarea.jsx');
-var TextField = require('../fields/text.jsx');
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-var ChooserTheme = require('../theme.jsx');
+import Textarea from '../fields/textarea.jsx';
+import TextField from '../fields/text.jsx';
 
 var CommonFields = React.createClass({
-    //Apply Custom theme - see http://www.material-ui.com/#/customization/themes
-    childContextTypes: {
-        muiTheme: React.PropTypes.object,
-    },
-    getChildContext: function() {
-        return {
-            muiTheme: GetMuiTheme(ChooserTheme),
-        };
-    },
     render: function() {
         return (
             <div style={{display: this.props.type?'block':'none'}}>
@@ -28,12 +16,6 @@ var CommonFields = React.createClass({
                         name="label"
                     />
                 </div>
-                {/*<div className="section">
-                    <label className="alloy-label">Instructions</label>
-                    <div className="alloy-container">
-                        <Wysiwyg container="instructions" placeholder="" />
-                    </div>
-                </div>*/}
                 <Textarea
                     name="instructions"
                     label="Instructions"
