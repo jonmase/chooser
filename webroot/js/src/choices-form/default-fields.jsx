@@ -28,6 +28,53 @@ var DefaultFields = React.createClass({
         };
     },
     render: function() {
+        var toggles = [
+            {
+                name: "code",
+                label: "Code",
+                defaultToggled: this.props.choice.use_code,
+            },
+            {
+                name: "title",
+                label: "Title",
+                defaultToggled: this.props.choice.use_title,
+            },
+            {
+                name: "description",
+                label: "Description",
+                defaultToggled: this.props.choice.use_description,
+            },
+            {
+                name: "min_places",
+                label: "Minimum Places",
+                defaultToggled: this.props.choice.use_min_places,
+            },
+            {
+                name: "max_places",
+                label: "Maximum Places",
+                defaultToggled: this.props.choice.use_max_places,
+            },
+            {
+                name: "points",
+                label: "Points",
+                defaultToggled: this.props.choice.use_points,
+            },
+        ];
+        
+        var toggleNodes = toggles.map(function(toggle) {
+            return (
+                <FormsyToggle
+                    key={toggle.name}
+                    name={toggle.name}
+                    label={toggle.label}
+                    defaultToggled={toggle.defaultToggled}
+                    labelPosition="right"
+                    onChange={this.props.handlers.change}
+                />
+            );
+        }, this);
+
+    
         return (
             <Card 
                 className="page-card"
@@ -51,48 +98,7 @@ var DefaultFields = React.createClass({
                                 //onChange={this.props.handlers.change}
                             >
                                 <div className="section">
-                                    <FormsyToggle
-                                        label={<span>Code</span>}
-                                        defaultToggled={this.props.choice.use_code}
-                                        labelPosition="right"
-                                        name="code"
-                                        onChange={this.props.handlers.change}
-                                    />
-                                    <FormsyToggle
-                                        label={<span>Title</span>}
-                                        defaultToggled={this.props.choice.use_title}
-                                        labelPosition="right"
-                                        name="title"
-                                        onChange={this.props.handlers.change}
-                                    />
-                                    <FormsyToggle
-                                        label={<span>Description</span>}
-                                        defaultToggled={this.props.choice.use_description}
-                                        labelPosition="right"
-                                        name="description"
-                                        onChange={this.props.handlers.change}
-                                    />
-                                    <FormsyToggle
-                                        label={<span>Min Places</span>}
-                                        defaultToggled={this.props.choice.use_min_places}
-                                        labelPosition="right"
-                                        name="min_places"
-                                        onChange={this.props.handlers.change}
-                                    />
-                                    <FormsyToggle
-                                        label={<span>Max Places</span>}
-                                        defaultToggled={this.props.choice.use_max_places}
-                                        labelPosition="right"
-                                        name="max_places"
-                                        onChange={this.props.handlers.change}
-                                    />
-                                    <FormsyToggle
-                                        label={<span>Points</span>}
-                                        defaultToggled={this.props.choice.use_points}
-                                        labelPosition="right"
-                                        name="points"
-                                        onChange={this.props.handlers.change}
-                                    />
+                                    {toggleNodes}
                                 </div>
                                 <RaisedButton 
                                     label={this.props.state.defaultsButton.label} 
