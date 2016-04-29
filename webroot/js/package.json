@@ -22,15 +22,16 @@
   },
   "homepage": "https://github.com/jonmase/chooser#readme",
   "dependencies": {
-    "alloyeditor": "^1.1.0",
-    "formsy-material-ui": "^0.3.8",
-    "formsy-react": "^0.17.0",
-    "html5shiv": "^3.7.3",
-    "jquery": "^2.2.2",
-    "material-ui": "^0.14.4",
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
-    "react-tap-event-plugin": "^0.2.2"
+    "alloyeditor": "^1.1",
+    "formsy-material-ui": "^0.4",
+    "formsy-react": "^0.18",
+    "html5shiv": "^3.7",
+    "jquery": "^2.2",
+    "material-ui": "0.15.0-beta.1",
+    "react": "^15.0",
+    "react-addons-update": "^15.0.1",
+    "react-dom": "^15.0",
+    "react-tap-event-plugin": "^1.0"
   },
   "devDependencies": {
     "babelify": "^7.2.0",
