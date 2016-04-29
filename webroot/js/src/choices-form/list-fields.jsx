@@ -7,7 +7,7 @@ var RaisedButton = require('material-ui/lib/raised-button');
 var MenuItem = require('material-ui/lib/menus/menu-item');
 
 var FilteringToggle = require('./filtering-toggle.jsx');
-var Textarea = require('../elements/textarea.jsx');
+var Textarea = require('../fields/textarea.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');

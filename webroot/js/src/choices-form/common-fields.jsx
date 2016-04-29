@@ -1,13 +1,9 @@
 var React = require('react');
-var Formsy = require('formsy-react');
-var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
 var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var FormsyText = require('formsy-material-ui/lib/FormsyText');
 
-var RaisedButton = require('material-ui/lib/raised-button');
-
-var AlloyEditorComponent = require('../elements/alloy.jsx');
-var Textarea = require('../elements/textarea.jsx');
+var Wysiwyg = require('../fields/wysiwyg.jsx');
+var Textarea = require('../fields/textarea.jsx');
+var TextField = require('../fields/text.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');
 var ChooserTheme = require('../theme.jsx');
@@ -26,17 +22,16 @@ var CommonFields = React.createClass({
         return (
             <div style={{display: this.props.type?'block':'none'}}>
                 <div className="section">
-                    <FormsyText
-                        floatingLabelText="Label"
-                        hintText="Enter field label"
+                    <TextField
+                        label="Label"
+                        hint="Enter field label"
                         name="label"
-                        required
                     />
                 </div>
                 {/*<div className="section">
                     <label className="alloy-label">Instructions</label>
                     <div className="alloy-container">
-                        <AlloyEditorComponent container="instructions" placeholder="" />
+                        <Wysiwyg container="instructions" placeholder="" />
                     </div>
                 </div>*/}
                 <Textarea

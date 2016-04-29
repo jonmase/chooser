@@ -2,11 +2,7 @@ var React = require('react');
 var Card  = require('material-ui/lib/card/card');
 var CardHeader = require('material-ui/lib/card/card-header');
 var CardText  = require('material-ui/lib/card/card-text');
-var Formsy = require('formsy-react');
-//var FormsyCheckbox = require('formsy-material-ui/lib/FormsyCheckbox');
-var FormsyToggle = require('formsy-material-ui/lib/FormsyToggle');
-var RaisedButton = require('material-ui/lib/raised-button');
-var AlloyEditorComponent = require('../elements/alloy.jsx');
+
 var AddField = require('./add-field.jsx');
 
 var GetMuiTheme = require('material-ui/lib/styles/getMuiTheme');

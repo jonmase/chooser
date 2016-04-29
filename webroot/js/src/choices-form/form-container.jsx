@@ -28,8 +28,20 @@ var FormContainer = React.createClass({
     },
     
     //Handle a change to the default field settings - enable the save button
-    handleDefaultsChange: function() {
+    handleDefaultsChange: function(event) {
+        //TODO: Do this use the update addon
+        var defaults = {
+            code: this.state.defaults.code,
+            title: this.state.defaults.title,
+            description: this.state.defaults.description,
+            min_places: this.state.defaults.min_places,
+            max_places: this.state.defaults.max_places,
+            points: this.state.defaults.points,
+        };
+
+        defaults[event.target.name] = event.target.checked;
         this.setState({
+            defaults: defaults,
             defaultsButton: {
                 disabled: false,
                 label: 'Save',
