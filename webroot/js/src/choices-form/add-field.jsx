@@ -65,6 +65,18 @@ var AddField = React.createClass({
                 type: 'url',
                 label: 'URL',
             },
+            {
+                type: 'date',
+                label: 'Date',
+            },
+            {
+                type: 'datetime',
+                label: 'Date & Time',
+            },
+            {
+                type: 'person',
+                label: 'Person',
+            },
         ];
         
         var typeMenuItems = fieldTypes.map(function(field) {
