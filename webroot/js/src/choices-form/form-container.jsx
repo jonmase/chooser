@@ -70,8 +70,7 @@ var FormContainer = React.createClass({
             data: defaults,
             success: function(returnedData) {
                 console.log(returnedData.response);
-                //Update the state with the updated data, and set 
-                //var stateData = settings;
+
                 var stateData = {};
                 stateData.defaultsButton = {
                     disabled: true,

@@ -73,7 +73,7 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      */
     public function roles($id = null)
     {
@@ -124,10 +124,10 @@ class ChoicesController extends AppController
     /**
      * roleSettings method
      * 
-     *
+     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
     public function roleSettings($id = null)
@@ -176,9 +176,12 @@ class ChoicesController extends AppController
     /**
      * addUser method
      * 
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
      */
     public function addUser($id = null)
     {
@@ -252,9 +255,11 @@ class ChoicesController extends AppController
     /**
      * editUser method
      * 
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      */
     public function editUser($id = null)
     {
@@ -372,6 +377,46 @@ class ChoicesController extends AppController
         $this->set(compact('choice'));
     }
 
+    /**
+     * formDefaults method
+     * Save the settings for the defaults option form fields
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     */
+    public function formDefaults($id = null) {
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+
+        if ($this->request->is('post')) {
+            $choice = $this->Choices->get($id);
+            
+            foreach($this->request->data as $field => $value) {
+                $choice['use_' . $field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+            
+            //pr($this->request->data);
+           // pr($choice);
+            if($this->Choices->save($choice)) {
+                $this->set('response', 'Default field settings saved');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving default field settings'));
+            }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Saving default field settings requires POST'));
+        }
+    }
 
     /**
      * Add method
