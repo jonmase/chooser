@@ -419,6 +419,97 @@ class ChoicesController extends AppController
     }
 
     /**
+     * formExtra method
+     * Save an extra field to the option form
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     */
+    public function formExtra($id = null) {
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+
+        if ($this->request->is('post')) {
+            //pr($this->request->data);
+            $data = $this->request->data;
+            $data['choice_id'] = $id;
+            
+            //Process bool fields
+            $boolFields = [
+                'required',
+                'show_to_students',
+                'in_user_defined_form',
+                'sortable',
+                'filterable',
+                'rule_category',
+            ];
+            foreach($boolFields as $fieldName) {
+                $data[$fieldName] = isset($data[$fieldName])?filter_var($data[$fieldName], FILTER_VALIDATE_BOOLEAN):false;
+            }
+            
+            //Process non-standard fields
+            if($data['type'] === 'list') {
+                //List - list_type, list_options (both required)
+                if(empty($data['list_type']) || empty($data['list_options'])) {
+                    throw new InternalErrorException(__('Please specify list type and options'));
+                }
+                else {
+                    $data['list_options'] = explode("\n", $data['list_options']);
+                    $extraFieldNames = ['list_type', 'list_options'];
+                    $data = $this->_processExtraFields($data, $extraFieldNames);
+                }
+            }
+            if($data['type'] === 'number') {
+                //Number - number_min, number_max (neither required)
+                $extraFieldNames = ['number_min', 'number_max'];
+                $data = $this->_processExtraFields($data, $extraFieldNames);
+            }
+           
+            //Create entity 
+            $extraField = $this->Choices->ExtraFields->newEntity($data);
+            //pr($extraField);
+            //exit;
+            
+            if($this->Choices->ExtraFields->save($extraField)) {
+                $this->set('response', 'Extra field added');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with adding extra field'));
+            }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Adding extra field requires POST'));
+        }
+    }
+    
+    /**
+     * _processExtraFields method
+     * Adds extra fields as JSON to 'extra' in data and removes those extra fields from data
+     * 
+     * @param array $data
+     * @param array|null $extraFieldNames - the fields that will be moved into 'extra'
+     * @return array $data - modified data array
+     */
+    private function _processExtraFields($data, $extraFieldNames = null) {
+        $extra = [];
+        foreach($extraFieldNames as $fieldName) {
+            $extra[$fieldName] = $data[$fieldName];
+            unset($data[$fieldName]);
+        }
+        $data['extra'] = json_encode($extra);
+        return $data;
+    }
+
+    /**
      * Add method
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
      * User can choose an available Choice (which then uses link method), create a new one

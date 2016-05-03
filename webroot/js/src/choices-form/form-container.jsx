@@ -121,17 +121,18 @@ var FormContainer = React.createClass({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: defaults,
+            data: field,
             success: function(returnedData) {
                 console.log(returnedData.response);
-                //Update the state with the updated data, and set 
-                //var stateData = settings;
+                
+                //Add the new field to the state data
+                
                 var stateData = {};
                 stateData.snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
-                
+                stateData.extraDialogOpen = false;
                 this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
