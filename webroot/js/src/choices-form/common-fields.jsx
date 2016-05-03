@@ -2,25 +2,31 @@ import React from 'react';
 
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import Textarea from '../fields/textarea.jsx';
 import TextField from '../fields/text.jsx';
+import MultilineTextField from '../fields/multiline-text.jsx';
 
 var CommonFields = React.createClass({
     render: function() {
         return (
             <div style={{display: this.props.type?'block':'none'}}>
-                <div className="section">
-                    <TextField
-                        label="Label"
-                        hint="Enter field label"
-                        name="label"
-                    />
-                </div>
-                <Textarea
+                <TextField
+                    label="Label"
+                    hint="Enter field label"
+                    name="label"
+                    section={false}
+                    //required
+                />
+                {/*<Textarea
                     name="instructions"
                     label="Instructions"
                     sublabel="Enter instructions for completing this field"
                     rows={2}
+                    section={true}
+                />*/}
+                <MultilineTextField
+                    name="instructions"
+                    label="Instructions"
+                    hint="Enter instructions for completing this field"
                     section={true}
                 />
                 <FormsyToggle

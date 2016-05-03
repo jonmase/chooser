@@ -20,6 +20,13 @@ var AddField = React.createClass({
         };
     },
 
+   handleDialogClose: function () {
+        this.setState({
+            type: null,
+        });
+        this.props.handlers.dialogClose();
+    },
+
     enableSubmitButton: function () {
         this.setState({
             canSubmit: true
@@ -90,7 +97,7 @@ var AddField = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.props.handlers.dialogClose}
+                onTouchTap={this.handleDialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -100,6 +107,23 @@ var AddField = React.createClass({
                 disabled={!this.state.canSubmit}
             />,
         ];
+        
+        var typeSpecific = '';
+        if(this.state.type === 'list') {
+            typeSpecific = 
+                <ListFields
+                    state={this.props.state}
+                    type={this.state.type}
+                />;
+        }
+        else if(this.state.type === 'number') {
+            typeSpecific = 
+                <NumberFields
+                    state={this.props.state}
+                    type={this.state.type}
+                />;
+        }
+        
         
         return (
             <span>
@@ -113,9 +137,11 @@ var AddField = React.createClass({
                 <Dialog
                     title="Add Extra Field"
                     open={this.props.state.extraDialogOpen}
-                    onRequestClose={this.props.handlers.dialogClose}
+                    onRequestClose={this.handleDialogClose}
                     autoScrollBodyContent={true}
+                    modal={true}
                 >
+                    <p className="no-bottom-margin">Select the type of field that you want to add, and then complete the additional details.</p>
                     <Formsy.Form
                         id="add_user_form"
                         method="POST"
@@ -131,20 +157,13 @@ var AddField = React.createClass({
                             onChange={this.typeSelectChange}
                         >
                             {typeMenuItems}
-                        </FormsySelect>                        
+                        </FormsySelect>
                         <CommonFields
                             state={this.props.state}
                             type={this.state.type}
                         />
-                        <ListFields
-                            state={this.props.state}
-                            type={this.state.type}
-                        />
-                        <NumberFields
-                            state={this.props.state}
-                            type={this.state.type}
-                        />
-                        <div style={{textAlign: 'right'}}>
+                        {typeSpecific}
+                        <div style={{textAlign: 'right', marginTop: '20px'}}>
                             {actions}
                         </div>
                     </Formsy.Form>
