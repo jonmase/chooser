@@ -373,7 +373,7 @@ class ChoicesController extends AppController
                 'ExtraFields' => ['ExtraFieldOptions']
             ]
         ]);
-        //pr($choice);
+        pr($choice);
         $this->set(compact('choice'));
     }
 
@@ -463,9 +463,21 @@ class ChoicesController extends AppController
                     throw new InternalErrorException(__('Please specify list type and options'));
                 }
                 else {
-                    $data['list_options'] = explode("\n", $data['list_options']);
-                    $extraFieldNames = ['list_type', 'list_options'];
-                    $data = $this->_processExtraFields($data, $extraFieldNames);
+                    //$extraFieldNames = ['list_type'];
+                    //$data = $this->_processExtraFields($data, $extraFieldNames);
+                    $data['type'] = $data['list_type'];
+                    unset($data['list_type']);
+                    
+                    $listOptions = explode("\n", $data['list_options']);
+                    $data['extra_field_options'] = [];
+                    foreach($listOptions as $option) {
+                        $optionData = [];
+                        $optionData['label'] = $option;
+                        $optionData['value'] = strtolower(preg_replace('/[^\w]/', '_', $option));
+                        //$data['extra_field_options'][] = $this->Choices->ExtraFields->ExtraFieldOptions->newEntity($optionData);
+                        $data['extra_field_options'][] = $optionData;
+                    }
+                    unset($data['list_options']);
                 }
             }
             if($data['type'] === 'number') {
@@ -473,9 +485,9 @@ class ChoicesController extends AppController
                 $extraFieldNames = ['number_min', 'number_max'];
                 $data = $this->_processExtraFields($data, $extraFieldNames);
             }
-           
+            //pr($data);
             //Create entity 
-            $extraField = $this->Choices->ExtraFields->newEntity($data);
+            $extraField = $this->Choices->ExtraFields->newEntity($data, ['associated' => ['ExtraFieldOptions']]);
             //pr($extraField);
             //exit;
             
