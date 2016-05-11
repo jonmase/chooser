@@ -12,7 +12,7 @@ var FormContainer = React.createClass({
     getInitialState: function () {
         return {
             extraDialogOpen: false,
-            extraFields: [],
+            extraFields: this.props.choice.extra_fields,
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,
@@ -178,7 +178,6 @@ var FormContainer = React.createClass({
                         handlers={defaultsHandlers}
                     />
                     <ExtraFields 
-                        choice={this.props.choice}
                         state={this.state}
                         handlers={extrasHandlers}
                     />

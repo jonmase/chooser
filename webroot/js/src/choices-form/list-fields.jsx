@@ -7,34 +7,29 @@ import MenuItem from 'material-ui/MenuItem';
 
 import FilteringToggle from './filtering-toggle.jsx';
 import MultilineTextField from '../fields/multiline-text.jsx';
+import DropdownField from '../fields/dropdown.jsx';
 
 var CommonFields = React.createClass({
     render: function() {
         var listTypes = [
             {
-                type: 'radio',
+                value: 'radio',
                 label: 'Radio buttons (select one)',
             },
             {
-                type: 'checkbox',
+                value: 'checkbox',
                 label: 'Checkboxes (select multiple)',
             },
             {
-                type: 'dropdown',
+                value: 'dropdown',
                 label: 'Dropdown (select one)',
             },
-            {
-                type: 'multidropdown',
+            /*{
+                value: 'multidropdown',
                 label: 'Dropdown (select multiple)',
-            },
+            },*/
         ];
 
-        var typeMenuItems = listTypes.map(function(type) {
-            return (
-                <MenuItem value={type.type} key={type.type} primaryText={type.label} />
-            );
-        });
-    
         return (
             <div>
                 <div className="section">
@@ -46,14 +41,13 @@ var CommonFields = React.createClass({
                         name="rule_category"
                     />
                 </div>
-                <FormsySelect
+                <DropdownField
                     name="list_type"
-                    required
-                    floatingLabelText="List type"
-                    onChange={this.typeSelectChange}
-                >
-                    {typeMenuItems}
-                </FormsySelect>                        
+                    options={listTypes}
+                    required={true}
+                    label="Option list type"
+                    //onChange={this.typeSelectChange}
+                />
                 <MultilineTextField
                     name="list_options"
                     label="Options"

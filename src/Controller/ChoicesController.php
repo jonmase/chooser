@@ -373,7 +373,7 @@ class ChoicesController extends AppController
                 'ExtraFields' => ['ExtraFieldOptions']
             ]
         ]);
-        pr($choice);
+        pr(json_encode($choice));
         $this->set(compact('choice'));
     }
 
