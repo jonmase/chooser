@@ -3,13 +3,13 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 var TextField = React.createClass({
     render: function() {
-        var required=this.props.required?true:false;
+        var required=this.props.field.required?true:false;
         return (
-            <div className={this.props.section?'section':''}>
+            <div className={this.props.field.section?'section':''}>
                 <FormsyText
-                    floatingLabelText={this.props.label}
-                    hintText={this.props.hint}
-                    name={this.props.name}
+                    floatingLabelText={this.props.field.label}
+                    hintText={this.props.field.instructions}
+                    name={this.props.field.name}
                     required={required}
                 />
             </div>

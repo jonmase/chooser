@@ -10,12 +10,21 @@ var CommonFields = React.createClass({
         return (
             <div style={{display: this.props.type?'block':'none'}}>
                 <TextField
+                    field={{
+                        label: "Label",
+                        instructions: "Enter field label",
+                        name: "label",
+                        section: false,
+                        required: true,
+                    }}
+                />
+                {/*<TextField
                     label="Label"
                     hint="Enter field label"
                     name="label"
                     section={false}
                     //required
-                />
+                />*/}
                 {/*<Textarea
                     name="instructions"
                     label="Instructions"

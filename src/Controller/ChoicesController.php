@@ -13,6 +13,9 @@ use Cake\Network\Exception\MethodNotAllowedException;
  */
 class ChoicesController extends AppController
 {
+    private function _cleanString($string) {
+        return strtolower(preg_replace('/[^\w]/', '_', $string));
+    }
 
     /**
      * Index method
@@ -373,7 +376,12 @@ class ChoicesController extends AppController
                 'ExtraFields' => ['ExtraFieldOptions']
             ]
         ]);
-        pr(json_encode($choice));
+        
+        foreach($choice['extra_fields'] as &$extra) {
+            $extra['name'] = $this->_cleanString($extra['label']);
+        }
+        
+        pr($choice);
         $this->set(compact('choice'));
     }
 
@@ -473,7 +481,7 @@ class ChoicesController extends AppController
                     foreach($listOptions as $option) {
                         $optionData = [];
                         $optionData['label'] = $option;
-                        $optionData['value'] = strtolower(preg_replace('/[^\w]/', '_', $option));
+                        $optionData['value'] = $this->_cleanString($option);
                         //$data['extra_field_options'][] = $this->Choices->ExtraFields->ExtraFieldOptions->newEntity($optionData);
                         $data['extra_field_options'][] = $optionData;
                     }

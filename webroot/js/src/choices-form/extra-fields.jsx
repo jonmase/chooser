@@ -43,16 +43,18 @@ var ExtraFields = React.createClass({
                         noValidate
                     >
                         {this.props.state.extraFields.map(function(field) {
+                            field.section = true;
                             switch(field.type) {
                                 case 'text': 
                                     return (
                                         <TextField
+                                            field={field}
                                             key={field.label}
-                                            label={field.label}
-                                            hint={field.instructions}
-                                            name={field.label}
-                                            required={field.required}
-                                            section={true}
+                                            //label={field.label}
+                                            //hint={field.instructions}
+                                            //name={field.label}
+                                            //required={field.required}
+                                            //section={true}
                                         />
                                     );
                                     break;
