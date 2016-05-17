@@ -3,13 +3,14 @@ import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
 var EmailField = React.createClass({
     render: function() {
-        var required=this.props.required?true:false;
+        var field = this.props.field;
+        var required=field.required?true:false;
         return (
-            <div className={this.props.section?'section':''}>
+            <div className={field.section?'section':''}>
                 <FormsyText
-                    floatingLabelText={this.props.label}
-                    hintText={this.props.hint}
-                    name={this.props.name}
+                    floatingLabelText={field.label}
+                    hintText={field.instructions}
+                    name={field.name}
                     required={required}
                     validations="isEmail"
                     validationError="Please enter a valid email address"

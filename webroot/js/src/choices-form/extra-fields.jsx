@@ -50,11 +50,6 @@ var ExtraFields = React.createClass({
                                         <TextField
                                             field={field}
                                             key={field.label}
-                                            //label={field.label}
-                                            //hint={field.instructions}
-                                            //name={field.label}
-                                            //required={field.required}
-                                            //section={true}
                                         />
                                     );
                                     break;
@@ -63,11 +58,6 @@ var ExtraFields = React.createClass({
                                         <Wysiwyg
                                             key={field.label}
                                             field={field}
-                                            //label={field.label}
-                                            //sublabel={field.instructions}
-                                            //container={field.label}
-                                            //required={field.required}
-                                            //section={true}
                                         />
                                     );
                                     break;
@@ -76,11 +66,6 @@ var ExtraFields = React.createClass({
                                         <NumericField
                                             field={field}
                                             key={field.label}
-                                            //label={field.label}
-                                            //hint={field.instructions}
-                                            //name={field.label}
-                                            //required={field.required}
-                                            //section={true}
                                         />
                                     );
                                     break;
@@ -88,11 +73,7 @@ var ExtraFields = React.createClass({
                                     return (
                                         <EmailField
                                             key={field.label}
-                                            label={field.label}
-                                            hint={field.instructions}
-                                            name={field.label}
-                                            required={field.required}
-                                            section={true}
+                                            field={field}
                                         />
                                     );
                                     break;
@@ -100,11 +81,7 @@ var ExtraFields = React.createClass({
                                     return (
                                         <UrlField
                                             key={field.label}
-                                            label={field.label}
-                                            hint={field.instructions}
-                                            name={field.label}
-                                            required={field.required}
-                                            section={true}
+                                            field={field}
                                         />
                                     );
                                     break;
