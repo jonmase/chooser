@@ -379,9 +379,10 @@ class ChoicesController extends AppController
         
         foreach($choice['extra_fields'] as &$extra) {
             $extra['name'] = $this->_cleanString($extra['label']);
+            $extra['extra'] = json_decode($extra['extra']);
         }
         
-        pr($choice);
+        //pr($choice);
         $this->set(compact('choice'));
     }
 
@@ -490,7 +491,7 @@ class ChoicesController extends AppController
             }
             if($data['type'] === 'number') {
                 //Number - number_min, number_max (neither required)
-                $extraFieldNames = ['number_min', 'number_max'];
+                $extraFieldNames = ['number_min', 'number_max', 'integer'];
                 $data = $this->_processExtraFields($data, $extraFieldNames);
             }
             //pr($data);
@@ -522,7 +523,9 @@ class ChoicesController extends AppController
     private function _processExtraFields($data, $extraFieldNames = null) {
         $extra = [];
         foreach($extraFieldNames as $fieldName) {
-            $extra[$fieldName] = $data[$fieldName];
+            if(!empty($data[$fieldName])) {
+                $extra[$fieldName] = $data[$fieldName];
+            }
             unset($data[$fieldName]);
         }
         $data['extra'] = json_encode($extra);

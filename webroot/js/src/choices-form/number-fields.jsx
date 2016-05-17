@@ -1,5 +1,7 @@
 import React from 'react';
 
+import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+
 import FilteringToggle from './filtering-toggle.jsx';
 import NumericField from '../fields/numeric.jsx';
 
@@ -9,19 +11,29 @@ var CommonFields = React.createClass({
             <div>
                 <div>
                     <FilteringToggle default={false} />
+                    <FormsyToggle
+                        label="Integer only"
+                        defaultToggled={false}
+                        labelPosition="right"
+                        name="integer"
+                    />
                 </div>
                 <div>
                     <NumericField
-                        label="Minimum value"
-                        hint="Enter minimum"
-                        name="number_min"
+                        field={{
+                            label: "Minimum value",
+                            hint: "Enter minimum",
+                            name: "number_min",
+                        }}
                     />
                 </div>
                 <div className="section">
                     <NumericField
-                        label="Maximum value"
-                        hint="Enter maximum"
-                        name="number_max"
+                        field={{
+                            label: "Maximum value",
+                            hint: "Enter maximum",
+                            name: "number_max",
+                        }}
                     />
                 </div>
             </div>

@@ -73,12 +73,13 @@ var ExtraFields = React.createClass({
                                 case 'number': 
                                     return (
                                         <NumericField
+                                            field={field}
                                             key={field.label}
-                                            label={field.label}
-                                            hint={field.instructions}
-                                            name={field.label}
-                                            required={field.required}
-                                            section={true}
+                                            //label={field.label}
+                                            //hint={field.instructions}
+                                            //name={field.label}
+                                            //required={field.required}
+                                            //section={true}
                                         />
                                     );
                                     break;

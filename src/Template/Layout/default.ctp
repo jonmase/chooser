@@ -28,7 +28,7 @@
     <?= $this->Html->css('base'); ?>
     <?= $this->Html->css('https://fonts.googleapis.com/css?family=Roboto:400,300,500,700'); //Roboto font ?>
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
-    <?= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
+    <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
     <?= $this->Html->css('/js/node_modules/alloyeditor/dist/alloy-editor/assets/alloy-editor-ocean-min.css'); //Alloy Editor ?>
     <?= $this->Html->css('chooser'); ?>
 
