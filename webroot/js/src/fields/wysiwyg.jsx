@@ -39,7 +39,7 @@ var toolbars = {
 
 var WysiwygField = React.createClass({
     componentDidMount: function() {
-        this._editor = AlloyEditor.editable(this.props.container, {toolbars: toolbars});
+        this._editor = AlloyEditor.editable(this.props.field.name, {toolbars: toolbars});
     },
 
     componentWillUnmount: function() {
@@ -48,14 +48,15 @@ var WysiwygField = React.createClass({
     
 
     render: function() {
+        var field = this.props.field;
         return (
             <div className="alloy-container">
                 <label>
-                    {this.props.label}<br />
-                    <span className="sublabel">{this.props.sublabel}</span>
+                    {field.label}<br />
+                    <span className="sublabel">{field.instructions}</span>
                 </label>
                 {/* //Use dangerouslySetInnerHTML to prevent invariant errors */}
-                <div id={this.props.container} dangerouslySetInnerHTML={{__html: '<p></p><p></p>'}}>
+                <div id={field.name} dangerouslySetInnerHTML={{__html: '<p></p><p></p>'}}>
                 </div>
             </div>
         );

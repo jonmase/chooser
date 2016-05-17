@@ -62,11 +62,12 @@ var ExtraFields = React.createClass({
                                     return (
                                         <Wysiwyg
                                             key={field.label}
-                                            label={field.label}
-                                            sublabel={field.instructions}
-                                            container={field.label}
-                                            required={field.required}
-                                            section={true}
+                                            field={field}
+                                            //label={field.label}
+                                            //sublabel={field.instructions}
+                                            //container={field.label}
+                                            //required={field.required}
+                                            //section={true}
                                         />
                                     );
                                     break;

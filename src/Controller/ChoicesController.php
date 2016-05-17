@@ -382,7 +382,7 @@ class ChoicesController extends AppController
             $extra['extra'] = json_decode($extra['extra']);
         }
         
-        //pr($choice);
+        pr($choice);
         $this->set(compact('choice'));
     }
 
