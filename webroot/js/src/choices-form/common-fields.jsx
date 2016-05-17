@@ -33,10 +33,12 @@ var CommonFields = React.createClass({
                     section={true}
                 />*/}
                 <MultilineTextField
-                    name="instructions"
-                    label="Instructions"
-                    hint="Enter instructions for completing this field"
-                    section={true}
+                    field={{
+                        label: "Instructions",
+                        instructions: "Enter instructions for completing this field",
+                        name: "instructions",
+                        section: true,
+                    }}
                 />
                 <FormsyToggle
                     label="Required"

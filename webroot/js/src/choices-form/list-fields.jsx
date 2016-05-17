@@ -49,10 +49,13 @@ var CommonFields = React.createClass({
                     //onChange={this.typeSelectChange}
                 />
                 <MultilineTextField
-                    name="list_options"
-                    label="Options"
-                    hint="Enter one option per line, in the order you want them to appear"
-                    required
+                    field={{
+                        name: "list_options",
+                        label: "Options",
+                        instructions: "Enter one option per line, in the order you want them to appear",
+                        required: true,
+                        section: false,
+                    }}
                 />
             </div>
         );
