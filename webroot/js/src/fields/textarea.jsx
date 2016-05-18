@@ -2,14 +2,16 @@ import React from 'react';
 
 var TextareaField = React.createClass({
     render: function() {
+        var field = this.props.field;
+
         return (
-            <div className={this.props.section?'section':''}>
+            <div className={field.section?'section':''}>
                 <label>
-                    {this.props.label}<br />
-                    <span className="sublabel">{this.props.sublabel}</span>
+                    {field.label}<br />
+                    <span className="sublabel">{field.instructions}</span>
                 </label>
                 <div>
-                    <textarea rows={this.props.rows} name={this.props.name} style={{width: '100%'}} />
+                    <textarea rows={field.rows} name={field.name} style={{width: '100%'}} />
                 </div>
             </div>
         );

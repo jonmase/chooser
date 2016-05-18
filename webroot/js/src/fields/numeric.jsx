@@ -25,6 +25,7 @@ Formsy.addValidationRule('numberMax', (values, value, maxValue) => {
 var NumericField = React.createClass({
     render: function() {
         var field = this.props.field;
+        
         var required=field.required?true:false;
         
         var validations = {

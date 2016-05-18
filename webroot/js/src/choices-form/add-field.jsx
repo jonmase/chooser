@@ -121,18 +121,18 @@ var AddField = React.createClass({
         return (
             <span>
                 <IconButton
-                    tooltip="Add Field"
-                    onTouchTap={this.props.handlers.dialogOpen}
                     iconClassName="material-icons"
+                    onTouchTap={this.props.handlers.dialogOpen}
+                    tooltip="Add Field"
                 >
                     add
                 </IconButton>         
                 <Dialog
-                    title="Add Extra Field"
-                    open={this.props.state.extraDialogOpen}
-                    onRequestClose={this.handleDialogClose}
                     autoScrollBodyContent={true}
                     modal={true}
+                    onRequestClose={this.handleDialogClose}
+                    open={this.props.state.extraDialogOpen}
+                    title="Add Extra Field"
                 >
                     <p className="no-bottom-margin">Select the type of field that you want to add, and then complete the additional details.</p>
                     <Formsy.Form
@@ -144,10 +144,12 @@ var AddField = React.createClass({
                         noValidate
                     >
                         <DropdownField
-                            name="type"
-                            options={fieldTypes}
-                            required={true}
-                            label="Field type"
+                            field={{
+                                label: "Field type",
+                                name: "type",
+                                options: fieldTypes,
+                                required: true,
+                            }}
                             onChange={this.typeSelectChange}
                         />
                         <CommonFields

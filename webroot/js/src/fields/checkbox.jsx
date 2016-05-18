@@ -4,10 +4,12 @@ import FormsyCheckbox from 'formsy-material-ui/lib/FormsyCheckbox';
 
 var CheckboxField = React.createClass({
     render: function() {
-        var checkboxes = this.props.options.map(function(option) {
+        var field = this.props.field;
+
+        var checkboxes = field.options.map(function(option) {
             return (
                 <FormsyCheckbox 
-                    name={this.props.name + '.' + option.value}
+                    name={field.name + '.' + option.value}
                     key={option.value} 
                     label={option.label} 
                     onChange={this.props.onChange}
@@ -15,12 +17,13 @@ var CheckboxField = React.createClass({
             );
         }, this);
     
-        var required=this.props.required?true:false;
+        var required=field.required?true:false;
+        
         return (
-            <div>
+            <div className={field.section?'section':''}>
                 <label>
-                    {this.props.label}<br />
-                    <span className="sublabel">{this.props.sublabel}</span>
+                    {field.label}<br />
+                    <span className="sublabel">{field.instructions}</span>
                 </label>
                 {checkboxes}
             </div>                        

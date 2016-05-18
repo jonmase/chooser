@@ -380,6 +380,8 @@ class ChoicesController extends AppController
         foreach($choice['extra_fields'] as &$extra) {
             $extra['name'] = $this->_cleanString($extra['label']);
             $extra['extra'] = json_decode($extra['extra']);
+            $extra['options'] = $extra['extra_field_options'];
+            unset($extra['extra_field_options']);
         }
         
         pr($choice);

@@ -49,8 +49,9 @@ var WysiwygField = React.createClass({
 
     render: function() {
         var field = this.props.field;
+        
         return (
-            <div className="alloy-container">
+            <div className={(field.section?'section ':'') + 'alloy-container'}>
                 <label>
                     {field.label}<br />
                     <span className="sublabel">{field.instructions}</span>

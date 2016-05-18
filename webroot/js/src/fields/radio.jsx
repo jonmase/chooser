@@ -5,23 +5,26 @@ import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
 
 var RadioField = React.createClass({
     render: function() {
-        var radios = this.props.options.map(function(option) {
+        var field = this.props.field;
+
+        var radios = field.options.map(function(option) {
             return (
                 <FormsyRadio value={option.value} key={option.value} label={option.label} />
             );
         });
     
-        var required=this.props.required?true:false;
+        var required=field.required?true:false;
+        
         return (
-            <div>
+            <div className={field.section?'section':''}>
                 <label>
-                    {this.props.label}<br />
-                    <span className="sublabel">{this.props.sublabel}</span>
+                    {field.label}<br />
+                    <span className="sublabel">{field.instructions}</span>
                 </label>
                 <FormsyRadioGroup 
-                    name={this.props.name}
+                    name={field.name}
                     required={required}
-                    floatingLabelText={this.props.label}
+                    floatingLabelText={field.label}
                     onChange={this.props.onChange}
                 >
                     {radios}

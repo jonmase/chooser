@@ -5,22 +5,33 @@ import MenuItem from 'material-ui/MenuItem';
 
 var DropdownField = React.createClass({
     render: function() {
-        var menuItems = this.props.options.map(function(option) {
+        var field = this.props.field;
+
+        var menuItems = field.options.map(function(option) {
             return (
                 <MenuItem value={option.value} key={option.value} primaryText={option.label} />
             );
         });
     
-        var required=this.props.required?true:false;
+        var required=field.required?true:false;
+        
         return (
-            <FormsySelect
-                name={this.props.name}
-                required={required}
-                floatingLabelText={this.props.label}
-                onChange={this.props.onChange}
-            >
-                {menuItems}
-            </FormsySelect>                        
+            <div className={field.section?'section':''}>
+                <FormsySelect
+                    name={field.name}
+                    required={required}
+                    floatingLabelText={field.label}
+                    onChange={this.props.onChange}
+                >
+                    {menuItems}
+                </FormsySelect>                        
+                {/*
+                //TODO: work out a better way of showing instructions for this
+                <div>
+                    <span className="sublabel">{field.instructions}</span>
+                </div>
+                */}
+            </div>                        
         );
     }
 });

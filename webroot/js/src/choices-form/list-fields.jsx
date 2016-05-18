@@ -35,24 +35,26 @@ var CommonFields = React.createClass({
                 <div className="section">
                     <FilteringToggle default={true} />
                     <FormsyToggle
-                        label="Use as category (for creating rules)"
                         defaultToggled={false}
+                        label="Use as category (for creating rules)"
                         labelPosition="right"
                         name="rule_category"
                     />
                 </div>
                 <DropdownField
-                    name="list_type"
-                    options={listTypes}
-                    required={true}
-                    label="Option list type"
+                    field={{
+                        label: "Option list type",
+                        name: "list_type",
+                        options: listTypes,
+                        required: true,
+                    }}
                     //onChange={this.typeSelectChange}
                 />
                 <MultilineTextField
                     field={{
-                        name: "list_options",
-                        label: "Options",
                         instructions: "Enter one option per line, in the order you want them to appear",
+                        label: "Options",
+                        name: "list_options",
                         required: true,
                         section: false,
                     }}

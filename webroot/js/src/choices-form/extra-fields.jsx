@@ -88,35 +88,24 @@ var ExtraFields = React.createClass({
                                 case 'radio': 
                                     return (
                                         <RadioField
+                                            field={field}
                                             key={field.label}
-                                            label={field.label}
-                                            sublabel={field.instructions}
-                                            name={field.label}
-                                            options={field.extra_field_options}
-                                            required={field.required}
                                         />
                                     );
                                     break;
                                 case 'checkbox': 
                                     return (
                                         <CheckboxField
+                                            field={field}
                                             key={field.label}
-                                            label={field.label}
-                                            sublabel={field.instructions}
-                                            name={field.label}
-                                            options={field.extra_field_options}
                                         />
                                     );
                                     break;
                                 case 'dropdown': 
                                     return (
                                         <DropdownField
+                                            field={field}
                                             key={field.label}
-                                            label={field.label}
-                                            sublabel={field.instructions}
-                                            name={field.label}
-                                            options={field.extra_field_options}
-                                            required={field.required}
                                         />
                                     );
                                     break;
