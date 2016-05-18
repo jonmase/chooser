@@ -17,6 +17,10 @@ var PersonField = React.createClass({
         
         return (
             <div className={field.section?'section':''}>
+                <label>
+                    {field.label}<br />
+                    <span className="sublabel">{field.instructions}</span>
+                </label>
                 <div className="row">
                     <div className={colClasses}>
                         <TextField
