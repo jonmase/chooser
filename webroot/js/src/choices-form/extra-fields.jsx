@@ -16,6 +16,7 @@ import RadioField from '../fields/radio.jsx';
 import CheckboxField from '../fields/checkbox.jsx';
 import DropdownField from '../fields/dropdown.jsx';
 import DateTimeField from '../fields/datetime.jsx';
+import PersonField from '../fields/person.jsx';
 
 var ExtraFields = React.createClass({
     render: function() {
@@ -118,6 +119,14 @@ var ExtraFields = React.createClass({
                                             field={field}
                                             key={field.label}
                                             time={time}
+                                        />
+                                    );
+                                    break;
+                                case 'person':
+                                    return (
+                                        <PersonField
+                                            field={field}
+                                            key={field.label}
                                         />
                                     );
                                     break;
