@@ -8,7 +8,7 @@ import MultilineTextField from '../fields/multiline-text.jsx';
 var CommonFields = React.createClass({
     render: function() {
         return (
-            <div style={{display: this.props.type?'block':'none'}}>
+            <div style={{display: this.props.state.addType?'block':'none'}}>
                 <TextField
                     field={{
                         label: "Label",

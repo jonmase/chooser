@@ -11,6 +11,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 var FormContainer = React.createClass({
     getInitialState: function () {
         return {
+            addType: null,
             extraDialogOpen: false,
             extraFields: this.props.choice.extra_fields,
             defaults: {
@@ -99,15 +100,24 @@ var FormContainer = React.createClass({
         }); 
     },
     
+    handleExtraTypeChange: function (event, value) {
+        console.log("Field type changed to " + value);
+        this.setState({
+            addType: value,
+        });
+    },
+
     handleExtraDialogOpen: function() {
         this.setState({
             extraDialogOpen: true,
+            addType: null,
         });
     },
 
     handleExtraDialogClose: function() {
         this.setState({
             extraDialogOpen: false,
+            addType: null,
         });
     },
 
@@ -163,6 +173,7 @@ var FormContainer = React.createClass({
         };
 
         var extrasHandlers={
+            extraTypeChange: this.handleExtraTypeChange,
             dialogOpen: this.handleExtraDialogOpen,
             dialogClose: this.handleExtraDialogClose,
             submit: this.handleExtraSubmit,

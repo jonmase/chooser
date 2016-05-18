@@ -15,15 +15,7 @@ var AddField = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            type: null,
         };
-    },
-
-   handleDialogClose: function () {
-        this.setState({
-            type: null,
-        });
-        this.props.handlers.dialogClose();
     },
 
     enableSubmitButton: function () {
@@ -35,13 +27,6 @@ var AddField = React.createClass({
     disableSubmitButton: function () {
         this.setState({
             canSubmit: false
-        });
-    },
-
-    typeSelectChange: function (event, value) {
-        console.log("Field type changed to " + value);
-        this.setState({
-            type: value,
         });
     },
 
@@ -90,7 +75,7 @@ var AddField = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.handleDialogClose}
+                onTouchTap={this.props.handlers.dialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -102,19 +87,13 @@ var AddField = React.createClass({
         ];
         
         var typeSpecific = '';
-        if(this.state.type === 'list') {
+        if(this.props.state.addType === 'list') {
             typeSpecific = 
-                <ListFields
-                    state={this.props.state}
-                    type={this.state.type}
-                />;
+                <ListFields />;
         }
-        else if(this.state.type === 'number') {
+        else if(this.props.state.addType === 'number') {
             typeSpecific = 
-                <NumberFields
-                    state={this.props.state}
-                    type={this.state.type}
-                />;
+                <NumberFields />;
         }
         
         
@@ -130,7 +109,7 @@ var AddField = React.createClass({
                 <Dialog
                     autoScrollBodyContent={true}
                     modal={true}
-                    onRequestClose={this.handleDialogClose}
+                    onRequestClose={this.props.handlers.dialogClose}
                     open={this.props.state.extraDialogOpen}
                     title="Add Extra Field"
                 >
@@ -150,11 +129,10 @@ var AddField = React.createClass({
                                 options: fieldTypes,
                                 required: true,
                             }}
-                            onChange={this.typeSelectChange}
+                            onChange={this.props.handlers.extraTypeChange}
                         />
                         <CommonFields
                             state={this.props.state}
-                            type={this.state.type}
                         />
                         {typeSpecific}
                         <div style={{textAlign: 'right', marginTop: '20px'}}>
