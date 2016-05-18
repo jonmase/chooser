@@ -5,6 +5,12 @@ import FormsyTime from 'formsy-material-ui/lib/FormsyTime';
 var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+var xs = 12;
+var sm = 6;
+var md = 4;
+var lg = 3;
+var colClasses = 'col-xs-' + xs + ' col-sm-' + sm + ' col-md-' + md + ' col-lg-' + lg
+        
 var DateTimeField = React.createClass({
     render: function() {
         var field = this.props.field;
@@ -13,17 +19,16 @@ var DateTimeField = React.createClass({
         
         var timeElement = '';
         if(this.props.time) {
-            timeElement = <FormsyTime
-                    //floatingLabelText={field.label}
-                    hintText="Time"
-                    //hintText={field.instructions}
-                    name={field.name + '_time'}
-                    required={required}
-                    style={{
-                        display: 'inline-block',
-                        marginLeft: '20px',
-                    }}
-                />;
+            timeElement = 
+                <div className={colClasses}>
+                    <FormsyTime
+                        //floatingLabelText={field.label}
+                        hintText="Time"
+                        //hintText={field.instructions}
+                        name={field.name + '_time'}
+                        required={required}
+                    />
+                </div>;
         }
         
         
@@ -33,19 +38,20 @@ var DateTimeField = React.createClass({
                     {field.label}<br />
                     <span className="sublabel">{field.instructions}</span>
                 </label>
-                <div>
-                    <FormsyDate
-                        //floatingLabelText="Date"
-                        hintText="Date"
-                        //hintText={field.instructions}
-                        name={field.name + '_date'}
-                        required={required}
-                        formatDate={function(date) {
-                            var dateString = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
-                            return dateString;
-                        }}
-                        style={{display: 'inline-block'}}
-                    />
+                <div className="row">
+                    <div className={colClasses}>
+                        <FormsyDate
+                            //floatingLabelText="Date"
+                            hintText="Date"
+                            //hintText={field.instructions}
+                            name={field.name + '_date'}
+                            required={required}
+                            formatDate={function(date) {
+                                var dateString = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+                                return dateString;
+                            }}
+                        />
+                    </div>
                     {timeElement}
                 </div>
             </div>
