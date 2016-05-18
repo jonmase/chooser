@@ -384,7 +384,7 @@ class ChoicesController extends AppController
             unset($extra['extra_field_options']);
         }
         
-        pr($choice);
+        //pr($choice);
         $this->set(compact('choice'));
     }
 

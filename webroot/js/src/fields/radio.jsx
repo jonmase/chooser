@@ -3,6 +3,8 @@ import React from 'react';
 import FormsyRadioGroup from 'formsy-material-ui/lib/FormsyRadioGroup';
 import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
 
+import FieldLabel from '../elements/label.jsx';
+
 var RadioField = React.createClass({
     render: function() {
         var field = this.props.field;
@@ -17,10 +19,10 @@ var RadioField = React.createClass({
         
         return (
             <div className={field.section?'section':''}>
-                <label>
-                    {field.label}<br />
-                    <span className="sublabel">{field.instructions}</span>
-                </label>
+                <FieldLabel
+                    label={field.label}
+                    instructions={field.instructions}
+                />
                 <FormsyRadioGroup 
                     name={field.name}
                     required={required}

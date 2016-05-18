@@ -7,6 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
+import FieldLabel from '../elements/label.jsx';
 
 var EditSelectedUsers = React.createClass({
     handleDialogClose: function() {
@@ -87,10 +88,10 @@ var EditSelectedUsers = React.createClass({
                         </ul>
                     </div>
                     <div>
-                        <p>
-                            Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have? <br />
-                            <span className="sublabel">This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn</span>
-                        </p>
+                        <FieldLabel
+                            label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
+                            instructions='This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn'
+                        />
                         <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
                     </div>
                     <FormsyToggle

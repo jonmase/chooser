@@ -2,6 +2,8 @@ import React from 'react';
 
 import FormsyCheckbox from 'formsy-material-ui/lib/FormsyCheckbox';
 
+import FieldLabel from '../elements/label.jsx';
+
 var CheckboxField = React.createClass({
     render: function() {
         var field = this.props.field;
@@ -21,10 +23,10 @@ var CheckboxField = React.createClass({
         
         return (
             <div className={field.section?'section':''}>
-                <label>
-                    {field.label}<br />
-                    <span className="sublabel">{field.instructions}</span>
-                </label>
+                <FieldLabel
+                    label={field.label}
+                    instructions={field.instructions}
+                />
                 {checkboxes}
             </div>                        
         );

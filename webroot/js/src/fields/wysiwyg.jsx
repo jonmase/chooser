@@ -1,6 +1,8 @@
 import React from 'react';
 import AlloyEditor from 'alloyeditor';
 
+import FieldLabel from '../elements/label.jsx';
+
 var selections = [
     {
         name: 'link',
@@ -52,10 +54,10 @@ var WysiwygField = React.createClass({
         
         return (
             <div className={(field.section?'section ':'') + 'alloy-container'}>
-                <label>
-                    {field.label}<br />
-                    <span className="sublabel">{field.instructions}</span>
-                </label>
+				<FieldLabel
+                    label={field.label}
+                    instructions={field.instructions}
+                />
                 {/* //Use dangerouslySetInnerHTML to prevent invariant errors */}
                 <div id={field.name} dangerouslySetInnerHTML={{__html: '<p></p><p></p>'}}>
                 </div>

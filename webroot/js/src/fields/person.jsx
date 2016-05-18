@@ -1,7 +1,9 @@
 import React from 'react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
+
 import TextField from '../fields/text.jsx';
 import EmailField from '../fields/email.jsx';
+import FieldLabel from '../elements/label.jsx';
 
 var PersonField = React.createClass({
     render: function() {
@@ -17,10 +19,10 @@ var PersonField = React.createClass({
         
         return (
             <div className={field.section?'section':''}>
-                <label>
-                    {field.label}<br />
-                    <span className="sublabel">{field.instructions}</span>
-                </label>
+                <FieldLabel
+                    label={field.label}
+                    instructions={field.instructions}
+                />
                 <div className="row">
                     <div className={colClasses}>
                         <TextField

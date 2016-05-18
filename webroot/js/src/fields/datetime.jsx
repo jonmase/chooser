@@ -1,6 +1,9 @@
 import React from 'react';
+
 import FormsyDate from 'formsy-material-ui/lib/FormsyDate';
 import FormsyTime from 'formsy-material-ui/lib/FormsyTime';
+
+import FieldLabel from '../elements/label.jsx';
 
 var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -34,10 +37,10 @@ var DateTimeField = React.createClass({
         
         return (
             <div className={field.section?'section':''}>
-                <label>
-                    {field.label}<br />
-                    <span className="sublabel">{field.instructions}</span>
-                </label>
+                <FieldLabel
+                    label={field.label}
+                    instructions={field.instructions}
+                />
                 <div className="row">
                     <div className={colClasses}>
                         <FormsyDate
