@@ -11,6 +11,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import Dialog from 'material-ui/Dialog';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
+import FieldLabel from '../elements/label.jsx';
 
 var AddUser = React.createClass({
     getInitialState: function () {
@@ -148,11 +149,11 @@ var AddUser = React.createClass({
                             style={{marginLeft: '10px'}}
                         />
                         <div>{this.props.state.findUserMessage}</div>
-                        <div>
-                            <p>
-                                Which additional roles should this user have? <br />
-                                <span className="sublabel">Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn</span>
-                            </p>
+                        <div className="section">
+                            <FieldLabel
+                                label='Which additional roles should this user have?'
+                                instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
+                            />
                             <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
                         </div>
                         <FormsyToggle
