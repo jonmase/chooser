@@ -15,6 +15,7 @@ import Wysiwyg from '../fields/wysiwyg.jsx';
 import RadioField from '../fields/radio.jsx';
 import CheckboxField from '../fields/checkbox.jsx';
 import DropdownField from '../fields/dropdown.jsx';
+import DateTimeField from '../fields/datetime.jsx';
 
 var ExtraFields = React.createClass({
     render: function() {
@@ -106,6 +107,17 @@ var ExtraFields = React.createClass({
                                         <DropdownField
                                             field={field}
                                             key={field.label}
+                                        />
+                                    );
+                                    break;
+                                case 'datetime': 
+                                    var time = true;
+                                case 'date': 
+                                    return (
+                                        <DateTimeField
+                                            field={field}
+                                            key={field.label}
+                                            time={time}
                                         />
                                     );
                                     break;
