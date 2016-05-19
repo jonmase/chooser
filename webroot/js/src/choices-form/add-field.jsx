@@ -68,6 +68,10 @@ var AddField = React.createClass({
                 value: 'person',
                 label: 'Person',
             },
+            {
+                value: 'file',
+                label: 'File Upload',
+            },
         ];
         
         var actions = [

@@ -96,6 +96,11 @@ textarea {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/* DROPZONE */
+.dropzone {
+    border: 1px solid rgb(224, 224, 224);
+}
+
 /* BUTTONS */
 /* Make sure text is centralised in buttons with short labels */
 a[type="button"] {  
