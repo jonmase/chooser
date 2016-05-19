@@ -2,7 +2,6 @@ import React from 'react';
 
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import FilteringToggle from './filtering-toggle.jsx';
 import NumericField from '../fields/numeric.jsx';
 
 var CommonFields = React.createClass({
@@ -10,7 +9,6 @@ var CommonFields = React.createClass({
         return (
             <div>
                 <div>
-                    <FilteringToggle default={false} />
                     <FormsyToggle
                         label="Integer only"
                         defaultToggled={false}

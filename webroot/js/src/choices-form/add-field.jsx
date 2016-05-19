@@ -100,6 +100,17 @@ var AddField = React.createClass({
                 <NumberFields />;
         }
         
+        var requirableFields = ['text', 'list', 'number', 'email', 'url', 'date', 'datetime', 'person'];
+        var allowRequired = true;
+        if(requirableFields.indexOf(this.props.state.addType) === -1) {
+            var allowRequired = false;
+        }
+        
+        var filterableFields = ['list', 'number', 'date', 'datetime', 'person'];
+        var allowFiltering = true;
+        if(filterableFields.indexOf(this.props.state.addType) === -1) {
+            var allowFiltering = false;
+        }
         
         return (
             <span>
@@ -137,6 +148,8 @@ var AddField = React.createClass({
                         />
                         <CommonFields
                             state={this.props.state}
+                            allowRequired={allowRequired}
+                            allowFiltering={allowFiltering}
                         />
                         {typeSpecific}
                         <div style={{textAlign: 'right', marginTop: '20px'}}>

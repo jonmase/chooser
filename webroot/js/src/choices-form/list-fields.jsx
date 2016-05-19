@@ -5,7 +5,6 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
 import MenuItem from 'material-ui/MenuItem';
 
-import FilteringToggle from './filtering-toggle.jsx';
 import MultilineTextField from '../fields/multiline-text.jsx';
 import DropdownField from '../fields/dropdown.jsx';
 
@@ -33,7 +32,6 @@ var CommonFields = React.createClass({
         return (
             <div>
                 <div className="section">
-                    <FilteringToggle default={true} />
                     <FormsyToggle
                         defaultToggled={false}
                         label="Use as category (for creating rules)"
