@@ -3,6 +3,8 @@ import React from 'react';
 import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
+import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 
 import Formsy from 'formsy-react';
 
@@ -18,6 +20,13 @@ import DropdownField from '../fields/dropdown.jsx';
 import DateTimeField from '../fields/datetime.jsx';
 import PersonField from '../fields/person.jsx';
 import FileField from '../fields/file.jsx';
+
+import CategoryIcon from '../icons/category.jsx';
+import FilterableIcon from '../icons/filterable.jsx';
+import RequiredIcon from '../icons/required.jsx';
+import ShowToStudentsIcon from '../icons/show-to-students.jsx';
+import SortableIcon from '../icons/sortable.jsx';
+import UserDefinedFormIcon from '../icons/user-defined-form.jsx';
 
 var ExtraFields = React.createClass({
     render: function() {
@@ -46,105 +55,110 @@ var ExtraFields = React.createClass({
                         noValidate
                     >
                         {this.props.state.extraFields.map(function(field) {
+                            var fieldComponent = null;
+                            
                             field.section = true;
                             switch(field.type) {
                                 case 'text': 
-                                    return (
+                                    fieldComponent = 
                                         <TextField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'wysiwyg': 
-                                    return (
+                                    fieldComponent = 
                                         <Wysiwyg
-                                            key={field.label}
                                             field={field}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'number': 
-                                    return (
+                                    fieldComponent = 
                                         <NumericField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'email': 
-                                    return (
+                                    fieldComponent = 
                                         <EmailField
-                                            key={field.label}
                                             field={field}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'url': 
-                                    return (
+                                    fieldComponent = 
                                         <UrlField
-                                            key={field.label}
                                             field={field}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'radio': 
-                                    return (
+                                    fieldComponent = 
                                         <RadioField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'checkbox': 
-                                    return (
+                                    fieldComponent = 
                                         <CheckboxField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'dropdown': 
-                                    return (
+                                    fieldComponent = 
                                         <DropdownField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'datetime': 
                                     var time = true;
                                 case 'date': 
-                                    return (
+                                    fieldComponent = 
                                         <DateTimeField
                                             field={field}
-                                            key={field.label}
                                             time={time}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'person':
-                                    return (
+                                    fieldComponent = 
                                         <PersonField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 case 'file':
-                                    return (
+                                    fieldComponent = 
                                         <FileField
                                             field={field}
-                                            key={field.label}
-                                        />
-                                    );
+                                        />;
                                     break;
                                 default:
-                                    return (
-                                        <div key={field.label}>{field.type}: {field.label}</div>
-                                    );
+                                    fieldComponent = 
+                                        <div>
+                                            {field.type}: {field.label}
+                                        </div>;
                                     break;
                             }
+                            
+                            return (
+                                <div className="row" key={field.label}>
+                                    <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto'}}>
+                                        {field.required?<RequiredIcon />:''}
+                                        {field.show_to_students?<ShowToStudentsIcon />:''}
+                                        {field.in_user_defined_form?<UserDefinedFormIcon />:''}
+                                        {field.sortable?<SortableIcon />:''}
+                                        {field.filterable?<FilterableIcon />:''}
+                                        {field.rule_category?<CategoryIcon />:''}
+                                    </div>
+                                    <div className="col-xs-6 col-md-9 col-lg-10">
+                                        {fieldComponent}
+                                    </div>
+                                    <div className="col-xs-3 col-md-1" style={{margin: 'auto'}}>
+                                        <IconButton tooltip={'Edit ' + field.label + ' Field'}>
+                                            <FontIcon className="material-icons">edit</FontIcon>
+                                        </IconButton>
+                                        <IconButton tooltip={'Delete ' + field.label + ' Field'}>
+                                            <FontIcon className="material-icons">delete</FontIcon>
+                                        </IconButton>
+                                    </div>
+                                </div>
+                            );
                         })}
                     </Formsy.Form>
                 </CardText>

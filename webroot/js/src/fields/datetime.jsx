@@ -44,6 +44,7 @@ var DateTimeField = React.createClass({
                 <div className="row">
                     <div className={colClasses}>
                         <FormsyDate
+                            autoOk={true}
                             //floatingLabelText="Date"
                             hintText="Date"
                             //hintText={field.instructions}
