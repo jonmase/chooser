@@ -15,6 +15,9 @@ var lg = 3;
 var colClasses = 'col-xs-' + xs + ' col-sm-' + sm + ' col-md-' + md + ' col-lg-' + lg
         
 var DateTimeField = React.createClass({
+    handleChangeTimePicker: function(event, time) {
+        console.log(time);
+    },
     render: function() {
         var field = this.props.field;
         
@@ -25,10 +28,13 @@ var DateTimeField = React.createClass({
             timeElement = 
                 <div className={colClasses}>
                     <FormsyTime
-                        //floatingLabelText={field.label}
+                        //autoOk={true}
+                        //defaultTime='11:23'   //Should be obkect, but not sure the format
+                        format='24hr'
                         hintText="Time"
-                        //hintText={field.instructions}
                         name={field.name + '_time'}
+                        onChange={this.handleChangeTimePicker}
+                        //pedantic={true}
                         required={required}
                     />
                 </div>;
@@ -45,9 +51,7 @@ var DateTimeField = React.createClass({
                     <div className={colClasses}>
                         <FormsyDate
                             autoOk={true}
-                            //floatingLabelText="Date"
                             hintText="Date"
-                            //hintText={field.instructions}
                             name={field.name + '_date'}
                             required={required}
                             formatDate={function(date) {
