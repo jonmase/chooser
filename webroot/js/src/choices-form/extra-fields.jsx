@@ -3,12 +3,19 @@ import React from 'react';
 import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
+
+import Dialog from 'material-ui/Dialog';
+
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 
 import Formsy from 'formsy-react';
 
 import AddField from './add-field.jsx';
+import CommonFields from './common-fields.jsx';
+import TypeSpecificFields from './type-specific-fields.jsx';
+
 import TextField from '../fields/text.jsx';
 import NumericField from '../fields/numeric.jsx';
 import EmailField from '../fields/email.jsx';
@@ -29,7 +36,76 @@ import SortableIcon from '../icons/sortable.jsx';
 import UserDefinedFormIcon from '../icons/user-defined-form.jsx';
 
 var ExtraFields = React.createClass({
+    getInitialState: function () {
+        return {
+            canSubmit: false,
+        };
+    },
+
+    enableSubmitButton: function () {
+        this.setState({
+            canSubmit: true
+        });
+    },
+
+    disableSubmitButton: function () {
+        this.setState({
+            canSubmit: false
+        });
+    },
+
     render: function() {
+        var actions = [
+            <FlatButton
+                key="cancel"
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.props.handlers.editDialogClose}
+            />,
+            <FlatButton
+                key="submit"
+                label="Submit"
+                primary={true}
+                type="submit"
+                disabled={!this.state.canSubmit}
+            />,
+        ];
+        
+        var dialog = '';
+        if(this.props.state.editExtraFieldId) {
+            var editField = this.props.state.extraFields[this.props.state.extraFieldNamesIds[this.props.state.editExtraFieldId]];
+
+            dialog = 
+                <Dialog
+                    autoScrollBodyContent={true}
+                    modal={true}
+                    onRequestClose={this.props.handlers.editDialogClose}
+                    open={this.props.state.editExtraDialogOpen}
+                    title="Edit Extra Field"
+                >
+                    <Formsy.Form
+                        id="add_user_form"
+                        method="POST"
+                        onValid={this.enableSubmitButton}
+                        onInvalid={this.disableSubmitButton}
+                        onValidSubmit={this.props.handlers.editSubmit}
+                        noValidate
+                    >
+                        <CommonFields
+                            type={editField.type}
+                            values={editField}
+                        />
+                        <TypeSpecificFields
+                            type={editField.type}
+                            values={editField}
+                        />
+                        <div style={{textAlign: 'right', marginTop: '20px'}}>
+                            {actions}
+                        </div>
+                    </Formsy.Form>
+                </Dialog>;
+        }
+
         return (
             <Card 
                 className="page-card"
@@ -47,11 +123,11 @@ var ExtraFields = React.createClass({
                 </CardHeader>
                 <CardText>
                     <Formsy.Form
-                        id="add_user_form"
+                        id="preview_extras_form"
                         method="POST"
-                        onValid={this.enableSubmitButton}
-                        onInvalid={this.disableSubmitButton}
-                        onValidSubmit={this.props.handlers.submit}
+                        //onValid={this.enableSubmitButton}
+                        //onInvalid={this.disableSubmitButton}
+                        //onValidSubmit={this.props.handlers.submit}
                         noValidate
                     >
                         {this.props.state.extraFields.map(function(field) {
@@ -74,14 +150,18 @@ var ExtraFields = React.createClass({
                                 case 'url': 
                                     fieldComponent = <UrlField field={field} />;
                                     break;
-                                case 'radio': 
-                                    fieldComponent = <RadioField field={field} />;
-                                    break;
-                                case 'checkbox': 
-                                    fieldComponent = <CheckboxField field={field} />;
-                                    break;
-                                case 'dropdown': 
-                                    fieldComponent = <DropdownField field={field} />;
+                                case 'list':
+                                    switch(field.extra.list_type) {
+                                        case 'radio': 
+                                            fieldComponent = <RadioField field={field} />;
+                                            break;
+                                        case 'checkbox': 
+                                            fieldComponent = <CheckboxField field={field} />;
+                                            break;
+                                        case 'dropdown': 
+                                            fieldComponent = <DropdownField field={field} />;
+                                            break;
+                                    }
                                     break;
                                 case 'datetime': 
                                     var time = true;
@@ -114,18 +194,19 @@ var ExtraFields = React.createClass({
                                         {field.rule_category?<CategoryIcon />:''}
                                     </div>
                                     <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        <IconButton tooltip={'Edit ' + field.label + ' Field'}>
+                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.editDialogOpen}>
                                             <FontIcon className="material-icons">edit</FontIcon>
                                         </IconButton>
-                                        <IconButton tooltip={'Delete ' + field.label + ' Field'}>
+                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} >
                                             <FontIcon className="material-icons">delete</FontIcon>
                                         </IconButton>
                                     </div>
                                 </div>
                             );
-                        })}
+                        }, this)}
                     </Formsy.Form>
                 </CardText>
+                {dialog}
             </Card>
         );
     }

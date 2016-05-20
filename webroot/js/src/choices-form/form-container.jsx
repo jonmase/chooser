@@ -12,8 +12,11 @@ var FormContainer = React.createClass({
     getInitialState: function () {
         return {
             addType: null,
-            extraDialogOpen: false,
+            addExtraDialogOpen: false,
+            editExtraDialogOpen: false,
+            editExtraFieldId: null,
             extraFields: this.props.choice.extra_fields,
+            extraFieldNamesIds: this.props.choice.extra_field_names,
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,
@@ -100,29 +103,29 @@ var FormContainer = React.createClass({
         }); 
     },
     
-    handleExtraTypeChange: function (event, value) {
+    handleAddExtraTypeChange: function (event, value) {
         console.log("Field type changed to " + value);
         this.setState({
             addType: value,
         });
     },
 
-    handleExtraDialogOpen: function() {
+    handleAddExtraDialogOpen: function() {
         this.setState({
-            extraDialogOpen: true,
+            addExtraDialogOpen: true,
             addType: null,
         });
     },
 
-    handleExtraDialogClose: function() {
+    handleAddExtraDialogClose: function() {
         this.setState({
-            extraDialogOpen: false,
+            addExtraDialogOpen: false,
             addType: null,
         });
     },
 
     //Submit the defaults form
-    handleExtraSubmit: function (field) {
+    handleAddExtraSubmit: function (field) {
         console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
         
         //Save the settings
@@ -142,7 +145,7 @@ var FormContainer = React.createClass({
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.extraDialogOpen = false;
+                stateData.addExtraDialogOpen = false;
                 this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
@@ -155,6 +158,56 @@ var FormContainer = React.createClass({
                 console.error(url, status, err.toString());
             }.bind(this)
         }); 
+    },
+    
+    handleEditExtraDialogOpen: function(event) {
+        this.setState({
+            editExtraDialogOpen: true,
+            editExtraFieldId: event.currentTarget.id,
+        });
+    },
+
+    handleEditExtraDialogClose: function() {
+        this.setState({
+            editExtraDialogOpen: false,
+            editExtraFieldId: null,
+        });
+    },
+
+    //Submit the defaults form
+    handleEditExtraSubmit: function (field) {
+        console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
+        
+        //Save the settings
+        /*var url = '../form_extra/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: field,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                //Add the new field to the state data
+                
+                var stateData = {};
+                stateData.snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                stateData.editExtraDialogOpen = false;
+                this.setState(stateData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                this.setState({
+                    snackbar: {
+                        open: true,
+                        message: 'Save error (' + err.toString() + ')',
+                    }
+                });
+                console.error(url, status, err.toString());
+            }.bind(this)
+        }); */
     },
     
     handleSnackbarClose: function() {
@@ -173,10 +226,13 @@ var FormContainer = React.createClass({
         };
 
         var extrasHandlers={
-            extraTypeChange: this.handleExtraTypeChange,
-            dialogOpen: this.handleExtraDialogOpen,
-            dialogClose: this.handleExtraDialogClose,
-            submit: this.handleExtraSubmit,
+            typeChange: this.handleAddExtraTypeChange,
+            addDialogOpen: this.handleAddExtraDialogOpen,
+            addDialogClose: this.handleAddExtraDialogClose,
+            addSubmit: this.handleAddExtraSubmit,
+            editDialogOpen: this.handleEditExtraDialogOpen,
+            editDialogClose: this.handleEditExtraDialogClose,
+            editSubmit: this.handleEditExtraSubmit,
         };
         
         return (

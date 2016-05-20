@@ -15,9 +15,6 @@ var lg = 3;
 var colClasses = 'col-xs-' + xs + ' col-sm-' + sm + ' col-md-' + md + ' col-lg-' + lg
         
 var DateTimeField = React.createClass({
-    handleChangeTimePicker: function(event, time) {
-        console.log(time);
-    },
     render: function() {
         var field = this.props.field;
         
@@ -33,7 +30,6 @@ var DateTimeField = React.createClass({
                         format='24hr'
                         hintText="Time"
                         name={field.name + '_time'}
-                        onChange={this.handleChangeTimePicker}
                         //pedantic={true}
                         required={required}
                     />

@@ -60,6 +60,7 @@ var NumericField = React.createClass({
                     required={required}
                     validations={validations}
                     validationErrors={validationErrors}
+                    value={field.value}
                 />
             </div>
         );

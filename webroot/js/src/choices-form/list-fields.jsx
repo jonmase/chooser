@@ -1,50 +1,40 @@
 import React from 'react';
 
-import FormsySelect from 'formsy-material-ui/lib/FormsySelect';
-import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
-
-import MenuItem from 'material-ui/MenuItem';
-
 import MultilineTextField from '../fields/multiline-text.jsx';
 import DropdownField from '../fields/dropdown.jsx';
 
 var CommonFields = React.createClass({
     render: function() {
+        var values = this.props.values?this.props.values:{};
+
         var listTypes = [
             {
-                value: 'radio',
                 label: 'Radio buttons (select one)',
+                value: 'radio',
             },
             {
-                value: 'checkbox',
                 label: 'Checkboxes (select multiple)',
+                value: 'checkbox',
             },
             {
-                value: 'dropdown',
                 label: 'Dropdown (select one)',
+                value: 'dropdown',
             },
             /*{
-                value: 'multidropdown',
                 label: 'Dropdown (select multiple)',
+                value: 'multidropdown',
             },*/
         ];
 
         return (
             <div>
-                <div className="section">
-                    <FormsyToggle
-                        defaultToggled={false}
-                        label="Use as category (for creating rules)"
-                        labelPosition="right"
-                        name="rule_category"
-                    />
-                </div>
                 <DropdownField
                     field={{
                         label: "Option list type",
                         name: "list_type",
                         options: listTypes,
                         required: true,
+                        value: values.list_type,
                     }}
                     //onChange={this.typeSelectChange}
                 />
@@ -55,6 +45,7 @@ var CommonFields = React.createClass({
                         name: "list_options",
                         required: true,
                         section: false,
+                        value: values.list_options,
                     }}
                 />
             </div>

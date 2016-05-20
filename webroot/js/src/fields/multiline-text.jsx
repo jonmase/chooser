@@ -14,15 +14,16 @@ var MultilineTextField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
-                    floatingLabelText={field.label}
                     //floatingLabelFixed={true}
+                    floatingLabelText={field.label}
+                    fullWidth={true}
                     hintText={field.instructions}
+                    //maxRows={maxRows}
+                    multiLine={true}
                     name={field.name}
                     required={required}
-                    multiLine={true}
                     //rows={rows}
-                    //maxRows={maxRows}
-                    fullWidth={true}
+                    value={field.value}
                 />
             </div>
         );

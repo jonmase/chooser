@@ -17,7 +17,6 @@ use Cake\Validation\Validator;
  */
 class ExtraFieldsTable extends Table
 {
-
     /**
      * Initialize method
      *

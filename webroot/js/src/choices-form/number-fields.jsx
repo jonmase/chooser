@@ -6,12 +6,19 @@ import NumericField from '../fields/numeric.jsx';
 
 var CommonFields = React.createClass({
     render: function() {
+        var values = this.props.values?this.props.values:{};
+        
+        var integer = false;
+        if(typeof(values.integer) !== 'undefined' && values.integer !== 'false' && values.integer) {
+            integer = true;
+        }
+
         return (
             <div>
                 <div>
                     <FormsyToggle
+                        defaultToggled={integer}
                         label="Integer only"
-                        defaultToggled={false}
                         labelPosition="right"
                         name="integer"
                     />
@@ -19,18 +26,20 @@ var CommonFields = React.createClass({
                 <div>
                     <NumericField
                         field={{
-                            label: "Minimum value",
                             hint: "Enter minimum",
+                            label: "Minimum value",
                             name: "number_min",
+                            value: values.number_min,
                         }}
                     />
                 </div>
                 <div className="section">
                     <NumericField
                         field={{
-                            label: "Maximum value",
                             hint: "Enter maximum",
+                            label: "Maximum value",
                             name: "number_max",
+                            value: values.number_max,
                         }}
                     />
                 </div>

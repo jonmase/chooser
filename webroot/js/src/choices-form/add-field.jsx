@@ -8,8 +8,7 @@ import Dialog from 'material-ui/Dialog';
 
 import DropdownField from '../fields/dropdown.jsx';
 import CommonFields from './common-fields.jsx';
-import ListFields from './list-fields.jsx';
-import NumberFields from './number-fields.jsx';
+import TypeSpecificFields from './type-specific-fields.jsx';
 
 var AddField = React.createClass({
     getInitialState: function () {
@@ -79,7 +78,7 @@ var AddField = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.props.handlers.dialogClose}
+                onTouchTap={this.props.handlers.addDialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -90,33 +89,11 @@ var AddField = React.createClass({
             />,
         ];
         
-        var typeSpecific = '';
-        if(this.props.state.addType === 'list') {
-            typeSpecific = 
-                <ListFields />;
-        }
-        else if(this.props.state.addType === 'number') {
-            typeSpecific = 
-                <NumberFields />;
-        }
-        
-        var requirableFields = ['text', 'list', 'number', 'email', 'url', 'date', 'datetime', 'person'];
-        var allowRequired = true;
-        if(requirableFields.indexOf(this.props.state.addType) === -1) {
-            var allowRequired = false;
-        }
-        
-        var filterableFields = ['list', 'number', 'date', 'datetime', 'person'];
-        var allowFiltering = true;
-        if(filterableFields.indexOf(this.props.state.addType) === -1) {
-            var allowFiltering = false;
-        }
-        
         return (
             <span>
                 <IconButton
                     iconClassName="material-icons"
-                    onTouchTap={this.props.handlers.dialogOpen}
+                    onTouchTap={this.props.handlers.addDialogOpen}
                     tooltip="Add Field"
                 >
                     add
@@ -124,8 +101,8 @@ var AddField = React.createClass({
                 <Dialog
                     autoScrollBodyContent={true}
                     modal={true}
-                    onRequestClose={this.props.handlers.dialogClose}
-                    open={this.props.state.extraDialogOpen}
+                    onRequestClose={this.props.handlers.addDialogClose}
+                    open={this.props.state.addExtraDialogOpen}
                     title="Add Extra Field"
                 >
                     <p className="no-bottom-margin">Select the type of field that you want to add, and then complete the additional details.</p>
@@ -134,7 +111,7 @@ var AddField = React.createClass({
                         method="POST"
                         onValid={this.enableSubmitButton}
                         onInvalid={this.disableSubmitButton}
-                        onValidSubmit={this.props.handlers.submit}
+                        onValidSubmit={this.props.handlers.addSubmit}
                         noValidate
                     >
                         <DropdownField
@@ -144,14 +121,14 @@ var AddField = React.createClass({
                                 options: fieldTypes,
                                 required: true,
                             }}
-                            onChange={this.props.handlers.extraTypeChange}
+                            onChange={this.props.handlers.typeChange}
                         />
                         <CommonFields
-                            state={this.props.state}
-                            allowRequired={allowRequired}
-                            allowFiltering={allowFiltering}
+                            type={this.props.state.addType}
                         />
-                        {typeSpecific}
+                        <TypeSpecificFields
+                            type={this.props.state.addType}
+                        />
                         <div style={{textAlign: 'right', marginTop: '20px'}}>
                             {actions}
                         </div>

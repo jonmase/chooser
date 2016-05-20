@@ -377,11 +377,32 @@ class ChoicesController extends AppController
             ]
         ]);
         
-        foreach($choice['extra_fields'] as &$extra) {
+        $choice['extra_field_names'] = [];
+        foreach($choice['extra_fields'] as $key => &$extra) {
             $extra['name'] = $this->_cleanString($extra['label']);
-            $extra['extra'] = json_decode($extra['extra']);
-            $extra['options'] = $extra['extra_field_options'];
+            
+            $listTypes = ['radio', 'checkbox', 'dropdown'];
+            if(in_array($extra['type'], $listTypes)) {
+                $extra['extra'] = [];
+                $extra['extra']['list_type'] = $extra['type'];
+                $extra['type'] = 'list';
+                
+                //Process options
+                $extra['options'] = $extra['extra_field_options'];  //Move extra_field_options to options
+                $listOptions = [];  //Create array for storing list option labels
+                foreach($extra['options'] as $option) { //Loop through options
+                    $listOptions[] = $option['label'];  //Add label to listOptions array
+                }
+                $extra['extra']['list_options'] = implode("\n", $listOptions);  //Join listOptions with line break
+                
+            }
+            else {
+                $extra['extra'] = json_decode($extra['extra']);
+            }
+            
             unset($extra['extra_field_options']);
+            
+            $choice['extra_field_names'][$extra['name']] = $key;
         }
         
         //pr($choice);
