@@ -60,85 +60,52 @@ var ExtraFields = React.createClass({
                             field.section = true;
                             switch(field.type) {
                                 case 'text': 
-                                    fieldComponent = 
-                                        <TextField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <TextField field={field} />;
                                     break;
                                 case 'wysiwyg': 
-                                    fieldComponent = 
-                                        <Wysiwyg
-                                            field={field}
-                                        />;
+                                    fieldComponent = <Wysiwyg field={field} />;
                                     break;
                                 case 'number': 
-                                    fieldComponent = 
-                                        <NumericField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <NumericField field={field} />;
                                     break;
                                 case 'email': 
-                                    fieldComponent = 
-                                        <EmailField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <EmailField field={field} />;
                                     break;
                                 case 'url': 
-                                    fieldComponent = 
-                                        <UrlField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <UrlField field={field} />;
                                     break;
                                 case 'radio': 
-                                    fieldComponent = 
-                                        <RadioField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <RadioField field={field} />;
                                     break;
                                 case 'checkbox': 
-                                    fieldComponent = 
-                                        <CheckboxField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <CheckboxField field={field} />;
                                     break;
                                 case 'dropdown': 
-                                    fieldComponent = 
-                                        <DropdownField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <DropdownField field={field} />;
                                     break;
                                 case 'datetime': 
                                     var time = true;
                                 case 'date': 
-                                    fieldComponent = 
-                                        <DateTimeField
-                                            field={field}
-                                            time={time}
-                                        />;
+                                    fieldComponent = <DateTimeField field={field} time={time} />;
                                     break;
                                 case 'person':
-                                    fieldComponent = 
-                                        <PersonField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <PersonField field={field} />;
                                     break;
                                 case 'file':
-                                    fieldComponent = 
-                                        <FileField
-                                            field={field}
-                                        />;
+                                    fieldComponent = <FileField field={field} />;
                                     break;
                                 default:
                                     fieldComponent = 
-                                        <div>
-                                            {field.type}: {field.label}
-                                        </div>;
+                                        <div>Count not display field ({field.type}: {field.label})</div>;
                                     break;
                             }
                             
                             return (
                                 <div className="row" key={field.label}>
-                                    <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto'}}>
+                                    <div className="col-xs-6 col-md-9 col-lg-10">
+                                        {fieldComponent}
+                                    </div>
+                                    <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
                                         {field.required?<RequiredIcon />:''}
                                         {field.show_to_students?<ShowToStudentsIcon />:''}
                                         {field.in_user_defined_form?<UserDefinedFormIcon />:''}
@@ -146,10 +113,7 @@ var ExtraFields = React.createClass({
                                         {field.filterable?<FilterableIcon />:''}
                                         {field.rule_category?<CategoryIcon />:''}
                                     </div>
-                                    <div className="col-xs-6 col-md-9 col-lg-10">
-                                        {fieldComponent}
-                                    </div>
-                                    <div className="col-xs-3 col-md-1" style={{margin: 'auto'}}>
+                                    <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
                                         <IconButton tooltip={'Edit ' + field.label + ' Field'}>
                                             <FontIcon className="material-icons">edit</FontIcon>
                                         </IconButton>

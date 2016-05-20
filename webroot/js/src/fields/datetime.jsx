@@ -29,7 +29,7 @@ var DateTimeField = React.createClass({
                 <div className={colClasses}>
                     <FormsyTime
                         //autoOk={true}
-                        //defaultTime='11:23'   //Should be obkect, but not sure the format
+                        //defaultTime='11:23'   //Should be object, but not sure the format
                         format='24hr'
                         hintText="Time"
                         name={field.name + '_time'}
