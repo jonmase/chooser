@@ -4,13 +4,11 @@ import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 
-import Dialog from 'material-ui/Dialog';
-
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 
-import Formsy from 'formsy-react';
+import FormsyDialog from '../elements/formsy-dialog.jsx';
 
 import AddField from './add-field.jsx';
 import CommonFields from './common-fields.jsx';
@@ -76,34 +74,25 @@ var ExtraFields = React.createClass({
             var editField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.editExtraFieldId]];
 
             dialog = 
-                <Dialog
-                    autoScrollBodyContent={true}
-                    modal={true}
-                    onRequestClose={this.props.handlers.editDialogClose}
-                    open={this.props.state.editExtraDialogOpen}
-                    title="Edit Extra Field"
+                <FormsyDialog
+                    actions={actions}
+                    dialogOnRequestClose={this.props.handlers.editDialogClose}
+                    dialogOpen={this.props.state.editExtraDialogOpen}
+                    dialogTitle="Edit Extra Field"
+                    formId="edit_extra_form"
+                    formOnValid={this.enableSubmitButton}
+                    formOnInvalid={this.disableSubmitButton}
+                    formOnValidSubmit={this.props.handlers.editSubmit}
                 >
-                    <Formsy.Form
-                        id="add_user_form"
-                        method="POST"
-                        onValid={this.enableSubmitButton}
-                        onInvalid={this.disableSubmitButton}
-                        onValidSubmit={this.props.handlers.editSubmit}
-                        noValidate
-                    >
-                        <CommonFields
-                            type={editField.type}
-                            values={editField}
-                        />
-                        <TypeSpecificFields
-                            type={editField.type}
-                            values={editField}
-                        />
-                        <div style={{textAlign: 'right', marginTop: '20px'}}>
-                            {actions}
-                        </div>
-                    </Formsy.Form>
-                </Dialog>;
+                    <CommonFields
+                        type={editField.type}
+                        values={editField}
+                    />
+                    <TypeSpecificFields
+                        type={editField.type}
+                        values={editField}
+                    />
+                </FormsyDialog>
         }
 
         return (

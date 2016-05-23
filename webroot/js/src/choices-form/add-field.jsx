@@ -1,10 +1,9 @@
 import React from 'react';
 
-import Formsy from 'formsy-react';
-
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
-import Dialog from 'material-ui/Dialog';
+
+import FormsyDialog from '../elements/formsy-dialog.jsx';
 
 import DropdownField from '../fields/dropdown.jsx';
 import CommonFields from './common-fields.jsx';
@@ -97,43 +96,34 @@ var AddField = React.createClass({
                     tooltip="Add Field"
                 >
                     add
-                </IconButton>         
-                <Dialog
-                    autoScrollBodyContent={true}
-                    modal={true}
-                    onRequestClose={this.props.handlers.addDialogClose}
-                    open={this.props.state.addExtraDialogOpen}
-                    title="Add Extra Field"
+                </IconButton>
+                <FormsyDialog
+                    actions={actions}
+                    dialogOnRequestClose={this.props.handlers.addDialogClose}
+                    dialogOpen={this.props.state.addExtraDialogOpen}
+                    dialogTitle="Add Extra Field"
+                    formId="add_extra_form"
+                    formOnValid={this.enableSubmitButton}
+                    formOnInvalid={this.disableSubmitButton}
+                    formOnValidSubmit={this.props.handlers.addSubmit}
                 >
                     <p className="no-bottom-margin">Select the type of field that you want to add, and then complete the additional details.</p>
-                    <Formsy.Form
-                        id="add_user_form"
-                        method="POST"
-                        onValid={this.enableSubmitButton}
-                        onInvalid={this.disableSubmitButton}
-                        onValidSubmit={this.props.handlers.addSubmit}
-                        noValidate
-                    >
-                        <DropdownField
-                            field={{
-                                label: "Field type",
-                                name: "type",
-                                options: fieldTypes,
-                                required: true,
-                            }}
-                            onChange={this.props.handlers.typeChange}
-                        />
-                        <CommonFields
-                            type={this.props.state.addType}
-                        />
-                        <TypeSpecificFields
-                            type={this.props.state.addType}
-                        />
-                        <div style={{textAlign: 'right', marginTop: '20px'}}>
-                            {actions}
-                        </div>
-                    </Formsy.Form>
-                </Dialog>
+                    <DropdownField
+                        field={{
+                            label: "Field type",
+                            name: "type",
+                            options: fieldTypes,
+                            required: true,
+                        }}
+                        onChange={this.props.handlers.typeChange}
+                    />
+                    <CommonFields
+                        type={this.props.state.addType}
+                    />
+                    <TypeSpecificFields
+                        type={this.props.state.addType}
+                    />
+                </FormsyDialog>
             </span>
         );
     }

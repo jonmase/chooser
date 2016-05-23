@@ -1,19 +1,15 @@
 import React from 'react';
 
-import Formsy from 'formsy-react';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
 import FlatButton from 'material-ui/FlatButton';
-import Dialog from 'material-ui/Dialog';
+
+import FormsyDialog from '../elements/formsy-dialog.jsx';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/label.jsx';
 
 var EditSelectedUsers = React.createClass({
-    handleDialogClose: function() {
-        this.props.handlers.dialogClose();
-    },
-    
     render: function() {
         var users = this.props.state.users;
         var userIndexesByUsername = this.props.state.userIndexesByUsername;
@@ -37,7 +33,7 @@ var EditSelectedUsers = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.handleDialogClose}
+                onTouchTap={this.props.handlers.dialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -49,62 +45,52 @@ var EditSelectedUsers = React.createClass({
             />,
         ];
         
-        
         return (
-            <Dialog
-                title="Edit Additional Permissions"
-                //actions={actions}
-                //modal={false}
-                open={this.props.state.editUserDialogOpen}
-                onRequestClose={this.handleDialogClose}
+            <FormsyDialog
+                actions={actions}
+                dialogOnRequestClose={this.props.handlers.dialogClose}
+                dialogOpen={this.props.state.editUserDialogOpen}
+                dialogTitle="Edit Additional Permissions"
+                formId="edit_users_form"
+                formOnValidSubmit={this.props.handlers.submit}
             >
-                <Formsy.Form
-                    id="edit_users_form"
-                    method="POST"
-                    onValidSubmit={this.props.handlers.submit}
-                    noValidate
-                >
-                    <div>
-                        The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:
-                        <ul>
-                            {this.props.state.usersBeingEdited.map(function(username, index) {
-                                var user = users[userIndexesByUsername[username]];
-                                var fullname = user.fullname;
-                                var email = user.email;
-                                var nameOrEmail = fullname || email;
-                                var nameAndEmail = fullname && email;
-                                var inputName = "users." + index;
-                                return (
-                                    <li key={username}>
-                                        {username} 
-                                        {nameOrEmail?" (":""}
-                                        {fullname}
-                                        {nameAndEmail?", ":""}
-                                        {email}
-                                        {nameOrEmail?")":""}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                    <div>
-                        <FieldLabel
-                            label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
-                            instructions='This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn'
-                        />
-                        <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
-                    </div>
-                    <FormsyToggle
-                        label={toggleLabel}
-                        defaultToggled={this.props.state.notify}
-                        labelPosition="right"
-                        name="notify"
+                <div>
+                    <p>The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:</p>
+                    <ul>
+                        {this.props.state.usersBeingEdited.map(function(username, index) {
+                            var user = users[userIndexesByUsername[username]];
+                            var fullname = user.fullname;
+                            var email = user.email;
+                            var nameOrEmail = fullname || email;
+                            var nameAndEmail = fullname && email;
+                            var inputName = "users." + index;
+                            return (
+                                <li key={username}>
+                                    {username} 
+                                    {nameOrEmail?" (":""}
+                                    {fullname}
+                                    {nameAndEmail?", ":""}
+                                    {email}
+                                    {nameOrEmail?")":""}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+                <div className="section">
+                    <FieldLabel
+                        label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
+                        instructions='This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn'
                     />
-                    <div style={{textAlign: 'right'}}>
-                        {actions}
-                    </div>
-                </Formsy.Form>
-            </Dialog>
+                    <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
+                </div>
+                <FormsyToggle
+                    label={toggleLabel}
+                    defaultToggled={this.props.state.notify}
+                    labelPosition="right"
+                    name="notify"
+                />
+            </FormsyDialog>
         );
     }
 });

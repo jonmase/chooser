@@ -493,6 +493,9 @@ class ChoicesController extends AppController
                 if(in_array($extraFieldInDB->type, $listTypes)) {
                     $type = 'list';
                 }
+                else {
+                    $type = $extraFieldInDB->type;
+                }
             }
             else {
                 $type = $data['type'];

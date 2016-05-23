@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Formsy from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
@@ -8,7 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
-import Dialog from 'material-ui/Dialog';
+import FormsyDialog from '../elements/formsy-dialog.jsx';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/label.jsx';
@@ -67,14 +66,6 @@ var AddUser = React.createClass({
         this.props.handlers.submit(user);
     },
     
-    handleDialogOpen: function() {
-        this.props.handlers.dialogOpen();
-    },
-    
-    handleDialogClose: function() {
-        this.props.handlers.dialogClose();
-    },
-    
     handleUserChange: function() {
         this.props.handlers.change();
         this.setState({
@@ -94,7 +85,7 @@ var AddUser = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.handleDialogClose}
+                onTouchTap={this.props.handlers.dialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -111,62 +102,53 @@ var AddUser = React.createClass({
             <span>
                 <IconButton
                     tooltip="Add User"
-                    onTouchTap={this.handleDialogOpen}
+                    onTouchTap={this.props.handlers.dialogOpen}
                     iconClassName="material-icons"
                 >
                     add
                 </IconButton>         
-                <Dialog
-                    title="Add User with Additional Roles"
-                    //actions={actions}
-                    //modal={false}
-                    open={this.props.state.addUserDialogOpen}
-                    onRequestClose={this.handleDialogClose}
+                <FormsyDialog
+                    actions={actions}
+                    dialogOnRequestClose={this.props.handlers.dialogClose}
+                    dialogOpen={this.props.state.addUserDialogOpen}
+                    dialogTitle="Add User with Additional Roles"
+                    formId="add_user_form"
+                    formOnValid={this.enableSubmitButton}
+                    formOnInvalid={this.disableSubmitButton}
+                    formOnValidSubmit={this.handleSubmit}
                 >
-                    <Formsy.Form
-                        id="add_user_form"
-                        method="POST"
-                        onValid={this.enableSubmitButton}
-                        onInvalid={this.disableSubmitButton}
-                        onValidSubmit={this.handleSubmit}
-                        noValidate
-                    >
-                        <FormsyText 
-                            name="username"
-                            id="add_username"
-                            hintText="Email address or SSO username" 
-                            floatingLabelText="Email/Username (required)"
-                            validations="minLength:1"
-                            validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
-                            required
-                            onChange={this.handleUserChange}
+                    <FormsyText 
+                        name="username"
+                        id="add_username"
+                        hintText="Email address or SSO username" 
+                        floatingLabelText="Email/Username (required)"
+                        validations="minLength:1"
+                        validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
+                        required
+                        onChange={this.handleUserChange}
+                    />
+                    <FlatButton
+                        label="Check User"
+                        type="button"
+                        disabled={!this.state.canSubmit || this.state.userChecked}
+                        onTouchTap={this.handleFindUser}
+                        style={{marginLeft: '10px'}}
+                    />
+                    <div>{this.props.state.findUserMessage}</div>
+                    <div className="section">
+                        <FieldLabel
+                            label='Which additional roles should this user have?'
+                            instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
                         />
-                        <FlatButton
-                            label="Check User"
-                            type="button"
-                            disabled={!this.state.canSubmit || this.state.userChecked}
-                            onTouchTap={this.handleFindUser}
-                            style={{marginLeft: '10px'}}
-                        />
-                        <div>{this.props.state.findUserMessage}</div>
-                        <div className="section">
-                            <FieldLabel
-                                label='Which additional roles should this user have?'
-                                instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
-                            />
-                            <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
-                        </div>
-                        <FormsyToggle
-                            label="Notify this user of their additional roles by email"
-                            defaultToggled={this.props.state.notify}
-                            labelPosition="right"
-                            name="notify"
-                        />
-                        <div style={{textAlign: 'right'}}>
-                            {actions}
-                        </div>
-                    </Formsy.Form>
-                </Dialog>
+                        <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
+                    </div>
+                    <FormsyToggle
+                        label="Notify this user of their additional roles by email"
+                        defaultToggled={this.props.state.notify}
+                        labelPosition="right"
+                        name="notify"
+                    />
+                </FormsyDialog>
             </span>
         );
     }
