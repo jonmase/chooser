@@ -17,6 +17,8 @@ use Cake\Validation\Validator;
  */
 class ExtraFieldsTable extends Table
 {
+    protected $_listTypes = ['radio', 'checkbox', 'dropdown'];
+    
     /**
      * Initialize method
      *
@@ -119,5 +121,9 @@ class ExtraFieldsTable extends Table
     {
         $rules->add($rules->existsIn(['choice_id'], 'Choices'));
         return $rules;
+    }
+    
+    public function getListTypes() {
+        return $this->_listTypes;
     }
 }

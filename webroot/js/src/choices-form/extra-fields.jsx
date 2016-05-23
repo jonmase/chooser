@@ -73,7 +73,7 @@ var ExtraFields = React.createClass({
         
         var dialog = '';
         if(this.props.state.editExtraFieldId) {
-            var editField = this.props.state.extraFields[this.props.state.extraFieldNamesIds[this.props.state.editExtraFieldId]];
+            var editField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.editExtraFieldId]];
 
             dialog = 
                 <Dialog

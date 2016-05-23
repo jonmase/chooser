@@ -381,7 +381,7 @@ class ChoicesController extends AppController
         foreach($choice['extra_fields'] as $key => &$extra) {
             $extra['name'] = $this->_cleanString($extra['label']);
             
-            $listTypes = ['radio', 'checkbox', 'dropdown'];
+            $listTypes = $this->Choices->ExtraFields->getListTypes();
             if(in_array($extra['type'], $listTypes)) {
                 $extra['extra'] = [];
                 $extra['extra']['list_type'] = $extra['type'];
@@ -472,8 +472,31 @@ class ChoicesController extends AppController
 
         if ($this->request->is('post')) {
             //pr($this->request->data);
+            //exit;
             $data = $this->request->data;
             $data['choice_id'] = $id;
+            
+            //Is an existing record being updated, i.e. is there an (extra_field_id) id in the data?
+            $updating = !empty($data['id']);
+            
+            //If updating...
+            if($updating) {
+                //Get the extra field
+                $extraFieldInDB = $this->Choices->ExtraFields->get($data['id']);
+                
+                //Make sure that the choice ids match in the existing data record and new data
+                if($extraFieldInDB->choice_id != $data['choice_id']) {
+                    throw new InternalErrorException(__('Problem with updating extra field - Choice IDs do not match'));
+                }
+                //pr($extraFieldInDB);
+                $listTypes = $this->Choices->ExtraFields->getListTypes();
+                if(in_array($extraFieldInDB->type, $listTypes)) {
+                    $type = 'list';
+                }
+            }
+            else {
+                $type = $data['type'];
+            }
             
             //Process bool fields
             $boolFields = [
@@ -489,7 +512,7 @@ class ChoicesController extends AppController
             }
             
             //Process non-standard fields
-            if($data['type'] === 'list') {
+            if($type === 'list') {
                 //List - list_type, list_options (both required)
                 if(empty($data['list_type']) || empty($data['list_options'])) {
                     throw new InternalErrorException(__('Please specify list type and options'));
@@ -511,27 +534,42 @@ class ChoicesController extends AppController
                     }
                     unset($data['list_options']);
                 }
+                //If updating, delete the existing extra field options, as those specified in the edit form will be resaved as new records
+                if($updating) {
+                    if(!$this->Choices->ExtraFields->ExtraFieldOptions->deleteAll([
+                        'extra_field_id' => $data['id'],
+                    ])) {
+                        throw new InternalErrorException(__('Error deleting existing extra field options'));
+                    }
+                }
             }
-            if($data['type'] === 'number') {
+            if($type === 'number') {
                 //Number - number_min, number_max (neither required)
                 $extraFieldNames = ['number_min', 'number_max', 'integer'];
                 $data = $this->_processExtraFields($data, $extraFieldNames);
             }
             //pr($data);
+
+            //If updating, patch the existing record with the updated data
+            if($updating) {
+                $extraField = $this->Choices->ExtraFields->patchEntity($extraFieldInDB, $data);
+            }
             //Create entity 
-            $extraField = $this->Choices->ExtraFields->newEntity($data, ['associated' => ['ExtraFieldOptions']]);
+            else {
+                $extraField = $this->Choices->ExtraFields->newEntity($data, ['associated' => ['ExtraFieldOptions']]);
+            }
             //pr($extraField);
             //exit;
             
             if($this->Choices->ExtraFields->save($extraField)) {
-                $this->set('response', 'Extra field added');
+                $this->set('response', 'Extra field ' . ($updating?'updated':'added'));
             } 
             else {
-                throw new InternalErrorException(__('Problem with adding extra field'));
+                throw new InternalErrorException(__('Problem with ' . ($updating?'updating':'adding') . ' extra field'));
             }
         }
         else {
-            throw new MethodNotAllowedException(__('Adding extra field requires POST'));
+            throw new MethodNotAllowedException(__('Adding/updating extra field requires POST'));
         }
     }
     

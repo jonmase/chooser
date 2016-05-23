@@ -16,7 +16,7 @@ var FormContainer = React.createClass({
             editExtraDialogOpen: false,
             editExtraFieldId: null,
             extraFields: this.props.choice.extra_fields,
-            extraFieldNamesIds: this.props.choice.extra_field_names,
+            extraFieldIdsIndexes: this.props.choice.extra_field_names,
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,
@@ -176,10 +176,12 @@ var FormContainer = React.createClass({
 
     //Submit the defaults form
     handleEditExtraSubmit: function (field) {
+        field.id = this.state.extraFields[this.state.extraFieldIdsIndexes[this.state.editExtraFieldId]].id;
+    
         console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
         
         //Save the settings
-        /*var url = '../form_extra/' + this.props.choice.id;
+        var url = '../form_extra/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -207,7 +209,7 @@ var FormContainer = React.createClass({
                 });
                 console.error(url, status, err.toString());
             }.bind(this)
-        }); */
+        }); 
     },
     
     handleSnackbarClose: function() {
