@@ -577,6 +577,36 @@ class ChoicesController extends AppController
     }
     
     /**
+     * deleteExtra method
+     * Delete an extra field from option form
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     */
+    public function formDeleteExtra($id = null) {
+        $this->request->allowMethod(['post', 'delete']);
+        $this->viewBuilder()->layout('ajax');
+
+        $extraField = $this->Choices->ExtraFields->get($this->request->data['id']);
+
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($extraField->choice_id, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+
+        if ($this->Choices->ExtraFields->delete($extraField)) {
+            $this->set('response', 'Extra field deleted');
+        } else {
+            throw new InternalErrorException(__('Problem with deleting extra field'));
+        }
+    }
+    
+    /**
      * _processExtraFields method
      * Adds extra fields as JSON to 'extra' in data and removes those extra fields from data
      * 

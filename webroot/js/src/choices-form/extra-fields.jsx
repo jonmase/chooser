@@ -33,6 +33,50 @@ import ShowToStudentsIcon from '../icons/show-to-students.jsx';
 import SortableIcon from '../icons/sortable.jsx';
 import UserDefinedFormIcon from '../icons/user-defined-form.jsx';
 
+var fieldTypes = [
+    {
+        value: 'text',
+        label: 'Simple Text',
+    },
+    {
+        value: 'wysiwyg',
+        label: 'Rich Text',
+    },
+    {
+        value: 'list',
+        label: 'Option List',
+    },
+    {
+        value: 'number',
+        label: 'Number',
+    },
+    {
+        value: 'email',
+        label: 'Email',
+    },
+    {
+        value: 'url',
+        label: 'URL',
+    },
+    {
+        value: 'date',
+        label: 'Date',
+    },
+    {
+        value: 'datetime',
+        label: 'Date & Time',
+    },
+    {
+        value: 'person',
+        label: 'Person',
+    },
+    {
+        value: 'file',
+        label: 'File Upload',
+    },
+];
+
+
 var ExtraFields = React.createClass({
     getInitialState: function () {
         return {
@@ -53,7 +97,7 @@ var ExtraFields = React.createClass({
     },
 
     render: function() {
-        var actions = [
+        var editActions = [
             <FlatButton
                 key="cancel"
                 label="Cancel"
@@ -69,13 +113,13 @@ var ExtraFields = React.createClass({
             />,
         ];
         
-        var dialog = '';
+        var editDialog = '';
         if(this.props.state.editExtraFieldId) {
             var editField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.editExtraFieldId]];
 
-            dialog = 
+            editDialog = 
                 <FormsyDialog
-                    actions={actions}
+                    actions={editActions}
                     dialogOnRequestClose={this.props.handlers.editDialogClose}
                     dialogOpen={this.props.state.editExtraDialogOpen}
                     dialogTitle="Edit Extra Field"
@@ -95,6 +139,48 @@ var ExtraFields = React.createClass({
                 </FormsyDialog>
         }
 
+        var deleteActions = [
+            <FlatButton
+                key="cancel"
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.props.handlers.deleteDialogClose}
+            />,
+            <FlatButton
+                key="submit"
+                label="Delete"
+                primary={true}
+                type="submit"
+            />,
+        ];
+        
+        var deleteDialog = '';
+        if(this.props.state.deleteExtraFieldId) {
+            var deleteField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.deleteExtraFieldId]];
+            var fieldType = '';
+            fieldTypes.some(function(type) {
+                if(type.value === deleteField.type) {
+                    fieldType = type;
+                }
+            });
+
+            editDialog = 
+                <FormsyDialog
+                    actions={deleteActions}
+                    dialogOnRequestClose={this.props.handlers.deleteDialogClose}
+                    dialogOpen={this.props.state.deleteExtraDialogOpen}
+                    dialogTitle="Delete Extra Field?"
+                    formId="delete_extra_form"
+                    formOnValidSubmit={this.props.handlers.deleteSubmit}
+                >
+                    <p>You are about to delete the following field:</p>
+                    <p><strong>Type:</strong> {fieldType.label}</p>
+                    <p><strong>Label:</strong> {deleteField.label}</p>
+                    <p><strong>Instructions:</strong> {deleteField.instructions}</p>
+                    <p> This cannot be undone, and any option data for this field will be lost. Are you sure you wish to delete this field?</p>
+                </FormsyDialog>
+        }
+
         return (
             <Card 
                 className="page-card"
@@ -106,7 +192,8 @@ var ExtraFields = React.createClass({
                     <div style={{float: 'right'}}>
                         <AddField 
                             state={this.props.state} 
-                            handlers={this.props.handlers} 
+                            handlers={this.props.handlers}
+                            fieldTypes={fieldTypes}
                         />
                     </div>
                 </CardHeader>
@@ -183,10 +270,10 @@ var ExtraFields = React.createClass({
                                         {field.rule_category?<CategoryIcon />:''}
                                     </div>
                                     <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.editDialogOpen}>
+                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.editDialogOpen} >
                                             <FontIcon className="material-icons">edit</FontIcon>
                                         </IconButton>
-                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} >
+                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.deleteDialogOpen} >
                                             <FontIcon className="material-icons">delete</FontIcon>
                                         </IconButton>
                                     </div>
@@ -195,7 +282,8 @@ var ExtraFields = React.createClass({
                         }, this)}
                     </Formsy.Form>
                 </CardText>
-                {dialog}
+                {editDialog}
+                {deleteDialog}
             </Card>
         );
     }

@@ -29,49 +29,6 @@ var AddField = React.createClass({
     },
 
     render: function() {
-        var fieldTypes = [
-            {
-                value: 'text',
-                label: 'Simple Text',
-            },
-            {
-                value: 'wysiwyg',
-                label: 'Rich Text',
-            },
-            {
-                value: 'list',
-                label: 'Option List',
-            },
-            {
-                value: 'number',
-                label: 'Number',
-            },
-            {
-                value: 'email',
-                label: 'Email',
-            },
-            {
-                value: 'url',
-                label: 'URL',
-            },
-            {
-                value: 'date',
-                label: 'Date',
-            },
-            {
-                value: 'datetime',
-                label: 'Date & Time',
-            },
-            {
-                value: 'person',
-                label: 'Person',
-            },
-            {
-                value: 'file',
-                label: 'File Upload',
-            },
-        ];
-        
         var actions = [
             <FlatButton
                 key="cancel"
@@ -112,7 +69,7 @@ var AddField = React.createClass({
                         field={{
                             label: "Field type",
                             name: "type",
-                            options: fieldTypes,
+                            options: this.props.fieldTypes,
                             required: true,
                         }}
                         onChange={this.props.handlers.typeChange}

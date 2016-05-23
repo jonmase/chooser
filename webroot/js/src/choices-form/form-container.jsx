@@ -13,6 +13,8 @@ var FormContainer = React.createClass({
         return {
             addType: null,
             addExtraDialogOpen: false,
+            deleteExtraDialogOpen: false,
+            deleteExtraFieldId: null,
             editExtraDialogOpen: false,
             editExtraFieldId: null,
             extraFields: this.props.choice.extra_fields,
@@ -160,6 +162,61 @@ var FormContainer = React.createClass({
         }); 
     },
     
+    handleDeleteExtraDialogOpen: function(event) {
+        this.setState({
+            deleteExtraDialogOpen: true,
+            deleteExtraFieldId: event.currentTarget.id,
+        });
+    },
+
+    handleDeleteExtraDialogClose: function() {
+        this.setState({
+            deleteExtraDialogOpen: false,
+            deleteExtraFieldId: null,
+        });
+    },
+
+    //Submit the delete extra field form
+    handleDeleteExtraSubmit: function () {
+        var extraFieldId = this.state.extraFields[this.state.extraFieldIdsIndexes[this.state.deleteExtraFieldId]].id;
+        var data = {
+            id: extraFieldId,
+        }
+    
+        console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + extraFieldId);
+        
+        //Save the settings
+        var url = '../form_delete_extra';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                //Remove the delete field from the state data
+                
+                var stateData = {};
+                stateData.snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                stateData.deleteExtraDialogOpen = false;
+                this.setState(stateData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                this.setState({
+                    snackbar: {
+                        open: true,
+                        message: 'Delete error (' + err.toString() + ')',
+                    }
+                });
+                console.error(url, status, err.toString());
+            }.bind(this)
+        }); 
+    },
+    
     handleEditExtraDialogOpen: function(event) {
         this.setState({
             editExtraDialogOpen: true,
@@ -232,6 +289,9 @@ var FormContainer = React.createClass({
             addDialogOpen: this.handleAddExtraDialogOpen,
             addDialogClose: this.handleAddExtraDialogClose,
             addSubmit: this.handleAddExtraSubmit,
+            deleteDialogOpen: this.handleDeleteExtraDialogOpen,
+            deleteDialogClose: this.handleDeleteExtraDialogClose,
+            deleteSubmit: this.handleDeleteExtraSubmit,
             editDialogOpen: this.handleEditExtraDialogOpen,
             editDialogClose: this.handleEditExtraDialogClose,
             editSubmit: this.handleEditExtraSubmit,

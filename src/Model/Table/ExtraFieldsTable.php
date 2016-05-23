@@ -41,7 +41,8 @@ class ExtraFieldsTable extends Table
             'foreignKey' => 'extra_field_id'
         ]);
         $this->hasMany('ExtraFieldOptions', [
-            'foreignKey' => 'extra_field_id'
+            'foreignKey' => 'extra_field_id',
+            'dependent' => true,    //Delete associated ExtraFieldOptions when ExtraField is deleted
         ]);
         $this->hasMany('StudentPreferenceCategories', [
             'foreignKey' => 'extra_field_id'
