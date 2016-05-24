@@ -96,6 +96,16 @@ var ExtraFields = React.createClass({
         });
     },
 
+    getFieldType: function(searchType) {
+        var fieldType = '';
+        fieldTypes.some(function(type) {
+            if(type.value === searchType) {
+                fieldType = type;
+            }
+        });
+        return fieldType;
+    },
+    
     render: function() {
         var editActions = [
             <FlatButton
@@ -115,8 +125,9 @@ var ExtraFields = React.createClass({
         
         var editDialog = '';
         if(this.props.state.editExtraFieldId) {
-            var editField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.editExtraFieldId]];
-
+            var editField = this.props.state.extraFields[this.props.state.extraFieldIndexesById[this.props.state.editExtraFieldId]];
+            var fieldType = this.getFieldType(editField.type);
+            
             editDialog = 
                 <FormsyDialog
                     actions={editActions}
@@ -128,6 +139,10 @@ var ExtraFields = React.createClass({
                     formOnInvalid={this.disableSubmitButton}
                     formOnValidSubmit={this.props.handlers.editSubmit}
                 >
+                    <p>
+                        <strong>Type:</strong> {fieldType.label} <br />
+                        <span className="sublabel">(You can't change this. If you want to change the field type, you will have to delete this field and then add the new one.)</span>
+                    </p>
                     <CommonFields
                         type={editField.type}
                         values={editField}
@@ -156,15 +171,10 @@ var ExtraFields = React.createClass({
         
         var deleteDialog = '';
         if(this.props.state.deleteExtraFieldId) {
-            var deleteField = this.props.state.extraFields[this.props.state.extraFieldIdsIndexes[this.props.state.deleteExtraFieldId]];
-            var fieldType = '';
-            fieldTypes.some(function(type) {
-                if(type.value === deleteField.type) {
-                    fieldType = type;
-                }
-            });
+            var deleteField = this.props.state.extraFields[this.props.state.extraFieldIndexesById[this.props.state.deleteExtraFieldId]];
+            var fieldType = this.getFieldType(deleteField.type);
 
-            editDialog = 
+            deleteDialog = 
                 <FormsyDialog
                     actions={deleteActions}
                     dialogOnRequestClose={this.props.handlers.deleteDialogClose}
@@ -270,10 +280,10 @@ var ExtraFields = React.createClass({
                                         {field.rule_category?<CategoryIcon />:''}
                                     </div>
                                     <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.editDialogOpen} >
+                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.editDialogOpen} >
                                             <FontIcon className="material-icons">edit</FontIcon>
                                         </IconButton>
-                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} id={field.name} onTouchTap={this.props.handlers.deleteDialogOpen} >
+                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.deleteDialogOpen} >
                                             <FontIcon className="material-icons">delete</FontIcon>
                                         </IconButton>
                                     </div>

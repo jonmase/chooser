@@ -18,7 +18,7 @@ var FormContainer = React.createClass({
             editExtraDialogOpen: false,
             editExtraFieldId: null,
             extraFields: this.props.choice.extra_fields,
-            extraFieldIdsIndexes: this.props.choice.extra_field_names,
+            extraFieldIndexesById: this.props.choice.extra_field_ids,
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,
@@ -140,14 +140,22 @@ var FormContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                //Add the new field to the state data
-                
                 var stateData = {};
+                
+                //Show the response message in the snackbar
                 stateData.snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.addExtraDialogOpen = false;
+                
+                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
+                stateData.extraFields.push(returnedData.field);   //Add the new field to current extraFields
+                
+                //Update the extraFieldIndexesById
+                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
+                
+                stateData.addExtraDialogOpen = false;   //Close the Dialog
+                
                 this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
@@ -165,7 +173,7 @@ var FormContainer = React.createClass({
     handleDeleteExtraDialogOpen: function(event) {
         this.setState({
             deleteExtraDialogOpen: true,
-            deleteExtraFieldId: event.currentTarget.id,
+            deleteExtraFieldId: event.currentTarget.id.substr(12),
         });
     },
 
@@ -178,12 +186,11 @@ var FormContainer = React.createClass({
 
     //Submit the delete extra field form
     handleDeleteExtraSubmit: function () {
-        var extraFieldId = this.state.extraFields[this.state.extraFieldIdsIndexes[this.state.deleteExtraFieldId]].id;
         var data = {
-            id: extraFieldId,
+            id: this.state.deleteExtraFieldId,
         }
     
-        console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + extraFieldId);
+        console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + data.id);
         
         //Save the settings
         var url = '../form_delete_extra';
@@ -195,14 +202,23 @@ var FormContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                //Remove the delete field from the state data
-                
                 var stateData = {};
+                
+                //Show the response message in the snackbar
                 stateData.snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.deleteExtraDialogOpen = false;
+
+                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
+                stateData.extraFields.splice(this.state.extraFieldIndexesById[returnedData.fieldId], 1);   //Remove the field from current extraFields
+                
+                //Update the extraFieldIndexesById
+                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
+                
+                stateData.deleteExtraDialogOpen = false;    //Close the Dialog
+                stateData.deleteExtraFieldId = null;
+
                 this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
@@ -220,7 +236,7 @@ var FormContainer = React.createClass({
     handleEditExtraDialogOpen: function(event) {
         this.setState({
             editExtraDialogOpen: true,
-            editExtraFieldId: event.currentTarget.id,
+            editExtraFieldId: event.currentTarget.id.substr(12),
         });
     },
 
@@ -233,7 +249,7 @@ var FormContainer = React.createClass({
 
     //Submit the defaults form
     handleEditExtraSubmit: function (field) {
-        field.id = this.state.extraFields[this.state.extraFieldIdsIndexes[this.state.editExtraFieldId]].id;
+        field.id = this.state.editExtraFieldId;
     
         console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
         
@@ -247,14 +263,23 @@ var FormContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                //Add the new field to the state data
-                
                 var stateData = {};
+                
+                //Show the response message in the snackbar
                 stateData.snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.editExtraDialogOpen = false;
+
+                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
+                stateData.extraFields.splice(this.state.extraFieldIndexesById[returnedData.field.id], 1, returnedData.field);   //Replace the field in current extraFields
+                
+                //Update the extraFieldIndexesById (shouldn't really need to do this)
+                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
+
+                stateData.editExtraDialogOpen = false;    //Close the Dialog
+                stateData.editExtraFieldId = null;
+
                 this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
@@ -278,6 +303,14 @@ var FormContainer = React.createClass({
         });
     },
     
+    updateExtraFieldIndexesById: function(extraFields) {
+        var extraFieldIndexesById = {};
+        extraFields.forEach(function(field, index) {
+            extraFieldIndexesById[field.id] = index;
+        });
+        return extraFieldIndexesById;
+    },
+
     render: function() {
         var defaultsHandlers={
             change: this.handleDefaultsChange,

@@ -85,6 +85,10 @@ h6 {
 
 
 /* FORMS */
+form {
+    margin: 0;
+}
+
 form div.section {
     margin-bottom: 20px;
 }

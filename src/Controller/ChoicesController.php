@@ -377,32 +377,11 @@ class ChoicesController extends AppController
             ]
         ]);
         
-        $choice['extra_field_names'] = [];
+        $choice['extra_field_ids'] = [];
         foreach($choice['extra_fields'] as $key => &$extra) {
-            $extra['name'] = $this->_cleanString($extra['label']);
+            $extra = $this->_processExtraFieldsForView($extra);
             
-            $listTypes = $this->Choices->ExtraFields->getListTypes();
-            if(in_array($extra['type'], $listTypes)) {
-                $extra['extra'] = [];
-                $extra['extra']['list_type'] = $extra['type'];
-                $extra['type'] = 'list';
-                
-                //Process options
-                $extra['options'] = $extra['extra_field_options'];  //Move extra_field_options to options
-                $listOptions = [];  //Create array for storing list option labels
-                foreach($extra['options'] as $option) { //Loop through options
-                    $listOptions[] = $option['label'];  //Add label to listOptions array
-                }
-                $extra['extra']['list_options'] = implode("\n", $listOptions);  //Join listOptions with line break
-                
-            }
-            else {
-                $extra['extra'] = json_decode($extra['extra']);
-            }
-            
-            unset($extra['extra_field_options']);
-            
-            $choice['extra_field_names'][$extra['name']] = $key;
+            $choice['extra_field_ids'][$extra['id']] = $key;
         }
         
         //pr($choice);
@@ -522,7 +501,7 @@ class ChoicesController extends AppController
                 }
                 else {
                     //$extraFieldNames = ['list_type'];
-                    //$data = $this->_processExtraFields($data, $extraFieldNames);
+                    //$data = $this->_processExtraFieldsForSave($data, $extraFieldNames);
                     $data['type'] = $data['list_type'];
                     unset($data['list_type']);
                     
@@ -549,7 +528,7 @@ class ChoicesController extends AppController
             if($type === 'number') {
                 //Number - number_min, number_max (neither required)
                 $extraFieldNames = ['number_min', 'number_max', 'integer'];
-                $data = $this->_processExtraFields($data, $extraFieldNames);
+                $data = $this->_processExtraFieldsForSave($data, $extraFieldNames);
             }
             //pr($data);
 
@@ -566,6 +545,9 @@ class ChoicesController extends AppController
             
             if($this->Choices->ExtraFields->save($extraField)) {
                 $this->set('response', 'Extra field ' . ($updating?'updated':'added'));
+                
+                $extraField = $this->_processExtraFieldsForView($extraField);
+                $this->set('field', $extraField);
             } 
             else {
                 throw new InternalErrorException(__('Problem with ' . ($updating?'updating':'adding') . ' extra field'));
@@ -580,18 +562,18 @@ class ChoicesController extends AppController
      * deleteExtra method
      * Delete an extra field from option form
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
-     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When delete fails.
      */
-    public function formDeleteExtra($id = null) {
+    public function formDeleteExtra() {
         $this->request->allowMethod(['post', 'delete']);
         $this->viewBuilder()->layout('ajax');
 
-        $extraField = $this->Choices->ExtraFields->get($this->request->data['id']);
+        $extraFieldId = $this->request->data['id'];
+        $extraField = $this->Choices->ExtraFields->get($extraFieldId);
 
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($extraField->choice_id, $this->Auth->user('id'));
@@ -601,20 +583,21 @@ class ChoicesController extends AppController
 
         if ($this->Choices->ExtraFields->delete($extraField)) {
             $this->set('response', 'Extra field deleted');
+            $this->set('fieldId', $extraFieldId);
         } else {
             throw new InternalErrorException(__('Problem with deleting extra field'));
         }
     }
     
     /**
-     * _processExtraFields method
+     * _processExtraFieldsForSave method
      * Adds extra fields as JSON to 'extra' in data and removes those extra fields from data
      * 
      * @param array $data
      * @param array|null $extraFieldNames - the fields that will be moved into 'extra'
      * @return array $data - modified data array
      */
-    private function _processExtraFields($data, $extraFieldNames = null) {
+    private function _processExtraFieldsForSave($data, $extraFieldNames = null) {
         $extra = [];
         foreach($extraFieldNames as $fieldName) {
             if(!empty($data[$fieldName])) {
@@ -624,6 +607,66 @@ class ChoicesController extends AppController
         }
         $data['extra'] = json_encode($extra);
         return $data;
+    }
+
+    /**
+     * _processExtraFieldsForView method
+     * Decodes JSON 'extra' field
+     * 
+     * @param array $extra JSON encoded extra info for field
+     * @return mixed decoded JSON
+     */
+    private function _processExtraFieldsForView($field) {
+        $field['name'] = $this->_cleanString($field['label']);
+        
+        $listTypes = $this->Choices->ExtraFields->getListTypes();
+        if(in_array($field['type'], $listTypes)) {
+            $field['extra'] = [];
+            $field['extra']['list_type'] = $field['type'];
+            $field['type'] = 'list';
+            
+            //Process options
+            $field['options'] = $field['extra_field_options'];  //Move extra_field_options to options
+            $listOptions = [];  //Create array for storing list option labels
+            foreach($field['options'] as $option) { //Loop through options
+                $listOptions[] = $option['label'];  //Add label to listOptions array
+            }
+            $field['extra']['list_options'] = implode("\n", $listOptions);  //Join listOptions with line break
+        }
+        else {
+            $field['extra'] = json_decode($field['extra']);
+        }
+        
+        //if(isset($extra['extra_field_options'])) {
+            unset($field['extra_field_options']);
+        //}
+        
+        
+        
+        return $field;
+    }
+
+    /**
+     * _processExtraListFieldsForView method
+     * Decodes JSON 'extra' field
+     * 
+     * @param object $field FIeld with raw options data
+     * @return object $field Processed field with list_options
+     */
+    private function _processExtraListFieldsForView($field) {
+        $field['extra'] = [];
+        $field['extra']['list_type'] = $field['type'];
+        $field['type'] = 'list';
+        
+        //Process options
+        $field['options'] = $field['extra_field_options'];  //Move extra_field_options to options
+        $listOptions = [];  //Create array for storing list option labels
+        foreach($field['options'] as $option) { //Loop through options
+            $listOptions[] = $option['label'];  //Add label to listOptions array
+        }
+        $field['extra']['list_options'] = implode("\n", $listOptions);  //Join listOptions with line break
+        
+        return $field;
     }
 
     /**

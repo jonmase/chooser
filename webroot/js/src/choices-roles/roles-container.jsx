@@ -96,6 +96,12 @@ var RolesContainer = React.createClass({
             success: function(returnedData) {
                 //console.log(returnedData.response);
                 
+                //Show the snackbar
+                var snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                
                 var currentUsers = this.state.users;    //Get the current users
                 
                 currentUsers.push(returnedData.user);   //Add the new user to current users
@@ -105,12 +111,6 @@ var RolesContainer = React.createClass({
                 currentUsers.forEach(function(user, index) {
                     userIndexesByUsername[user.username] = index;
                 });
-                
-                //Show the snackbar
-                var snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
                 
                 //Refilter the users to account for new roles/removed users
                 var filteredUserIndexes = this.filterUsers(currentUsers, this.state.filterRoles);
