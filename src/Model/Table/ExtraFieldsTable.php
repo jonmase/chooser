@@ -35,7 +35,7 @@ class ExtraFieldsTable extends Table
 
         $this->belongsTo('Choices', [
             'foreignKey' => 'choice_id',
-            'joinType' => 'INNER'
+            //'joinType' => 'INNER'
         ]);
         $this->hasMany('ChoicesOptionsUsers', [
             'foreignKey' => 'extra_field_id'
@@ -124,7 +124,64 @@ class ExtraFieldsTable extends Table
         return $rules;
     }
     
+    public function cleanFieldName($name) {
+        return strtolower(preg_replace('/[^\w]/', '_', $name));
+    }
+    
     public function getListTypes() {
         return $this->_listTypes;
+    }
+
+    /**
+     * processExtraFieldsForSave method
+     * Adds extra fields as JSON to 'extra' in data and removes those extra fields from data
+     * 
+     * @param array $data
+     * @param array|null $extraFieldNames - the fields that will be moved into 'extra'
+     * @return array $data - modified data array
+     */
+    public function processExtraFieldsForSave($data, $extraFieldNames = null) {
+        $extra = [];
+        foreach($extraFieldNames as $fieldName) {
+            if(!empty($data[$fieldName])) {
+                $extra[$fieldName] = $data[$fieldName];
+            }
+            unset($data[$fieldName]);
+        }
+        $data['extra'] = json_encode($extra);
+        return $data;
+    }
+
+    /**
+     * processExtraFieldsForView method
+     * Decodes JSON 'extra' field
+     * 
+     * @param array $extra JSON encoded extra info for field
+     * @return mixed decoded JSON
+     */
+    public function processExtraFieldsForView($field) {
+        $field['name'] = $this->cleanFieldName($field['label']);
+        
+        $listTypes = $this->getListTypes();
+        if(in_array($field['type'], $listTypes)) {
+            $field['extra'] = [];
+            $field['extra']['list_type'] = $field['type'];
+            $field['type'] = 'list';
+            
+            //Process options
+            $field['options'] = $field['extra_field_options'];  //Move extra_field_options to options
+            $listOptions = [];  //Create array for storing list option labels
+            foreach($field['options'] as $option) { //Loop through options
+                $listOptions[] = $option['label'];  //Add label to listOptions array
+            }
+            $field['extra']['list_options'] = implode("\n", $listOptions);  //Join listOptions with line break
+        }
+        else {
+            $field['extra'] = json_decode($field['extra']);
+        }
+        
+        unset($field['extra_field_options']);
+        
+        return $field;
     }
 }
