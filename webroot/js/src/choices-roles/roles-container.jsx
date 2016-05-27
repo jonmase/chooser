@@ -87,7 +87,7 @@ var RolesContainer = React.createClass({
         }
         
         //Save the settings
-        var url = '../add_user/' + this.props.choiceId;
+        var url = '../../users/add/' + this.props.choiceId;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -181,7 +181,7 @@ var RolesContainer = React.createClass({
         });
         
         //Save the users' roles
-        var url = '../edit_user/' + this.props.choiceId;
+        var url = '../../users/edit/' + this.props.choiceId;
         $.ajax({
             url: url,
             dataType: 'json',

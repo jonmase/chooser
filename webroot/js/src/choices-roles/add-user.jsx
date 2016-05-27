@@ -117,24 +117,26 @@ var AddUser = React.createClass({
                     formOnInvalid={this.disableSubmitButton}
                     formOnValidSubmit={this.handleSubmit}
                 >
-                    <FormsyText 
-                        name="username"
-                        id="add_username"
-                        hintText="Email address or SSO username" 
-                        floatingLabelText="Email/Username (required)"
-                        validations="minLength:1"
-                        validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
-                        required
-                        onChange={this.handleUserChange}
-                    />
-                    <FlatButton
-                        label="Check User"
-                        type="button"
-                        disabled={!this.state.canSubmit || this.state.userChecked}
-                        onTouchTap={this.handleFindUser}
-                        style={{marginLeft: '10px'}}
-                    />
-                    <div>{this.props.state.findUserMessage}</div>
+                    <div className="section">
+                        <FormsyText 
+                            name="username"
+                            id="add_username"
+                            hintText="Email address or SSO username" 
+                            floatingLabelText="Email/Username (required)"
+                            validations="minLength:1"
+                            validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
+                            required
+                            onChange={this.handleUserChange}
+                        />
+                        <FlatButton
+                            label="Check User"
+                            type="button"
+                            disabled={!this.state.canSubmit || this.state.userChecked}
+                            onTouchTap={this.handleFindUser}
+                            style={{marginLeft: '10px'}}
+                        />
+                        <div>{this.props.state.findUserMessage}</div>
+                    </div>
                     <div className="section">
                         <FieldLabel
                             label='Which additional roles should this user have?'
