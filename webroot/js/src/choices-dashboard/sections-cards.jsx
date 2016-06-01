@@ -97,6 +97,7 @@ var SectionsCards = React.createClass({
                 actions: [
                     {
                         label: 'Edit',
+                        url: '../../profile/' + this.props.choiceId,
                     }
                 ],
                 roles: ['admin', 'editor'],

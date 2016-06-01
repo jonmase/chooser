@@ -37,8 +37,8 @@
         <script src="js/node_modules/html5shiv/dist/html5shiv.min.js"></script>
     <![endif]-->
     <script>
-      window.ALLOYEDITOR_BASEPATH = '../../js/node_modules/alloyeditor/dist/alloy-editor/';
-      window.CKEDITOR_BASEPATH = '../../js/node_modules/alloyeditor/dist/alloy-editor/';
+      window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
+      window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
     </script>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>

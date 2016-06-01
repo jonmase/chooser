@@ -16,6 +16,7 @@ var EmailField = React.createClass({
                     required={required}
                     validations="isEmail"
                     validationError="Please enter a valid email address"
+                    value={field.value}
                 />
             </div>
         );

@@ -16,6 +16,7 @@ var UrlField = React.createClass({
                     required={required}
                     validations="isUrl"
                     validationError="Please enter a valid URL (web address)"
+                    value={field.value}
                 />
             </div>
         );
