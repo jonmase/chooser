@@ -9,6 +9,7 @@ injectTapEventPlugin();
 ReactDOM.render(
     <TopBar 
         subtitle={data.choice.name} 
+        menu={true}
     />, 
     document.getElementById('topbar')
 );

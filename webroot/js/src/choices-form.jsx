@@ -10,6 +10,7 @@ ReactDOM.render(<TopBar subtitle={data.choice.name} />, document.getElementById(
 ReactDOM.render(
     <FormContainer 
         choice={data.choice} 
+        menu={true}
     />, 
     document.getElementById('form')
 );
