@@ -8,6 +8,7 @@
     var data = {};
     data.choice = <?= json_encode($choice); ?>;
     data.roleOptions = <?= json_encode($roleOptions); ?>;
+    data.sections = <?= json_encode($sections); ?>;
     data.users = <?= json_encode($users); ?>;
     data.userSortField = "<?= $userSortField; ?>";
 <?= $this->Html->scriptEnd(); ?>

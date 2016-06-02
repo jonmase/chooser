@@ -20,7 +20,6 @@ use Cake\Validation\Validator;
  */
 class ChoicesTable extends Table
 {
-
     /**
      * Initialize method
      *
@@ -103,7 +102,7 @@ class ChoicesTable extends Table
     }
     
     /**
-     * Default validation rules.
+     * getChoices method
      *
      * @param int $userId The DB ID of the logged in user
      * @param string $role The minimum role the user must have on the Choices that are returned
@@ -140,4 +139,135 @@ class ChoicesTable extends Table
 
         return $choices;
     }
+    
+    public function getDashboardSections($choiceId = null, $userRoles = null) {
+        if(!$choiceId || !$userRoles) {
+            return [];
+        }
+        
+        $sections = [
+            [
+                'title' => 'User Roles',
+                'icon' => 'lock_open',  //icon => 'verified_user',//icon => 'block',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                        'url' => '../roles/' . $choiceId,
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
+            [
+                'title' => 'Options Form',
+                'icon' => 'playlist_add',   //'icon' => 'input',//'icon' => 'format_list_bulleted',//icon' => 'reorder',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                        'url' => '../form/' . $choiceId,
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
+            [
+                'title' => 'Editing Schedules',
+                'icon' => 'mode_edit',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                    ],
+                    [
+                        'label' => 'New',
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
+            [
+                'title' => 'Notifications',
+                'icon' => 'mail_outline',   //'icon' => 'announcement',//'icon' => 'priority_high',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
+            [
+                'title' => 'Profile',
+                'icon' => 'perm_identity',  //'icon' => 'account_circle',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                        'url' => '../../profile/' . $choiceId,
+                    ]
+                ],
+                'roles' => ['admin', 'editor'],
+            ],
+            [
+                'title' => 'Options',
+                'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
+                'actions' => [
+                    [
+                        'label' => 'Edit Yours',
+                    ],
+                    [
+                        'label' => 'View All',
+                    ]
+                ],
+                'roles' => ['admin', 'editor', 'approver'],
+            ],
+            [
+                'title' => 'Choosing Schedules',
+                'icon' => 'schedule',   //'icon' => 'timer',
+                'actions' => [
+                    [
+                        'label' => 'Edit',
+                    ],
+                    [
+                        'label' => 'New',
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
+            [
+                'title' => 'Results',
+                'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
+                'actions' => [
+                    [
+                        'label' => 'View',
+                    ],
+                    [
+                        'label' => 'Quick Download',
+                    ]
+                ],
+                'roles' => ['admin', 'reviewer', 'allocator'],
+            ],
+            [
+                'title' => 'Allocations',
+                'icon' => 'compare_arrows',
+                'actions' => [
+                    [
+                        'label' => 'View/Edit',
+                    ],
+                    [
+                        'label' => 'Quick Download',
+                    ]
+                ],
+                'roles' => ['admin', 'allocator'],
+            ],
+        ];
+        
+        $userSections = [];
+        
+        foreach($sections as $section) {
+            foreach($section['roles'] as $sectionRole) {
+                if(in_array($sectionRole, $userRoles)) {
+                    $userSections[] = $section;
+                    break;
+                }
+            }
+        }
+
+        return $userSections;
+    }
+
 }

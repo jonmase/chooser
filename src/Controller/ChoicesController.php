@@ -101,8 +101,11 @@ class ChoicesController extends AppController
         }
         
         $choice = $this->Choices->get($id);
+        
+        //$roles = ['editor'];  //For debugging, override the role
+        $sections = $this->Choices->getDashboardSections($id, $roles);
 
-        $this->set(compact('choice', 'roles'));
+        $this->set(compact('choice', 'roles', 'sections'));
         //$this->set('_serialize', ['choice']);
     }
     
@@ -283,7 +286,11 @@ class ChoicesController extends AppController
         //pr($defaultRolesObject); 
         //exit;
         
-        $this->set(compact('choice', 'users', 'roleOptions', 'roleDescriptions', 'userSortField'));
+        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
+        $sections = $this->Choices->getDashboardSections($id, $roles);
+        //pr($sections);
+        
+        $this->set(compact('choice', 'users', 'roleOptions', 'roleDescriptions', 'sections', 'userSortField'));
         //$this->set('_serialize', ['choice']);
     }
     

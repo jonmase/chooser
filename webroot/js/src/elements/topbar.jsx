@@ -32,7 +32,30 @@ var TopBar = React.createClass({
         this.setState({open: false});
     },
     
+    handleSelect: function(e) {
+        var url = this.props.sections[parseInt(e.currentTarget.id)].actions[0].url;
+        console.log(url);
+        window.location.href = url;
+    },
+    
     render: function() {
+        var drawer = '';
+        if(this.props.sections) {
+            drawer = <Drawer
+                docked={false}
+                width={250}
+                open={this.state.open}
+                onRequestChange={(open) => this.setState({open})}
+            >
+                <h3 style={{padding: '0 16px'}}>Dashboard</h3>
+                {this.props.sections.map(function(section, sectionIndex) {
+                    return (
+                        <MenuItem onTouchTap={this.handleSelect} key={section.title} id={sectionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{section.icon}</FontIcon>{section.title}</MenuItem>
+                    );
+                }, this)}
+            </Drawer>;
+        }
+    
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
@@ -54,16 +77,7 @@ var TopBar = React.createClass({
                             </IconMenu>
                         }*/
                     />
-                    <Drawer
-                        docked={false}
-                        width={200}
-                        open={this.state.open}
-                        onRequestChange={(open) => this.setState({open})}
-                    >
-                        <h3 style={{padding: '0 16px'}}>Dashboard</h3>
-                        <MenuItem onTouchTap={this.handleClose}>Menu Item</MenuItem>
-                        <MenuItem onTouchTap={this.handleClose}>Menu Item 2</MenuItem>
-                    </Drawer>
+                    {drawer}
                 </div>
             </MuiThemeProvider>
         );

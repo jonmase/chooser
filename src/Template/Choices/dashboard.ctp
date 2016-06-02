@@ -6,5 +6,6 @@
     data.choiceId = "<?= $choice->id; ?>";
     data.subtitle = "<?= $choice->name; ?>";
     data.roles = <?= json_encode($roles); ?>;
+    data.sections = <?= json_encode($sections); ?>;
 <?= $this->Html->scriptEnd(); ?>
 <?= $this->Html->script('dist/choices-dashboard-bundle', ['block' => 'script']); ?>

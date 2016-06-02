@@ -10,6 +10,7 @@ ReactDOM.render(
     <TopBar 
         subtitle={data.choice.name} 
         menu={true}
+        sections={data.sections} 
     />, 
     document.getElementById('topbar')
 );

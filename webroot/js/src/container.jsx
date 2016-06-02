@@ -8,4 +8,4 @@ import DashboardCards from './choices-dashboard/sections-cards.jsx';
 injectTapEventPlugin();
 
 ReactDOM.render(<TopBar subtitle={data.subtitle} />, document.getElementById('topbar'));
-ReactDOM.render(<DashboardCards sections={data.sections} />, document.getElementById('grid'));
+ReactDOM.render(<DashboardCards roles={data.roles} choiceId={data.choiceId} />, document.getElementById('grid'));
