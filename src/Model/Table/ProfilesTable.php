@@ -50,10 +50,6 @@ class ProfilesTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->requirePresence('sso', 'create')
-            ->notEmpty('sso');
-
-        $validator
             ->allowEmpty('title');
 
         $validator
@@ -109,8 +105,17 @@ class ProfilesTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(['email']));
+        //$rules->add($rules->isUnique(['email']));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
+    
+    public function findProfileByUserId($userId) {
+        $profileQuery = $this->findByUser_id($userId, [
+            //'contain' => ['Users']
+        ]);
+
+        $profile = $profileQuery->first();
+        return $profile;
+    }   
 }

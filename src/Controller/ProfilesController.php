@@ -2,6 +2,8 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\MethodNotAllowedException;
 
 /**
  * Profiles Controller
@@ -25,10 +27,7 @@ class ProfilesController extends AppController
 
         //pr($this->Auth->user());
         
-        $profileQuery = $this->Profiles->findByUser_id($this->Auth->user('id'), [
-            //'contain' => ['Users']
-        ]);
-        $profile = $profileQuery->first();
+        $profile = $this->Profiles->findProfileByUserId($this->Auth->user('id'));
         
         //If profile is empty, get whatever info we have from the users table
         if(empty($profile)) {
@@ -53,26 +52,50 @@ class ProfilesController extends AppController
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function save($id = null)
+    public function save()
     {
-        $choice = $this->Profiles->Users->Choices->get($id);
-
-        $this->set(compact('choice'));
-
-        /*$profile = $this->Profiles->get($id, [
-            'contain' => []
-        ]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $profile = $this->Profiles->patchEntity($profile, $this->request->data);
-            if ($this->Profiles->save($profile)) {
-                $this->Flash->success(__('The profile has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The profile could not be saved. Please, try again.'));
+            $this->request->data['user_id'] = $this->Auth->user('id');
+            //pr($this->request->data);
+            //exit;
+            $profile = $this->Profiles->findProfileByUserId($this->Auth->user('id'));
+            //pr($profile);
+            
+            if(empty($profile)) {
+                $profile = $this->Profiles->newEntity($this->request->data);
+            }
+            else {
+                //Save existing profile as revision
+                $oldProfile = $profile->toArray();
+                $oldProfile['revision_parent'] = $profile->id;  //Set the profile ID as the revision_parent
+                
+                //Remove the record ID, created and modified date
+                unset($oldProfile['id'], $oldProfile['created'], $oldProfile['modified']); 
+
+                $oldProfile = $this->Profiles->newEntity($oldProfile);  //Convert to entity
+                //pr($oldProfile);
+
+                //Save the old profile
+                if(!$this->Profiles->save($oldProfile)) {
+                    //pr($oldProfile);
+                    throw new InternalErrorException(__('Problem with saving previous profile version'));
+                }
+                
+                //Merge the request data into the existing profile
+                $profile = $this->Profiles->patchEntity($profile, $this->request->data);
+            }
+            //pr($profile);
+            //exit;
+        
+            if($this->Profiles->save($profile)) {
+                $this->set('response', 'Profile saved');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving profile'));
             }
         }
-        $users = $this->Profiles->Users->find('list', ['limit' => 200]);
-        $this->set(compact('profile', 'users'));
-        $this->set('_serialize', ['profile']);*/
+        else {
+            throw new MethodNotAllowedException(__('Saving profile requires POST'));
+        }
     }
 }

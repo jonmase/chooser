@@ -1,6 +1,8 @@
 import React from 'react';
 import AlloyEditor from 'alloyeditor';
 
+import FormsyTextarea from '../fields/textarea.jsx';
+
 import FieldLabel from '../elements/label.jsx';
 
 var selections = [
@@ -41,26 +43,58 @@ var toolbars = {
 
 var WysiwygField = React.createClass({
     componentDidMount: function() {
-        this._editor = AlloyEditor.editable(this.props.field.name, {toolbars: toolbars});
+        var field = this.props.field;
+
+        this._editor = AlloyEditor.editable(field.name, {toolbars: toolbars});
+        var nativeEditor = this._editor.get('nativeEditor');
+        nativeEditor.on('change', function(e) {
+            var data = nativeEditor.getData();
+            field.onChange(field.name, data);
+        }); 
+        nativeEditor.on('focus', function(e) {
+            this.onFocus();
+        }, this); 
+        nativeEditor.on('blur', function(e) {
+            this.onBlur();
+        }, this); 
     },
 
     componentWillUnmount: function() {
         this._editor.destroy();
     },
-    
 
+    getInitialState: function () {
+        return {
+            focused: false,
+        };
+    },
+    
+    onFocus: function() {
+        this.setState({
+            focused: true,
+        });
+    },
+    
+    onBlur: function() {
+        this.setState({
+            focused: false,
+        });
+    },
+    
     render: function() {
         var field = this.props.field;
+        if(!field.value) {
+            field.value = "<br />&nbsp;";
+        }
         
         return (
-            <div className={(field.section?'section ':'') + 'alloy-container'}>
+            <div className={(field.section?'section ':'') + (this.state.focused?'focused ':'') + 'alloy-container'}>
 				<FieldLabel
                     label={field.label}
                     instructions={field.instructions}
                 />
-                {/* //Use dangerouslySetInnerHTML to prevent invariant errors */}
-                <div id={field.name} dangerouslySetInnerHTML={{__html: '<p></p><p></p>'}}>
-                </div>
+                {/* //Create Formsy textarea component, otherwise got errors about missing name on input field */}
+                <FormsyTextarea name={field.name} value={field.value} />
             </div>
         );
     }

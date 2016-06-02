@@ -21,22 +21,26 @@ body {
 .ae-toolbar, .ae-toolbar-styles, .ae-toolbar-add {
     z-index: 2000;
 }
-.alloy-label {
+.alloy-container label {
     line-height: 22px; 
     z-index: 1; 
-    color: rgba(0, 0, 0, 0.298039); 
+    /*color: rgba(0, 0, 0, 0.298039); */
+    color: rgba(0, 0, 0, 0.498039); 
     -webkit-user-select: none;
 }
-.alloy-container  > div {
+.alloy-container.focused label {
+    color: rgb(0, 150, 136)
+}
+div.ae-editable {
     border: 1px solid rgb(224, 224, 224);
 }
-.alloy-container > div > p:first-child {
+div.ae-editable > p:first-child {
     margin-top: 0;
 }
-.alloy-container > div > p:last-child {
+div.ae-editable > p:last-child {
     margin-bottom: 0;
 }
-.alloy-container > div:focus {
+div.ae-editable:focus {
     outline: none;
 }
 

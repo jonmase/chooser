@@ -1,23 +1,15 @@
 import React from 'react';
 
-import FieldLabel from '../elements/label.jsx';
+import Formsy from 'formsy-react';
 
-var TextareaField = React.createClass({
+var FormsyTextarea = React.createClass({
+    // Add the Formsy Mixin
+    mixins: [Formsy.Mixin],
     render: function() {
-        var field = this.props.field;
-
         return (
-            <div className={field.section?'section':''}>
-                <FieldLabel
-                    label={field.label}
-                    instructions={field.instructions}
-                />
-                <div>
-                    <textarea rows={field.rows} name={field.name} style={{width: '100%'}} />
-                </div>
-            </div>
+            <textarea id={this.props.name} name={this.props.name} defaultValue={this.props.value} />
         );
     }
 });
 
-module.exports = TextareaField;
+module.exports = FormsyTextarea;

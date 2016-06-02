@@ -4,6 +4,8 @@ import update from 'react-addons-update';
 import Snackbar from 'material-ui/Snackbar';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import Formsy from 'formsy-react';
+
 import TextField from '../fields/text.jsx';
 import MultilineTextField from '../fields/multiline-text.jsx';
 import EmailField from '../fields/email.jsx';
@@ -17,86 +19,94 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 var ProfileContainer = React.createClass({
     getInitialState: function () {
         return {
-            canSubmit: false,
-            editButton: {
-                disabled: true,
-                label: 'Saved',
-            },
+            edited: false,
+            saveButtonEnabled: false,
+            saveButtonLabel: 'Saved',
             snackbar: {
                 open: false,
                 message: '',
             },
+            biographyValue: profile.biography,
+            labValue: profile.lab,
         };
     },
     
-    enableSubmitButton: function () {
+    enableSaveButton: function () {
         this.setState({
-            canSubmit: true
+            saveButtonEnabled: true
         });
     },
 
-    disableSubmitButton: function () {
+    disableSaveButton: function () {
         this.setState({
-            canSubmit: false
+            saveButtonEnabled: false
         });
     },
 
-    //Handle a change to the default field settings - enable the save button
-    handleChange: function(currentValues, isChanged, arg3, arg4) {
-        console.log('Changed?', isChanged, '; Values: ', currentValues);
-        this.setState({
-            editButton: {
-                disabled: false,
-                label: 'Save',
-            },
-        });
+    //Handle a change to the profile fields - enable Save button
+    handleChange: function(values, isChanged) {
+        //Only enable save button if it isn't already enabled
+        if(!this.state.edited) {
+            this.setState({
+                edited: true,
+                saveButtonLabel: 'Save',
+            });
+        }
+    },
+
+    handleWysiwygChange: function(element, value) {
+        var stateData = {};
+        stateData[element + 'Value'] = value;
+        this.setState(stateData);
+        
+        this.handleChange();
     },
     
     //Submit the profile form
     handleSubmit: function (profile) {
         this.setState({
-            editButton: {
-                disabled: true,
-                label: 'Saving',
-            },
+            saveButtonEnabled: false,
+            saveButtonLabel: 'Saving',
         });
 
+        //Get the alloy editor data
+        //AlloyEditor.editable(field.name, {toolbars: toolbars});
+        profile.biography = this.state.biographyValue;
+        profile.lab = this.state.labValue;
+        
         console.log("Saving profile: ", profile);
         
         //Save the settings
-        var url = '../save';
+        var url = './save';
         $.ajax({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: defaults,
+            data: profile,
             success: function(returnedData) {
                 console.log(returnedData.response);
 
-                var stateData = {};
-                stateData.editButton = {
-                    disabled: true,
-                    label: 'Saved',
-                };
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                
-                this.setState(stateData);
+                this.setState({
+                    edited: false,
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Saved',
+                    snackbar: {
+                        open: true,
+                        message: returnedData.response,
+                    }
+                });
             }.bind(this),
             error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
                 this.setState({
-                    editButton: {
-                        disabled: false,
-                        label: 'Resave',
-                    },
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Resave',
                     snackbar: {
                         open: true,
                         message: 'Save error (' + err.toString() + ')',
                     }
                 });
-                console.error(url, status, err.toString());
             }.bind(this)
         }); 
     },
@@ -121,65 +131,70 @@ var ProfileContainer = React.createClass({
                         id="profile_form"
                         method="POST"
                         onChange={this.handleChange}
-                        onValid={this.enableSubmitButton}
-                        onInvalid={this.disableSubmitButton}
+                        onValid={this.enableSaveButton}
+                        onInvalid={this.disableSaveButton}
                         onValidSubmit={this.handleSubmit}
                         noValidate
                     >
+                        <input name="user_id" type="hidden" value={profile.user_id} />
                         <div className="row">
-                            <div className="col-xs-12 col-sm-6 col-md-4">
-                                <TextField
-                                    field={{
-                                        label: "Title",
-                                        instructions: "Dr, Prof, etc",
-                                        name: "title",
-                                        section: false,
-                                        required: false,
-                                        value: profile.title,
-                                    }}
-                                />
-                                <TextField
-                                    field={{
-                                        label: "First Name(s)",
-                                        instructions: "",
-                                        name: "firstname",
-                                        section: false,
-                                        required: false,
-                                        value: profile.firstname,
-                                    }}
-                                />
-                                <TextField
-                                    field={{
-                                        label: "Last Name(s)",
-                                        instructions: "",
-                                        name: "lastname",
-                                        section: false,
-                                        required: false,
-                                        value: profile.lastname,
-                                    }}
-                                />
-                            </div>
-                            <div className="col-xs-12 col-sm-6 col-md-4">
-                                <EmailField
-                                    field={{
-                                        label: "Email",
-                                        instructions: "",
-                                        name: "email",
-                                        section: false,
-                                        required: false,
-                                        value: profile.email,
-                                    }}
-                                />
-                                <TextField
-                                    field={{
-                                        label: "Phone Number",
-                                        instructions: "",
-                                        name: "phone",
-                                        section: false,
-                                        required: false,
-                                        value: profile.phone,
-                                    }}
-                                />
+                            <div className="col-xs-12 col-sm-6 col-md-8">
+                                <div className="row">
+                                    <div className="col-xs-12 col-md-6">
+                                        <TextField
+                                            field={{
+                                                label: "Title",
+                                                instructions: "Dr, Prof, etc",
+                                                name: "title",
+                                                section: false,
+                                                required: false,
+                                                value: profile.title,
+                                            }}
+                                        />
+                                        <TextField
+                                            field={{
+                                                label: "First Name(s)",
+                                                instructions: "",
+                                                name: "firstname",
+                                                section: false,
+                                                required: false,
+                                                value: profile.firstname,
+                                            }}
+                                        />
+                                        <TextField
+                                            field={{
+                                                label: "Last Name(s)",
+                                                instructions: "",
+                                                name: "lastname",
+                                                section: false,
+                                                required: false,
+                                                value: profile.lastname,
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="col-xs-12 col-md-6">
+                                        <EmailField
+                                            field={{
+                                                label: "Email",
+                                                instructions: "",
+                                                name: "email",
+                                                section: false,
+                                                required: false,
+                                                value: profile.email,
+                                            }}
+                                        />
+                                        <TextField
+                                            field={{
+                                                label: "Phone Number",
+                                                instructions: "",
+                                                name: "phone",
+                                                section: false,
+                                                required: false,
+                                                value: profile.phone,
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                             <div className="col-xs-12 col-sm-6 col-md-4">
                                 <TextField
@@ -213,7 +228,7 @@ var ProfileContainer = React.createClass({
                                 />
                             </div>
                         </div>
-                        <div className="row section">
+                        <div className="row section" style={{marginTop: '14px'}}>
                             <div className="col-xs-12 col-sm-6">
                                 <UrlField
                                     field={{
@@ -230,7 +245,7 @@ var ProfileContainer = React.createClass({
                                         label: "Biography",
                                         //instructions: "Enter the description of this option. Select text to format it or create links. Use the + icon to add images, links or tables.",
                                         name: "biography",
-                                        onChange: this.handleChange,
+                                        onChange: this.handleWysiwygChange,
                                         section: false,
                                         value: profile.biography,
                                     }}
@@ -261,6 +276,7 @@ var ProfileContainer = React.createClass({
                                         label: "Lab/Professional Info",
                                         //instructions: "Enter the description of this option. Select text to format it or create links. Use the + icon to add images, links or tables.",
                                         name: "lab",
+                                        onChange: this.handleWysiwygChange,
                                         section: false,
                                         value: profile.lab,
                                     }}
@@ -269,10 +285,10 @@ var ProfileContainer = React.createClass({
                         </div>
                         <div className="section">
                             <RaisedButton 
-                                label={this.state.editButton.label} 
+                                label={this.state.saveButtonLabel} 
                                 primary={true} 
                                 type="submit"
-                                disabled={this.state.editButton.disabled}
+                                disabled={!this.state.saveButtonEnabled || !this.state.edited}
                             />
                         </div>
                     </Formsy.Form>

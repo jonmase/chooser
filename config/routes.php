@@ -52,6 +52,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      */
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
     $routes->connect('/launch', ['controller' => 'LtiConsumer', 'action' => 'launch']);
+    $routes->connect('/profile/save', ['controller' => 'Profiles', 'action' => 'save']);
     $routes->connect('/profile/*', ['controller' => 'Profiles', 'action' => 'view']);
 
     /**
