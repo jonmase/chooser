@@ -23,10 +23,6 @@ class ProfilesController extends AppController
     {
         $choice = $this->Profiles->Users->Choices->get($choiceId);
 
-        $this->set(compact('choice'));
-
-        //pr($this->Auth->user());
-        
         $profile = $this->Profiles->findProfileByUserId($this->Auth->user('id'));
         
         //If profile is empty, get whatever info we have from the users table
@@ -41,7 +37,10 @@ class ProfilesController extends AppController
         }
         //pr($profile);
 
-        $this->set('profile', $profile);
+        //Get user's roles for this Choice
+        $roles = $this->Profiles->Users->Choices->ChoicesUsers->getRolesAsIDsArray($choiceId, $this->Auth->user('id'));
+        $sections = $this->Profiles->Users->Choices->getDashboardSections($choiceId, $roles);
+        $this->set(compact('choice', 'profile', 'sections'));
         //$this->set('_serialize', ['profile']);
     }
     

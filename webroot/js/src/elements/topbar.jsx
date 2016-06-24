@@ -32,6 +32,12 @@ var TopBar = React.createClass({
         this.setState({open: false});
     },
     
+    handleDashboardSelect: function(e) {
+        var url = this.props.dashboardUrl;
+        console.log(url);
+        window.location.href = url;
+    },
+    
     handleSelect: function(e) {
         var url = this.props.sections[parseInt(e.currentTarget.id)].actions[0].url;
         console.log(url);
@@ -47,7 +53,7 @@ var TopBar = React.createClass({
                 open={this.state.open}
                 onRequestChange={(open) => this.setState({open})}
             >
-                <h3 style={{padding: '0 16px'}}>Dashboard</h3>
+                <MenuItem onTouchTap={this.handleDashboardSelect} key="dashboard" id="dashboard"><h3 style={{margin: '10px 0 0'}}>Dashboard</h3></MenuItem>
                 {this.props.sections.map(function(section, sectionIndex) {
                     return (
                         <MenuItem onTouchTap={this.handleSelect} key={section.title} id={sectionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{section.icon}</FontIcon>{section.title}</MenuItem>
@@ -60,7 +66,7 @@ var TopBar = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     <AppBar
-                        title={<span>Chooser<span style={styles.subtitle}>{this.props.subtitle}</span></span>}
+                        title={<span>Chooser<span style={styles.subtitle}>{this.props.choice.name}</span></span>}
                         showMenuIconButton={this.props.menu?true:false}
                         onLeftIconButtonTouchTap={this.handleToggle}
                         //iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}

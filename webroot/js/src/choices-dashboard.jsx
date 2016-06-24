@@ -7,5 +7,10 @@ import DashboardCards from './choices-dashboard/sections-cards.jsx';
 
 injectTapEventPlugin();
 
-ReactDOM.render(<TopBar subtitle={data.subtitle} />, document.getElementById('topbar'));
+ReactDOM.render(
+    <TopBar 
+        choice={data.choice} 
+    />, 
+    document.getElementById('topbar')
+);
 ReactDOM.render(<DashboardCards sections={data.sections} />, document.getElementById('grid'));

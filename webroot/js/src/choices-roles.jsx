@@ -8,7 +8,8 @@ injectTapEventPlugin();
 
 ReactDOM.render(
     <TopBar 
-        subtitle={data.choice.name} 
+        choice={data.choice} 
+        dashboardUrl={data.dashboard} 
         menu={true}
         sections={data.sections} 
     />, 

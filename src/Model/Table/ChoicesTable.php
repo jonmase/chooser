@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Routing\Router;
 
 /**
  * Choices Model
@@ -152,7 +153,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => '../roles/' . $choiceId,
+                        'url' => Router::url(['controller' => 'choices', 'action' => 'roles', $choiceId]),
                     ]
                 ],
                 'roles' => ['admin'],
@@ -163,7 +164,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => '../form/' . $choiceId,
+                        'url' => Router::url(['controller' => 'choices', 'action' => 'form', $choiceId]),
                     ]
                 ],
                 'roles' => ['admin'],
@@ -197,7 +198,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => '../../profile/' . $choiceId,
+                        'url' => Router::url(['controller' => 'profiles', 'action' => 'view', $choiceId]),
                     ]
                 ],
                 'roles' => ['admin', 'editor'],

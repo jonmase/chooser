@@ -6,7 +6,15 @@ import ProfileContainer from './profile/profile-container.jsx';
 
 injectTapEventPlugin();
 
-ReactDOM.render(<TopBar subtitle={data.subtitle} menu={true} />, document.getElementById('topbar'));
+ReactDOM.render(
+    <TopBar 
+        choice={data.choice} 
+        dashboardUrl={data.dashboard} 
+        menu={true}
+        sections={data.sections} 
+    />, 
+    document.getElementById('topbar')
+);
 ReactDOM.render(
     <ProfileContainer />, 
     document.getElementById('profile')

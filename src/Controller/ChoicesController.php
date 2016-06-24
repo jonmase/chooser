@@ -139,7 +139,9 @@ class ChoicesController extends AppController
         }
         
         //pr($choice);
-        $this->set(compact('choice'));
+        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
+        $sections = $this->Choices->getDashboardSections($id, $roles);
+        $this->set(compact('choice', 'sections'));
     }
 
     /**

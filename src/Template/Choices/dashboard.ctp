@@ -3,8 +3,7 @@
 </div>
 <?= $this->Html->scriptStart(['block' => true]); ?>
     var data = {};
-    data.choiceId = "<?= $choice->id; ?>";
-    data.subtitle = "<?= $choice->name; ?>";
+    data.choice = <?= json_encode($choice); ?>;
     data.roles = <?= json_encode($roles); ?>;
     data.sections = <?= json_encode($sections); ?>;
 <?= $this->Html->scriptEnd(); ?>
