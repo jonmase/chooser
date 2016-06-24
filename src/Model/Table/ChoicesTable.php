@@ -169,7 +169,7 @@ class ChoicesTable extends Table
                 ],
                 'roles' => ['admin'],
             ],
-            [
+            /*[
                 'title' => 'Editing Schedules',
                 'icon' => 'mode_edit',
                 'actions' => [
@@ -181,8 +181,8 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin'],
-            ],
-            [
+            ],*/
+            /*[
                 'title' => 'Notifications',
                 'icon' => 'mail_outline',   //'icon' => 'announcement',//'icon' => 'priority_high',
                 'actions' => [
@@ -191,7 +191,7 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin'],
-            ],
+            ],*/
             [
                 'title' => 'Profile',
                 'icon' => 'perm_identity',  //'icon' => 'account_circle',
@@ -209,14 +209,16 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit Yours',
+                        'url' => Router::url(['controller' => 'options', 'action' => 'index', $choiceId]),
                     ],
                     [
                         'label' => 'View All',
+                        'url' => Router::url(['controller' => 'choices', 'action' => 'view', $choiceId]),
                     ]
                 ],
                 'roles' => ['admin', 'editor', 'approver'],
             ],
-            [
+            /*[
                 'title' => 'Choosing Schedules',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => [
@@ -228,8 +230,8 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin'],
-            ],
-            [
+            ],*/
+            /*[
                 'title' => 'Results',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
                 'actions' => [
@@ -241,8 +243,8 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
-            ],
-            [
+            ],*/
+            /*[
                 'title' => 'Allocations',
                 'icon' => 'compare_arrows',
                 'actions' => [
@@ -254,7 +256,7 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin', 'allocator'],
-            ],
+            ],*/
         ];
         
         $userSections = [];
@@ -271,4 +273,17 @@ class ChoicesTable extends Table
         return $userSections;
     }
 
+    public function getDashboardSectionsFromId($choiceId = null, $userId = null) {
+        if(!$choiceId || !$userId) {
+            return [];
+        }
+        
+        $roles = $this->ChoicesUsers->getRolesAsIDsArray($choiceId, $userId);
+        if(empty($roles)) {
+            return [];
+        }
+        $sections = $this->getDashboardSections($choiceId, $roles);
+        
+        return $sections;
+    }
 }

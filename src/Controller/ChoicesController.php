@@ -93,19 +93,16 @@ class ChoicesController extends AppController
      */
     public function dashboard($id = null)
     {
-        //Get user's roles for this Choice
-        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
-        //Make sure user has additional permissions for this Choice
-        if(empty($roles)) {
-            throw new ForbiddenException(__('Not permitted to view Choice dashboard.'));
+        //Get the sections to show
+        $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        if(empty($sections)) {
+            //User doesn't have permission to view any dashboard sections, so redirect to Choice view
+            $this->redirect(['controller' => 'choices', 'action' => 'view', $id]);
         }
         
         $choice = $this->Choices->get($id);
-        
-        //$roles = ['editor'];  //For debugging, override the role
-        $sections = $this->Choices->getDashboardSections($id, $roles);
 
-        $this->set(compact('choice', 'roles', 'sections'));
+        $this->set(compact('choice', 'sections'));
         //$this->set('_serialize', ['choice']);
     }
     
@@ -138,9 +135,9 @@ class ChoicesController extends AppController
             $choice['extra_field_ids'][$extra['id']] = $key;
         }
         
-        //pr($choice);
-        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
-        $sections = $this->Choices->getDashboardSections($id, $roles);
+        //Get the sections to show in the menu  bar
+        $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        
         $this->set(compact('choice', 'sections'));
     }
 
@@ -288,8 +285,8 @@ class ChoicesController extends AppController
         //pr($defaultRolesObject); 
         //exit;
         
-        $roles = $this->Choices->ChoicesUsers->getRolesAsIDsArray($id, $this->Auth->user('id'));
-        $sections = $this->Choices->getDashboardSections($id, $roles);
+        //Get the sections to show in the menu  bar
+        $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
         //pr($sections);
         
         $this->set(compact('choice', 'users', 'roleOptions', 'roleDescriptions', 'sections', 'userSortField'));

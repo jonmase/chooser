@@ -37,9 +37,9 @@ class ProfilesController extends AppController
         }
         //pr($profile);
 
-        //Get user's roles for this Choice
-        $roles = $this->Profiles->Users->Choices->ChoicesUsers->getRolesAsIDsArray($choiceId, $this->Auth->user('id'));
-        $sections = $this->Profiles->Users->Choices->getDashboardSections($choiceId, $roles);
+        //Get the sections to show in the menu  bar
+        $sections = $this->Profiles->Users->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
+
         $this->set(compact('choice', 'profile', 'sections'));
         //$this->set('_serialize', ['profile']);
     }

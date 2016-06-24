@@ -18,7 +18,6 @@ ReactDOM.render(
 ReactDOM.render(
     <FormContainer 
         choice={data.choice} 
-        menu={true}
     />, 
     document.getElementById('form')
 );

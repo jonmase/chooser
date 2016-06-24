@@ -288,7 +288,6 @@ class ChoicesUsersTable extends Table
         //Get the user's roles, omitting view
         $roles = $this->getRolesAsIDsArray($choiceId, $userId);
 
-        //If the user has any role (view is omitted), they have additional permissions
         if(in_array('admin', $roles)) {
             return true;
         }
@@ -297,4 +296,27 @@ class ChoicesUsersTable extends Table
         }
     }
     
+    /**
+     * isEditor method
+     * Checks whether a User is an editor for a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @return boolean True if the User is an editor, false if not
+     */
+    public function isEditor($choiceId = null, $userId = null) {
+        //If either choiceId or userId isn't set, return false (i.e. no role)
+        if(!$choiceId || !$userId) {
+            return false;
+        }
+        
+        //Get the user's roles, omitting view
+        $roles = $this->getRolesAsIDsArray($choiceId, $userId);
+        if(in_array('editor', $roles) || in_array('admin', $roles)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }
