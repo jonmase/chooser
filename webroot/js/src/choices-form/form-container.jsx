@@ -2,7 +2,7 @@ import React from 'react';
 import update from 'react-addons-update';
 
 import Snackbar from 'material-ui/Snackbar';
-import DefaultFields from './default-fields.jsx';
+import DefaultFieldToggles from './default-field-toggles.jsx';
 import ExtraFields from './extra-fields.jsx';
 
 import ChooserTheme from '../theme.jsx';
@@ -334,7 +334,7 @@ var FormContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     <p>This is where you can define the fields that you want to appear on the form for creating/editing options. </p>
-                    <DefaultFields 
+                    <DefaultFieldToggles 
                         choice={this.props.choice}
                         state={this.state}
                         handlers={defaultsHandlers}

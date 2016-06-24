@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import TopBar from './elements/topbar.jsx';
-import FormContainer from './choices-form/form-container.jsx';
+import IndexContainer from './options-index/index-container.jsx';
 
 injectTapEventPlugin();
 
