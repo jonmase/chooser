@@ -141,6 +141,34 @@ class ChoicesTable extends Table
         return $choices;
     }
     
+    /**
+     * getChoiceWithProcessedExtraFields method
+     *
+     * @param int $choiceId The DB ID of the choice
+     * @return array
+     */
+    public function getChoiceWithProcessedExtraFields($choiceId = null) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        $choice = $this->get($choiceId, [
+            'contain' => [
+                'ExtraFields' => ['ExtraFieldOptions']
+            ]
+        ]);
+        
+        $choice['extra_field_ids'] = [];
+        foreach($choice['extra_fields'] as $key => &$extra) {
+            $extra = $this->ExtraFields->processExtraFieldsForView($extra);
+            
+            $choice['extra_field_ids'][$extra['id']] = $key;
+        }
+        
+        return $choice;
+    }
+        
+
     public function getDashboardSections($choiceId = null, $userRoles = null) {
         if(!$choiceId || !$userRoles) {
             return [];

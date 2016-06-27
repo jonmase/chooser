@@ -36,8 +36,8 @@ class OptionsController extends AppController
         ]);*/
         $options = [];
 
-        $choice = $this->Options->ChoicesOptions->Choices->get($choiceId);
-
+        $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
+        //pr($choice);
         //Get the sections to show in the menu  bar
         $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
 

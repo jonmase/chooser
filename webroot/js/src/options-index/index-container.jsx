@@ -12,14 +12,6 @@ var IndexContainer = React.createClass({
     getInitialState: function () {
         return {
             addOptionDialogOpen: false,
-            defaults: {
-                code: this.props.choice.use_code,
-                title: this.props.choice.use_title,
-                description: this.props.choice.use_description,
-                min_places: this.props.choice.use_min_places,
-                max_places: this.props.choice.use_max_places,
-                points: this.props.choice.use_points,
-            },
             snackbar: {
                 open: false,
                 message: '',
@@ -57,7 +49,7 @@ var IndexContainer = React.createClass({
     },
     
     render: function() {
-        var addHandlers={
+        var addHandlers = {
             change: this.handleAddChange,
             submit: this.handleAddSubmit,
             dialogOpen: this.handleAddDialogOpen,
@@ -68,7 +60,8 @@ var IndexContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     <OptionsTable
-                        state={this.state} 
+                        state={this.state}
+                        choice={this.props.choice}
                         addHandlers={addHandlers}
                     />
                     <Snackbar

@@ -44,6 +44,7 @@ var UsersTable = React.createClass({
     },
     render: function() {
         var props = this.props;
+
         return (
             <div>
                 <Card 
@@ -74,6 +75,7 @@ var UsersTable = React.createClass({
                             />&nbsp;*/}
                             <AddOption 
                                 state={props.state} 
+                                choice={props.choice}
                                 handlers={props.addHandlers} 
                             />
                             {/*<UsersActionMenu

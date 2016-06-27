@@ -7,6 +7,12 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 import FieldLabel from '../elements/label.jsx';
 import DefaultFields from '../options-form/default-fields.jsx';
+import ExtraField from '../options-form/extra-field.jsx';
+
+var customDialogStyle = {
+    width: '95%',
+    maxWidth: 'none',
+};
 
 var AddOption = React.createClass({
     getInitialState: function () {
@@ -44,7 +50,15 @@ var AddOption = React.createClass({
             />,
         ];
         
-        
+        var defaults = {
+            code: this.props.choice.use_code,
+            title: this.props.choice.use_title,
+            description: this.props.choice.use_description,
+            min_places: this.props.choice.use_min_places,
+            max_places: this.props.choice.use_max_places,
+            points: this.props.choice.use_points,
+        };
+
         return (
             <span>
                 <IconButton
@@ -56,6 +70,7 @@ var AddOption = React.createClass({
                 </IconButton>         
                 <FormsyDialog
                     actions={actions}
+                    contentStyle={customDialogStyle}
                     dialogOnRequestClose={this.props.handlers.dialogClose}
                     dialogOpen={this.props.state.addOptionDialogOpen}
                     dialogTitle="Add Option"
@@ -66,8 +81,18 @@ var AddOption = React.createClass({
                 >
                     <div className="section">
                         <DefaultFields
-                            defaults={this.props.state.defaults}
+                            defaults={defaults}
                         />
+                    </div>
+                    <div className="section">
+                        {this.props.choice.extra_fields.map(function(field) {
+                            return (
+                                <ExtraField
+                                    key={field.id}
+                                    field={field}
+                                />
+                            );
+                        })}
                     </div>
                 </FormsyDialog>
             </span>

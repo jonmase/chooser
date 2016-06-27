@@ -14,17 +14,7 @@ import AddField from './add-field.jsx';
 import CommonFields from './common-fields.jsx';
 import TypeSpecificFields from './type-specific-fields.jsx';
 
-import TextField from '../fields/text.jsx';
-import NumericField from '../fields/numeric.jsx';
-import EmailField from '../fields/email.jsx';
-import UrlField from '../fields/url.jsx';
-import Wysiwyg from '../fields/wysiwyg.jsx';
-import RadioField from '../fields/radio.jsx';
-import CheckboxField from '../fields/checkbox.jsx';
-import DropdownField from '../fields/dropdown.jsx';
-import DateTimeField from '../fields/datetime.jsx';
-import PersonField from '../fields/person.jsx';
-import FileField from '../fields/file.jsx';
+import ExtraField from '../options-form/extra-field.jsx';
 
 import CategoryIcon from '../icons/category.jsx';
 import FilterableIcon from '../icons/filterable.jsx';
@@ -217,59 +207,10 @@ var ExtraFields = React.createClass({
                         noValidate
                     >
                         {this.props.state.extraFields.map(function(field) {
-                            var fieldComponent = null;
-                            
-                            field.section = true;
-                            switch(field.type) {
-                                case 'text': 
-                                    fieldComponent = <TextField field={field} />;
-                                    break;
-                                case 'wysiwyg': 
-                                    fieldComponent = <Wysiwyg field={field} />;
-                                    break;
-                                case 'number': 
-                                    fieldComponent = <NumericField field={field} />;
-                                    break;
-                                case 'email': 
-                                    fieldComponent = <EmailField field={field} />;
-                                    break;
-                                case 'url': 
-                                    fieldComponent = <UrlField field={field} />;
-                                    break;
-                                case 'list':
-                                    switch(field.extra.list_type) {
-                                        case 'radio': 
-                                            fieldComponent = <RadioField field={field} />;
-                                            break;
-                                        case 'checkbox': 
-                                            fieldComponent = <CheckboxField field={field} />;
-                                            break;
-                                        case 'dropdown': 
-                                            fieldComponent = <DropdownField field={field} />;
-                                            break;
-                                    }
-                                    break;
-                                case 'datetime': 
-                                    var time = true;
-                                case 'date': 
-                                    fieldComponent = <DateTimeField field={field} time={time} />;
-                                    break;
-                                case 'person':
-                                    fieldComponent = <PersonField field={field} />;
-                                    break;
-                                case 'file':
-                                    fieldComponent = <FileField field={field} />;
-                                    break;
-                                default:
-                                    fieldComponent = 
-                                        <div>Count not display field ({field.type}: {field.label})</div>;
-                                    break;
-                            }
-                            
                             return (
                                 <div className="row" key={field.label}>
                                     <div className="col-xs-6 col-md-9 col-lg-10">
-                                        {fieldComponent}
+                                        <ExtraField field={field} />
                                     </div>
                                     <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
                                         {field.required?<RequiredIcon />:''}

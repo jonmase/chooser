@@ -15,6 +15,7 @@ var FormsyDialog = React.createClass({
             <Dialog
                 autoScrollBodyContent={autoScrollBodyContent}
                 bodyStyle={{padding: '0px'}}
+                contentStyle={this.props.contentStyle}
                 modal={modal}
                 onRequestClose={this.props.dialogOnRequestClose}
                 open={this.props.dialogOpen}
