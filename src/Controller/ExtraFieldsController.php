@@ -62,6 +62,7 @@ class ExtraFieldsController extends AppController
             }
             else {
                 $type = $data['type'];
+                $data['name'] = $this->ExtraFields->cleanFieldName($data['label']);
             }
             
             //Process bool fields

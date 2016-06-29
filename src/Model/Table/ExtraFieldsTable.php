@@ -160,7 +160,7 @@ class ExtraFieldsTable extends Table
      * @return mixed decoded JSON
      */
     public function processExtraFieldsForView($field) {
-        $field['name'] = $this->cleanFieldName($field['label']);
+        //$field['name'] = $this->cleanFieldName($field['label']);
         
         $listTypes = $this->getListTypes();
         if(in_array($field['type'], $listTypes)) {

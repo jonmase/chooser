@@ -99,6 +99,7 @@ var DefaultFieldToggles = React.createClass({
                             >
                                 <DefaultFields
                                     defaults={this.props.state.defaults}
+                                    removeOrHide="hide"
                                 />
                             </Formsy.Form>
                         </div>

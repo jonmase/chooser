@@ -46,6 +46,42 @@ class OptionsController extends AppController
     }
 
     /**
+     * save method
+     *
+     * @param string|null $id Profile id.
+     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     */
+    public function save($choiceId = null) {
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
+        if(empty($isEditor)) {
+            throw new ForbiddenException(__('Not permitted to create/edit options for this Choice.'));
+        }
+
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $choicesOption = $this->Options->processOptionForSave($choiceId, $this->Auth->user('id'), $this->request->data);
+            //pr($choicesOption);
+            //exit;
+       
+            if($this->Options->ChoicesOptions->save($choicesOption)) {
+                $this->set('response', 'Option saved');
+                
+                $option = $this->Options->processOptionForView($choicesOption);
+                $this->set('option', $option);
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving option'));
+            }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Saving option requires POST'));
+        }
+    }
+
+    /**
      * Add method
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.

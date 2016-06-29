@@ -43,10 +43,10 @@ var AddOption = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label="Submit"
+                label={this.props.state.addSaveButtonLabel}
                 primary={true}
                 type="submit"
-                disabled={!this.state.canSubmit}
+                disabled={!this.state.canSubmit || !this.props.state.addSaveButtonEnabled}
             />,
         ];
         
@@ -82,17 +82,22 @@ var AddOption = React.createClass({
                     <div className="section">
                         <DefaultFields
                             defaults={defaults}
+                            removeOrHide="remove"
                         />
                     </div>
                     <div className="section">
                         {this.props.choice.extra_fields.map(function(field) {
+                            if(field.type === 'wysiwyg') {
+                                field.onChange = this.props.handlers.wysiwygChange;
+                            }
+                        
                             return (
                                 <ExtraField
                                     key={field.id}
                                     field={field}
                                 />
                             );
-                        })}
+                        }, this)}
                     </div>
                 </FormsyDialog>
             </span>
