@@ -89,16 +89,7 @@ class OptionsTable extends Table
     }
 
     public function processOptionForSave($choiceId, $userId, $requestData) {
-        $optionData = ['revision_parent' => 0];
-        
-        foreach($this->_optionsTableProperties as $property) {
-            if(isset($requestData[$property])) {
-                $optionData[$property] = $requestData[$property];
-                unset($requestData[$property]);
-            }
-        }
-        //pr($optionData);
-
+        //Set up the basic choicesOption data
         $choicesOptionData = [
             'choice_id' => $choiceId,
             'published' => 1,  //Publish everything for now. TODO: sort this out
@@ -110,6 +101,7 @@ class OptionsTable extends Table
             'revision_parent' => 0,
         ];
         
+        //Add the choicesOption fields from the form
         foreach($this->_choicesOptionsTableProperties as $property) {
             if(isset($requestData[$property])) {
                 $choicesOptionData[$property] = $requestData[$property];
@@ -117,19 +109,42 @@ class OptionsTable extends Table
             }
         }
         
+        //Set up the basic option data
+        $optionData = ['revision_parent' => 0];
+        
+        //Add the Option fields from the form
+        //TODO: Check that an option with this code doesn't already exist for this choice
+        foreach($this->_optionsTableProperties as $property) {
+            if(isset($requestData[$property])) {
+                $optionData[$property] = $requestData[$property];
+                unset($requestData[$property]);
+            }
+        }
+        $choicesOptionData['option'] = $optionData;
+         //pr($optionData);
+       
+        //Set up the choicesOptionsUser record for the editor
+        //TODO: Connect up this user (and any others) with extra fields
+        $editor = [
+            'user_id' => $userId,
+            'editor' => 1,
+            'visible_to_students' => 0,
+        ];
+        $choicesOptionData['choices_options_users'] = [$editor];
+        
         //Remaining fields are extra fields
         $choicesOptionData['extra'] = $this->processExtraFieldData($requestData);
-        
-        $choicesOptionData['option'] = $optionData;
         //pr($choicesOptionData);
         
         $choicesOption = $this->ChoicesOptions->newEntity($choicesOptionData);
+        //pr($choicesOption);
+        //exit;
         return $choicesOption;
     }
     
     public function processOptionForView($option) {
         $option = $option->toArray();
-        pr($option);
+        //pr($option);
 
         $extra = (array) json_decode($option['extra']);
         unset($option['extra']);
