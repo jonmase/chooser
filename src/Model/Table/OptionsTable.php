@@ -76,6 +76,25 @@ class OptionsTable extends Table
         return $validator;
     }
     
+    public function getForView($choiceId, $userId) {
+        $options = $this->ChoicesOptions->ChoicesOptionsUsers->find('all', [
+            'conditions' => [
+                'ChoicesOptions.choice_id' => $choiceId,
+                'ChoicesOptions.revision_parent' => 0,
+                'ChoicesOptionsUsers.user_id' => $userId,
+            ],
+            'contain' => ['ChoicesOptions' => ['Options']],
+        ]);
+        
+        $options = $options->toArray();
+        foreach($options as &$option) {
+            $option = $option->choices_option;    //Ignore ChoicesOptionsUser data at top level
+            $option = $this->processForView($option);
+        }
+        
+        return $options;
+    }
+    
     public function getChoicesOptionsTableProperties() {
         return $this->_choicesOptionsTableProperties;
     }
@@ -83,12 +102,19 @@ class OptionsTable extends Table
         return $this->_optionsTableProperties;
     }
     
-    public function processExtraFieldData($requestData) {
+    public function processExtrasForSave($extras) {
         //TODO: Work out how this should be done
-        return json_encode($requestData);
+        $extrasJSON = json_encode($extras);
+        return $extrasJSON;
     }
 
-    public function processOptionForSave($choiceId, $userId, $requestData) {
+    public function processExtrasForView($extrasJSON) {
+        //TODO: Work out how this should be done
+        $extras = (array) json_decode($extrasJSON);
+        return $extras;
+    }
+
+    public function processForSave($choiceId, $userId, $requestData) {
         //Set up the basic choicesOption data
         $choicesOptionData = [
             'choice_id' => $choiceId,
@@ -133,26 +159,27 @@ class OptionsTable extends Table
         $choicesOptionData['choices_options_users'] = [$editor];
         
         //Remaining fields are extra fields
-        $choicesOptionData['extra'] = $this->processExtraFieldData($requestData);
+        $choicesOptionData['extra'] = $this->processExtrasForSave($requestData);
         //pr($choicesOptionData);
         
         $choicesOption = $this->ChoicesOptions->newEntity($choicesOptionData);
-        //pr($choicesOption);
-        //exit;
+
         return $choicesOption;
     }
     
-    public function processOptionForView($option) {
-        $option = $option->toArray();
-        //pr($option);
-
-        $extra = (array) json_decode($option['extra']);
-        unset($option['extra']);
-        //pr($extra);
-        //$option
-        
-        $option = array_merge($option, $option['option'], $extra);
-        unset($option['option']);
+    public function processForView($option) {
+        foreach($this->_optionsTableProperties as $property) {
+            if(isset($option->option[$property])) {
+                $option[$property] = $option->option[$property];
+            }
+        }
+        unset($option->option);
+       
+        $extras = $this->processExtrasForView($option->extra);
+        foreach($extras as $key => $value) {
+            $option[$key] = $value;
+        }
+        unset($option->extra);
         
         //pr($option);
         return $option;

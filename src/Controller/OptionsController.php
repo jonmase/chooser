@@ -27,14 +27,8 @@ class OptionsController extends AppController
             throw new ForbiddenException(__('Not an editor for this Choice.'));
         }
         
-        /*$options = $this->Options->ChoicesOptions->find('all', [
-            'conditions' => [
-                'choice_id' => $choiceId,
-                
-            ],
-            'contain' => ['Options'],
-        ]);*/
-        $options = [];
+        $options = $this->Options->getForView($choiceId, $this->Auth->user('id'));
+        //pr($options);
 
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);
@@ -62,14 +56,16 @@ class OptionsController extends AppController
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $choicesOption = $this->Options->processOptionForSave($choiceId, $this->Auth->user('id'), $this->request->data);
+            $choicesOption = $this->Options->processForSave($choiceId, $this->Auth->user('id'), $this->request->data);
+            //pr($choicesOption);
+            //exit;
             //pr($choicesOption);
             //exit;
        
             if($this->Options->ChoicesOptions->save($choicesOption)) {
                 $this->set('response', 'Option saved');
                 
-                $option = $this->Options->processOptionForView($choicesOption);
+                $option = $this->Options->processForView($choicesOption);
                 $this->set('option', $option);
             } 
             else {

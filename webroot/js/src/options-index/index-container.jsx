@@ -14,7 +14,7 @@ var IndexContainer = React.createClass({
             addOptionDialogOpen: false,
             addSaveButtonEnabled: true,
             addSaveButtonLabel: 'Save',
-            options: [],
+            options: this.props.options,
             snackbar: {
                 open: false,
                 message: '',

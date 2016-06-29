@@ -18,6 +18,7 @@ ReactDOM.render(
 ReactDOM.render(
     <IndexContainer 
         choice={data.choice} 
+        options={data.options} 
     />, 
     document.getElementById('index')
 );

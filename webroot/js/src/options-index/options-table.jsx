@@ -97,13 +97,13 @@ var UsersTable = React.createClass({
                                 displaySelectAll={false}
                             >
                                 <TableRow>
-                                    <TableHeaderColumn>Code</TableHeaderColumn>
-                                    <TableHeaderColumn>Title</TableHeaderColumn>
-                                    <TableHeaderColumn>Min. Places</TableHeaderColumn>
-                                    <TableHeaderColumn>Max. Places</TableHeaderColumn>
-                                    <TableHeaderColumn>Points</TableHeaderColumn>
+                                    {(props.choice.use_code)?<TableHeaderColumn>Code</TableHeaderColumn>:""}
+                                    {(props.choice.use_title)?<TableHeaderColumn>Title</TableHeaderColumn>:""}
+                                    {(props.choice.use_min_places)?<TableHeaderColumn>Min. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_max_places)?<TableHeaderColumn>Max. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_points)?<TableHeaderColumn>Points</TableHeaderColumn>:""}
                                     <TableHeaderColumn>Published</TableHeaderColumn>
-                                    <TableHeaderColumn>Approved</TableHeaderColumn>
+                                    {/*<TableHeaderColumn>Approved</TableHeaderColumn>*/}
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
@@ -111,25 +111,25 @@ var UsersTable = React.createClass({
                                 //displayRowCheckbox={false}
                                 deselectOnClickaway={false}
                             >
-                                {/*props.state.filteredOptions.map(function(option) {
+                                {props.state.options.map(function(option) {
                                     //var user = props.state.users[userIndex];
                                     return (
                                         <TableRow 
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.title}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.published}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.approved}</TableRowColumn>
+                                            {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
+                                            {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumn}>{option.title}</TableRowColumn>:""}
+                                            {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
+                                            {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
+                                            {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
+                                            <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
+                                            {/*<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>*/}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                             </TableRowColumn>
                                         </TableRow>
                                     );
-                                })*/}
+                                })}
                             </TableBody>
                         </Table>
                     </CardText>
