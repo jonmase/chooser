@@ -92,8 +92,8 @@ var IndexContainer = React.createClass({
                 stateData.addOptionDialogOpen = false;   //Close the Dialog
 
                 //Add the new option to state
-                //stateData.options = this.state.options;    //Get the current options
-                //stateData.options.push(returnedData.option);   //Add the new option to current options
+                stateData.options = this.state.options;    //Get the current options
+                stateData.options.push(returnedData.option);   //Add the new option to current options
                 
                 //Update the extraFieldIndexesById
                 //stateData.optionIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);

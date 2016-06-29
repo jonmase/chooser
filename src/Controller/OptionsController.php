@@ -28,7 +28,7 @@ class OptionsController extends AppController
         }
         
         $options = $this->Options->getForView($choiceId, $this->Auth->user('id'));
-        //pr($options);
+        //pr(json_encode($options));
 
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);
@@ -57,8 +57,6 @@ class OptionsController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $choicesOption = $this->Options->processForSave($choiceId, $this->Auth->user('id'), $this->request->data);
-            //pr($choicesOption);
-            //exit;
             //pr($choicesOption);
             //exit;
        
