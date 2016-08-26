@@ -6,19 +6,14 @@ var CodeField = React.createClass({
         return (
             <TextField
                 field={{
-                    label: "Code",
                     instructions: "Enter text",
+                    label: "Code",
                     name: "code",
-                    section: false,
                     required: true,
+                    section: false,
+                    value: this.props.value,
                 }}
             />
-            /*<TextField
-                label="Code"
-                hint="Enter text"
-                name="code"
-                required={true}
-            />*/
         );
     }
 });

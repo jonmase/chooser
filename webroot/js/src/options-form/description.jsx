@@ -6,9 +6,10 @@ var DescriptionField = React.createClass({
         return (
             <Wysiwyg
                 field={{
-                    name: "description",
-                    label: "Description",
                     instructions: "Enter the description of this option. Select text to format it or create links. Use the + icon to add images, links or tables.",
+                    label: "Description",
+                    name: "description",
+                    value: this.props.value,
                 }}
             />
         );

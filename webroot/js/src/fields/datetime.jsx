@@ -22,11 +22,17 @@ var DateTimeField = React.createClass({
         
         var timeElement = '';
         if(this.props.time) {
+            var defaultTime = false;
+            if(typeof(field.value) !== "undefined" && typeof(field.value.time) !== "undefined") {
+                //defaultTime = new Date(field.value.time);
+                defaultTime = new Date(2016, 1, 1, field.value.time.hour, field.value.time.minute);
+            }
+            
             timeElement = 
                 <div className={colClasses}>
                     <FormsyTime
                         //autoOk={true}
-                        //defaultTime='11:23'   //Should be object, but not sure the format
+                        defaultTime={defaultTime}   //Should be object, but not sure the format
                         format='24hr'
                         hintText="Time"
                         name={field.name + '_time'}
@@ -36,6 +42,11 @@ var DateTimeField = React.createClass({
                 </div>;
         }
         
+        var defaultDate = false;
+        if(typeof(field.value) !== "undefined" && typeof(field.value.time) !== "undefined") {
+            //defaultTime = new Date(field.value.time);
+            defaultDate = new Date(field.value.date.year, field.value.date.month, field.value.date.day);
+        }
         
         return (
             <div className={field.section?'section':''}>
@@ -47,6 +58,7 @@ var DateTimeField = React.createClass({
                     <div className={colClasses}>
                         <FormsyDate
                             autoOk={true}
+                            defaultDate={defaultDate}
                             hintText="Date"
                             name={field.name + '_date'}
                             required={required}

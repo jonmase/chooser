@@ -9,12 +9,18 @@ var CheckboxField = React.createClass({
         var field = this.props.field;
 
         var checkboxes = field.options.map(function(option) {
+            var defaultChecked = false;
+            if(typeof(field.value) !== "undefined" && typeof(field.value[option.value]) !== "undefined") {
+                defaultChecked = !!field.value[option.value];
+            }
+            
             return (
                 <FormsyCheckbox 
                     name={field.name + '.' + option.value}
                     key={option.value} 
                     label={option.label} 
                     onChange={this.props.onChange}
+                    defaultChecked={defaultChecked}
                 />
             );
         }, this);

@@ -56,14 +56,14 @@ var fieldTypes = [
         value: 'datetime',
         label: 'Date & Time',
     },
-    {
+    /*{
         value: 'person',
         label: 'Person',
-    },
-    {
+    },*/
+    /*{
         value: 'file',
         label: 'File Upload',
-    },
+    },*/
 ];
 
 

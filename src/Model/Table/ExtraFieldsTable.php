@@ -18,6 +18,7 @@ use Cake\Validation\Validator;
 class ExtraFieldsTable extends Table
 {
     protected $_listTypes = ['radio', 'checkbox', 'dropdown'];
+    protected $_personFields = ['title', 'given_name', 'last_name', 'email', 'department', 'college'];
     
     /**
      * Initialize method
@@ -130,6 +131,10 @@ class ExtraFieldsTable extends Table
     
     public function getListTypes() {
         return $this->_listTypes;
+    }
+
+    public function getPersonFields() {
+        return $this->_personFields;
     }
 
     /**

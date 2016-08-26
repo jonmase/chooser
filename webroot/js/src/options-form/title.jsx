@@ -6,19 +6,14 @@ var TitleField = React.createClass({
         return (
             <TextField
                 field={{
-                    label: "Title",
                     instructions: "Enter text",
+                    label: "Title",
                     name: "title",
-                    section: false,
                     required: true,
+                    section: false,
+                    value: this.props.value,
                 }}
             />
-            /*<TextField
-                label="Title"
-                hint="Enter text"
-                name="title"
-                required={true}
-            />*/
         );
     }
 });

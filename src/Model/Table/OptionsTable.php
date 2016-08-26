@@ -76,20 +76,30 @@ class OptionsTable extends Table
         return $validator;
     }
     
-    public function getForView($choiceId, $userId) {
-        $options = $this->ChoicesOptions->ChoicesOptionsUsers->find('all', [
+    public function getForView($choiceId, $userId = null, $editableOnly = false) {
+        $optionsQuery = $this->ChoicesOptions->find('all', [
             'conditions' => [
                 'ChoicesOptions.choice_id' => $choiceId,
                 'ChoicesOptions.revision_parent' => 0,
-                'ChoicesOptionsUsers.user_id' => $userId,
             ],
-            'contain' => ['ChoicesOptions' => ['Options']],
+            'contain' => ['Options'],
         ]);
+        if($userId) {
+            $optionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId, $editableOnly) {
+                $conditions = ['ChoicesOptionsUsers.user_id' => $userId];
+                if($editableOnly) {
+                    $conditions['ChoicesOptionsUsers.editor'] = true;
+                }
+                
+                return $q->where($conditions);
+            });
+        }
         
-        $options = $options->toArray();
+        $options = $optionsQuery->toArray();
+        //pr($options); 
+        //exit;
         foreach($options as &$option) {
-            $option = $option->choices_option;    //Ignore ChoicesOptionsUser data at top level
-            $option = $this->processForView($option);
+            $option = $this->processForView($option, $choiceId);
         }
         
         return $options;
@@ -103,19 +113,69 @@ class OptionsTable extends Table
     }
     
     public function processExtrasForSave($extras) {
-        //TODO: Work out how this should be done
         $extrasJSON = json_encode($extras);
         return $extrasJSON;
     }
 
-    public function processExtrasForView($extrasJSON) {
+    public function processExtrasForView($extraValuesJSON, $extraTypes) {
         //TODO: Work out how this should be done
-        $extras = (array) json_decode($extrasJSON);
-        return $extras;
+        $extraValues = (array) json_decode($extraValuesJSON);
+        //pr($extraTypes);
+        //pr($extraValues);
+        
+        foreach($extraTypes as $name => $type) {
+            if($type === 'checkbox') {
+                foreach($extraValues[$name] as $key => &$bool)
+                if(filter_var($bool, FILTER_VALIDATE_BOOLEAN)) {
+                    $bool = 1;
+                }
+                else {
+                    $bool = 0;
+                }
+            }
+            if($type === 'person') {
+                $person = [];
+                $personFields = $this->ChoicesOptions->Choices->ExtraFields->getPersonFields();
+                foreach($personFields as $personField) {
+                    $valueFieldName = $name . '_' . $personField;
+                    $person[$personField] = $extraValues[$valueFieldName];
+                    unset($extraValues[$valueFieldName]);
+                }
+                $extraValues[$name] = $person;
+            }
+            if($type === 'date' || $type === 'datetime') {
+                $value = [];
+                if(!empty($extraValues[$name . '_date']) && $extraValues[$name . '_date'] !== 'false') {
+                    $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_date']);
+                    //pr($date);
+                    $value['date'] = [
+                        'year' => $date->format('Y'),
+                        'month' => $date->format('m'),
+                        'day' => $date->format('d'),
+                    ];
+                    //pr($value);
+                    unset($extraValues[$name . '_date']);
+                }
+                
+                if($type === 'datetime' && !empty($extraValues[$name . '_time'])) {
+                    $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_time']);
+                    $value['time'] = [
+                        'hour' => $date->format('H'),
+                        'minute' => $date->format('i'),
+                    ];
+                    //pr($value);
+                    unset($extraValues[$name . '_time']);
+                }
+                $extraValues[$name] = $value;
+            }
+        }
+        //pr($extraValues);
+        return $extraValues;
     }
 
-    public function processForSave($choiceId, $userId, $requestData) {
+    public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null) {
         //Set up the basic choicesOption data
+        //TODO: should we only add bits of this when editing? 
         $choicesOptionData = [
             'choice_id' => $choiceId,
             'published' => 1,  //Publish everything for now. TODO: sort this out
@@ -126,6 +186,9 @@ class OptionsTable extends Table
             'allocations_hidden' => 0,
             'revision_parent' => 0,
         ];
+        if($existingChoicesOption) {
+            $choicesOptionData['id'] = $existingChoicesOption['id'];
+        }
         
         //Add the choicesOption fields from the form
         foreach($this->_choicesOptionsTableProperties as $property) {
@@ -137,6 +200,9 @@ class OptionsTable extends Table
         
         //Set up the basic option data
         $optionData = ['revision_parent' => 0];
+        if($existingChoicesOption) {
+            $optionData['id'] = $existingChoicesOption['option']['id'];
+        }
         
         //Add the Option fields from the form
         //TODO: Check that an option with this code doesn't already exist for this choice
@@ -149,25 +215,34 @@ class OptionsTable extends Table
         $choicesOptionData['option'] = $optionData;
          //pr($optionData);
        
-        //Set up the choicesOptionsUser record for the editor
-        //TODO: Connect up this user (and any others) with extra fields
-        $editor = [
-            'user_id' => $userId,
-            'editor' => 1,
-            'visible_to_students' => 0,
-        ];
-        $choicesOptionData['choices_options_users'] = [$editor];
+        if(!$existingChoicesOption) {
+            //Set up the choicesOptionsUser record for the editor
+            //TODO: Connect up this user (and any others) with extra fields
+            $editor = [
+                'user_id' => $userId,
+                'editor' => 1,
+                'visible_to_students' => 0,
+            ];
+            $choicesOptionData['choices_options_users'] = [$editor];
+        }
         
         //Remaining fields are extra fields
         $choicesOptionData['extra'] = $this->processExtrasForSave($requestData);
         //pr($choicesOptionData);
         
-        $choicesOption = $this->ChoicesOptions->newEntity($choicesOptionData);
+        if($existingChoicesOption) {
+            $choicesOption = clone $existingChoicesOption;
+            $choicesOption->option = clone $existingChoicesOption->option;
+            $choicesOption = $this->ChoicesOptions->patchEntity($choicesOption, $choicesOptionData);
+        }
+        else {
+            $choicesOption = $this->ChoicesOptions->newEntity($choicesOptionData);
+        }
 
         return $choicesOption;
     }
     
-    public function processForView($option) {
+    public function processForView($option, $choiceId) {
         foreach($this->_optionsTableProperties as $property) {
             if(isset($option->option[$property])) {
                 $option[$property] = $option->option[$property];
@@ -175,7 +250,13 @@ class OptionsTable extends Table
         }
         unset($option->option);
        
-        $extras = $this->processExtrasForView($option->extra);
+        //Process the extra fields for displaying
+        $extraTypes = $this->ChoicesOptions->Choices->ExtraFields->find('list', [
+            'conditions' => ['choice_id' => $choiceId],
+            'keyField' => 'name',
+            'valueField' => 'type',
+        ]);
+        $extras = $this->processExtrasForView($option->extra, $extraTypes->toArray());
         foreach($extras as $key => $value) {
             $option[$key] = $value;
         }

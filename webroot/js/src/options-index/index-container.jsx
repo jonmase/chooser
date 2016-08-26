@@ -11,9 +11,12 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 var IndexContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
-            addOptionDialogOpen: false,
-            addSaveButtonEnabled: true,
-            addSaveButtonLabel: 'Save',
+            optionBeingEdited: null,
+            optionDialogOpen: false,
+            optionDialogTitle: 'Add Option',
+            optionIndexesById: this.props.optionIds,
+            optionSaveButtonEnabled: true,
+            optionSaveButtonLabel: 'Save',
             options: this.props.options,
             snackbar: {
                 open: false,
@@ -22,50 +25,67 @@ var IndexContainer = React.createClass({
         };
         
         if(this.props.choice.use_description) {
-            initialState.addValue_description = '';
+            initialState.optionValue_description = '';
         }
         for(var extra in this.props.choice.extra_fields) {
             var field = this.props.choice.extra_fields[extra];
             if(field.type === 'wysiwyg') {
-                initialState['addValue_' + field.name] = '';
+                initialState['optionValue_' + field.name] = '';
             }
         }
 
         return initialState;
     },
     
-    handleAddChange: function() {
+    handleOptionChange: function() {
     
     },
     
-    handleAddDialogOpen: function() {
+    handleOptionDialogOpen: function(option) {
+        //If no option is specified, a new option is being added so set optionBeingEdited to null
+        if(option) {
+            var optionDialogTitle = 'Edit Option';
+            console.log("Editing option: ", option);
+        }
+        else {
+            var optionDialogTitle = 'Add Option';
+            console.log("Adding option");
+            option = null;
+        }
         this.setState({
-            addOptionDialogOpen: true,
+            optionBeingEdited: option,
+            optionDialogOpen: true,    //Open the dialog
+            optionDialogTitle: optionDialogTitle,
         });
     },
     
-    handleAddDialogClose: function() {
+    handleOptionDialogClose: function() {
         this.setState({
-            addOptionDialogOpen: false,
+            optionBeingEdited: null,    //Clear the option being edited
+            optionDialogOpen: false,    //Close the dialog
         });
     },
     
     //Submit the add option form
-    handleAddSubmit: function (option) {
-        //this.setState({
-        //    addSaveButtonEnabled: false,
-        //    addSaveButtonLabel: 'Saving',
-        //});
+    handleOptionSubmit: function (option) {
+        this.setState({
+            optionSaveButtonEnabled: false,
+            optionSaveButtonLabel: 'Saving',
+        });
 
         //Get the alloy editor data
         if(this.props.choice.use_description) {
-            option.description = this.state.addValue_description;
+            option.description = this.state.optionValue_description;
         }
         for(var extra in this.props.choice.extra_fields) {
             var field = this.props.choice.extra_fields[extra];
             if(field.type === 'wysiwyg') {
-                option[field.name] = this.state['addValue_' + field.name];
+                option[field.name] = this.state['optionValue_' + field.name];
             }
+        }
+        
+        if(this.state.optionBeingEdited) {
+            option.choices_option_id = this.state.optionBeingEdited.id;
         }
         
         console.log("Saving option: ", option);
@@ -87,16 +107,25 @@ var IndexContainer = React.createClass({
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.saveButtonEnabled = true;
-                stateData.saveButtonLabel = 'Save';
-                stateData.addOptionDialogOpen = false;   //Close the Dialog
-
-                //Add the new option to state
+                stateData.optionSaveButtonEnabled = true;
+                stateData.optionSaveButtonLabel = 'Save';
+                stateData.optionDialogOpen = false;   //Close the Dialog
+                
+                //Update the state options list
                 stateData.options = this.state.options;    //Get the current options
-                stateData.options.push(returnedData.option);   //Add the new option to current options
+                
+                //If editing an option, replace the old option with the new one
+                if(this.state.optionBeingEdited) {
+                    stateData.options.splice(this.state.optionIndexesById[returnedData.option.id], 1, returnedData.option);   //Replace the field in current extraFields
+                
+                }
+                //If adding an option, add the new option to the enf of the list
+                else {
+                    stateData.options.push(returnedData.option);   //Add the new option to current options
+                }
                 
                 //Update the extraFieldIndexesById
-                //stateData.optionIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
+                stateData.optionIndexesById = this.updateOptionIndexesById(stateData.options);
                 
                 this.setState(stateData);
             }.bind(this),
@@ -104,8 +133,8 @@ var IndexContainer = React.createClass({
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    saveButtonEnabled: true,
-                    saveButtonLabel: 'Resave',
+                    optionSaveButtonEnabled: true,
+                    optionSaveButtonLabel: 'Resave',
                     snackbar: {
                         open: true,
                         message: 'Save error (' + err.toString() + ')',
@@ -126,18 +155,26 @@ var IndexContainer = React.createClass({
     
     handleWysiwygChange: function(element, value) {
         var stateData = {};
-        stateData['addValue_' + element] = value;
+        stateData['optionValue_' + element] = value;
         this.setState(stateData);
         
-        this.handleAddChange();
+        this.handleOptionChange();
     },
     
+    updateOptionIndexesById: function(options) {
+        var optionIndexesById = {};
+        options.forEach(function(option, index) {
+            optionIndexesById[option.id] = index;
+        });
+        return optionIndexesById;
+    },
+
     render: function() {
-        var addHandlers = {
-            change: this.handleAddChange,
-            submit: this.handleAddSubmit,
-            dialogOpen: this.handleAddDialogOpen,
-            dialogClose: this.handleAddDialogClose,
+        var optionHandlers = {
+            change: this.handleOptionChange,
+            submit: this.handleOptionSubmit,
+            dialogOpen: this.handleOptionDialogOpen,
+            dialogClose: this.handleOptionDialogClose,
             wysiwygChange: this.handleWysiwygChange,
         };
         
@@ -147,7 +184,7 @@ var IndexContainer = React.createClass({
                     <OptionsTable
                         state={this.state}
                         choice={this.props.choice}
-                        addHandlers={addHandlers}
+                        optionHandlers={optionHandlers}
                     />
                     <Snackbar
                         open={this.state.snackbar.open}

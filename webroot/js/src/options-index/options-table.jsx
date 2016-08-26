@@ -12,7 +12,8 @@ import TableRow from 'material-ui/Table/TableRow';
 import TableRowColumn from 'material-ui/Table/TableRowColumn';
 
 import AddOption from './add-option.jsx';
-
+import EditOption from './edit-option.jsx';
+import OptionDialog from './option-dialog.jsx';
 
 var styles = {
     tableRowColumn: {
@@ -68,15 +69,11 @@ var UsersTable = React.createClass({
                                 roleOptions={props.roleOptions} 
                                 handlers={props.filterUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
-                            />&nbsp;
-                            <EditSelectedUsers
-                                state={props.state} 
-                                handlers={props.editUserHandlers} 
                             />&nbsp;*/}
                             <AddOption 
                                 state={props.state} 
                                 choice={props.choice}
-                                handlers={props.addHandlers} 
+                                handlers={props.optionHandlers} 
                             />
                             {/*<UsersActionMenu
                             
@@ -126,6 +123,10 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
                                             {/*<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>*/}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
+                                                <EditOption
+                                                    handlers={props.optionHandlers} 
+                                                    option={option}
+                                                />
                                             </TableRowColumn>
                                         </TableRow>
                                     );
@@ -134,6 +135,11 @@ var UsersTable = React.createClass({
                         </Table>
                     </CardText>
                 </Card>
+                <OptionDialog
+                    state={props.state} 
+                    choice={props.choice}
+                    handlers={props.optionHandlers}
+                />
                 {/*<EditUserDialog 
                     state={props.state} 
                     roleOptions={props.roleOptions} 

@@ -17,33 +17,37 @@ var ExtraField = React.createClass({
         var field = this.props.field;
         field.section = true;
         
+        var props = {
+            field: field,
+        };
+        
         var fieldComponent = null;
         switch(field.type) {
             case 'text': 
-                fieldComponent = <TextField field={field} />;
+                fieldComponent = <TextField {...props} />;
                 break;
             case 'wysiwyg': 
-                fieldComponent = <Wysiwyg field={field} />;
+                fieldComponent = <Wysiwyg {...props} />;
                 break;
             case 'number': 
-                fieldComponent = <NumericField field={field} />;
+                fieldComponent = <NumericField {...props} />;
                 break;
             case 'email': 
-                fieldComponent = <EmailField field={field} />;
+                fieldComponent = <EmailField {...props} />;
                 break;
             case 'url': 
-                fieldComponent = <UrlField field={field} />;
+                fieldComponent = <UrlField {...props} />;
                 break;
             case 'list':
                 switch(field.extra.list_type) {
                     case 'radio': 
-                        fieldComponent = <RadioField field={field} />;
+                        fieldComponent = <RadioField {...props} />;
                         break;
                     case 'checkbox': 
-                        fieldComponent = <CheckboxField field={field} />;
+                        fieldComponent = <CheckboxField {...props} />;
                         break;
                     case 'dropdown': 
-                        fieldComponent = <DropdownField field={field} />;
+                        fieldComponent = <DropdownField {...props} />;
                         break;
                     default:
                         fieldComponent = 
@@ -52,15 +56,15 @@ var ExtraField = React.createClass({
                 }
                 break;
             case 'datetime': 
-                var time = true;
+                props.time = true;
             case 'date': 
-                fieldComponent = <DateTimeField field={field} time={time} />;
+                fieldComponent = <DateTimeField {...props} />;
                 break;
             case 'person':
-                fieldComponent = <PersonField field={field} />;
+                fieldComponent = <PersonField {...props} />;
                 break;
             case 'file':
-                fieldComponent = <FileField field={field} />;
+                fieldComponent = <FileField {...props} />;
                 break;
             default:
                 fieldComponent = 

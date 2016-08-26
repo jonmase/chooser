@@ -20,14 +20,15 @@ var RadioField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FieldLabel
-                    label={field.label}
                     instructions={field.instructions}
+                    label={field.label}
                 />
                 <FormsyRadioGroup 
-                    name={field.name}
-                    required={required}
+                    defaultSelected={field.value}
                     floatingLabelText={field.label}
+                    name={field.name}
                     onChange={this.props.onChange}
+                    required={required}
                 >
                     {radios}
                 </FormsyRadioGroup>                        
