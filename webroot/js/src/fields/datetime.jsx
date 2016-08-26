@@ -22,7 +22,7 @@ var DateTimeField = React.createClass({
         
         var timeElement = '';
         if(this.props.time) {
-            var defaultTime = false;
+            var defaultTime = null;
             if(typeof(field.value) !== "undefined" && typeof(field.value.time) !== "undefined") {
                 //defaultTime = new Date(field.value.time);
                 defaultTime = new Date(2016, 1, 1, field.value.time.hour, field.value.time.minute);
@@ -42,7 +42,7 @@ var DateTimeField = React.createClass({
                 </div>;
         }
         
-        var defaultDate = false;
+        var defaultDate = null;
         if(typeof(field.value) !== "undefined" && typeof(field.value.time) !== "undefined") {
             //defaultTime = new Date(field.value.time);
             defaultDate = new Date(field.value.date.year, field.value.date.month, field.value.date.day);
