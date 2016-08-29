@@ -76,14 +76,23 @@ class OptionsTable extends Table
         return $validator;
     }
     
-    public function getForView($choiceId, $userId = null, $editableOnly = false) {
+    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $userId = null, $editableOnly = false) {
+        $conditions = [
+            'ChoicesOptions.choice_id' => $choiceId,
+            'ChoicesOptions.revision_parent' => 0,
+        ];
+        if($publishedOnly) {
+            $conditions['ChoicesOptions.published'] = 1;
+        }
+        if($approvedOnly) {
+            $conditions['ChoicesOptions.approved'] = 1;
+        }
+        
         $optionsQuery = $this->ChoicesOptions->find('all', [
-            'conditions' => [
-                'ChoicesOptions.choice_id' => $choiceId,
-                'ChoicesOptions.revision_parent' => 0,
-            ],
+            'conditions' => $conditions,
             'contain' => ['Options'],
         ]);
+        
         if($userId) {
             $optionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId, $editableOnly) {
                 $conditions = ['ChoicesOptionsUsers.user_id' => $userId];

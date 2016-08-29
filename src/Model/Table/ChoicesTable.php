@@ -236,15 +236,21 @@ class ChoicesTable extends Table
                 'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
                 'actions' => [
                     [
-                        'label' => 'Edit Yours',
-                        'url' => Router::url(['controller' => 'options', 'action' => 'index', $choiceId]),
+                        'label' => 'Preview',
+                        'url' => Router::url(['controller' => 'options', 'action' => 'view', $choiceId]),
                     ],
                     [
-                        'label' => 'View All',
-                        'url' => Router::url(['controller' => 'choices', 'action' => 'view', $choiceId]),
+                        'label' => 'Edit',
+                        'url' => Router::url(['controller' => 'options', 'action' => 'edit', $choiceId]),
+                        'roles' => ['admin', 'editor'],
+                    ],
+                    [
+                        'label' => 'Approve',
+                        'url' => Router::url(['controller' => 'options', 'action' => 'approve', $choiceId]),
+                        'roles' => ['admin', 'approver'],
                     ]
                 ],
-                'roles' => ['admin', 'editor', 'approver'],
+                'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],
             /*[
                 'title' => 'Choosing Schedules',
@@ -290,8 +296,25 @@ class ChoicesTable extends Table
         $userSections = [];
         
         foreach($sections as $section) {
+            $userSectionActions = [];
             foreach($section['roles'] as $sectionRole) {
                 if(in_array($sectionRole, $userRoles)) {
+                    foreach($section['actions'] as $action) {
+                        //If roles are specified for the action, only add the actions for which the user has the correct roles
+                        if(!empty($action['roles'])) {
+                            foreach($action['roles'] as $actionRole) {
+                                if(in_array($actionRole, $userRoles)) {
+                                    $userSectionActions[] = $action;
+                                }
+                                break;
+                            }
+                        }
+                        else {
+                            $userSectionActions[] = $action;
+                        }
+                    }
+                    $section['actions'] = $userSectionActions;
+                    
                     $userSections[] = $section;
                     break;
                 }

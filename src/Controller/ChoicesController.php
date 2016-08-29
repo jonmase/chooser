@@ -334,18 +334,4 @@ class ChoicesController extends AppController
         }
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id Choice id.
-     * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $choice = $this->Choices->get($id);
-
-        $this->set('choice', $choice);
-        //$this->set('_serialize', ['choice']);
-    }
 }

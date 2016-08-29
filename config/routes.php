@@ -54,6 +54,9 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/launch', ['controller' => 'LtiConsumer', 'action' => 'launch']);
     $routes->connect('/profile/save', ['controller' => 'Profiles', 'action' => 'save']);
     $routes->connect('/profile/*', ['controller' => 'Profiles', 'action' => 'view']);
+    $routes->connect('/options/view/:id', ['controller' => 'Options', 'action' => 'index', 'view'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/options/edit/:id', ['controller' => 'Options', 'action' => 'index', 'edit'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/options/approve/:id', ['controller' => 'Options', 'action' => 'index', 'approve'], ['id' => '\d+', 'pass' => ['id']]);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
