@@ -7,7 +7,7 @@ var TitleField = React.createClass({
             <TextField
                 field={{
                     instructions: "Enter text",
-                    label: "Title",
+                    label: "Title*",
                     name: "title",
                     required: true,
                     section: false,

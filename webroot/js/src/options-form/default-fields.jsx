@@ -36,7 +36,7 @@ var DefaultFields = React.createClass({
         if(!remove || defaults.description) {
             defaultsFields.push(
                 <div className={defaults.description?'':'hidden'} key="description">
-                    <DescriptionField value={option?option.description:""} />
+                    <DescriptionField value={option?option.description:""} onChange={this.props.onWysiwygChange} />
                 </div>
             );
         }

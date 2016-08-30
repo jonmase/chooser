@@ -74,8 +74,9 @@ var OptionDialog = React.createClass({
                 <div className="section">
                     <DefaultFields
                         defaults={defaults}
-                        removeOrHide="remove"
                         option={optionBeingEdited}
+                        removeOrHide="remove"
+                        onWysiwygChange={this.props.handlers.wysiwygChange}
                     />
                 </div>
                 <div className="section">

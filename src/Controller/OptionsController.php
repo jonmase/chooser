@@ -117,6 +117,7 @@ class OptionsController extends AppController
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
+            //pr($this->request->data);
             $originalChoicesOption = null;
             if(!empty($this->request->data['choices_option_id'])) {
                 $choicesOptionsQuery = $this->Options->ChoicesOptions->find('all', [
@@ -152,7 +153,6 @@ class OptionsController extends AppController
                 $choicesOptions[] = $this->Options->ChoicesOptions->newEntity($originalChoicesOption);
             }
 
-            
             //pr($choicesOptions);
             //exit;
        

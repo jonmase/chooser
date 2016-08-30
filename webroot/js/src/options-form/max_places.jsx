@@ -7,9 +7,10 @@ var MaxPlacesField = React.createClass({
             <NumericField
                 field={{
                     hint: "Enter a number",
-                    label: "Maximum places",
+                    label: "Maximum places*",
                     name: "max_places",
                     value: this.props.value,
+                    required: true,
                 }}
             />
         );

@@ -9,6 +9,7 @@ var DescriptionField = React.createClass({
                     instructions: "Enter the description of this option. Select text to format it or create links. Use the + icon to add images, links or tables.",
                     label: "Description",
                     name: "description",
+                    onChange: this.props.onChange,
                     value: this.props.value,
                 }}
             />

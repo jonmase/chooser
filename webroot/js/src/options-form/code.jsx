@@ -7,7 +7,7 @@ var CodeField = React.createClass({
             <TextField
                 field={{
                     instructions: "Enter text",
-                    label: "Code",
+                    label: "Code*",
                     name: "code",
                     required: true,
                     section: false,
