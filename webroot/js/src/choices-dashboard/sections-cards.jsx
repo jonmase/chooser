@@ -50,7 +50,7 @@ var SectionsCards = React.createClass({
                 <div style={styles.root} className="row">
                     {this.props.sections.map(function(card) {
                         return (
-                            <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" style={styles.cardContainer} key={card.title}>
+                            <div className="col-xs-12 col-sm-6 col-md-4" style={styles.cardContainer} key={card.title}>
                                 <Card style={styles.card}>
                                     <CardTitle 
                                         title={

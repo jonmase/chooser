@@ -3,9 +3,8 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
-import ShortTextDisplay from '../display/short-text.jsx';
-import LongTextDisplay from '../display/long-text.jsx';
-import MinMaxDisplay from '../display/min-max.jsx';
+import DefaultFields from './default-fields.jsx';
+import ExtraField from './extra-field.jsx';
 
 
 var customDialogStyle = {
@@ -48,38 +47,41 @@ var OptionViewDialog = React.createClass({
             }
         }
 
-        if(optionBeingViewed) {
-            return (
-                <Dialog
-                    actions={actions}
-                    modal={false}
-                    onRequestClose={this.props.handlers.dialogClose}
-                    open={this.props.viewState.optionDialogOpen}
-                    style={customDialogStyle}
-                    title={title}
-                >
-                    {(optionBeingViewed.code)?
-                        <ShortTextDisplay title="Code" content={optionBeingViewed.code} />
-                    :""}
-                    {(optionBeingViewed.title)?
-                        <ShortTextDisplay title="Title" content={optionBeingViewed.title} />
-                    :""}
-                    {(optionBeingViewed.description)?
-                        <LongTextDisplay title="Description" content={optionBeingViewed.description} />
-                    :""}
-                    {(optionBeingViewed.min_places || optionBeingViewed.max_places)?
-                        <MinMaxDisplay title="Places" min={optionBeingViewed.min_places} max={optionBeingViewed.max_places} />
-                    :""}
-                    {(optionBeingViewed.points)?
-                        <ShortTextDisplay title="Points" content={optionBeingViewed.points} />
-                    :""}
-                    
-                </Dialog>
-            );
-        }
-        else {
-            return null;
-        }
+        return (
+            <Dialog
+                actions={actions}
+                modal={false}
+                onRequestClose={this.props.handlers.dialogClose}
+                open={this.props.viewState.optionDialogOpen}
+                style={customDialogStyle}
+                title={title}
+            >
+
+                <DefaultFields
+                    defaults={defaults}
+                    option={optionBeingViewed}
+                />
+                
+                {this.props.choice.extra_fields.map(function(field) {
+                    if(optionBeingViewed && typeof(optionBeingViewed[field.name]) !== "undefined") {
+                        field.value = optionBeingViewed[field.name];
+                    }
+                    else {
+                        //delete field.value;
+                        field.value = '';
+                    }
+
+                
+                    return (
+                        <ExtraField
+                            key={field.id}
+                            field={field}
+                        />
+                    );
+                }, this)}
+
+            </Dialog>
+        );
     }
 });
 

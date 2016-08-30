@@ -168,7 +168,22 @@ class ChoicesTable extends Table
         return $choice;
     }
         
-
+    /**
+     * getExtraFieldTypes method
+     *
+     * @param int $choiceId The DB ID of the choice
+     * @return array
+     */
+    public function getExtraFieldTypes($choiceId = null) {
+        $extraTypes = $this->ChoicesOptions->Choices->ExtraFields->find('list', [
+            'conditions' => ['choice_id' => $choiceId],
+            'keyField' => 'name',
+            'valueField' => 'type',
+        ]);
+        
+        return $extraTypes->toArray();
+    }
+        
     public function getDashboardSections($choiceId = null, $userRoles = null) {
         if(!$choiceId || !$userRoles) {
             return [];

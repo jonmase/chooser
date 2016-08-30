@@ -24,7 +24,7 @@ var styles = {
     },
     actionsTableRowColumn: {
         whiteSpace: 'normal',
-        width: '72px',
+        width: '96px',
         paddingLeft: '12px',
         paddingRight: '12px',
         textAlign: 'right',
@@ -144,7 +144,7 @@ var UsersTable = React.createClass({
                                 <AddOption 
                                     state={props.state} 
                                     choice={props.choice}
-                                    handlers={props.optionHandlers} 
+                                    handlers={props.optionEditHandlers} 
                                 />
                             :""}
                             
@@ -168,18 +168,19 @@ var UsersTable = React.createClass({
                                 displaySelectAll={true}
                             >
                                 <TableRow>
+                                    {(props.choice.use_code)?<TableHeaderColumn>Code</TableHeaderColumn>:""}
+                                    {(props.choice.use_title)?<TableHeaderColumn>Title</TableHeaderColumn>:""}
+                                    {(props.choice.use_min_places)?<TableHeaderColumn>Min. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_max_places)?<TableHeaderColumn>Max. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_points)?<TableHeaderColumn>Points</TableHeaderColumn>:""}
+                                    {(props.action === 'edit')?<TableHeaderColumn>Published</TableHeaderColumn>:""}
+                                    {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn>Approved</TableHeaderColumn>:""*/}
                                     {(props.action === 'view')?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                         <FavouriteOption
                                             handlers={props.optionHandlers} 
                                             option="all"
                                         />
                                     </TableHeaderColumn>:""}
-                                    {(props.choice.use_code)?<TableHeaderColumn>Code</TableHeaderColumn>:""}
-                                    {(props.choice.use_title)?<TableHeaderColumn>Title</TableHeaderColumn>:""}
-                                    {(props.choice.use_min_places)?<TableHeaderColumn>Min. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_max_places)?<TableHeaderColumn>Max. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_points)?<TableHeaderColumn>Points</TableHeaderColumn>:""}
-                                    {/*(props.action === 'approve')?<TableHeaderColumn>Approved</TableHeaderColumn>:""*/}
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
@@ -195,19 +196,19 @@ var UsersTable = React.createClass({
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
-                                            {(props.action === 'view')?<TableRowColumn style={styles.favouriteTableRowColumn}>
-                                                <FavouriteOption
-                                                    handlers={props.optionHandlers} 
-                                                    option={option}
-                                                />
-                                            </TableRowColumn>:""}
                                             {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
                                             {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumn}>{option.title}</TableRowColumn>:""}
                                             {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
                                             {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
                                             {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
                                             {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
-                                            {/*(props.action === 'approve')?<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>:""*/}
+                                            {/*(props.action === 'approve' || props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>:""*/}
+                                            {(props.action === 'view')?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                                <FavouriteOption
+                                                    handlers={props.optionHandlers} 
+                                                    option={option}
+                                                />
+                                            </TableRowColumn>:""}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {props.action === 'edit'? 
                                                     <EditOption
@@ -233,14 +234,12 @@ var UsersTable = React.createClass({
                         </Table>
                     </CardText>
                 </Card>
-                {(props.action === 'view')?
-                    <OptionViewDialog
-                        choice={props.choice}
-                        handlers={optionViewHandlers}
-                        state={props.state} 
-                        viewState={this.state}
-                    />
-                :""}
+                <OptionViewDialog
+                    choice={props.choice}
+                    handlers={optionViewHandlers}
+                    state={props.state} 
+                    viewState={this.state}
+                />
                 {(props.action === 'edit')?
                     <OptionEditDialog
                         choice={props.choice}

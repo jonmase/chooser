@@ -160,6 +160,8 @@ class OptionsController extends AppController
                 $this->set('response', 'Option saved');
                 
                 $option = $this->Options->processForView($updatedChoicesOption, $choiceId);
+                //pr($option);
+                //exit;
                 $this->set('option', $option);
             } 
             else {

@@ -121,25 +121,16 @@ class OptionsTable extends Table
         return $this->_optionsTableProperties;
     }
     
-    public function processExtrasForSave($extras) {
-        $extrasJSON = json_encode($extras);
-        return $extrasJSON;
-    }
-
-    public function processExtrasForView($extraValuesJSON, $extraTypes) {
-        //TODO: Work out how this should be done
-        $extraValues = (array) json_decode($extraValuesJSON);
-        //pr($extraTypes);
-        //pr($extraValues);
-        
+    public function processExtrasForSave($choiceId, $extraValues, $extraTypes) {
         foreach($extraTypes as $name => $type) {
             if($type === 'checkbox') {
-                foreach($extraValues[$name] as $key => &$bool)
-                if(filter_var($bool, FILTER_VALIDATE_BOOLEAN)) {
-                    $bool = 1;
-                }
-                else {
-                    $bool = 0;
+                foreach($extraValues[$name] as $key => &$bool) {
+                    if(filter_var($bool, FILTER_VALIDATE_BOOLEAN)) {
+                        $bool = 1;
+                    }
+                    else {
+                        $bool = 0;
+                    }
                 }
             }
             if($type === 'person') {
@@ -157,28 +148,55 @@ class OptionsTable extends Table
                 if(!empty($extraValues[$name . '_date']) && $extraValues[$name . '_date'] !== 'false') {
                     $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_date']);
                     //pr($date);
-                    $value['date'] = [
-                        'year' => $date->format('Y'),
-                        'month' => $date->format('m'),
-                        'day' => $date->format('d'),
-                    ];
+                    $value['date'] = $date->format('Y-m-d');
                     //pr($value);
-                    unset($extraValues[$name . '_date']);
                 }
+                unset($extraValues[$name . '_date']);
                 
-                if($type === 'datetime' && !empty($extraValues[$name . '_time'])) {
+                if($type === 'datetime' && !empty($extraValues[$name . '_time']) && $extraValues[$name . '_time'] !== 'false') {
                     $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_time']);
-                    $value['time'] = [
-                        'hour' => $date->format('H'),
-                        'minute' => $date->format('i'),
-                    ];
+                    $value['time'] = $date->format('H:i');
                     //pr($value);
                     unset($extraValues[$name . '_time']);
                 }
                 $extraValues[$name] = $value;
             }
-        }
+        }        
+        
         //pr($extraValues);
+        //exit;
+        $extrasJSON = json_encode($extraValues);
+        //pr($extrasJSON);
+        //exit;
+        return $extrasJSON;
+    }
+
+    public function processExtrasForView($extraValuesJSON, $extraTypes) {
+        //TODO: Work out how this should be done
+        $extraValues = (array) json_decode($extraValuesJSON);
+        //pr($extraTypes);
+        //pr($extraValues);
+        //exit;
+        
+        foreach($extraTypes as $name => $type) {
+            if($type === 'datetime' || $type === 'date') {
+                if($type === 'datetime' && !empty($extraValues[$name]->time)) {
+                    $datetime = date_create_from_format('Y-m-d H:i', $extraValues[$name]->date . " " . $extraValues[$name]->time);
+                    $formattedDateTime = $datetime->format('H:i \o\n D j M Y');
+                    $extraValues[$name] = $formattedDateTime;
+                }
+                else if(!empty($extraValues[$name]->date)) {
+                    $date = date_create_from_format('Y-m-d', $extraValues[$name]->date);
+                    $formattedDate = $date->format('D j M Y');
+                    $extraValues[$name] = $formattedDate;
+                }
+                else {
+                    $extraValues[$name] = null;
+                }
+            }
+        }        
+        //pr($extraValues);
+        
         return $extraValues;
     }
 
@@ -236,8 +254,11 @@ class OptionsTable extends Table
         }
         
         //Remaining fields are extra fields
-        $choicesOptionData['extra'] = $this->processExtrasForSave($requestData);
+        //pr($requestData);
+        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        $choicesOptionData['extra'] = $this->processExtrasForSave($choiceId, $requestData, $extraTypes);
         //pr($choicesOptionData);
+        //exit;
         
         if($existingChoicesOption) {
             $choicesOption = clone $existingChoicesOption;
@@ -260,12 +281,8 @@ class OptionsTable extends Table
         unset($option->option);
        
         //Process the extra fields for displaying
-        $extraTypes = $this->ChoicesOptions->Choices->ExtraFields->find('list', [
-            'conditions' => ['choice_id' => $choiceId],
-            'keyField' => 'name',
-            'valueField' => 'type',
-        ]);
-        $extras = $this->processExtrasForView($option->extra, $extraTypes->toArray());
+        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        $extras = $this->processExtrasForView($option->extra, $extraTypes);
         foreach($extras as $key => $value) {
             $option[$key] = $value;
         }

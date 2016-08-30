@@ -51,7 +51,7 @@ var ExtraField = React.createClass({
                         break;
                     default:
                         fieldComponent = 
-                            <div>Count not display list field ({field.extra.list_type}: {field.label})</div>;
+                            <div>Could not display list field ({field.extra.list_type}: {field.label})</div>;
                         break;
                 }
                 break;
@@ -68,7 +68,7 @@ var ExtraField = React.createClass({
                 break;
             default:
                 fieldComponent = 
-                    <div>Count not display field ({field.type}: {field.label})</div>;
+                    <div>Could not display field ({field.type}: {field.label})</div>;
                 break;
         }
 
