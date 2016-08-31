@@ -43,9 +43,9 @@ var ExtraField = React.createClass({
                     case 'radio': 
                         fieldComponent = <RadioField {...props} />;
                         break;
-                    case 'checkbox': 
+                    /*case 'checkbox': 
                         fieldComponent = <CheckboxField {...props} />;
-                        break;
+                        break;*/
                     case 'dropdown': 
                         fieldComponent = <DropdownField {...props} />;
                         break;
@@ -60,12 +60,12 @@ var ExtraField = React.createClass({
             case 'date': 
                 fieldComponent = <DateTimeField {...props} />;
                 break;
-            case 'person':
+            /*case 'person':
                 fieldComponent = <PersonField {...props} />;
                 break;
             case 'file':
                 fieldComponent = <FileField {...props} />;
-                break;
+                break;*/
             default:
                 fieldComponent = 
                     <div>Could not display field ({field.type}: {field.label})</div>;

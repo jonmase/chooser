@@ -15,6 +15,9 @@ import DateTime from '../display/datetime.jsx';
 var ExtraField = React.createClass({
     render: function() {
         var field = this.props.field;
+        if(this.props.value) {
+            field.value = this.props.value;
+        }
         
         var props = {
             field: field,

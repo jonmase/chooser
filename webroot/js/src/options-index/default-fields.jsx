@@ -20,7 +20,7 @@ var DefaultFields = React.createClass({
                 value: option.code,
             };
             defaultsFields.push(
-                <Text field={field} />
+                <Text field={field} key="code" />
             );
         }
         if(defaults.title) {
@@ -29,7 +29,7 @@ var DefaultFields = React.createClass({
                 value: option.title,
             };
             defaultsFields.push(
-                <Text field={field} />
+                <Text field={field} key="title" />
             );
         }
         if(defaults.description) {
@@ -38,7 +38,7 @@ var DefaultFields = React.createClass({
                 value: option.description,
             };
             defaultsFields.push(
-                <Wysiwyg field={field} />
+                <Wysiwyg field={field} key="description" />
             );
         }
         if(defaults.min_places || defaults.max_places) {
@@ -61,7 +61,7 @@ var DefaultFields = React.createClass({
             }
         
             defaultsFields.push(
-                <Text field={field} />
+                <Text field={field} key="places" />
             );
         }
         if(defaults.points) {
@@ -71,7 +71,7 @@ var DefaultFields = React.createClass({
                 value: option.points,
             };
             defaultsFields.push(
-                <Numeric field={field} />
+                <Numeric field={field} key="points" />
             );
         }
     

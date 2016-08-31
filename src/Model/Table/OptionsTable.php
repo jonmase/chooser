@@ -123,7 +123,7 @@ class OptionsTable extends Table
     
     public function processExtrasForSave($choiceId, $extraValues, $extraTypes) {
         foreach($extraTypes as $name => $type) {
-            if($type === 'checkbox') {
+            if($type === 'checkbox' && !empty($extraValues[$name])) {
                 foreach($extraValues[$name] as $key => &$bool) {
                     if(filter_var($bool, FILTER_VALIDATE_BOOLEAN)) {
                         $bool = 1;

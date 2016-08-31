@@ -22,6 +22,7 @@ var ViewContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             options: this.props.options,
+            optionIndexesById: this.props.optionIds,
             snackbar: {
                 open: false,
                 message: '',
@@ -48,6 +49,18 @@ var ViewContainer = React.createClass({
         });
     },
     
+    updateOptionIndexesById: function(options) {
+        var optionIndexesById = {};
+        options.forEach(function(option, index) {
+            optionIndexesById[option.id] = index;
+        });
+        
+        this.setState({
+            optionIndexesById: optionIndexesById,
+        });
+        //return optionIndexesById;
+    },
+
     render: function() {
         var optionHandlers = {
         };

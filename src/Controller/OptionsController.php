@@ -83,13 +83,14 @@ class OptionsController extends AppController
             $options = $this->Options->getForView($choiceId, true, true);
         }
         
-        //TODO: Is this needed for all of the actions, or just edit?
+        //Create an array of optionIds mapped to index in options array
+        //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
         $optionIds = [];
         foreach($options as $key => $option) {
             $optionIds[$option['id']] = $key;
         }
         //pr(json_encode($options));
-        //pr($options);
+        pr($options);
 
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);

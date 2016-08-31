@@ -53,7 +53,7 @@ var IndexContainer = React.createClass({
             option = null;
         }
         this.setState({
-            optionBeingEdited: option,
+            optionBeingEdited: option.id,
             optionDialogOpen: true,    //Open the dialog
             optionDialogTitle: optionDialogTitle,
         });
@@ -85,7 +85,7 @@ var IndexContainer = React.createClass({
         }
         
         if(this.state.optionBeingEdited) {
-            option.choices_option_id = this.state.optionBeingEdited.id;
+            option.choices_option_id = this.state.optionBeingEdited;
         }
         
         console.log("Saving option: ", option);
@@ -117,7 +117,6 @@ var IndexContainer = React.createClass({
                 //If editing an option, replace the old option with the new one
                 if(this.state.optionBeingEdited) {
                     stateData.options.splice(this.state.optionIndexesById[returnedData.option.id], 1, returnedData.option);   //Replace the field in current extraFields
-                
                 }
                 //If adding an option, add the new option to the enf of the list
                 else {

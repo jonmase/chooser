@@ -3,11 +3,11 @@ import IconButton from 'material-ui/IconButton';
 
 var ExpandOption = React.createClass({
     handleExpandMore: function() {
-        this.props.handlers.dialogOpen(this.props.option);
+        this.props.handlers.dialogOpen(this.props.optionId);
     },
-    handleExpandLess: function() {
+    /*handleExpandLess: function() {
         this.props.handlers.expandLess(this.props.option);
-    },
+    },*/
     render: function() {
         return (
             <span>

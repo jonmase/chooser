@@ -71,9 +71,9 @@ var UsersTable = React.createClass({
     _onSelectAll: function(selectedRows){
         //this.props.selectUserHandlers.change(selectedRows);
     },
-    handleDialogOpen: function(option) {
+    handleDialogOpen: function(optionId) {
         this.setState({
-            optionBeingViewed: option,
+            optionBeingViewed: optionId,
             optionDialogOpen: true,    //Open the dialog
         });
     },
@@ -224,7 +224,7 @@ var UsersTable = React.createClass({
                                                 :""*/}
                                                 <ExpandOption
                                                     handlers={optionViewHandlers} 
-                                                    option={option}
+                                                    optionId={option.id}
                                                 />
                                             </TableRowColumn>
                                         </TableRow>

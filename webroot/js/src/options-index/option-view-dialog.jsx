@@ -32,18 +32,18 @@ var OptionViewDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var optionBeingViewed = this.props.viewState.optionBeingViewed;
+        var option = this.props.state.options[this.props.state.optionIndexesById[this.props.viewState.optionBeingViewed]];
         
         var title = '';
-        if(typeof(optionBeingViewed) !== "undefined" && optionBeingViewed) {
-            if(optionBeingViewed.code) {
-                title += optionBeingViewed.code;
-                if(optionBeingViewed.title) {
+        if(typeof(option) !== "undefined" && option) {
+            if(option.code) {
+                title += option.code;
+                if(option.title) {
                     title += ": ";
                 }
             }
-            if(optionBeingViewed.title) {
-                title += optionBeingViewed.title;
+            if(option.title) {
+                title += option.title;
             }
         }
 
@@ -59,23 +59,20 @@ var OptionViewDialog = React.createClass({
 
                 <DefaultFields
                     defaults={defaults}
-                    option={optionBeingViewed}
+                    option={option}
                 />
                 
                 {this.props.choice.extra_fields.map(function(field) {
-                    if(optionBeingViewed && typeof(optionBeingViewed[field.name]) !== "undefined") {
-                        field.value = optionBeingViewed[field.name];
+                    var value = null;
+                    if(option && typeof(option[field.name]) !== "undefined") {
+                        value = option[field.name];
                     }
-                    else {
-                        //delete field.value;
-                        field.value = '';
-                    }
-
                 
                     return (
                         <ExtraField
                             key={field.id}
                             field={field}
+                            value={value}
                         />
                     );
                 }, this)}

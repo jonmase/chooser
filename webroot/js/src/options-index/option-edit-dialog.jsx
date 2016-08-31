@@ -57,7 +57,8 @@ var OptionDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var optionBeingEdited = this.props.state.optionBeingEdited;
+        //var option = this.props.state.options[this.props.state.optionBeingEdited];
+        var option = this.props.state.options[this.props.state.optionIndexesById[this.props.state.optionBeingEdited]];
 
         return (
             <FormsyDialog
@@ -74,7 +75,7 @@ var OptionDialog = React.createClass({
                 <div className="section">
                     <DefaultFields
                         defaults={defaults}
-                        option={optionBeingEdited}
+                        option={option}
                         removeOrHide="remove"
                         onWysiwygChange={this.props.handlers.wysiwygChange}
                     />
@@ -84,8 +85,8 @@ var OptionDialog = React.createClass({
                         if(field.type === 'wysiwyg') {
                             field.onChange = this.props.handlers.wysiwygChange;
                         }
-                        if(optionBeingEdited && typeof(optionBeingEdited[field.name]) !== "undefined") {
-                            field.value = optionBeingEdited[field.name];
+                        if(option && typeof(option[field.name]) !== "undefined") {
+                            field.value = option[field.name];
                         }
                         else {
                             //delete field.value;
