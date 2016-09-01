@@ -252,18 +252,23 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Preview',
+                        'menuLabel' => 'Preview Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'view', $choiceId]),
                     ],
                     [
+                        'icon' => 'edit',
                         'label' => 'Edit',
+                        'menuLabel' => 'Edit Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'edit', $choiceId]),
                         'roles' => ['admin', 'editor'],
                     ],
-                    [
+                    /*[
+                        'icon' => 'check',
                         'label' => 'Approve',
+                        'menuLabel' => 'Approve Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'approve', $choiceId]),
                         'roles' => ['admin', 'approver'],
-                    ]
+                    ]*/
                 ],
                 'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],

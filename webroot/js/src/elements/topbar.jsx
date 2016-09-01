@@ -39,7 +39,10 @@ var TopBar = React.createClass({
     },
     
     handleSelect: function(e) {
-        var url = this.props.sections[parseInt(e.currentTarget.id)].actions[0].url;
+        var sectionIndex = parseInt(e.currentTarget.dataset.sectionIndex);
+        var actionIndex = parseInt(e.currentTarget.dataset.actionIndex);
+    
+        var url = this.props.sections[sectionIndex].actions[actionIndex].url;
         console.log(url);
         window.location.href = url;
     },
@@ -55,9 +58,31 @@ var TopBar = React.createClass({
             >
                 <MenuItem onTouchTap={this.handleDashboardSelect} key="dashboard" id="dashboard"><h3 style={{margin: '10px 0 0'}}>Dashboard</h3></MenuItem>
                 {this.props.sections.map(function(section, sectionIndex) {
-                    return (
-                        <MenuItem onTouchTap={this.handleSelect} key={section.title} id={sectionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{section.icon}</FontIcon>{section.title}</MenuItem>
-                    );
+                    return section.actions.map(function(action, actionIndex) {
+                        var id = sectionIndex + "-" + actionIndex;
+                        if(action.icon) {
+                            var icon = action.icon;
+                        }
+                        else {
+                            var icon = section.icon;
+                        }
+                        if(action.menuLabel) {
+                            var label = action.menuLabel;
+                        }
+                        else {
+                            var label = section.title;
+                        }
+                        
+                        
+                        return (
+                            <MenuItem onTouchTap={this.handleSelect} key={id} id={id} data-section-index={sectionIndex} data-action-index={actionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{icon}</FontIcon>{label}</MenuItem>
+                        );
+                    }, this);
+                    /*else {
+                        return (
+                            <MenuItem onTouchTap={this.handleSelect} key={section.title} id={sectionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{section.icon}</FontIcon>{label}</MenuItem>
+                        );
+                    }*/
                 }, this)}
             </Drawer>;
         }
