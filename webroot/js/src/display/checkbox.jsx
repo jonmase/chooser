@@ -8,11 +8,11 @@ var TextDisplay = React.createClass({
         return (
             <p>
                 <strong>{field.label}: </strong>
-                {field.value?Object.keys(field.value).sort().map(function(key) {
-                    if(field.value[key]) {
-                        return key + "; ";
+                {field.options.map(function(option) {
+                    if(field.value && field.value[option.value]) {
+                        return option.label + "; ";
                     }
-                }):""}
+                })}
             </p>
         );
     }
