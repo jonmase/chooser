@@ -43,9 +43,9 @@ var ExtraField = React.createClass({
                     case 'radio': 
                         fieldComponent = <RadioField {...props} />;
                         break;
-                    /*case 'checkbox': 
+                    case 'checkbox': 
                         fieldComponent = <CheckboxField {...props} />;
-                        break;*/
+                        break;
                     case 'dropdown': 
                         fieldComponent = <DropdownField {...props} />;
                         break;

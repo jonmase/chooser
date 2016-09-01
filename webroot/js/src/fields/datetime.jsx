@@ -43,9 +43,9 @@ var DateTimeField = React.createClass({
         }
         
         var defaultDate = null;
-        if(typeof(field.value) !== "undefined" && typeof(field.value.time) !== "undefined") {
-            //defaultTime = new Date(field.value.time);
-            defaultDate = new Date(field.value.date.year, field.value.date.month, field.value.date.day);
+        if(typeof(field.value) !== "undefined" && typeof(field.value.date) !== "undefined") {
+            //Create the date to pass to the datepicker (months start from 0 not 1)
+            defaultDate = new Date(field.value.date.year, field.value.date.month - 1, field.value.date.day);
         }
         
         return (

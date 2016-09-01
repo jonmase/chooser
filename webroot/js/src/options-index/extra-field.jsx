@@ -15,6 +15,8 @@ import DateTime from '../display/datetime.jsx';
 var ExtraField = React.createClass({
     render: function() {
         var field = this.props.field;
+        
+        //For some reason, setting field.value in option-view-dialog.jsx did not work for the edit page, so passing as separate prop and adding to field here
         if(this.props.value) {
             field.value = this.props.value;
         }

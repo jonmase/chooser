@@ -180,15 +180,30 @@ class OptionsTable extends Table
         
         foreach($extraTypes as $name => $type) {
             if($type === 'datetime' || $type === 'date') {
+                $value = [];
                 if($type === 'datetime' && !empty($extraValues[$name]->time)) {
                     $datetime = date_create_from_format('Y-m-d H:i', $extraValues[$name]->date . " " . $extraValues[$name]->time);
-                    $formattedDateTime = $datetime->format('H:i \o\n D j M Y');
-                    $extraValues[$name] = $formattedDateTime;
+                    $value['formatted'] = $datetime->format('H:i \o\n D j M Y');
+                    $value['time'] = [
+                        'hour' => $datetime->format('H'),
+                        'minute' => $datetime->format('i'),
+                    ];
+                    $value['date'] = [
+                        'year' => $datetime->format('Y'),
+                        'month' => $datetime->format('m'),
+                        'day' => $datetime->format('d'),
+                    ];
+                    $extraValues[$name] = $value;
                 }
                 else if(!empty($extraValues[$name]->date)) {
                     $date = date_create_from_format('Y-m-d', $extraValues[$name]->date);
-                    $formattedDate = $date->format('D j M Y');
-                    $extraValues[$name] = $formattedDate;
+                    $value['formatted'] = $date->format('D j M Y');
+                    $value['date'] = [
+                        'year' => $date->format('Y'),
+                        'month' => $date->format('m'),
+                        'day' => $date->format('d'),
+                    ];
+                    $extraValues[$name] = $value;
                 }
                 else {
                     $extraValues[$name] = null;
