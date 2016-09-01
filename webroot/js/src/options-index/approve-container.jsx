@@ -46,14 +46,15 @@ var IndexContainer = React.createClass({
         if(option) {
             var optionDialogTitle = 'Edit Option';
             console.log("Editing option: ", option);
+            var optionId = option.id;
         }
         else {
             var optionDialogTitle = 'Add Option';
             console.log("Adding option");
-            option = null;
+            var optionId = null;
         }
         this.setState({
-            optionBeingEdited: option.id,
+            optionBeingEdited: optionId,
             optionDialogOpen: true,    //Open the dialog
             optionDialogTitle: optionDialogTitle,
         });
