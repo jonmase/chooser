@@ -111,7 +111,7 @@ class LtiConsumerController extends AppController
                             }
                             else {
                                 //Otherwise, just redirect to the view page
-                                $this->redirect(['controller' => 'choices', 'action' => 'view', $choice->id]);
+                                $this->redirect(['controller' => 'options', 'action' => 'view', $choice->id]);
                             }
                         }
                     }
