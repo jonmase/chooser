@@ -189,6 +189,39 @@ class ChoicesTable extends Table
             return [];
         }
         
+        //If user is admin, find out whether there is an existing choosing schedule
+        if(in_array('admin', $userRoles)) {
+            //TODO: Actually lookup the current situation
+            $currentChoosingInstance = false;
+            $previousChoosingInstances = false;
+            
+            $choosingSetupActions = [];
+            
+            if($currentChoosingInstance) {
+                $choosingSetupActions[] = [
+                    'label' => 'View/Edit',
+                    'menuLabel' => 'Edit Schedule',
+                    'url' => Router::url(['controller' => 'Choices', 'action' => 'setup', $choiceId]),
+                ];
+            }
+            else {
+                $choosingSetupActions[] = [
+                    'label' => 'Create',
+                    'menuLabel' => 'Create Schedule',
+                    'url' => Router::url(['controller' => 'Choices', 'action' => 'setup', $choiceId]),
+                ];
+            }
+            
+            if($previousChoosingInstances) {
+                $choosingSetupActions[] = [
+                    'icon' => 'history',
+                    'label' => 'Archive',
+                    'menuLabel' => 'Archived Schedules',
+                    'url' => Router::url(['controller' => 'Choices', 'action' => 'archive', $choiceId]),
+                ];
+            }
+        }
+        
         $sections = [
             [
                 'title' => 'User Roles',
@@ -213,7 +246,7 @@ class ChoicesTable extends Table
                 'roles' => ['admin'],
             ],
             /*[
-                'title' => 'Editing Schedules',
+                'title' => 'Editing Setup',
                 'icon' => 'mode_edit',
                 'actions' => [
                     [
@@ -272,19 +305,12 @@ class ChoicesTable extends Table
                 ],
                 'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],
-            /*[
-                'title' => 'Choosing Schedules',
+            [
+                'title' => 'Choosing Setup',
                 'icon' => 'schedule',   //'icon' => 'timer',
-                'actions' => [
-                    [
-                        'label' => 'Edit',
-                    ],
-                    [
-                        'label' => 'New',
-                    ]
-                ],
+                'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
-            ],*/
+            ],
             /*[
                 'title' => 'Results',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
@@ -313,6 +339,7 @@ class ChoicesTable extends Table
             ],*/
         ];
         
+        
         $userSections = [];
         
         foreach($sections as $section) {
@@ -340,6 +367,7 @@ class ChoicesTable extends Table
                 }
             }
         }
+        //pr($userSections);
 
         return $userSections;
     }

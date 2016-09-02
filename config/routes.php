@@ -57,6 +57,9 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/options/view/:id', ['controller' => 'Options', 'action' => 'index', 'view'], ['id' => '\d+', 'pass' => ['id']]);
     $routes->connect('/options/edit/:id', ['controller' => 'Options', 'action' => 'index', 'edit'], ['id' => '\d+', 'pass' => ['id']]);
     $routes->connect('/options/approve/:id', ['controller' => 'Options', 'action' => 'index', 'approve'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/choices/archive/:id', ['controller' => 'ChoosingInstances', 'action' => 'archive'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/choices/setup/:id', ['controller' => 'ChoosingInstances', 'action' => 'view'], ['id' => '\d+', 'pass' => ['id']]);
+    //$routes->connect('/choices/choosing/:id', ['controller' => 'ChoosingInstances', 'action' => 'view'], ['id' => '\d+', 'pass' => ['id']]);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.

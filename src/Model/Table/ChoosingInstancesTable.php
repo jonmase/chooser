@@ -242,4 +242,28 @@ class ChoosingInstancesTable extends Table
         $rules->add($rules->existsIn(['choice_id'], 'Choices'));
         return $rules;
     }
+    
+    public function findActive($choiceId) {
+        return $this->findByChoiceId($choiceId, true);
+    }
+    
+    public function findInactive($choiceId) {
+        return $this->findByChoiceId($choiceId, false);
+    }
+    
+    public function findByChoiceId($choiceId = null, $active = true) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        $choosingInstanceQuery = $this->find('all', [
+            'conditions' => [
+                'choice_id' => $choiceId,
+                'active' => $active,
+            ],
+            'contain' => ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
+        ]);
+        
+        return $choosingInstanceQuery->toArray();
+    }
 }

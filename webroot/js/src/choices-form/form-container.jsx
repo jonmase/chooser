@@ -333,7 +333,7 @@ var FormContainer = React.createClass({
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    <p>This is where you can define the fields that you want to appear on the form for creating/editing options. </p>
+                    <p>Define the fields that you want to appear on the form for creating/editing options. </p>
                     <DefaultFieldToggles 
                         choice={this.props.choice}
                         state={this.state}

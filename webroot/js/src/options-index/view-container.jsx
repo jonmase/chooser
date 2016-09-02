@@ -86,7 +86,7 @@ var ViewContainer = React.createClass({
                             expandable={true}
                             style={styles.cardText}
                         >
-                            Instructions here...
+                            This Choice has not yet been scheduled for the students, and so there are not yet any instructions, rules, deadlines etc. 
                         </CardText>
                     </Card>
                     <OptionsTable
