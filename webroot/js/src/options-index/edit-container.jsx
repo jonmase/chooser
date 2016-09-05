@@ -41,23 +41,34 @@ var IndexContainer = React.createClass({
     
     },
     
-    handleOptionDialogOpen: function(option) {
+    handleOptionDialogOpen: function(optionId) {
+        var stateData = {
+            optionDialogOpen: true,    //Open the dialog
+        };
+        
         //If no option is specified, a new option is being added so set optionBeingEdited to null
-        if(option) {
-            var optionDialogTitle = 'Edit Option';
-            console.log("Editing option: ", option);
-            var optionId = option.id;
+        if(optionId) {
+            console.log("Editing option: ", optionId);
+            stateData.optionDialogTitle = 'Edit Option';
+            stateData.optionBeingEdited = optionId;
         }
         else {
-            var optionDialogTitle = 'Add Option';
             console.log("Adding option");
-            var optionId = null;
+            stateData.optionDialogTitle = 'Add Option';
+            stateData.optionBeingEdited = null;
         }
-        this.setState({
-            optionBeingEdited: optionId,
-            optionDialogOpen: true,    //Open the dialog
-            optionDialogTitle: optionDialogTitle,
-        });
+        
+        if(this.props.choice.use_description) {
+            stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
+        }
+        for(var extra in this.props.choice.extra_fields) {
+            var field = this.props.choice.extra_fields[extra];
+            if(field.type === 'wysiwyg') {
+                stateData['optionValue_' + field.name] = this.state.options[this.state.optionIndexesById[optionId]][field.name];
+            }
+        }
+        
+        this.setState(stateData);
     },
     
     handleOptionDialogClose: function() {

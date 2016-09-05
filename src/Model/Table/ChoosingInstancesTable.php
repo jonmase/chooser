@@ -36,6 +36,7 @@ class ChoosingInstancesTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Datetime');
 
         $this->belongsTo('Choices', [
             'foreignKey' => 'choice_id',
@@ -142,10 +143,6 @@ class ChoosingInstancesTable extends Table
             ->allowEmpty('editor_preferences_deadline');
 
         $validator
-            ->requirePresence('editor_preferences_type', 'create')
-            ->notEmpty('editor_preferences_type');
-
-        $validator
             ->integer('editor_preferences_points')
             ->allowEmpty('editor_preferences_points');
 
@@ -163,66 +160,66 @@ class ChoosingInstancesTable extends Table
             ->integer('allocation_max')
             ->allowEmpty('allocation_max');
 
-        $validator
+        /*$validator
             ->boolean('notify_open')
             ->requirePresence('notify_open', 'create')
-            ->notEmpty('notify_open');
+            ->notEmpty('notify_open');*/
 
         $validator
             ->allowEmpty('notify_open_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_deadline')
             ->requirePresence('notify_deadline', 'create')
-            ->notEmpty('notify_deadline');
+            ->notEmpty('notify_deadline');*/
 
         $validator
             ->allowEmpty('notify_deadline_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_submission')
             ->requirePresence('notify_submission', 'create')
-            ->notEmpty('notify_submission');
+            ->notEmpty('notify_submission');*/
 
         $validator
             ->allowEmpty('notify_submission_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_results_available')
             ->requirePresence('notify_results_available', 'create')
-            ->notEmpty('notify_results_available');
+            ->notEmpty('notify_results_available');*/
 
         $validator
             ->allowEmpty('notify_results_available_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_editor_prefs_available')
             ->requirePresence('notify_editor_prefs_available', 'create')
-            ->notEmpty('notify_editor_prefs_available');
+            ->notEmpty('notify_editor_prefs_available');*/
 
         $validator
             ->allowEmpty('notify_editor_prefs_available_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_allocation_available')
             ->requirePresence('notify_allocation_available', 'create')
-            ->notEmpty('notify_allocation_available');
+            ->notEmpty('notify_allocation_available');*/
 
         $validator
             ->allowEmpty('notify_allocation_available_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_student_allocations')
             ->requirePresence('notify_student_allocations', 'create')
-            ->notEmpty('notify_student_allocations');
+            ->notEmpty('notify_student_allocations');*/
 
         $validator
             ->allowEmpty('notify_student_allocations_extra');
 
-        $validator
+        /*$validator
             ->boolean('notify_editor_allocations')
             ->requirePresence('notify_editor_allocations', 'create')
-            ->notEmpty('notify_editor_allocations');
+            ->notEmpty('notify_editor_allocations');*/
 
         $validator
             ->allowEmpty('notify_editor_allocations_extra');
@@ -265,5 +262,40 @@ class ChoosingInstancesTable extends Table
         ]);
         
         return $choosingInstanceQuery->toArray();
+    }
+    
+    public function processForSave($requestData) {
+        //pr($requestData);
+
+        $datetimeFields = ['opens', 'deadline', 'extension'];
+        
+        foreach($datetimeFields as $field) {
+            if(!empty($requestData[$field . '_date'])) {
+                $requestData[$field] = $this->formatDateForSave($requestData[$field . '_date']);
+                if(!empty($requestData[$field . '_time'])) {
+                    $requestData[$field] .= ' ' . $this->formatTimeForSave($requestData[$field . '_time']);
+                }
+                else {
+                    $requestData[$field] .= ' 00:00';
+                }
+            }
+            unset($requestData[$field . '_date'], $requestData[$field . '_time']);
+        }
+        
+        $boolFields = ['editable', 'preference', 'comments_overall', 'comments_per_option', 'editor_preferences', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_results_available', 'notify_editor_prefs_available', 'notify_allocation_available', 'notify_student_allocations', 'notify_editor_allocations'];
+        
+        foreach($boolFields as $field) {
+            if(!empty($requestData[$field])) {  //If field is not empty, convert it to bool
+                $requestData[$field] = filter_var($requestData[$field], FILTER_VALIDATE_BOOLEAN);
+            }
+            else {  //Empty fields are always false
+                $requestData[$field] = false;
+            }
+            
+            //$requestData[$field] = !empty($requestData[$field]) || filter_var($requestData[$field], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        //pr($requestData);
+        return $requestData;
     }
 }

@@ -201,14 +201,14 @@ class ChoicesTable extends Table
                 $choosingSetupActions[] = [
                     'label' => 'View/Edit',
                     'menuLabel' => 'Edit Schedule',
-                    'url' => Router::url(['controller' => 'Choices', 'action' => 'setup', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
             else {
                 $choosingSetupActions[] = [
                     'label' => 'Create',
                     'menuLabel' => 'Create Schedule',
-                    'url' => Router::url(['controller' => 'Choices', 'action' => 'setup', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
             
@@ -217,7 +217,7 @@ class ChoicesTable extends Table
                     'icon' => 'history',
                     'label' => 'Archive',
                     'menuLabel' => 'Archived Schedules',
-                    'url' => Router::url(['controller' => 'Choices', 'action' => 'archive', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive', $choiceId]),
                 ];
             }
         }

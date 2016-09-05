@@ -136,6 +136,8 @@ class OptionsController extends AppController
                     ]);
                 });
                 
+                unset($this->request->data['choices_option_id']);
+                
                 $originalChoicesOption = $choicesOptionsQuery->first();
                 if(empty($originalChoicesOption)) {
                     throw new ForbiddenException(__('Not permitted to edit this option.'));

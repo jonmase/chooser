@@ -33,6 +33,8 @@ class OptionsTable extends Table
         $this->table('options');
         $this->displayField('title');
         $this->primaryKey('id');
+        
+        $this->addBehavior('Datetime');
 
         $this->hasMany('ChoicesOptions', [
             'foreignKey' => 'option_id',
@@ -146,17 +148,12 @@ class OptionsTable extends Table
             if($type === 'date' || $type === 'datetime') {
                 $value = [];
                 if(!empty($extraValues[$name . '_date']) && $extraValues[$name . '_date'] !== 'false') {
-                    $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_date']);
-                    //pr($date);
-                    $value['date'] = $date->format('Y-m-d');
-                    //pr($value);
+                    $value['date'] = $this->formatDateForSave($extraValues[$name . '_date']);
                 }
                 unset($extraValues[$name . '_date']);
                 
                 if($type === 'datetime' && !empty($extraValues[$name . '_time']) && $extraValues[$name . '_time'] !== 'false') {
-                    $date = date_create_from_format('D M d Y H:i+', $extraValues[$name . '_time']);
-                    $value['time'] = $date->format('H:i');
-                    //pr($value);
+                    $value['time'] = $this->formatTimeForSave($extraValues[$name . '_time']);
                     unset($extraValues[$name . '_time']);
                 }
                 $extraValues[$name] = $value;
@@ -182,28 +179,10 @@ class OptionsTable extends Table
             if($type === 'datetime' || $type === 'date') {
                 $value = [];
                 if($type === 'datetime' && !empty($extraValues[$name]->time)) {
-                    $datetime = date_create_from_format('Y-m-d H:i', $extraValues[$name]->date . " " . $extraValues[$name]->time);
-                    $value['formatted'] = $datetime->format('H:i \o\n D j M Y');
-                    $value['time'] = [
-                        'hour' => $datetime->format('H'),
-                        'minute' => $datetime->format('i'),
-                    ];
-                    $value['date'] = [
-                        'year' => $datetime->format('Y'),
-                        'month' => $datetime->format('m'),
-                        'day' => $datetime->format('d'),
-                    ];
-                    $extraValues[$name] = $value;
+                    $extraValues[$name] = $this->formatForView($extraValues[$name]->date, $extraValues[$name]->time);
                 }
                 else if(!empty($extraValues[$name]->date)) {
-                    $date = date_create_from_format('Y-m-d', $extraValues[$name]->date);
-                    $value['formatted'] = $date->format('D j M Y');
-                    $value['date'] = [
-                        'year' => $date->format('Y'),
-                        'month' => $date->format('m'),
-                        'day' => $date->format('d'),
-                    ];
-                    $extraValues[$name] = $value;
+                    $extraValues[$name] = $this->formatForView($extraValues[$name]->date);
                 }
                 else {
                     $extraValues[$name] = null;

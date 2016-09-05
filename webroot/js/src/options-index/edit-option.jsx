@@ -3,7 +3,7 @@ import IconButton from 'material-ui/IconButton';
 
 var EditOption = React.createClass({
     handleDialogOpen: function() {
-        this.props.handlers.dialogOpen(this.props.option);
+        this.props.handlers.dialogOpen(this.props.option.id);
     },
     
     render: function() {

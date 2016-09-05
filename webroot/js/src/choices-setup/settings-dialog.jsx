@@ -19,11 +19,12 @@ var customDialogStyle = {
 
 var SettingsDialog = React.createClass({
     getInitialState: function () {
+        var instance = this.props.state.instance;
         return {
-            commentsOverallToggle: false,
-            commentsPerOptionToggle: false,
-            preferenceToggle: false,
-            preferenceType: 'rank',
+            commentsOverallToggle: instance.comments_overall || false,
+            commentsPerOptionToggle: instance.comments_per_option || false,
+            preferenceToggle: (instance.preference_type === "rank") || (instance.preference_type === "points") || false,
+            preferenceType: instance.preference_type || 'rank',
             canSubmit: false,
         };
     },
@@ -74,10 +75,10 @@ var SettingsDialog = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label="Save"
+                label={this.props.state.settingsSaveButtonLabel}
                 primary={true}
                 type="submit"
-                disabled={!this.state.canSubmit}
+                disabled={!this.state.canSubmit || !this.props.state.settingsSaveButtonEnabled}
             />,
         ];
         
@@ -95,7 +96,9 @@ var SettingsDialog = React.createClass({
                 formOnInvalid={this.disableSubmitButton}
                 formOnValidSubmit={this.props.handlers.submit}
             >
-                {this.props.state.instance.id?"":
+                {this.props.state.instance.id?
+                    <input type="hidden" name="instance_id" value={this.props.state.instance.id} />
+                    :
                     <p>You have not set this Choice up yet for students to choose their options. Complete the fields below to set up the Choice.</p>
                 }
                 <div id="instructions">
@@ -103,6 +106,7 @@ var SettingsDialog = React.createClass({
                         label: "Instructions",
                         instructions: "Provide instructions for the students on making their choices. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.",
                         name: "choosing_instructions",
+                        onChange: this.props.handlers.wysiwygChange,
                         section: true,
                         value: instance.choosing_instructions || null,
                     }} />
@@ -186,6 +190,7 @@ var SettingsDialog = React.createClass({
                             label: "Preference Instructions",
                             instructions: "Provide instructions for the students on expressing their preferences.",
                             name: "preference_instructions",
+                            onChange: this.props.handlers.wysiwygChange,
                             section: true,
                             value: instance.preference_instructions || null,
                         }} />
@@ -206,6 +211,7 @@ var SettingsDialog = React.createClass({
                             label: "Choice Comments Instructions",
                             instructions: "Provide instructions for the students on what they should include in their comments about their choice as a whole",
                             name: "comments_overall_instructions",
+                            onChange: this.props.handlers.wysiwygChange,
                             section: false,
                             value: instance.comments_overall_instructions || null,
                         }} />
@@ -235,6 +241,7 @@ var SettingsDialog = React.createClass({
                             label: "Option Comments Instructions",
                             instructions: "Provide instructions for the students on what they should include in their comments about each option",
                             name: "comments_per_option_instructions",
+                            onChange: this.props.handlers.wysiwygChange,
                             section: false,
                             value: instance.comments_per_option_instructions || null,
                         }} />

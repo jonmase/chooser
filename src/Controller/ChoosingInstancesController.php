@@ -2,6 +2,9 @@
 namespace App\Controller;
 
 use App\Controller\AppController;
+use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\MethodNotAllowedException;
 
 /**
  * ChoosingInstances Controller
@@ -53,26 +56,56 @@ class ChoosingInstancesController extends AppController
     }
 
     /**
-     * Add method
+     * Save method
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function save($choiceId = null)
     {
-        $choosingInstance = $this->ChoosingInstances->newEntity();
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+        
         if ($this->request->is('post')) {
-            $choosingInstance = $this->ChoosingInstances->patchEntity($choosingInstance, $this->request->data);
+            $this->viewBuilder()->layout('ajax');
+            
+            //Process the data
+            $data = $this->ChoosingInstances->processForSave($this->request->data);
+            $data['active'] = true;
+            $data['choice_id'] = $choiceId;
+            
+            //pr($data);
+            //exit;
+            
+            if(!empty($data['instance_id'])) {
+                //Get the instance and patch entity
+                $choosingInstance = $this->ChoosingInstances->get($data['instance_id']);
+                $choosingInstance = $this->ChoosingInstances->patchEntity($choosingInstance, $data);
+            }
+            else {
+                $choosingInstance = $this->ChoosingInstances->newEntity($data);
+            }
+            
+            //pr($choosingInstance);
+            //exit;
+            
             if ($this->ChoosingInstances->save($choosingInstance)) {
-                $this->Flash->success(__('The choosing instance has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The choosing instance could not be saved. Please, try again.'));
+                $this->set('response', 'Choosing settings saved');
+                
+                //$option = $this->Options->processForView($updatedChoicesOption, $choiceId);
+                //pr($choosingInstance->toArray());
+                //exit;
+                $this->set('instance', $choosingInstance->toArray());
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving choosing settings'));
             }
         }
-        $choices = $this->ChoosingInstances->Choices->find('list', ['limit' => 200]);
-        $this->set(compact('choosingInstance', 'choices'));
-        $this->set('_serialize', ['choosingInstance']);
+        else {
+            throw new MethodNotAllowedException(__('Saving choosing settings requires POST'));
+        }
     }
 
     /**
