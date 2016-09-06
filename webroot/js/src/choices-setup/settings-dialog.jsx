@@ -126,7 +126,7 @@ var SettingsDialog = React.createClass({
                             instructions: "Set the date/time when the students must submit their choices",
                             name: "deadline",
                             section: true,
-                            value:  instance.opens || null,
+                            value:  instance.deadline || null,
                         }} 
                         time={true}
                     />
@@ -135,7 +135,7 @@ var SettingsDialog = React.createClass({
                             instructions: "Set an extension date/time, after which the students will still be able to make their choices, but they will be marked as late",
                             name: "extension",
                             section: true, 
-                            value:  instance.opens || null,
+                            value:  instance.extension || null,
                         }} 
                         time={true}
                     />
