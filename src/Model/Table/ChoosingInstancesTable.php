@@ -241,11 +241,14 @@ class ChoosingInstancesTable extends Table
     }
     
     public function findActive($choiceId) {
-        return $this->findByChoiceId($choiceId, true);
+        if($result = $this->findByChoiceId($choiceId, true)->first()) {
+            return $result;
+        }
+        return [];
     }
     
     public function findInactive($choiceId) {
-        return $this->findByChoiceId($choiceId, false);
+        return $this->findByChoiceId($choiceId, false)->toArray();
     }
     
     public function findByChoiceId($choiceId = null, $active = true) {
@@ -261,7 +264,7 @@ class ChoosingInstancesTable extends Table
             'contain' => ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
         ]);
         
-        return $choosingInstanceQuery->toArray();
+        return $choosingInstanceQuery;
     }
     
     public function processForSave($requestData) {
@@ -271,12 +274,11 @@ class ChoosingInstancesTable extends Table
         
         foreach($datetimeFields as $field) {
             if(!empty($requestData[$field . '_date'])) {
-                $requestData[$field] = $this->formatDateForSave($requestData[$field . '_date']);
                 if(!empty($requestData[$field . '_time'])) {
-                    $requestData[$field] .= ' ' . $this->formatTimeForSave($requestData[$field . '_time']);
+                    $requestData[$field] = $this->createDatetimeForSave($requestData[$field . '_date'], $requestData[$field . '_time']);
                 }
                 else {
-                    $requestData[$field] .= ' 00:00';
+                    $requestData[$field] = $this->createDatetimeForSave($requestData[$field . '_date']);
                 }
             }
             unset($requestData[$field . '_date'], $requestData[$field . '_time']);
