@@ -20,6 +20,7 @@ use Cake\Validation\Validator;
  */
 class ChoosingInstancesTable extends Table
 {
+    protected $_datetimeFields = ['opens', 'deadline', 'extension'];
 
     /**
      * Initialize method
@@ -242,6 +243,7 @@ class ChoosingInstancesTable extends Table
     
     public function findActive($choiceId) {
         if($result = $this->findByChoiceId($choiceId, true)->first()) {
+            $result = $this->processForView($result);
             return $result;
         }
         return [];
@@ -268,11 +270,7 @@ class ChoosingInstancesTable extends Table
     }
     
     public function processForSave($requestData) {
-        //pr($requestData);
-
-        $datetimeFields = ['opens', 'deadline', 'extension'];
-        
-        foreach($datetimeFields as $field) {
+        foreach($this->_datetimeFields as $field) {
             if(!empty($requestData[$field . '_date'])) {
                 if(!empty($requestData[$field . '_time'])) {
                     $requestData[$field] = $this->createDatetimeForSave($requestData[$field . '_date'], $requestData[$field . '_time']);
@@ -300,4 +298,19 @@ class ChoosingInstancesTable extends Table
         //pr($requestData);
         return $requestData;
     }
+    
+    public function processForView($instance) {
+        foreach($this->_datetimeFields as $field) {
+            $datetimeField = [];
+            if(!empty($instance[$field])) {
+                pr($instance[$field]);
+                $instance[$field] = $this->formatDatetimeObjectForView($instance[$field]);
+                pr($instance[$field]);
+            }
+                
+        }
+            
+        return $instance;
+    }
+
 }

@@ -50,7 +50,7 @@ class ChoosingInstancesController extends AppController
         
         $choice = $this->ChoosingInstances->Choices->get($choiceId);
         $sections = $this->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
-        //pr($choosingInstance);
+        pr($choosingInstance);
 
         $this->set(compact('choosingInstance', 'choice', 'sections'));
         $this->set('_serialize', ['choosingInstance']);

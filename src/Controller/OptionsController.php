@@ -90,7 +90,7 @@ class OptionsController extends AppController
             $optionIds[$option['id']] = $key;
         }
         //pr(json_encode($options));
-        //pr($options);
+        pr($options);
 
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);

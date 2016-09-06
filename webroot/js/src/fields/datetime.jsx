@@ -33,10 +33,10 @@ var DateTimeField = React.createClass({
                     <FormsyTime
                         //autoOk={true}
                         defaultTime={defaultTime}   //Should be object, but not sure the format
-                        format='24hr'
+                        format='ampm'
                         hintText="Time"
                         name={field.name + '_time'}
-                        //pedantic={true}
+                        pedantic={true}
                         required={required}
                     />
                 </div>;
