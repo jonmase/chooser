@@ -14,7 +14,7 @@ class DatetimeBehavior extends Behavior {
         //'viewDatetimeFormat' => 'H:i \o\n D j M Y',
         //'viewDateFormat' => 'D j M Y',
         //'viewTimeFormat' => 'H:i',
-        'viewDatetimeFormat' => "HH:mm 'on' EEE d MMM yyyy",
+        'viewDatetimeFormat' => "h:mm a 'on' EEE d MMM yyyy",
         'viewDateFormat' => "EEE d MMM yyyy",
         'viewTimeFormat' => "HH:mm",
         'yearFormat' => "yyyy",
@@ -91,9 +91,8 @@ class DatetimeBehavior extends Behavior {
         }
         
         if($time) {
-            if(substr($value['formatted'], 0, 5) === '00:00') {
-                $value['formatted'] = str_replace('00:00', 'Midnight', $value['formatted']);
-            }
+            $midnightText = '12:00 AM';
+            $value['formatted'] = str_replace($midnightText, 'Midnight', $value['formatted']);
             
             $value['time'] = [
                 'hour' => $timeObject->i18nFormat($config['hourFormat']),
