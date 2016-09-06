@@ -303,11 +303,10 @@ class ChoosingInstancesTable extends Table
         foreach($this->_datetimeFields as $field) {
             $datetimeField = [];
             if(!empty($instance[$field])) {
-                pr($instance[$field]);
+                //pr($instance[$field]);
                 $instance[$field] = $this->formatDatetimeObjectForView($instance[$field]);
-                pr($instance[$field]);
+                //pr($instance[$field]);
             }
-                
         }
             
         return $instance;

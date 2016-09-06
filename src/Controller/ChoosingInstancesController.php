@@ -50,7 +50,7 @@ class ChoosingInstancesController extends AppController
         
         $choice = $this->ChoosingInstances->Choices->get($choiceId);
         $sections = $this->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
-        pr($choosingInstance);
+        //pr($choosingInstance);
 
         $this->set(compact('choosingInstance', 'choice', 'sections'));
         $this->set('_serialize', ['choosingInstance']);
@@ -95,10 +95,10 @@ class ChoosingInstancesController extends AppController
             if ($this->ChoosingInstances->save($choosingInstance)) {
                 $this->set('response', 'Choosing settings saved');
                 
-                //$option = $this->Options->processForView($updatedChoicesOption, $choiceId);
-                //pr($choosingInstance->toArray());
+                $instanceForView = $this->ChoosingInstances->processForView($choosingInstance);
+                //pr($instanceForView);
                 //exit;
-                $this->set('instance', $choosingInstance->toArray());
+                $this->set('instance', $instanceForView);
             } 
             else {
                 throw new InternalErrorException(__('Problem with saving choosing settings'));

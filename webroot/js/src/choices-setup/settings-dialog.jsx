@@ -10,6 +10,7 @@ import Text from '../fields/text.jsx';
 import Wysiwyg from '../fields/wysiwyg.jsx';
 import DateTime from '../fields/datetime.jsx';
 import Dropdown from '../fields/dropdown.jsx';
+import Hidden from '../fields/hidden.jsx';
 
 
 var customDialogStyle = {
@@ -23,7 +24,7 @@ var SettingsDialog = React.createClass({
         return {
             commentsOverallToggle: instance.comments_overall || false,
             commentsPerOptionToggle: instance.comments_per_option || false,
-            preferenceToggle: (instance.preference_type === "rank") || (instance.preference_type === "points") || false,
+            preferenceToggle: instance.preference || false,
             preferenceType: instance.preference_type || 'rank',
             canSubmit: false,
         };
@@ -96,8 +97,8 @@ var SettingsDialog = React.createClass({
                 formOnInvalid={this.disableSubmitButton}
                 formOnValidSubmit={this.props.handlers.submit}
             >
-                {this.props.state.instance.id?
-                    <input type="hidden" name="instance_id" value={this.props.state.instance.id} />
+                {instance.id?
+                    <Hidden name="instance_id" value={instance.id} />
                     :
                     <p>You have not set this Choice up yet for students to choose their options. Complete the fields below to set up the Choice.</p>
                 }
@@ -142,7 +143,7 @@ var SettingsDialog = React.createClass({
                 </div>
                 <div className="section" id="editable">
                     <FormsyToggle
-                        defaultToggled={true}
+                        defaultToggled={(typeof(instance.editable) !== "undefined")?instance.editable:true}
                         label="Allow students to edit choices. If switched on, students who have submitted choices, can return and edit them until the deadline"
                         labelPosition="right"
                         name="editable"
