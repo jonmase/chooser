@@ -51,21 +51,22 @@ var IndexContainer = React.createClass({
             console.log("Editing option: ", optionId);
             stateData.optionDialogTitle = 'Edit Option';
             stateData.optionBeingEdited = optionId;
+            
+            //Get the WYSIWYG field values
+            if(this.props.choice.use_description) {
+                stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
+            }
+            for(var extra in this.props.choice.extra_fields) {
+                var field = this.props.choice.extra_fields[extra];
+                if(field.type === 'wysiwyg') {
+                    stateData['optionValue_' + field.name] = this.state.options[this.state.optionIndexesById[optionId]][field.name];
+                }
+            }
         }
         else {
             console.log("Adding option");
             stateData.optionDialogTitle = 'Add Option';
             stateData.optionBeingEdited = null;
-        }
-        
-        if(this.props.choice.use_description) {
-            stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
-        }
-        for(var extra in this.props.choice.extra_fields) {
-            var field = this.props.choice.extra_fields[extra];
-            if(field.type === 'wysiwyg') {
-                stateData['optionValue_' + field.name] = this.state.options[this.state.optionIndexesById[optionId]][field.name];
-            }
         }
         
         this.setState(stateData);
