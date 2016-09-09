@@ -15,6 +15,10 @@ var FormContainer = React.createClass({
         
         return {
             instance: this.props.instance,
+            ruleCategoryFields: ruleCategoryFields,
+            ruleDialogOpen: settingsDialogOpen,
+            ruleSaveButtonEnabled: true,
+            ruleSaveButtonLabel: 'Save',
             settingsDialogOpen: settingsDialogOpen,
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
@@ -26,9 +30,75 @@ var FormContainer = React.createClass({
             wysiwygValue_preference_instructions: this.props.instance.preference_instructions || '',
             wysiwygValue_comments_overall_instructions: this.props.instance.comments_overall_instructions || '',
             wysiwygValue_comments_per_option_instructions: this.props.instance.comments_per_option_instructions || '',
+            wysiwygValue_rule_instructions: '',
         };
     },
     
+    handleRuleDialogOpen: function(event) {
+        this.setState({
+            ruleDialogOpen: true,
+        });
+    },
+
+    handleRuleDialogClose: function() {
+        this.setState({
+            ruleDialogOpen: false,
+        });
+    },
+
+    handleRuleSubmit: function(rule) {
+        this.setState({
+            ruleSaveButtonEnabled: false,
+            ruleSaveButtonLabel: 'Saving',
+        });
+
+        //Get the wysiwyg editor data
+        rule.instructions = this.state.wysiwygValue_rule_instructions;
+        
+        console.log("Saving rule: ", rule);
+        
+        //Save the Rule
+        //var url = '../../rules/save/' + this.props.choice.id;
+        var url = '../saverule/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: rule,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                /*var stateData = {};
+                
+                //Show the response message in the snackbar
+                stateData.snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                stateData.settingsSaveButtonEnabled = true;
+                stateData.settingsSaveButtonLabel = 'Save';
+                stateData.settingsDialogOpen = false;   //Close the Dialog
+                
+                //Update the state instance
+                //stateData.instance = returnedData.instance;
+                
+                this.setState(stateData);*/
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                /*this.setState({
+                    settingsSaveButtonEnabled: true,
+                    settingsSaveButtonLabel: 'Resave',
+                    snackbar: {
+                        open: true,
+                        message: 'Save error (' + err.toString() + ')',
+                    }
+                });*/
+            }.bind(this)
+        });
+    },
+
     handleSettingsDialogOpen: function(event) {
         this.setState({
             settingsDialogOpen: true,
@@ -105,9 +175,15 @@ var FormContainer = React.createClass({
         });
     },
     
-    handleWysiwygChange: function(element, value) {
+    handleSettingsWysiwygChange: function(element, value) {
         var stateData = {};
         stateData['wysiwygValue_' + element] = value;
+        this.setState(stateData);
+    },
+    
+    handleRuleWysiwygChange: function(element, value) {
+        var stateData = {};
+        stateData['wysiwygValue_rule_instructions'] = value;
         this.setState(stateData);
     },
     
@@ -116,9 +192,13 @@ var FormContainer = React.createClass({
             dialogOpen: this.handleSettingsDialogOpen,
             dialogClose: this.handleSettingsDialogClose,
             submit: this.handleSettingsSubmit,
-            wysiwygChange: this.handleWysiwygChange,
+            wysiwygChange: this.handleSettingsWysiwygChange,
         };
         var rulesHandlers={
+            dialogOpen: this.handleRuleDialogOpen,
+            dialogClose: this.handleRuleDialogClose,
+            submit: this.handleRuleSubmit,
+            wysiwygChange: this.handleRuleWysiwygChange,
         };
 
         return (

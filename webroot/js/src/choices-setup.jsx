@@ -20,6 +20,7 @@ ReactDOM.render(
     <ViewContainer 
         choice={data.choice} 
         instance={data.instance} 
+        ruleCategoryFields={data.ruleCategoryFields} 
     />, 
     document.getElementById('view')
 );

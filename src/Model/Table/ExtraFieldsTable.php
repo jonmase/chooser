@@ -137,6 +137,18 @@ class ExtraFieldsTable extends Table
         return $this->_personFields;
     }
 
+    public function getRuleCategoryFields($choiceId) {
+        $fieldsQuery = $this->find('all', [
+            'conditions' => [
+                'choice_id' => $choiceId,
+                'rule_category' => true,
+            ],
+            'contain' => ['ExtraFieldOptions'],
+        ]);
+        
+        return $fieldsQuery->toArray();
+    }
+
     /**
      * processExtraFieldsForSave method
      * Adds extra fields as JSON to 'extra' in data and removes those extra fields from data

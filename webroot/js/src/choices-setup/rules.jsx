@@ -4,6 +4,9 @@ import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 
+import AddRule from './add-rule.jsx';
+import RuleDialog from './rule-dialog.jsx';
+
 var Rules = React.createClass({
     render: function() {
         return (
@@ -14,9 +17,15 @@ var Rules = React.createClass({
                 <CardHeader
                     title="Rules"
                     subtitle="Define the rules for making valid choices"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                />
+                    actAsExpander={false}
+                    showExpandableButton={false}
+                >
+                    <div style={{float: 'right'}}>
+                        <AddRule
+                            handlers={this.props.handlers}
+                        />
+                    </div>
+                </CardHeader>
                 <CardText 
                     expandable={true}
                 >
@@ -24,6 +33,11 @@ var Rules = React.createClass({
                         Table? of rules
                     </div>
                 </CardText>
+                <RuleDialog
+                    choice={this.props.choice}
+                    handlers={this.props.handlers}
+                    state={this.props.state}
+                />
             </Card>
         );
     }
