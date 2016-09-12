@@ -15,7 +15,8 @@ var FormContainer = React.createClass({
         
         return {
             instance: this.props.instance,
-            ruleCategoryFields: ruleCategoryFields,
+            rules: [],//this.props.rules,
+            ruleCategoryFields: this.props.ruleCategoryFields,
             ruleDialogOpen: settingsDialogOpen,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',

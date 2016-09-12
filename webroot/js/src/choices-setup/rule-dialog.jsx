@@ -22,7 +22,7 @@ var RuleDialog = React.createClass({
     getInitialState: function () {
         var instance = this.props.state.instance;
         return {
-            preferenceType: rule.type || 'number',
+            ruleType: 'number',//rule.type || 'number',
             canSubmit: false,
         };
     },
@@ -41,7 +41,7 @@ var RuleDialog = React.createClass({
     
     handleRuleTypeChange: function(event, value) {
         this.setState({
-            preferenceType: value
+            ruleType: value
         });
     },
 
@@ -63,6 +63,7 @@ var RuleDialog = React.createClass({
         ];
         
         var instance = this.props.state.instance;
+        var rule = [];
         
         return (
             <FormsyDialog
@@ -127,12 +128,12 @@ var RuleDialog = React.createClass({
                         name: "rule_instructions",
                         onChange: this.props.handlers.wysiwygChange,
                         section: true,
-                        value: rule.instructions || null,
+                        value: null //rule.instructions || null,
                     }} />
                 </div>
                 <div className="section" id="hard">
                     <FormsyToggle
-                        defaultToggled={(typeof(rule.hard) !== "undefined")?instance.hard:true}
+                        defaultToggled={(typeof(rule.hard) !== "undefined")?rule.hard:true}
                         label="Hard rule? Students cannot submit if they do not fulfil a hard rule. They will always get a warning if they do not fulfil a rule."
                         labelPosition="right"
                         name="hard"

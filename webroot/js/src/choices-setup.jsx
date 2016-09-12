@@ -21,6 +21,7 @@ ReactDOM.render(
         choice={data.choice} 
         instance={data.instance} 
         ruleCategoryFields={data.ruleCategoryFields} 
+        rules={data.rules} 
     />, 
     document.getElementById('view')
 );

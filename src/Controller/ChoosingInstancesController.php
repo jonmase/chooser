@@ -47,15 +47,24 @@ class ChoosingInstancesController extends AppController
         }
         
         $choosingInstance = $this->ChoosingInstances->findActive($choiceId);
+        
+        $ruleModels = ['rules', 'rules_related_options', 'rules_related_categories'];
+        $rules = [];
+        foreach($ruleModels as $model) {
+            $rules[$model] = $choosingInstance[$model];
+            unset($choosingInstance[$model]);
+        }
+        pr($choosingInstance);
+        pr($rules);
+        
         $ruleCategoryFields = $this->ChoosingInstances->Choices->ExtraFields->getRuleCategoryFields($choiceId);
-        //pr($choosingInstance);
         pr($ruleCategoryFields);
         
         $choice = $this->ChoosingInstances->Choices->get($choiceId);
         $sections = $this->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
         pr($choice);
 
-        $this->set(compact('choosingInstance', 'ruleCategoryFields', 'choice', 'sections'));
+        $this->set(compact('choosingInstance', 'rules', 'ruleCategoryFields', 'choice', 'sections'));
         $this->set('_serialize', ['choosingInstance']);
     }
 
