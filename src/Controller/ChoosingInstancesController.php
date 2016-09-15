@@ -46,27 +46,53 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
-        $choosingInstance = $this->ChoosingInstances->findActive($choiceId);
+        //$choosingInstance = $this->ChoosingInstances->findActive($choiceId);
+        //pr($choosingInstance);
         
-        $ruleModels = ['rules', 'rules_related_options', 'rules_related_categories'];
+        /*$ruleModels = ['rules', 'rules_related_options', 'rules_related_categories'];
         $rules = [];
         foreach($ruleModels as $model) {
             $rules[$model] = $choosingInstance[$model];
             unset($choosingInstance[$model]);
         }
-        pr($choosingInstance);
-        pr($rules);
+        pr($rules);*/
         
-        $ruleCategoryFields = $this->ChoosingInstances->Choices->ExtraFields->getRuleCategoryFields($choiceId);
-        pr($ruleCategoryFields);
+        /*$ruleCategoryFields = $this->ChoosingInstances->Choices->ExtraFields->getRuleCategoryFields($choiceId);
+        pr($ruleCategoryFields);*/
         
         $choice = $this->ChoosingInstances->Choices->get($choiceId);
         $sections = $this->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
-        pr($choice);
+        //pr($choice);
 
-        $this->set(compact('choosingInstance', 'rules', 'ruleCategoryFields', 'choice', 'sections'));
+        $this->set(compact('choice', 'sections'));
+        //$this->set(compact('choosingInstance', 'rules', 'ruleCategoryFields', 'choice', 'sections'));
+        //$this->set('_serialize', ['choosingInstance']);
+    }
+    
+    /**
+     * GetInstance method
+     *
+     * @param string|null $id Choosing Instance id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function getActive($choiceId = null)
+    {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+        
+        $choosingInstance = $this->ChoosingInstances->findActive($choiceId);
+        //pr($choosingInstance);
+        //exit;
+        
+        $this->set(compact('choosingInstance'));
         $this->set('_serialize', ['choosingInstance']);
     }
+    
+    
 
     /**
      * Save method
@@ -82,6 +108,9 @@ class ChoosingInstancesController extends AppController
         }
         
         if ($this->request->is('post')) {
+            //pr($this->request->data);
+            //exit;
+            
             $this->viewBuilder()->layout('ajax');
             
             //Process the data
@@ -101,12 +130,13 @@ class ChoosingInstancesController extends AppController
                 $choosingInstance = $this->ChoosingInstances->newEntity($data);
             }
             
-            //pr($choosingInstance);
+            ////pr($choosingInstance);
             //exit;
             
             if ($this->ChoosingInstances->save($choosingInstance)) {
                 $this->set('response', 'Choosing settings saved');
-                
+                //pr($choosingInstance);
+                //exit;
                 $instanceForView = $this->ChoosingInstances->processForView($choosingInstance);
                 //pr($instanceForView);
                 //exit;

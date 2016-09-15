@@ -8,33 +8,67 @@ import Rules from './rules.jsx';
 import ChooserTheme from '../theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+var update = require('react-addons-update');
+
 var FormContainer = React.createClass({
+    loadInstanceFromServer: function() {
+        var url = '../getActive/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    instance: data.choosingInstance,
+                    instanceLoaded: true,
+                    settingsToggle_preference: data.choosingInstance.preference,
+                    settingsToggle_comments_overall: data.choosingInstance.comments_overall,
+                    settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
+                    settingsWysiwyg_choosing_instructions: data.choosingInstance.choosing_instructions,
+                    settingsWysiwyg_preference_instructions: data.choosingInstance.preference_instructions,
+                    settingsWysiwyg_comments_overall_instructions: data.choosingInstance.comments_overall_instructions,
+                    settingsWysiwyg_comments_per_option_instructions: data.choosingInstance.comments_per_option_instructions,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
     getInitialState: function () {
         //Open dialog straight away if there is no current instance
-        var settingsDialogOpen = this.props.instance.id?false:true;
+        //var settingsDialogOpen = this.props.instance.id?false:true;
+        var settingsDialogOpen = false;
         
         return {
-            instance: this.props.instance,
+            instance: [],//this.props.instance,
+            instanceLoaded: false,
             rules: [],//this.props.rules,
-            ruleCategoryFields: this.props.ruleCategoryFields,
+            //ruleCategoryFields: this.props.ruleCategoryFields,
             ruleDialogOpen: settingsDialogOpen,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',
             settingsDialogOpen: settingsDialogOpen,
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
+            settingsToggle_preference: false,
+            settingsToggle_comments_overall: false,
+            settingsToggle_comments_per_option: false,
+            settingsWysiwyg_choosing_instructions: '',
+            settingsWysiwyg_preference_instructions: '',
+            settingsWysiwyg_comments_overall_instructions: '',
+            settingsWysiwyg_comments_per_option_instructions: '',
             snackbar: {
                 open: false,
                 message: '',
             },
-            wysiwygValue_choosing_instructions: this.props.instance.choosing_instructions || '',
-            wysiwygValue_preference_instructions: this.props.instance.preference_instructions || '',
-            wysiwygValue_comments_overall_instructions: this.props.instance.comments_overall_instructions || '',
-            wysiwygValue_comments_per_option_instructions: this.props.instance.comments_per_option_instructions || '',
-            wysiwygValue_rule_instructions: '',
+            //wysiwygValue_rule_instructions: '',
         };
     },
-    
+    componentDidMount: function() {
+        this.loadInstanceFromServer();
+        //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    },
     handleRuleDialogOpen: function(event) {
         this.setState({
             ruleDialogOpen: true,
@@ -119,10 +153,10 @@ var FormContainer = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        settings.choosing_instructions = this.state.wysiwygValue_choosing_instructions;
-        settings.preference_instructions = this.state.wysiwygValue_preference_instructions;
-        settings.comments_overall_instructions = this.state.wysiwygValue_comments_overall_instructions;
-        settings.comments_per_option_instructions = this.state.wysiwygValue_comments_per_option_instructions;
+        settings.choosing_instructions = this.state.settingsWysiwyg_choosing_instructions;
+        settings.preference_instructions = this.state.settingsWysiwyg_preference_instructions;
+        settings.comments_overall_instructions = this.state.settingsWysiwyg_comments_overall_instructions;
+        settings.comments_per_option_instructions = this.state.settingsWysiwyg_comments_per_option_instructions;
         
         console.log("Saving settings: ", settings);
         
@@ -176,9 +210,15 @@ var FormContainer = React.createClass({
         });
     },
     
+    handleSettingsToggleChange: function(event, value) {
+        var stateData = {};
+        stateData['settingsToggle_' + event.target.name] = value;
+        this.setState(stateData);
+    },
+
     handleSettingsWysiwygChange: function(element, value) {
         var stateData = {};
-        stateData['wysiwygValue_' + element] = value;
+        stateData['settingsWysiwyg_' + element] = value;
         this.setState(stateData);
     },
     
@@ -192,8 +232,9 @@ var FormContainer = React.createClass({
         var settingsHandlers={
             dialogOpen: this.handleSettingsDialogOpen,
             dialogClose: this.handleSettingsDialogClose,
+            handleToggleChange: this.handleSettingsToggleChange,
             submit: this.handleSettingsSubmit,
-            wysiwygChange: this.handleSettingsWysiwygChange,
+            handleWysiwygChange: this.handleSettingsWysiwygChange,
         };
         var rulesHandlers={
             dialogOpen: this.handleRuleDialogOpen,

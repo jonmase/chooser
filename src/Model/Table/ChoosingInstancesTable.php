@@ -263,7 +263,7 @@ class ChoosingInstancesTable extends Table
                 'choice_id' => $choiceId,
                 'active' => $active,
             ],
-            'contain' => ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
+            //'contain' => ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
         ]);
         
         return $choosingInstanceQuery;
@@ -304,11 +304,12 @@ class ChoosingInstancesTable extends Table
             $datetimeField = [];
             if(!empty($instance[$field])) {
                 //pr($instance[$field]);
+        //exit;
                 $instance[$field] = $this->formatDatetimeObjectForView($instance[$field]);
                 //pr($instance[$field]);
             }
         }
-            
+        //exit;
         return $instance;
     }
 

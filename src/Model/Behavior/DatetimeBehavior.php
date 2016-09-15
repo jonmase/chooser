@@ -9,8 +9,10 @@ class DatetimeBehavior extends Behavior {
     
     protected $_defaultConfig = [
         'datepickerFormat' => 'D M d Y H:i+',
-        'simpleDateFormat' => 'Y-m-d',
-        'simpleTimeFormat' => 'H:i',
+        'createSimpleDateFormat' => 'Y-m-d',
+        'createSimpleTimeFormat' => 'H:i',
+        'formatSimpleDateFormat' => 'yyyy-MM-dd',
+        'formatSimpleTimeFormat' => 'HH:mm',
         //'viewDatetimeFormat' => 'H:i \o\n D j M Y',
         //'viewDateFormat' => 'D j M Y',
         //'viewTimeFormat' => 'H:i',
@@ -39,29 +41,63 @@ class DatetimeBehavior extends Behavior {
             $time = $this->formatTimeForSave($time);
         }
        
-        $datetime = date_create_from_format($config['simpleDateFormat'] . ' ' . $config['simpleTimeFormat'], $date . " " . $time);
-        return $datetime;
+        //pr($time);
+        //pr($date);
+        //exit;
+        $datetime = $date . " " . $time;
+        $format = $config['createSimpleDateFormat'] . ' ' . $config['createSimpleTimeFormat'];
+        //pr($datetime);
+        //pr($format);
+        //exit;
+        $datetimeObject = Time::createFromFormat(
+            $format,
+            $datetime,
+            'Europe/London'
+        );
+        //pr($datetimeObject);
+        //exit;
+        return $datetimeObject;
     }
         
     public function formatDateForSave($date = null) {
         if(!$date) {
             return null;
         }
-        
-        $config = $this->config(); 
-        $date = date_create_from_format($config['datepickerFormat'], $date);
         //pr($date);
-        return $date->format($config['simpleDateFormat']);
+        $config = $this->config(); 
+       // $date = date_create_from_format($config['datepickerFormat'], $date);
+        $timeObject = Time::createFromFormat(
+            $config['datepickerFormat'],
+            $date
+        );
+        //pr($timeObject);
+        
+        $date = $timeObject->i18nFormat($config['formatSimpleDateFormat']);
+        //pr($date);
+        //exit;
+        //return $date->format($config['simpleDateFormat']);
+        return $date;
     }
         
     public function formatTimeForSave($time = null) {
         if(!$time) {
             return null;
         }
+        //pr($time);
         
         $config = $this->config(); 
-        $date = date_create_from_format($config['datepickerFormat'], $time);
-        return $date->format($config['simpleTimeFormat']);
+        //$date = date_create_from_format($config['datepickerFormat'], $time);
+        $timeObject = Time::createFromFormat(
+            $config['datepickerFormat'],
+            $time
+        );
+        //pr($timeObject);
+        
+        //return $date->format($config['simpleTimeFormat']);
+        $time = $timeObject->i18nFormat($config['formatSimpleTimeFormat']);
+        //pr($time);
+        //exit;
+        return $time;
     }
 
     public function formatDatetimeForView($timeObject = null, $date = true, $time = true) {

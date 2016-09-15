@@ -36,6 +36,7 @@
     <!--[if lt IE 9]>
         <script src="js/node_modules/html5shiv/dist/html5shiv.min.js"></script>
     <![endif]-->
+    <?php echo $this->Html->script('node_modules/jquery/dist/jquery.min'); ?>
     <script>
       window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
       window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
@@ -52,7 +53,7 @@
     </main>
     <footer>
     </footer>
-    <?= $this->Html->script('node_modules/jquery/dist/jquery.min', ['block' => 'script']); ?>
+    <?php //echo $this->Html->script('node_modules/jquery/dist/jquery.min', ['block' => 'script']); ?>
     <?= $this->fetch('script') ?>
 </body>
 </html>
