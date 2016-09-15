@@ -20,7 +20,7 @@ var customDialogStyle = {
 
 var SettingsDialog = React.createClass({
     getInitialState: function () {
-        var instance = this.props.state.instance;
+        var instance = this.props.containerState.instance;
         return {
             commentsOverallToggle: false,
             commentsPerOptionToggle: false,
@@ -76,21 +76,21 @@ var SettingsDialog = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label={this.props.state.settingsSaveButtonLabel}
+                label={this.props.containerState.settingsSaveButtonLabel}
                 primary={true}
                 type="submit"
-                disabled={!this.state.canSubmit || !this.props.state.settingsSaveButtonEnabled}
+                disabled={!this.state.canSubmit || !this.props.containerState.settingsSaveButtonEnabled}
             />,
         ];
         
-        var instance = this.props.state.instance;
+        var instance = this.props.containerState.instance;
         
         return (
             <FormsyDialog
                 actions={actions}
                 contentStyle={customDialogStyle}
                 dialogOnRequestClose={this.props.handlers.dialogClose}
-                dialogOpen={this.props.state.settingsDialogOpen}
+                dialogOpen={this.props.containerState.settingsDialogOpen}
                 dialogTitle="Edit Settings"
                 formId="option_form"
                 formOnValid={this.enableSubmitButton}
@@ -109,7 +109,7 @@ var SettingsDialog = React.createClass({
                         name: "choosing_instructions",
                         onChange: this.props.handlers.handleWysiwygChange,
                         section: true,
-                        value: this.props.state.settingsWysiwyg_choosing_instructions,
+                        value: this.props.containerState.settingsWysiwyg_choosing_instructions,
                     }} />
                 </div>
                 <div id="dates">
@@ -150,10 +150,10 @@ var SettingsDialog = React.createClass({
                     />
                 </div>
                 <div id="preferences">
-                    <div className={this.props.state.settingsToggle_preference?"":"section"}>
+                    <div className={this.props.containerState.settingsToggle_preference?"":"section"}>
                         <FormsyToggle
                             //defaultToggled={(typeof(instance.preference) !== "undefined")?instance.preference:false}
-                            defaultToggled={this.props.state.settingsToggle_preference}
+                            defaultToggled={this.props.containerState.settingsToggle_preference}
                             label="Allow students to express preferences for chosen options, e.g. by ranking or assigning points?"
                             labelPosition="right"
                             name="preference"
@@ -161,7 +161,7 @@ var SettingsDialog = React.createClass({
                             //toggled={false}
                         />
                     </div>
-                    <div className={this.props.state.settingsToggle_preference?"":"hidden"}>
+                    <div className={this.props.containerState.settingsToggle_preference?"":"hidden"}>
                         <Dropdown field={{
                                 label: "Preference Type",
                                 name: "preference_type",
@@ -195,28 +195,28 @@ var SettingsDialog = React.createClass({
                             name: "preference_instructions",
                             onChange: this.props.handlers.handleWysiwygChange,
                             section: true,
-                            value: this.props.state.settingsWysiwyg_preference_instructions,
+                            value: this.props.containerState.settingsWysiwyg_preference_instructions,
                         }} />
                     </div>
                 </div>
                 <div id="comments_overall">
                     <div className="section">
                         <FormsyToggle
-                            defaultToggled={this.props.state.settingsToggle_comments_overall}
+                            defaultToggled={this.props.containerState.settingsToggle_comments_overall}
                             label="Allow students to make comments about their choice as a whole"
                             labelPosition="right"
                             name="comments_overall"
                             onChange={this.props.handlers.handleToggleChange}
                         />
                     </div>
-                    <div className={this.props.state.settingsToggle_comments_overall?"":"hidden"}>
+                    <div className={this.props.containerState.settingsToggle_comments_overall?"":"hidden"}>
                         <Wysiwyg field={{
                             label: "Choice Comments Instructions",
                             instructions: "Provide instructions for the students on what they should include in their comments about their choice as a whole",
                             name: "comments_overall_instructions",
                             onChange: this.props.handlers.handleWysiwygChange,
                             section: false,
-                            value: this.props.state.settingsWysiwyg_comments_overall_instructions,
+                            value: this.props.containerState.settingsWysiwyg_comments_overall_instructions,
                         }} />
                         <div>
                             <Text field={{
@@ -232,21 +232,21 @@ var SettingsDialog = React.createClass({
                 <div id="comments_options">
                     <div className="section">
                         <FormsyToggle
-                            defaultToggled={this.props.state.settingsToggle_comments_per_option}
+                            defaultToggled={this.props.containerState.settingsToggle_comments_per_option}
                             label="Allow students to make separate comments about each option they have chosen"
                             labelPosition="right"
                             name="comments_per_option"
                             onChange={this.props.handlers.handleToggleChange}
                         />
                     </div>
-                    <div className={this.props.state.settingsToggle_comments_per_option?"":"hidden"}>
+                    <div className={this.props.containerState.settingsToggle_comments_per_option?"":"hidden"}>
                         <Wysiwyg field={{
                             label: "Option Comments Instructions",
                             instructions: "Provide instructions for the students on what they should include in their comments about each option",
                             name: "comments_per_option_instructions",
                             onChange: this.props.handlers.handleWysiwygChange,
                             section: false,
-                            value: this.props.state.settingsWysiwyg_comments_per_option_instructions,
+                            value: this.props.containerState.settingsWysiwyg_comments_per_option_instructions,
                         }} />
                         <div>
                             <Text field={{

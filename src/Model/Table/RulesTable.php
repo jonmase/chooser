@@ -36,6 +36,9 @@ class RulesTable extends Table
             'foreignKey' => 'choosing_instance_id',
             'joinType' => 'INNER'
         ]);
+        $this->belongsTo('ExtraFields', [
+            'foreignKey' => 'extra_field_id'
+        ]);
         $this->belongsTo('ExtraFieldOptions', [
             'foreignKey' => 'extra_field_option_id'
         ]);
@@ -94,6 +97,26 @@ class RulesTable extends Table
     {
         $rules->add($rules->existsIn(['choosing_instance_id'], 'ChoosingInstances'));
         $rules->add($rules->existsIn(['extra_field_option_id'], 'ExtraFieldOptions'));
+        return $rules;
+    }
+    
+    public function getForChoice($choiceId = null) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        $instanceQuery = $this->ChoosingInstances->find('all', [
+            'conditions' => [
+                'choice_id' => $choiceId,
+                'active' => 1,
+            ],
+            'contain' => ['Rules' => ['ExtraFields', 'ExtraFieldOptions']],
+        ]);
+        
+        $instance = $instanceQuery->first();
+        
+        $rules = $instance->rules;
+        
         return $rules;
     }
 }

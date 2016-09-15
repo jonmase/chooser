@@ -7,7 +7,7 @@ import CardText  from 'material-ui/Card/CardText';
 
 import Snackbar from 'material-ui/Snackbar';
 
-import OptionsTable from './options-table.jsx';
+import OptionsTable from './option-table.jsx';
 
 import ChooserTheme from '../theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -86,7 +86,7 @@ var ViewContainer = React.createClass({
                             expandable={true}
                             style={styles.cardText}
                         >
-                            This Choice has not yet been scheduled for the students, and so there are not yet any instructions, rules, deadlines etc. 
+                            Please select 4 projects for the options listed below.
                         </CardText>
                     </Card>
                     <OptionsTable

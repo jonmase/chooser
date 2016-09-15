@@ -4,8 +4,8 @@ import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 
-import EditSettings from './edit-settings.jsx';
-import EditSettingsRaised from './edit-settings-raised.jsx';
+import EditSettings from './settings-edit-button.jsx';
+import EditSettingsRaised from './settings-edit-button-raised.jsx';
 import SettingsDialog from './settings-dialog.jsx';
 
 import Text from '../display/text.jsx';
@@ -18,7 +18,7 @@ import Loader from '../elements/loader.jsx';
 
 var Settings = React.createClass({
     render: function() {
-        var instance = this.props.state.instance;
+        var instance = this.props.containerState.instance;
     
         return (
             <Card 
@@ -40,10 +40,10 @@ var Settings = React.createClass({
                 <CardText 
                     expandable={false}
                 >
-                    {!this.props.state.instanceLoaded?
+                    {!this.props.containerState.instanceLoaded?
                         <Loader />
                     :
-                        !this.props.state.instance.id?
+                        !this.props.containerState.instance.id?
                             <div>
                                 <p>This Choice has not been set up yet.</p>
                                 <EditSettingsRaised handlers={this.props.handlers} />
@@ -121,7 +121,7 @@ var Settings = React.createClass({
                 <SettingsDialog
                     choice={this.props.choice}
                     handlers={this.props.handlers}
-                    state={this.props.state}
+                    containerState={this.props.containerState}
                 />
             </Card>
         );

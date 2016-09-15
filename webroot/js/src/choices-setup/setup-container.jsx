@@ -35,17 +35,53 @@ var FormContainer = React.createClass({
             }.bind(this)
         });
     },
+    loadRulesFromServer: function() {
+        var url = '../../rules/get/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    rules: data.rules,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    loadRulesFromServer: function() {
+        var url = '../../rules/get/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    rules: data.rules,
+                    ruleIds: data.ruleIds,
+                    rulesLoaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
     getInitialState: function () {
         //Open dialog straight away if there is no current instance
         //var settingsDialogOpen = this.props.instance.id?false:true;
         var settingsDialogOpen = false;
         
         return {
-            instance: [],//this.props.instance,
+            instance: [],
             instanceLoaded: false,
-            rules: [],//this.props.rules,
+            rules: [],
+            ruleIds: [],
+            rulesLoaded: false,
             //ruleCategoryFields: this.props.ruleCategoryFields,
-            ruleDialogOpen: settingsDialogOpen,
+            ruleEditDialogOpen: false,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',
             settingsDialogOpen: settingsDialogOpen,
@@ -67,17 +103,19 @@ var FormContainer = React.createClass({
     },
     componentDidMount: function() {
         this.loadInstanceFromServer();
+        this.loadRulesFromServer();
+        //this.loadRuleCategoryFieldsFromServer();
         //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
-    handleRuleDialogOpen: function(event) {
+    handleRuleEditDialogOpen: function(event) {
         this.setState({
-            ruleDialogOpen: true,
+            ruleEditDialogOpen: true,
         });
     },
 
-    handleRuleDialogClose: function() {
+    handleRuleEditDialogClose: function() {
         this.setState({
-            ruleDialogOpen: false,
+            ruleEditDialogOpen: false,
         });
     },
 
@@ -237,8 +275,8 @@ var FormContainer = React.createClass({
             handleWysiwygChange: this.handleSettingsWysiwygChange,
         };
         var rulesHandlers={
-            dialogOpen: this.handleRuleDialogOpen,
-            dialogClose: this.handleRuleDialogClose,
+            dialogOpen: this.handleRuleEditDialogOpen,
+            dialogClose: this.handleRuleEditDialogClose,
             submit: this.handleRuleSubmit,
             wysiwygChange: this.handleRuleWysiwygChange,
         };
@@ -250,12 +288,12 @@ var FormContainer = React.createClass({
                     <Settings
                         choice={this.props.choice}
                         handlers={settingsHandlers}
-                        state={this.state}
+                        containerState={this.state}
                     />
                     <Rules
                         choice={this.props.choice}
                         handlers={rulesHandlers}
-                        state={this.state}
+                        containerState={this.state}
                     />
                     <Snackbar
                         open={this.state.snackbar.open}

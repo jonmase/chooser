@@ -160,17 +160,17 @@ class DatetimeBehavior extends Behavior {
         if($date && $time) {
             //$datetime = date_create_from_format($config['simpleDateFormat'] . ' ' . $config['simpleTimeFormat'], $date . " " . $time);
             $datetime = Time::createFromFormat(
-                $config['simpleDateFormat'] . ' ' . $config['simpleTimeFormat'],
+                $config['createSimpleDateFormat'] . ' ' . $config['createSimpleTimeFormat'],
                 $date . " " . $time
             );
             //$value['formatted'] = $datetime->format($config['viewDatetimeFormat']);
         }
         else if($date) {
-            $datetime = Time::createFromFormat($config['simpleDateFormat'], $date);
+            $datetime = Time::createFromFormat($config['createSimpleDateFormat'], $date);
             //$value['formatted'] = $datetime->format($config['viewDateFormat']);
         }
         else if($time) {
-            $datetime = Time::createFromFormat($config['simpleTimeFormat'], $time);
+            $datetime = Time::createFromFormat($config['createSimpleTimeFormat'], $time);
             //$value['formatted'] = $datetime->format($config['viewTimeFormat']);
         }
         

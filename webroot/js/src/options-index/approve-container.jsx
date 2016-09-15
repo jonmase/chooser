@@ -3,7 +3,7 @@ import update from 'react-addons-update';
 
 import Snackbar from 'material-ui/Snackbar';
 
-import OptionsTable from './options-table.jsx';
+import OptionsTable from './option-table.jsx';
 
 import ChooserTheme from '../theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
