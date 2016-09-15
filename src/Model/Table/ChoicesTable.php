@@ -195,28 +195,34 @@ class ChoicesTable extends Table
             $currentChoosingInstance = false;
             $previousChoosingInstances = false;
             
+            $activeInstanceQuery = $this->ChoosingInstances->findActive($choiceId);
+            $activeChoosingInstance = !empty($activeInstanceQuery);
+            
+            $archivedInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
+            $archivedChoosingInstance = !empty($archivedInstancesQuery);
+            
             $choosingSetupActions = [];
             
-            if($currentChoosingInstance) {
+            if($activeChoosingInstance) {
                 $choosingSetupActions[] = [
                     'label' => 'View/Edit',
-                    'menuLabel' => 'Edit Schedule',
+                    'menuLabel' => 'Edit Settings',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
             else {
                 $choosingSetupActions[] = [
-                    'label' => 'Create',
-                    'menuLabel' => 'Create Schedule',
+                    'label' => 'Set Up',
+                    'menuLabel' => 'Set Up Choice',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
             
-            if($previousChoosingInstances) {
+            if($archivedChoosingInstance) {
                 $choosingSetupActions[] = [
                     'icon' => 'history',
-                    'label' => 'Archive',
-                    'menuLabel' => 'Archived Schedules',
+                    'label' => 'View Archive',
+                    'menuLabel' => 'View Archived Settings',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive', $choiceId]),
                 ];
             }
@@ -306,7 +312,7 @@ class ChoicesTable extends Table
                 'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],
             [
-                'title' => 'Choosing Setup',
+                'title' => 'Choice Settings',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
