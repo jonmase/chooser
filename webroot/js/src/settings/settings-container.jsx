@@ -4,6 +4,7 @@ import Snackbar from 'material-ui/Snackbar';
 
 import Settings from './settings.jsx';
 import Rules from './rules.jsx';
+import SettingsDialog from './settings-dialog.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -107,20 +108,19 @@ var FormContainer = React.createClass({
     },
 
     handleRuleSubmit: function(rule) {
-        this.setState({
+        /*this.setState({
             ruleSaveButtonEnabled: false,
             ruleSaveButtonLabel: 'Saving',
-        });
+        });*/
 
         //Get the wysiwyg editor data
-        rule.instructions = this.state.wysiwygValue_rule_instructions;
-        rule.instructions = this.state.wysiwygValue_rule_instructions;
+        rule.instructions = this.state.ruleWysiwyg_instructions;
+        rule.warning = this.state.ruleWysiwyg_warning;
         
         console.log("Saving rule: ", rule);
         
         //Save the Rule
-        //var url = '../../rules/save/' + this.props.choice.id;
-        var url = '../saverule/' + this.props.choice.id;
+        var url = '../../rules/save/' + this.props.choice.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -129,33 +129,34 @@ var FormContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
 
-                /*var stateData = {};
+                var stateData = {};
                 
                 //Show the response message in the snackbar
                 stateData.snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
-                stateData.settingsSaveButtonEnabled = true;
-                stateData.settingsSaveButtonLabel = 'Save';
-                stateData.settingsDialogOpen = false;   //Close the Dialog
+                stateData.ruleSaveButtonEnabled = true;
+                stateData.ruleSaveButtonLabel = 'Save';
+                stateData.ruleEditDialogOpen = false;   //Close the Dialog
                 
                 //Update the state instance
-                //stateData.instance = returnedData.instance;
+                stateData.rules = returnedData.rules;
+                stateData.ruleIds = returnedData.ruleIds;
                 
-                this.setState(stateData);*/
+                this.setState(stateData);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
-                /*this.setState({
-                    settingsSaveButtonEnabled: true,
-                    settingsSaveButtonLabel: 'Resave',
+                this.setState({
+                    ruleSaveButtonEnabled: true,
+                    ruleSaveButtonLabel: 'Resave',
                     snackbar: {
                         open: true,
                         message: 'Save error (' + err.toString() + ')',
                     }
-                });*/
+                });
             }.bind(this)
         });
     },
@@ -265,6 +266,7 @@ var FormContainer = React.createClass({
         var rulesHandlers={
             dialogOpen: this.handleRuleEditDialogOpen,
             dialogClose: this.handleRuleEditDialogClose,
+            settingsDialogOpen: this.handleSettingsDialogOpen,
             submit: this.handleRuleSubmit,
             wysiwygChange: this.handleRuleWysiwygChange,
         };
@@ -281,6 +283,11 @@ var FormContainer = React.createClass({
                     <Rules
                         choice={this.props.choice}
                         handlers={rulesHandlers}
+                        containerState={this.state}
+                    />
+                    <SettingsDialog
+                        choice={this.props.choice}
+                        handlers={settingsHandlers}
                         containerState={this.state}
                     />
                     <Snackbar

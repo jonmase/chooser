@@ -64,6 +64,9 @@ class RulesTable extends Table
             ->allowEmpty('instructions');
 
         $validator
+            ->allowEmpty('warning');
+
+        $validator
             ->requirePresence('type', 'create')
             ->notEmpty('type');
 
@@ -71,6 +74,9 @@ class RulesTable extends Table
             ->boolean('hard')
             ->requirePresence('hard', 'create')
             ->notEmpty('hard');
+
+        $validator
+            ->allowEmpty('scope');
 
         $validator
             ->integer('max')
@@ -81,7 +87,7 @@ class RulesTable extends Table
             ->allowEmpty('min');
 
         $validator
-            ->allowEmpty('values');
+            ->allowEmpty('allowed_values');
 
         return $validator;
     }
@@ -113,10 +119,20 @@ class RulesTable extends Table
             'contain' => ['Rules' => ['ExtraFields', 'ExtraFieldOptions']],
         ]);
         
-        $instance = $instanceQuery->first();
+        if(!$instanceQuery->isEmpty()) {
+            $instance = $instanceQuery->first();
+            $rules = $instance->rules;
+            
+            //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
+            $ruleIds = [];
+            foreach($rules as $key => $rule) {
+                $ruleIds[$rule['id']] = $key;
+            }
         
-        $rules = $instance->rules;
-        
-        return $rules;
+            return array($rules, $ruleIds);
+        }
+        else {
+            return [];
+        }
     }
 }

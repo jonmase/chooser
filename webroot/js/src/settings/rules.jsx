@@ -14,6 +14,8 @@ import TableRowColumn from 'material-ui/Table/TableRowColumn';
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
+import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
+import DeleteButton from '../elements/buttons/delete-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 
 import RuleEditDialog from './rule-edit-dialog.jsx';
@@ -88,67 +90,80 @@ var Rules = React.createClass({
                     showExpandableButton={false}
                 >
                     <div style={{float: 'right'}}>
-                        <AddButton
-                            handleAdd={this.props.handlers.dialogOpen}
-                            tooltip="Add Rule"
-                        />
+                        {(this.props.containerState.instance.id)?
+                            <AddButton
+                                handleAdd={this.props.handlers.dialogOpen}
+                                tooltip="Add Rule"
+                            />
+                        :""}
                     </div>
                 </CardHeader>
                 <CardText 
                     expandable={true}
                 >
-                    {!this.props.containerState.rulesLoaded?
+                    {(!this.props.containerState.instanceLoaded || !this.props.containerState.rulesLoaded)?
+                        //Show loader until both instance and rules have been loaded, as rules rely on instance
                         <Loader />
                     :
-                        (this.props.containerState.rules.length === 0)?
+                        (!this.props.containerState.instance.id)?
                             <div>
-                                <p>There are no rules yet.</p>
-                                <AddButtonRaised handleAdd={this.props.handlers.dialogOpen} label="Add Rule" />
+                                <p>You cannot create rules until you have set up the Choice.</p>
+                                <EditButtonRaised 
+                                    handleEdit={this.props.handlers.settingsDialogOpen} 
+                                    id={null} 
+                                    label="Set Up Choice"
+                                />
                             </div>
                         :
-                            <Table 
-                                //selectable={false}
-                                multiSelectable={true}
-                                //onRowSelection={this._onRowSelection}
-                                //onCellClick={this.onCellClick}
-                            >
-                                <TableHeader 
-                                    //adjustForCheckbox={false} 
-                                    displaySelectAll={true}
+                            (this.props.containerState.rules.length === 0)?
+                                <div>
+                                    <p>There are no rules yet.</p>
+                                    <AddButtonRaised handleAdd={this.props.handlers.dialogOpen} label="Add Rule" />
+                                </div>
+                            :
+                                <Table 
+                                    //selectable={false}
+                                    multiSelectable={true}
+                                    //onRowSelection={this._onRowSelection}
+                                    //onCellClick={this.onCellClick}
                                 >
-                                    <TableRow>
-                                        <TableHeaderColumn>Name</TableHeaderColumn>
-                                        <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody 
-                                    //displayRowCheckbox={false}
-                                    deselectOnClickaway={false}
-                                >
-                                    {this.props.containerState.rules.map(function(rule, index) {
-                                        return (
-                                            <TableRow 
-                                                key={rule.id} 
-                                                //selected={this.props.state.optionssSelected.indexOf(user.username) !== -1}
-                                            >
-                                                <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
-                                                <TableRowColumn style={styles.actionsTableRowColumn}>
-                                                    <EditButton
-                                                        handleEdit={this.props.handlers.dialogOpen} 
-                                                        id={index}
-                                                        tooltip=""
-                                                    />
-                                                    <ExpandButton
-                                                        handleMore={viewDialogHandlers.dialogOpen} 
-                                                        id={index}
-                                                        tooltip=""
-                                                    />
-                                                </TableRowColumn>
-                                            </TableRow>
-                                        );
-                                    }, this)}
-                                </TableBody>
-                            </Table>
+                                    <TableHeader 
+                                        //adjustForCheckbox={false} 
+                                        displaySelectAll={true}
+                                    >
+                                        <TableRow>
+                                            <TableHeaderColumn>Name</TableHeaderColumn>
+                                            <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody 
+                                        //displayRowCheckbox={false}
+                                        deselectOnClickaway={false}
+                                    >
+                                        {this.props.containerState.rules.map(function(rule, index) {
+                                            return (
+                                                <TableRow 
+                                                    key={rule.id} 
+                                                    //selected={this.props.state.optionssSelected.indexOf(user.username) !== -1}
+                                                >
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
+                                                    <TableRowColumn style={styles.actionsTableRowColumn}>
+                                                        <ExpandButton
+                                                            handleMore={viewDialogHandlers.dialogOpen} 
+                                                            id={index}
+                                                            tooltip=""
+                                                        />
+                                                        <EditButton
+                                                            handleEdit={this.props.handlers.dialogOpen} 
+                                                            id={index}
+                                                            tooltip=""
+                                                        />
+                                                    </TableRowColumn>
+                                                </TableRow>
+                                            );
+                                        }, this)}
+                                    </TableBody>
+                                </Table>
                     }
                 </CardText>
                 <RuleEditDialog

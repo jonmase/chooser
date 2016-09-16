@@ -11,13 +11,17 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\ChoosingInstance $choosing_instance
  * @property string $name
  * @property string $instructions
+ * @property string $warning
  * @property string $type
  * @property bool $hard
+ * @property string $scope
+ * @property int $extra_field_id
+ * @property \App\Model\Entity\ExtraField $extra_field
  * @property int $extra_field_option_id
  * @property \App\Model\Entity\ExtraFieldOption $extra_field_option
  * @property int $max
  * @property int $min
- * @property string $values
+ * @property string $allowed_values
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
  */

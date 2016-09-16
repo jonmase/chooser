@@ -27,18 +27,68 @@ class RulesController extends AppController
             //}
         }
         
-        $rules = $this->Rules->getForChoice($choiceId);
-
-        //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
-        $ruleIds = [];
-        foreach($rules as $key => $rule) {
-            $ruleIds[$rule['id']] = $key;
-        }
+        list($rules, $ruleIds) = $this->Rules->getForChoice($choiceId);
         
         $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
 
         $this->set(compact('rules', 'ruleIds', 'ruleCategoryFields'));
         $this->set('_serialize', ['rules', 'ruleIds', 'ruleCategoryFields']);
+    }
+
+    /**
+     * Save method
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     */
+    public function save($choiceId = null)
+    {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+        
+        if ($this->request->is('post')) {
+            //pr($this->request->data);
+            //exit;
+            
+            //Process the data
+            /*$data = $this->ChoosingInstances->processForSave($this->request->data);
+            
+            //pr($data);
+            //exit;
+            */
+            $data = $this->request->data;
+            $data['hard'] = filter_var($data['hard'], FILTER_VALIDATE_BOOLEAN);
+
+            
+            if(!empty($data['id'])) {
+                //Get the instance and patch entity
+                $rule = $this->Rules->get($data['id']);
+                $rule = $this->Rules->patchEntity($rule, $data);
+            }
+            else {
+                $rule = $this->Rules->newEntity($data);
+            }
+            
+            //pr($rule);
+           // exit;
+            
+            if ($this->Rules->save($rule)) {
+                $response = 'Rule saved';
+                
+                list($rules, $ruleIds) = $this->Rules->getForChoice($choiceId);
+
+                $this->set(compact('rules', 'ruleIds', 'response'));
+                $this->set('_serialize', ['rules', 'ruleIds', 'response']);
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with saving choosing settings'));
+            }
+        }
+        else {
+            throw new MethodNotAllowedException(__('Saving choosing settings requires POST'));
+        }
     }
 
     /**

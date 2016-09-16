@@ -6,7 +6,6 @@ import CardText  from 'material-ui/Card/CardText';
 
 import EditButton from '../elements/buttons/edit-button.jsx';
 import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
-import SettingsDialog from './settings-dialog.jsx';
 
 import Text from '../elements/display/text.jsx';
 import Wysiwyg from '../elements/display/wysiwyg.jsx';
@@ -19,6 +18,14 @@ import Loader from '../elements/loader.jsx';
 var Settings = React.createClass({
     render: function() {
         var instance = this.props.containerState.instance;
+    
+        if(this.props.containerState.instance.id) {
+            var editTooltip = "Edit Settings";
+        }
+        else {
+            var editTooltip = "Set Up Choice";
+        }
+        
     
         return (
             <Card 
@@ -35,7 +42,7 @@ var Settings = React.createClass({
                         <EditButton
                             handleEdit={this.props.handlers.dialogOpen}
                             id={null}
-                            tooltip="Edit Settings"
+                            tooltip={editTooltip}
                         />
                     </div>
                 </CardHeader>
@@ -51,7 +58,7 @@ var Settings = React.createClass({
                                 <EditButtonRaised 
                                     handleEdit={this.props.handlers.dialogOpen} 
                                     id={null} 
-                                    label="Edit Settings"
+                                    label={editTooltip}
                                 />
                             </div>
                         :
@@ -124,11 +131,6 @@ var Settings = React.createClass({
                             </div>
                     }
                 </CardText>
-                <SettingsDialog
-                    choice={this.props.choice}
-                    handlers={this.props.handlers}
-                    containerState={this.props.containerState}
-                />
             </Card>
         );
     }

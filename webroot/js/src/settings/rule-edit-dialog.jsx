@@ -90,7 +90,7 @@ var RuleDialog = React.createClass({
             />,
         ];
         
-        var rule = [];
+        var rule = {};
         
         var allOptionsArray = [
             {value: 'all', label: 'All Options'}
@@ -108,6 +108,8 @@ var RuleDialog = React.createClass({
                 formOnInvalid={this.disableSubmitButton}
                 formOnValidSubmit={this.props.handlers.submit}
             >
+                <Hidden name="id" value={rule.id} />
+                <Hidden name="choosing_instance_id" value={this.props.containerState.instance.id} />
                 <Text 
                     field={{
                         label: "Name*",
@@ -202,9 +204,9 @@ var RuleDialog = React.createClass({
                                     field={{
                                         instructions: "Comma-separated, e.g. 3, 5, 8",
                                         label: "Possible Values",
-                                        name: "values",
+                                        name: "allowed_values",
                                         section: true, 
-                                        //value: rule.values,
+                                        //value: rule.allowed_values,
                                     }}
                                 />
                             </div>
