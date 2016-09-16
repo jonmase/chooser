@@ -3,6 +3,11 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
+import Text from '../elements/display/text.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
+import Numeric from '../elements/display/numeric.jsx';
+import Toggle from '../elements/display/toggle.jsx';
+
 var customDialogStyle = {
     width: '95%',
     maxWidth: 'none',
@@ -38,7 +43,11 @@ var RuleViewDialog = React.createClass({
                 title={title}
             >
                 {rule?
-                    <p>{rule.name}</p>
+                    <div>
+                        <Text field={{label: "Name", value: rule.name}} key="name" />
+                        <Wysiwyg field={{label: "Instructions", value: rule.instructions}} key="instructions" />
+                        <Wysiwyg field={{label: "Warning", value: rule.warning}} key="warning" />
+                    </div>
                 :
                     <p>No rule</p>
                 }
