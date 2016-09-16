@@ -84,7 +84,8 @@ var FormContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            //wysiwygValue_rule_instructions: '',
+            ruleWysiwyg_instructions: '',
+            ruleWysiwyg_warning: '',
         };
     },
     componentDidMount: function() {
@@ -112,6 +113,7 @@ var FormContainer = React.createClass({
         });
 
         //Get the wysiwyg editor data
+        rule.instructions = this.state.wysiwygValue_rule_instructions;
         rule.instructions = this.state.wysiwygValue_rule_instructions;
         
         console.log("Saving rule: ", rule);
@@ -248,7 +250,7 @@ var FormContainer = React.createClass({
     
     handleRuleWysiwygChange: function(element, value) {
         var stateData = {};
-        stateData['wysiwygValue_rule_instructions'] = value;
+        stateData['ruleWysiwyg_' + element] = value;
         this.setState(stateData);
     },
     
