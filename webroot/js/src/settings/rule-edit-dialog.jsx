@@ -13,6 +13,9 @@ import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
 import Numeric from '../elements/fields/numeric.jsx';
+import Checkbox from '../elements/fields/checkbox.jsx';
+import Radio from '../elements/fields/radio.jsx';
+
 
 var customDialogStyle = {
     width: '95%',
@@ -22,6 +25,9 @@ var customDialogStyle = {
 var RuleDialog = React.createClass({
     getInitialState: function () {
         return {
+            ruleCategoryFieldIndex: null,
+            ruleCategoryFieldOptionIndex: null,
+            //ruleCategoryFieldOptionIndexes: [],
             ruleScope: 'choice',//rule.type || 'number',
             ruleType: 'number_range',//rule.type || 'number',
             canSubmit: false,
@@ -40,9 +46,24 @@ var RuleDialog = React.createClass({
         });
     },
     
+    handleRuleCategoryFieldChange: function(event, value) {
+        this.setState({
+            ruleCategoryFieldIndex: value,
+            ruleCategoryFieldOptionIndex: null,
+        });
+    },
+
+    handleRuleCategoryFieldOptionChange: function(event, value) {
+        this.setState({
+            ruleCategoryFieldOptionIndex: value,
+        });
+    },
+
     handleRuleScopeChange: function(event, value) {
         this.setState({
-            ruleScope: value
+            ruleScope: value,
+            ruleCategoryFieldIndex: null,
+            ruleCategoryFieldOptionIndex: null,
         });
     },
 
@@ -70,6 +91,10 @@ var RuleDialog = React.createClass({
         ];
         
         var rule = [];
+        
+        var allOptionsArray = [
+            {value: 'all', label: 'All Options'}
+        ];
         
         return (
             <FormsyDialog
@@ -206,7 +231,43 @@ var RuleDialog = React.createClass({
                             onChange={this.handleRuleScopeChange}
                         />
                         {(this.state.ruleScope === "category")?
-                            <p>Which field to use for the category? Which options should the rule be applied to - checkboxes.</p>
+                            <div>
+                                <Dropdown 
+                                    field={{
+                                        label: "Category Field",
+                                        name: "category_field",
+                                        options: this.props.containerState.ruleCategoryFields,
+                                        section: true, 
+                                        value:  this.state.ruleCategoryFieldIndex,
+                                    }} 
+                                    onChange={this.handleRuleCategoryFieldChange}
+                                />
+                                {(this.state.ruleCategoryFieldIndex !== null)?
+                                    /*<Checkbox 
+                                        field={{
+                                            instructions: "Select the option categories that you would like this rule to apply to.",
+                                            label: "Categories",
+                                            name: "categories",
+                                            options: this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options,
+                                            section: true, 
+                                            value:  this.state.ruleCategoryFieldOptionIndexes,
+                                        }} 
+                                        onChange={this.handleRuleCategoryFieldOptionChange}
+                                    />*/
+                                    <Radio 
+                                        field={{
+                                            instructions: "Select the option category that you would like this rule to apply to.",
+                                            label: "Categories",
+                                            name: "categories",
+                                            options: allOptionsArray.concat(this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options),
+                                            section: true, 
+                                            value:  this.state.ruleCategoryFieldOptionIndex,
+                                        }} 
+                                        onChange={this.handleRuleCategoryFieldOptionChange}
+                                    />
+                                :""}
+                                
+                            </div>
                         :
                             <p>This rule will be applied across all of the options.</p>
                         }

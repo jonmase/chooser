@@ -35,10 +35,11 @@ class RulesController extends AppController
             $ruleIds[$rule['id']] = $key;
         }
         
-        $this->set(compact('rules', 'ruleIds'));
-        $this->set('_serialize', ['rules', 'ruleIds']);
-    }
+        $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
 
+        $this->set(compact('rules', 'ruleIds', 'ruleCategoryFields'));
+        $this->set('_serialize', ['rules', 'ruleIds', 'ruleCategoryFields']);
+    }
 
     /**
      * Index method

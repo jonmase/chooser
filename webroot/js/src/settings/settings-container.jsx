@@ -42,11 +42,13 @@ var FormContainer = React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data) {
-                this.setState({
+                var stateDate = {
                     rules: data.rules,
+                    ruleCategoryFields: data.ruleCategoryFields,
                     ruleIds: data.ruleIds,
                     rulesLoaded: true,
-                });
+                }
+                this.setState(stateDate);
             }.bind(this),
                 error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
@@ -64,7 +66,7 @@ var FormContainer = React.createClass({
             rules: [],
             ruleIds: [],
             rulesLoaded: false,
-            //ruleCategoryFields: this.props.ruleCategoryFields,
+            ruleCategoryFields: [],
             ruleEditDialogOpen: false,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',

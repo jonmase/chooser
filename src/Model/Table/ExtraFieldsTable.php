@@ -147,7 +147,14 @@ class ExtraFieldsTable extends Table
                 'rule_category' => true,
             ],
             'contain' => ['ExtraFieldOptions'],
+            'fields' => ['id', 'choice_id', 'name', 'label', 'type', 'rule_category'],
         ]);
+        
+        $fields = $fieldsQuery->all();
+        
+        $fields = $fields->each(function($field, $key) {
+            $field['value'] = $key;
+        });
         
         return $fieldsQuery->toArray();
     }
