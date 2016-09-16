@@ -3,9 +3,15 @@ import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 
 var AddButtonRaised = React.createClass({
+    handleAdd: function() {
+        //Call the passed handleAdd method, without passing any arguments
+        //If call this directly from onTouchTap, event gets passed, which then makes it think it is getting an optionId
+        this.props.handleAdd();
+    },
+    
     render: function() {
         var label = this.props.label
-        if(!label) {
+        if(typeof(label) === "undefined") {
             label = "Add";
         }
         return (
@@ -15,7 +21,7 @@ var AddButtonRaised = React.createClass({
                 </FontIcon>}
                 label={label}
                 labelPosition="before"
-                onTouchTap={this.props.handleAdd}
+                onTouchTap={this.handleAdd}
                 primary={true}
             />
         );

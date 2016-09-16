@@ -176,7 +176,7 @@ var ProfileContainer = React.createClass({
                                         <EmailField
                                             field={{
                                                 label: "Email",
-                                                instructions: "",
+                                                //instructions: "",
                                                 name: "email",
                                                 section: false,
                                                 required: false,

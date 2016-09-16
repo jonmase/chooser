@@ -18,4 +18,4 @@
     var data = {};
     data.adminChoicesList = <?= json_encode($choices); ?>
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/choices-add-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/lti-link-bundle', ['block' => 'script']); ?>

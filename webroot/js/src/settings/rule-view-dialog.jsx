@@ -19,8 +19,8 @@ var RuleViewDialog = React.createClass({
             />,
         ];
         
-        if(this.props.rulesState.ruleBeingViewed) {
-            var rule = this.props.containerState.rules[this.props.containerState.ruleIds[this.props.rulesState.ruleBeingViewed]];
+        if(this.props.rulesState.ruleBeingViewed !== null) {
+            var rule = this.props.containerState.rules[this.props.rulesState.ruleBeingViewed];
             var title = "Rule: " + rule.name;
         }
         else {

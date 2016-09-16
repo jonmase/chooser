@@ -15,6 +15,7 @@ import AddButton from '../buttons/add-button.jsx';
 import AddButtonRaised from '../buttons/add-button-raised.jsx';
 import EditButton from '../buttons/edit-button.jsx';
 import ExpandButton from '../buttons/expand-button.jsx';
+
 import RuleEditDialog from './rule-edit-dialog.jsx';
 import RuleViewDialog from './rule-view-dialog.jsx';
 
@@ -57,9 +58,9 @@ var Rules = React.createClass({
         
         return initialState;
     },
-    handleDialogOpen: function(ruleId) {
+    handleDialogOpen: function(ruleIndex) {
         this.setState({
-            ruleBeingViewed: ruleId,
+            ruleBeingViewed: ruleIndex,
             ruleViewDialogOpen: true,    //Open the dialog
         });
     },
@@ -124,7 +125,7 @@ var Rules = React.createClass({
                                     //displayRowCheckbox={false}
                                     deselectOnClickaway={false}
                                 >
-                                    {this.props.containerState.rules.map(function(rule) {
+                                    {this.props.containerState.rules.map(function(rule, index) {
                                         return (
                                             <TableRow 
                                                 key={rule.id} 
@@ -133,14 +134,14 @@ var Rules = React.createClass({
                                                 <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
                                                 <TableRowColumn style={styles.actionsTableRowColumn}>
                                                     <EditButton
-                                                        handlerEdit={this.props.handlers.dialogOpen} 
-                                                        id={rule.id}
-                                                        tooltip="Edit Option"
+                                                        handleEdit={this.props.handlers.dialogOpen} 
+                                                        id={index}
+                                                        tooltip=""
                                                     />
                                                     <ExpandButton
-                                                        handlerMore={viewDialogHandlers.dialogOpen} 
-                                                        id={rule.id}
-                                                        tooltip="See More"
+                                                        handleMore={viewDialogHandlers.dialogOpen} 
+                                                        id={index}
+                                                        tooltip=""
                                                     />
                                                 </TableRowColumn>
                                             </TableRow>

@@ -13,4 +13,4 @@
     data.users = <?= json_encode($users); ?>;
     data.userSortField = "<?= $userSortField; ?>";
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/choices-roles-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/roles-bundle', ['block' => 'script']); ?>

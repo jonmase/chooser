@@ -10,7 +10,7 @@ var ExpandButton = React.createClass({
     },*/
     render: function() {
         var tooltip = this.props.tooltip;
-        if(!tooltip) {
+        if(typeof(tooltip) === "undefined") {
             tooltip = "More";
         }
         return (

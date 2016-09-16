@@ -9,7 +9,7 @@ var EditButtonRaised = React.createClass({
     
     render: function() {
         var label = this.props.label
-        if(!label) {
+        if(typeof(label) === "undefined") {
             label = "Edit";
         }
         return (

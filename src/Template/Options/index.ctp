@@ -25,4 +25,4 @@
         data.sections = <?= json_encode($sections); ?>;
     <?php endif; ?>
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/options-index-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/options-bundle', ['block' => 'script']); ?>

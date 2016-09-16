@@ -6,4 +6,4 @@
     data.choice = <?= json_encode($choice); ?>;
     data.sections = <?= json_encode($sections); ?>;
 <?= $this->Html->scriptEnd(); ?>
-<?= $this->Html->script('dist/choices-dashboard-bundle', ['block' => 'script']); ?>
+<?= $this->Html->script('dist/dashboard-bundle', ['block' => 'script']); ?>

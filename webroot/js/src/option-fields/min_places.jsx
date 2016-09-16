@@ -6,7 +6,7 @@ var MinPlacesField = React.createClass({
         return (
             <NumericField
                 field={{
-                    hint: "Enter a number",
+                    instructions: "Enter a number",
                     label: "Minimum places*",
                     name: "min_places",
                     value: this.props.value,

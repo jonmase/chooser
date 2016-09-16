@@ -35,7 +35,7 @@ var Settings = React.createClass({
                         <EditButton
                             handleEdit={this.props.handlers.dialogOpen}
                             id={null}
-                            tooltip={editSettings}
+                            tooltip="Edit Settings"
                         />
                     </div>
                 </CardHeader>

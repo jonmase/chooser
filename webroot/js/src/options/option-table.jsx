@@ -24,7 +24,6 @@ var styles = {
     },
     actionsTableRowColumn: {
         whiteSpace: 'normal',
-        width: '48px',
         paddingLeft: '12px',
         paddingRight: '12px',
         textAlign: 'right',
@@ -93,6 +92,13 @@ var UsersTable = React.createClass({
     },
     render: function() {
         var props = this.props;
+        
+        if(props.action === 'view') {
+            styles.actionsTableRowColumn.width = '48px';
+        }
+        else {
+            styles.actionsTableRowColumn.width = '96px';
+        }
         
         switch(props.action) {
             case 'edit':
@@ -211,15 +217,15 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {props.action === 'edit'? 
                                                     <EditButton
-                                                        handlerEdit={props.optionEditHandlers.dialogOpen} 
+                                                        handleEdit={props.optionEditHandlers.dialogOpen} 
                                                         id={option.id}
-                                                        tooltip="Edit Option"
+                                                        tooltip=""
                                                     />
                                                 :""}
                                                 <ExpandButton
                                                     handleMore={optionViewHandlers.dialogOpen} 
                                                     id={option.id}
-                                                    tooltip="See More"
+                                                    tooltip=""
                                                 />
                                             </TableRowColumn>
                                         </TableRow>

@@ -7,11 +7,16 @@ var EmailField = React.createClass({
         
         var required=field.required?true:false;
         
+        var instructions = field.instructions;
+        if(!instructions) {
+            instructions = "name@provider.com";
+        }
+        
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
                     floatingLabelText={field.label}
-                    hintText={field.instructions}
+                    hintText={instructions}
                     name={field.name}
                     required={required}
                     validations="isEmail"

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import TopBar from './elements/topbar.jsx';
-import ViewContainer from './choices-setup/setup-container.jsx';
+import SettingsContainer from './settings/settings-container.jsx';
 
 injectTapEventPlugin();
 
@@ -17,7 +17,7 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-    <ViewContainer 
+    <SettingsContainer 
         choice={data.choice} 
     />, 
     document.getElementById('view')

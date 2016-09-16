@@ -53,7 +53,7 @@ var PersonField = React.createClass({
                     <div className={colClasses}>
                         <EmailField
                             field={{
-                                instructions: 'Enter Email',
+                                //instructions: 'Enter Email',
                                 label: 'Email',
                                 name: field.name + '_email',
                                 required: false,

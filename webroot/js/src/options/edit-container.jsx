@@ -53,8 +53,11 @@ var IndexContainer = React.createClass({
             stateData.optionBeingEdited = optionId;
             
             //Get the WYSIWYG field values
-            if(this.props.choice.use_description) {
+            if(optionId && this.props.choice.use_description) {
                 stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
+            }
+            else {
+                stateData.optionValue_description = '';
             }
             for(var extra in this.props.choice.extra_fields) {
                 var field = this.props.choice.extra_fields[extra];
