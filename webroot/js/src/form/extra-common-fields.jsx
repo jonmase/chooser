@@ -2,8 +2,8 @@ import React from 'react';
 
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import TextField from '../fields/text.jsx';
-import MultilineTextField from '../fields/multiline-text.jsx';
+import TextField from '../elements/fields/text.jsx';
+import MultilineTextField from '../elements/fields/multiline-text.jsx';
 
 var CommonFields = React.createClass({
     render: function() {

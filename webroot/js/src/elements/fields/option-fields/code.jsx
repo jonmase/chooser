@@ -1,14 +1,14 @@
 import React from 'react';
-import TextField from '../fields/text.jsx';
+import TextField from '../text.jsx';
 
-var TitleField = React.createClass({
+var CodeField = React.createClass({
     render: function() {
         return (
             <TextField
                 field={{
                     instructions: "Enter text",
-                    label: "Title*",
-                    name: "title",
+                    label: "Code*",
+                    name: "code",
                     required: true,
                     section: false,
                     value: this.props.value,
@@ -18,4 +18,4 @@ var TitleField = React.createClass({
     }
 });
 
-module.exports = TitleField;
+module.exports = CodeField;

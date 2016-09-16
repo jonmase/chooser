@@ -4,15 +4,15 @@ import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 
-import EditButton from '../buttons/edit-button.jsx';
-import EditButtonRaised from '../buttons/edit-button-raised.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
+import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
 import SettingsDialog from './settings-dialog.jsx';
 
-import Text from '../display/text.jsx';
-import Wysiwyg from '../display/wysiwyg.jsx';
-import Numeric from '../display/numeric.jsx';
-import DateTime from '../display/datetime.jsx';
-import Toggle from '../display/toggle.jsx';
+import Text from '../elements/display/text.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
+import Numeric from '../elements/display/numeric.jsx';
+import DateTime from '../elements/display/datetime.jsx';
+import Toggle from '../elements/display/toggle.jsx';
 
 import Loader from '../elements/loader.jsx';
 

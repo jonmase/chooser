@@ -1,9 +1,9 @@
 import React from 'react';
 import AlloyEditor from 'alloyeditor';
 
-import FormsyTextarea from '../fields/textarea.jsx';
+import FormsyTextarea from './textarea.jsx';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var selections = [
     {

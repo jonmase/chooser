@@ -1,9 +1,9 @@
 import React from 'react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 
-import TextField from '../fields/text.jsx';
-import EmailField from '../fields/email.jsx';
-import FieldLabel from '../elements/label.jsx';
+import TextField from './text.jsx';
+import EmailField from './email.jsx';
+import FieldLabel from './label.jsx';
 
 var PersonField = React.createClass({
     render: function() {

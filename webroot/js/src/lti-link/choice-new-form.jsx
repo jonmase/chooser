@@ -5,7 +5,7 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 
 var NewChoiceForm = React.createClass({
     getInitialState: function () {

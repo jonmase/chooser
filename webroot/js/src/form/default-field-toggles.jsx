@@ -8,7 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Formsy from 'formsy-react';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import DefaultFields from '../option-fields/default-fields.jsx';
+import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 
 var DefaultFieldToggles = React.createClass({
     render: function() {

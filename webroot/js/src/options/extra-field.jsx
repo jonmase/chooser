@@ -1,16 +1,16 @@
 import React from 'react';
 
-import Text from '../display/text.jsx';
-import Numeric from '../display/numeric.jsx';
-import Email from '../display/email.jsx';
-import Url from '../display/url.jsx';
-import Wysiwyg from '../display/wysiwyg.jsx';
-import Radio from '../display/radio.jsx';
-import Checkbox from '../display/checkbox.jsx';
-import Dropdown from '../display/dropdown.jsx';
-import DateTime from '../display/datetime.jsx';
-//import Person from '../display/person.jsx';
-//import File from '../display/file.jsx';
+import Text from '../elements/display/text.jsx';
+import Numeric from '../elements/display/numeric.jsx';
+import Email from '../elements/display/email.jsx';
+import Url from '../elements/display/url.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
+import Radio from '../elements/display/radio.jsx';
+import Checkbox from '../elements/display/checkbox.jsx';
+import Dropdown from '../elements/display/dropdown.jsx';
+import DateTime from '../elements/display/datetime.jsx';
+//import Person from '../elements/display/person.jsx';
+//import File from '../elements/display/file.jsx';
 
 var ExtraField = React.createClass({
     render: function() {

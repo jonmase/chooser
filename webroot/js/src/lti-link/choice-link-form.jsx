@@ -4,7 +4,7 @@ import FormsyRadioGroup from 'formsy-material-ui/lib/FormsyRadioGroup';
 import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var style = {

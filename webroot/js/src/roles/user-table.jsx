@@ -15,7 +15,7 @@ import UsersRole from './user-role.jsx';
 import SortUsers from './user-sort.jsx';
 import FilterUsers from './user-filter.jsx';
 import AddUser from './user-add.jsx';
-import EditButton from '../buttons/edit-button.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
 import EditUserDialog from './user-edit-dialog.jsx';
 import EditSelectedUsers from './user-edit-selected.jsx';
 import UsersActionMenu from './user-action-menu.jsx';
@@ -136,9 +136,9 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
-                                                        handlerEdit={props.editUserHandlers.dialogOpen} 
-                                                        id={user.username}
-                                                        tooltip="Edit User"
+                                                        handleEdit={props.editUserHandlers.dialogOpen} 
+                                                        id={[user.username]}
+                                                        tooltip=""
                                                     />
                                                 :""}
                                             </TableRowColumn>

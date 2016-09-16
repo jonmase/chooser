@@ -1,7 +1,7 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var styles = {
     basic: {

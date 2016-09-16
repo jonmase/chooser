@@ -14,14 +14,14 @@ import AddField from './extra-add-field.jsx';
 import CommonFields from './extra-common-fields.jsx';
 import TypeSpecificFields from './extra-type-specific-fields.jsx';
 
-import ExtraField from '../option-fields/extra-field.jsx';
+import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
-import CategoryIcon from '../icons/category.jsx';
-import FilterableIcon from '../icons/filterable.jsx';
-import RequiredIcon from '../icons/required.jsx';
-import ShowToStudentsIcon from '../icons/show-to-students.jsx';
-import SortableIcon from '../icons/sortable.jsx';
-import UserDefinedFormIcon from '../icons/user-defined-form.jsx';
+import CategoryIcon from '../elements/icons/category.jsx';
+import FilterableIcon from '../elements/icons/filterable.jsx';
+import RequiredIcon from '../elements/icons/required.jsx';
+import ShowToStudentsIcon from '../elements/icons/show-to-students.jsx';
+import SortableIcon from '../elements/icons/sortable.jsx';
+import UserDefinedFormIcon from '../elements/icons/user-defined-form.jsx';
 
 var fieldTypes = [
     {

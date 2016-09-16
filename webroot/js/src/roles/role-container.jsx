@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var blankFindUserMessage = '\u00A0';

@@ -8,7 +8,7 @@ import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 
 var styles = {
   subtitle: {

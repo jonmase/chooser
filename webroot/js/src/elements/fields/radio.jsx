@@ -3,7 +3,7 @@ import React from 'react';
 import FormsyRadioGroup from 'formsy-material-ui/lib/FormsyRadioGroup';
 import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var RadioField = React.createClass({
     render: function() {

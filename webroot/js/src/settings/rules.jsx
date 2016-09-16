@@ -11,10 +11,10 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableRow from 'material-ui/Table/TableRow';
 import TableRowColumn from 'material-ui/Table/TableRowColumn';
 
-import AddButton from '../buttons/add-button.jsx';
-import AddButtonRaised from '../buttons/add-button-raised.jsx';
-import EditButton from '../buttons/edit-button.jsx';
-import ExpandButton from '../buttons/expand-button.jsx';
+import AddButton from '../elements/buttons/add-button.jsx';
+import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
 
 import RuleEditDialog from './rule-edit-dialog.jsx';
 import RuleViewDialog from './rule-view-dialog.jsx';

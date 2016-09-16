@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Text from '../display/text.jsx';
-import Wysiwyg from '../display/wysiwyg.jsx';
-import Numeric from '../display/numeric.jsx';
+import Text from '../elements/display/text.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
+import Numeric from '../elements/display/numeric.jsx';
 
 
 var DefaultFields = React.createClass({

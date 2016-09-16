@@ -1,5 +1,5 @@
 import React from 'react';
-import NumericField from '../fields/numeric.jsx';
+import NumericField from '../numeric.jsx';
 
 var MinPlacesField = React.createClass({
     render: function() {

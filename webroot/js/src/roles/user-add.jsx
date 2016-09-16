@@ -10,7 +10,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from '../elements/fields/label.jsx';
 
 var AddUser = React.createClass({
     getInitialState: function () {

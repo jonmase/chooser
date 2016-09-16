@@ -1,6 +1,6 @@
 import React from 'react';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var TextareaField = React.createClass({
     render: function() {

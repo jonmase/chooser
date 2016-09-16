@@ -6,14 +6,14 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import Formsy from 'formsy-react';
 
-import TextField from '../fields/text.jsx';
-import MultilineTextField from '../fields/multiline-text.jsx';
-import EmailField from '../fields/email.jsx';
-import UrlField from '../fields/url.jsx';
-import Wysiwyg from '../fields/wysiwyg.jsx';
-import FileField from '../fields/file.jsx';
+import TextField from '../elements/fields/text.jsx';
+import MultilineTextField from '../elements/fields/multiline-text.jsx';
+import EmailField from '../elements/fields/email.jsx';
+import UrlField from '../elements/fields/url.jsx';
+import Wysiwyg from '../elements/fields/wysiwyg.jsx';
+import FileField from '../elements/fields/file.jsx';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var ProfileContainer = React.createClass({

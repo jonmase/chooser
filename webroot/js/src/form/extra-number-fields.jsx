@@ -2,7 +2,7 @@ import React from 'react';
 
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import NumericField from '../fields/numeric.jsx';
+import NumericField from '../elements/fields/numeric.jsx';
 
 var NumberFields = React.createClass({
     render: function() {

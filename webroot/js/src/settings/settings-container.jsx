@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import Settings from './settings.jsx';
 import Rules from './rules.jsx';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var update = require('react-addons-update');

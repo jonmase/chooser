@@ -3,7 +3,7 @@ import React from 'react';
 import FormsyDate from 'formsy-material-ui/lib/FormsyDate';
 import FormsyTime from 'formsy-material-ui/lib/FormsyTime';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

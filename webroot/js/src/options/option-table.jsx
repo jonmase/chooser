@@ -11,9 +11,9 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableRow from 'material-ui/Table/TableRow';
 import TableRowColumn from 'material-ui/Table/TableRowColumn';
 
-import AddButton from '../buttons/add-button.jsx';
-import EditButton from '../buttons/edit-button.jsx';
-import ExpandButton from '../buttons/expand-button.jsx';
+import AddButton from '../elements/buttons/add-button.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
 import FavouriteOption from './option-favourite-button.jsx';
 import OptionEditDialog from './option-edit-dialog.jsx';
 import OptionViewDialog from './option-view-dialog.jsx';

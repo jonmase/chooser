@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 
 import OptionsTable from './option-table.jsx';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var IndexContainer = React.createClass({

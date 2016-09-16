@@ -5,14 +5,14 @@ import FlatButton from 'material-ui/FlatButton';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from '../elements/fields/label.jsx';
 
-import Text from '../fields/text.jsx';
-import Wysiwyg from '../fields/wysiwyg.jsx';
-import DateTime from '../fields/datetime.jsx';
-import Dropdown from '../fields/dropdown.jsx';
-import Hidden from '../fields/hidden.jsx';
-import Numeric from '../fields/numeric.jsx';
+import Text from '../elements/fields/text.jsx';
+import Wysiwyg from '../elements/fields/wysiwyg.jsx';
+import DateTime from '../elements/fields/datetime.jsx';
+import Dropdown from '../elements/fields/dropdown.jsx';
+import Hidden from '../elements/fields/hidden.jsx';
+import Numeric from '../elements/fields/numeric.jsx';
 
 var customDialogStyle = {
     width: '95%',

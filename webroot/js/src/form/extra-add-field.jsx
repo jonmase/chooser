@@ -5,7 +5,7 @@ import IconButton from 'material-ui/IconButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 
-import DropdownField from '../fields/dropdown.jsx';
+import DropdownField from '../elements/fields/dropdown.jsx';
 import CommonFields from './extra-common-fields.jsx';
 import TypeSpecificFields from './extra-type-specific-fields.jsx';
 

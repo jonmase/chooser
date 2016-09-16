@@ -2,7 +2,7 @@ import React from 'react';
 
 import FormsyCheckbox from 'formsy-material-ui/lib/FormsyCheckbox';
 
-import FieldLabel from '../elements/label.jsx';
+import FieldLabel from './label.jsx';
 
 var CheckboxField = React.createClass({
     render: function() {

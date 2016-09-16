@@ -3,9 +3,9 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
-import FieldLabel from '../elements/label.jsx';
-import DefaultFields from '../option-fields/default-fields.jsx';
-import ExtraField from '../option-fields/extra-field.jsx';
+import FieldLabel from '../elements/fields/label.jsx';
+import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
+import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
 var customDialogStyle = {
     width: '95%',

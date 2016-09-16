@@ -10,7 +10,7 @@ import IconButton from 'material-ui/IconButton';
 import FlatButton  from 'material-ui/FlatButton';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 
 var styles = {
     cardContainer: {

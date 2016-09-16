@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import DefaultFieldToggles from './default-field-toggles.jsx';
 import ExtraFields from './extra-fields.jsx';
 
-import ChooserTheme from '../theme.jsx';
+import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var FormContainer = React.createClass({

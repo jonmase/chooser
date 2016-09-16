@@ -1,7 +1,7 @@
 import React from 'react';
 
-import MultilineTextField from '../fields/multiline-text.jsx';
-import DropdownField from '../fields/dropdown.jsx';
+import MultilineTextField from '../elements/fields/multiline-text.jsx';
+import DropdownField from '../elements/fields/dropdown.jsx';
 
 var ListFields = React.createClass({
     render: function() {
