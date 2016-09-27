@@ -133,7 +133,7 @@ class RulesTable extends Table
                     $rule['combined_type'] = $rule['type'] . '_' . $rule['value_type'];
                     
                     if($rule['value_type'] === 'range') {
-                        $rule['values'] = $rule['min'] + ' to ' + $rule['max'];
+                        $rule['values'] = $rule['min'] . ' to ' . $rule['max'];
                     }
                     else {
                         $rule['values'] = $rule['allowed_values'];

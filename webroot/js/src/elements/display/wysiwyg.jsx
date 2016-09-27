@@ -7,7 +7,7 @@ var WysiwygDisplay = React.createClass({
 
     render: function() {
         return (
-            <div>
+            <div style={{marginTop: '1em'}}>
                 <strong>{this.props.field.label}: </strong><br />
                 <div dangerouslySetInnerHTML={this.createMarkup()} />
             </div>

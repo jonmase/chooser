@@ -11,6 +11,8 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableRow from 'material-ui/Table/TableRow';
 import TableRowColumn from 'material-ui/Table/TableRowColumn';
 
+import FontIcon from 'material-ui/FontIcon';
+
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
@@ -133,6 +135,10 @@ var Rules = React.createClass({
                                     >
                                         <TableRow>
                                             <TableHeaderColumn>Name</TableHeaderColumn>
+                                            <TableHeaderColumn>Type</TableHeaderColumn>
+                                            <TableHeaderColumn>Allowed Values</TableHeaderColumn>
+                                            <TableHeaderColumn>Scope</TableHeaderColumn>
+                                            <TableHeaderColumn>Hard</TableHeaderColumn>
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         </TableRow>
                                     </TableHeader>
@@ -147,6 +153,14 @@ var Rules = React.createClass({
                                                     //selected={this.props.state.optionssSelected.indexOf(user.username) !== -1}
                                                 >
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.type.charAt(0).toUpperCase() + rule.type.slice(1)}</TableRowColumn>
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.values}</TableRowColumn>
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.scope.charAt(0).toUpperCase() + rule.scope.slice(1)}</TableRowColumn>
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.hard?
+                                                        <FontIcon className="material-icons" style={{marginTop: '-2px'}}>check</FontIcon>
+                                                        :
+                                                        <FontIcon className="material-icons" style={{marginTop: '-1px'}}>close</FontIcon>
+                                                    }</TableRowColumn>
                                                     <TableRowColumn style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
                                                             handleMore={viewDialogHandlers.dialogOpen} 
