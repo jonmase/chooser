@@ -29,7 +29,9 @@ var RuleDialog = React.createClass({
             ruleCategoryFieldOptionIndex: null,
             //ruleCategoryFieldOptionIndexes: [],
             ruleScope: 'choice',//rule.type || 'number',
-            ruleType: 'number_range',//rule.type || 'number',
+            ruleType: 'number',//rule.type || 'number',
+            ruleCombinedType: 'number_range',//rule.type || 'number',
+            ruleValueType: 'range',//rule.type || 'number',
             canSubmit: false,
         };
     },
@@ -68,9 +70,22 @@ var RuleDialog = React.createClass({
     },
 
     handleRuleTypeChange: function(event, value) {
-        this.setState({
-            ruleType: value
-        });
+        var stateData = {
+            ruleCombinedType: value,
+        }
+        
+        var splitValue = value.split('_');
+        
+        stateData.ruleType = splitValue[0];
+        
+        if(typeof(splitValue[1]) !== "undefined") {
+            stateData.ruleValueType = splitValue[1];
+        }
+        else {
+            stateData.ruleValueType = null;
+        }
+    
+        this.setState(stateData);
     },
 
     render: function() {
@@ -109,6 +124,8 @@ var RuleDialog = React.createClass({
                 formOnValidSubmit={this.props.handlers.submit}
             >
                 <Hidden name="id" value={rule.id} />
+                <Hidden name="type" value={this.state.ruleType} />
+                <Hidden name="value_type" value={this.state.ruleValueType} />
                 <Hidden name="choosing_instance_id" value={this.props.containerState.instance.id} />
                 <Text 
                     field={{
@@ -149,7 +166,7 @@ var RuleDialog = React.createClass({
                         <Dropdown 
                             field={{
                                 label: "Rule Type",
-                                name: "type",
+                                name: "combined_type",
                                 options: [
                                     {
                                         label: "Number - Min and/or Max",
@@ -173,11 +190,11 @@ var RuleDialog = React.createClass({
                                     }*/
                                 ],
                                 section: false, 
-                                value:  this.state.ruleType,
+                                value:  this.state.ruleCombinedType,
                             }} 
                             onChange={this.handleRuleTypeChange}
                         />
-                        {(this.state.ruleType === "number_range" || this.state.ruleType === "points_range")?
+                        {(this.state.ruleValueType === "range")?
                             <div>
                                 <Numeric
                                     field={{
@@ -199,17 +216,19 @@ var RuleDialog = React.createClass({
                                 />
                             </div>
                         :
-                            <div>
-                                <Text
-                                    field={{
-                                        instructions: "Comma-separated, e.g. 3, 5, 8",
-                                        label: "Possible Values",
-                                        name: "allowed_values",
-                                        section: true, 
-                                        //value: rule.allowed_values,
-                                    }}
-                                />
-                            </div>
+                            (this.state.ruleValueType === "values")?
+                                <div>
+                                    <Text
+                                        field={{
+                                            instructions: "Comma-separated, e.g. 3, 5, 8",
+                                            label: "Possible Values",
+                                            name: "allowed_values",
+                                            section: true, 
+                                            //value: rule.allowed_values,
+                                        }}
+                                    />
+                                </div>
+                            :""
                         }
                     </div>
                     <div className="col-xs-12 col-sm-6">

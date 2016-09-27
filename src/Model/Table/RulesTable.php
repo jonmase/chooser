@@ -71,6 +71,9 @@ class RulesTable extends Table
             ->notEmpty('type');
 
         $validator
+            ->allowEmpty('value_type');
+
+        $validator
             ->boolean('hard')
             ->requirePresence('hard', 'create')
             ->notEmpty('hard');
@@ -125,7 +128,11 @@ class RulesTable extends Table
             
             //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
             $ruleIds = [];
-            foreach($rules as $key => $rule) {
+            foreach($rules as $key => &$rule) {
+                if(!empty($rule['value_type'])) {
+                    $rule['combined_type'] = $rule['type'] . '_' . $rule['value_type'];
+                }
+                
                 $ruleIds[$rule['id']] = $key;
             }
         

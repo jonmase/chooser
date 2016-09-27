@@ -60,7 +60,6 @@ class RulesController extends AppController
             */
             $data = $this->request->data;
             $data['hard'] = filter_var($data['hard'], FILTER_VALIDATE_BOOLEAN);
-
             
             if(!empty($data['id'])) {
                 //Get the instance and patch entity
@@ -72,7 +71,7 @@ class RulesController extends AppController
             }
             
             //pr($rule);
-           // exit;
+            //exit;
             
             if ($this->Rules->save($rule)) {
                 $response = 'Rule saved';

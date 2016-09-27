@@ -47,6 +47,14 @@ var RuleViewDialog = React.createClass({
                         <Text field={{label: "Name", value: rule.name}} key="name" />
                         <Wysiwyg field={{label: "Instructions", value: rule.instructions}} key="instructions" />
                         <Wysiwyg field={{label: "Warning", value: rule.warning}} key="warning" />
+                        <Text field={{label: "Type", value: rule.type}} key="type" />
+                        
+                        
+                        <Toggle field={{
+                            label: "Hard Rule?", 
+                            value: rule.hard, 
+                            explanation: "Students can" + (rule.hard?"not submit":" still submit even") + " if they do not fulfil this rule",
+                        }} />
                     </div>
                 :
                     <p>No rule</p>
