@@ -200,18 +200,18 @@ var RuleDialog = React.createClass({
                                     field={{
                                         instructions: "Enter minimum",
                                         label: "Minimum",
-                                        name: "number_min",
+                                        name: "min",
                                         section: false, 
-                                       // value: rule.number_min,
+                                       // value: rule.min,
                                     }}
                                 />
                                 <Numeric
                                     field={{
                                         instructions: "Enter maximum",
                                         label: "Maximum",
-                                        name: "number_max",
+                                        name: "max",
                                         section: true, 
-                                        //value: rule.number_max,
+                                        //value: rule.max,
                                     }}
                                 />
                             </div>

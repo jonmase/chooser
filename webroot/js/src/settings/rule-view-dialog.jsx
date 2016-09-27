@@ -47,9 +47,25 @@ var RuleViewDialog = React.createClass({
                         <Text field={{label: "Name", value: rule.name}} key="name" />
                         <Wysiwyg field={{label: "Instructions", value: rule.instructions}} key="instructions" />
                         <Wysiwyg field={{label: "Warning", value: rule.warning}} key="warning" />
-                        <Text field={{label: "Type", value: rule.type}} key="type" />
+                        <Text field={{label: "Type", value: rule.type.charAt(0).toUpperCase() + rule.type.slice(1)}} key="type" />
                         
+                        {(rule.type === 'points' || rule.type === 'number')?
+                            <Text 
+                                field={{
+                                    label: "Alowed Values", 
+                                    value: rule.values,
+                                }} 
+                                key="values" 
+                            />
+                        :""}
                         
+                        <Text 
+                            field={{
+                                label: "Scope", 
+                                value: rule.scope.charAt(0).toUpperCase() + rule.scope.slice(1)
+                            }} 
+                            key="scope" 
+                        />
                         <Toggle field={{
                             label: "Hard Rule?", 
                             value: rule.hard, 

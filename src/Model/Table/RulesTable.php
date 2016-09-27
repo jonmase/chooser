@@ -131,6 +131,13 @@ class RulesTable extends Table
             foreach($rules as $key => &$rule) {
                 if(!empty($rule['value_type'])) {
                     $rule['combined_type'] = $rule['type'] . '_' . $rule['value_type'];
+                    
+                    if($rule['value_type'] === 'range') {
+                        $rule['values'] = $rule['min'] + ' to ' + $rule['max'];
+                    }
+                    else {
+                        $rule['values'] = $rule['allowed_values'];
+                    }
                 }
                 
                 $ruleIds[$rule['id']] = $key;
