@@ -22,7 +22,7 @@ var DropdownField = React.createClass({
                     required={required}
                     floatingLabelText={field.label}
                     onChange={this.props.onChange}
-                    value={this.props.field.value}
+                    value={field.value}
                 >
                     {menuItems}
                 </FormsySelect>                        

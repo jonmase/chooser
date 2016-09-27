@@ -279,7 +279,7 @@ var RuleDialog = React.createClass({
                                         field={{
                                             instructions: "Select the option category that you would like this rule to apply to.",
                                             label: "Categories",
-                                            name: "categories",
+                                            name: "category",
                                             options: allOptionsArray.concat(this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options),
                                             section: true, 
                                             value:  this.state.ruleCategoryFieldOptionIndex,

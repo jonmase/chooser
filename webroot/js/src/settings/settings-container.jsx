@@ -117,6 +117,14 @@ var FormContainer = React.createClass({
         rule.instructions = this.state.ruleWysiwyg_instructions;
         rule.warning = this.state.ruleWysiwyg_warning;
         
+        //Get the IDs of the category field and option
+        if(rule.scope === 'category') {
+            var extraField = this.state.ruleCategoryFields[rule.category_field];
+            rule.extra_field_id = extraField.id;
+            var option = extraField.extra_field_options.find(function(option) { return option.value === rule.category; });
+            rule.extra_field_option_id = option.id;
+        }
+        
         console.log("Saving rule: ", rule);
         
         //Save the Rule
