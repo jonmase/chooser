@@ -27,12 +27,12 @@ class RulesController extends AppController
             //}
         }
         
-        list($rules, $ruleIds) = $this->Rules->getForChoice($choiceId);
+        list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
         
         $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
 
-        $this->set(compact('rules', 'ruleIds', 'ruleCategoryFields'));
-        $this->set('_serialize', ['rules', 'ruleIds', 'ruleCategoryFields']);
+        $this->set(compact('rules', 'ruleIndexesById', 'ruleCategoryFields'));
+        $this->set('_serialize', ['rules', 'ruleIndexesById', 'ruleCategoryFields']);
     }
 
     /**
@@ -76,10 +76,10 @@ class RulesController extends AppController
             if ($this->Rules->save($rule)) {
                 $response = 'Rule saved';
                 
-                list($rules, $ruleIds) = $this->Rules->getForChoice($choiceId);
+                list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
 
-                $this->set(compact('rules', 'ruleIds', 'response'));
-                $this->set('_serialize', ['rules', 'ruleIds', 'response']);
+                $this->set(compact('rules', 'ruleIndexesById', 'response'));
+                $this->set('_serialize', ['rules', 'ruleIndexesById', 'response']);
             } 
             else {
                 throw new InternalErrorException(__('Problem with saving choosing settings'));

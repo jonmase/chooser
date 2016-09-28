@@ -25,13 +25,13 @@ var customDialogStyle = {
 var RuleDialog = React.createClass({
     getInitialState: function () {
         return {
-            ruleCategoryFieldIndex: null,
-            ruleCategoryFieldOptionIndex: null,
+            //ruleCategoryFieldIndex: null,
+            //ruleCategoryFieldOptionIndex: null,
             //ruleCategoryFieldOptionIndexes: [],
-            ruleScope: 'choice',//rule.type || 'number',
-            ruleType: 'number',//rule.type || 'number',
-            ruleCombinedType: 'number_range',//rule.type || 'number',
-            ruleValueType: 'range',//rule.type || 'number',
+            //ruleType: 'number',
+            //ruleValueType: 'range',
+            //ruleCombinedType: 'number_range',
+            //ruleScope: 'choice',
             canSubmit: false,
         };
     },
@@ -48,46 +48,6 @@ var RuleDialog = React.createClass({
         });
     },
     
-    handleRuleCategoryFieldChange: function(event, value) {
-        this.setState({
-            ruleCategoryFieldIndex: value,
-            ruleCategoryFieldOptionIndex: null,
-        });
-    },
-
-    handleRuleCategoryFieldOptionChange: function(event, value) {
-        this.setState({
-            ruleCategoryFieldOptionIndex: value,
-        });
-    },
-
-    handleRuleScopeChange: function(event, value) {
-        this.setState({
-            ruleScope: value,
-            ruleCategoryFieldIndex: null,
-            ruleCategoryFieldOptionIndex: null,
-        });
-    },
-
-    handleRuleTypeChange: function(event, value) {
-        var stateData = {
-            ruleCombinedType: value,
-        }
-        
-        var splitValue = value.split('_');
-        
-        stateData.ruleType = splitValue[0];
-        
-        if(typeof(splitValue[1]) !== "undefined") {
-            stateData.ruleValueType = splitValue[1];
-        }
-        else {
-            stateData.ruleValueType = null;
-        }
-    
-        this.setState(stateData);
-    },
-
     render: function() {
         var actions = [
             <FlatButton
@@ -105,7 +65,12 @@ var RuleDialog = React.createClass({
             />,
         ];
         
-        var rule = {};
+        if(this.props.containerState.ruleBeingEdited) {
+            var rule = this.props.containerState.rules[this.props.containerState.ruleIndexesById[this.props.containerState.ruleBeingEdited]];
+        }
+        else {
+            var rule = {};
+        }
         
         var allOptionsArray = [
             {value: 'all', label: 'All Categories (the rule will apply to all the categories for this field)'}
@@ -124,8 +89,8 @@ var RuleDialog = React.createClass({
                 formOnValidSubmit={this.props.handlers.submit}
             >
                 <Hidden name="id" value={rule.id} />
-                <Hidden name="type" value={this.state.ruleType} />
-                <Hidden name="value_type" value={this.state.ruleValueType} />
+                <Hidden name="type" value={this.props.containerState.ruleType} />
+                <Hidden name="value_type" value={this.props.containerState.ruleValueType} />
                 <Hidden name="choosing_instance_id" value={this.props.containerState.instance.id} />
                 <Text 
                     field={{
@@ -143,7 +108,7 @@ var RuleDialog = React.createClass({
                     name: "instructions",
                     onChange: this.props.handlers.wysiwygChange,
                     section: true,
-                    value: null //rule.instructions || null,
+                    value: rule.instructions,
                 }} />
                 <Wysiwyg field={{
                     label: "Warning Message",
@@ -151,7 +116,7 @@ var RuleDialog = React.createClass({
                     name: "warning",
                     onChange: this.props.handlers.wysiwygChange,
                     section: true,
-                    value: null //rule.instructions || null,
+                    value: rule.instructions,
                 }} />
                 <div className="section" id="hard">
                     <FormsyToggle
@@ -190,11 +155,11 @@ var RuleDialog = React.createClass({
                                     }*/
                                 ],
                                 section: false, 
-                                value:  this.state.ruleCombinedType,
+                                value:  this.props.containerState.ruleCombinedType,
                             }} 
-                            onChange={this.handleRuleTypeChange}
+                            onChange={this.props.handlers.typeChange}
                         />
-                        {(this.state.ruleValueType === "range")?
+                        {(this.props.containerState.ruleValueType === "range")?
                             <div>
                                 <Numeric
                                     field={{
@@ -202,7 +167,7 @@ var RuleDialog = React.createClass({
                                         label: "Minimum",
                                         name: "min",
                                         section: false, 
-                                       // value: rule.min,
+                                        value: rule.min,
                                     }}
                                 />
                                 <Numeric
@@ -211,12 +176,12 @@ var RuleDialog = React.createClass({
                                         label: "Maximum",
                                         name: "max",
                                         section: true, 
-                                        //value: rule.max,
+                                        value: rule.max,
                                     }}
                                 />
                             </div>
                         :
-                            (this.state.ruleValueType === "values")?
+                            (this.props.containerState.ruleValueType === "values")?
                                 <div>
                                     <Text
                                         field={{
@@ -224,7 +189,7 @@ var RuleDialog = React.createClass({
                                             label: "Possible Values",
                                             name: "allowed_values",
                                             section: true, 
-                                            //value: rule.allowed_values,
+                                            value: rule.allowed_values,
                                         }}
                                     />
                                 </div>
@@ -247,11 +212,11 @@ var RuleDialog = React.createClass({
                                     },
                                 ],
                                 section: false, 
-                                value:  this.state.ruleScope,
+                                value:  this.props.containerState.ruleScope,
                             }} 
-                            onChange={this.handleRuleScopeChange}
+                            onChange={this.props.handlers.scopeChange}
                         />
-                        {(this.state.ruleScope === "category")?
+                        {(this.props.containerState.ruleScope === "category")?
                             <div>
                                 <Dropdown 
                                     field={{
@@ -259,11 +224,11 @@ var RuleDialog = React.createClass({
                                         name: "category_field",
                                         options: this.props.containerState.ruleCategoryFields,
                                         section: true, 
-                                        value:  this.state.ruleCategoryFieldIndex,
+                                        value:  this.props.containerState.ruleCategoryFieldIndex,
                                     }} 
-                                    onChange={this.handleRuleCategoryFieldChange}
+                                    onChange={this.props.handlers.categoryFieldChange}
                                 />
-                                {(this.state.ruleCategoryFieldIndex !== null)?
+                                {(this.props.containerState.ruleCategoryFieldIndex !== null)?
                                     /*
                                     //TODO - Maybe use checkboxes and if multiple are selected, split it into separate rules when saving
                                     <Checkbox 
@@ -271,22 +236,22 @@ var RuleDialog = React.createClass({
                                             instructions: "Select the categories that you would like this rule to apply to.",
                                             label: "Categories",
                                             name: "categories",
-                                            options: this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options,
+                                            options: this.props.containerState.ruleCategoryFields[this.props.containerState.ruleCategoryFieldIndex].extra_field_options,
                                             section: true, 
-                                            value:  this.state.ruleCategoryFieldOptionIndexes,
+                                            value:  this.props.containerState.ruleCategoryFieldOptionIndexes,
                                         }} 
-                                        onChange={this.handleRuleCategoryFieldOptionChange}
+                                        onChange={this.props.handlers.categoryFieldOptionChange}
                                     />*/
                                     <Radio 
                                         field={{
                                             instructions: "Select the category that you would like this rule to apply to. If you want it to apply to more than one category, but not all of them, you will need to create separate rules for each one.",
                                             label: "Categories",
                                             name: "category",
-                                            options: allOptionsArray.concat(this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options),
+                                            options: allOptionsArray.concat(this.props.containerState.ruleCategoryFields[this.props.containerState.ruleCategoryFieldIndex].extra_field_options),
                                             section: true, 
-                                            value:  this.state.ruleCategoryFieldOptionIndex,
+                                            value:  this.props.containerState.ruleCategoryFieldOptionValue,
                                         }} 
-                                        onChange={this.handleRuleCategoryFieldOptionChange}
+                                        onChange={this.props.handlers.categoryFieldOptionChange}
                                     />
                                 :""}
                                 

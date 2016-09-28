@@ -46,7 +46,7 @@ var FormContainer = React.createClass({
                 var stateDate = {
                     rules: data.rules,
                     ruleCategoryFields: data.ruleCategoryFields,
-                    ruleIds: data.ruleIds,
+                    ruleIndexesById: data.ruleIndexesById,
                     rulesLoaded: true,
                 }
                 this.setState(stateDate);
@@ -65,12 +65,19 @@ var FormContainer = React.createClass({
             instance: [],
             instanceLoaded: false,
             rules: [],
-            ruleIds: [],
+            ruleIndexesById: [],
             rulesLoaded: false,
+            ruleBeingEdited: null,
             ruleCategoryFields: [],
             ruleEditDialogOpen: false,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',
+            ruleType: 'number',
+            ruleValueType: 'range',
+            ruleCombinedType: 'number_range',
+            ruleScope: 'choice',
+            ruleCategoryFieldIndex: null,
+            ruleCategoryFieldOptionValue: null,
             settingsDialogOpen: settingsDialogOpen,
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
@@ -95,23 +102,102 @@ var FormContainer = React.createClass({
         //this.loadRuleCategoryFieldsFromServer();
         //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
-    handleRuleEditDialogOpen: function(event) {
-        this.setState({
+    handleRuleEditDialogOpen: function(ruleIndex) {
+        var stateData = {
             ruleEditDialogOpen: true,
-        });
+        }
+        
+        if(typeof(ruleIndex) !== "undefined") {
+            stateData.ruleBeingEdited = this.state.rules[ruleIndex].id;
+            stateData.ruleType = this.state.rules[ruleIndex].type;
+            stateData.ruleValueType = this.state.rules[ruleIndex].value_type;
+            stateData.ruleCombinedType = this.state.rules[ruleIndex].combined_type;
+            
+            var scope = this.state.rules[ruleIndex].scope;
+            if(scope === 'category_all') {
+                stateData.ruleScope = 'category';
+            }
+            else {
+                stateData.ruleScope = scope;
+            }
+            
+            if(this.state.rules[ruleIndex].extra_field_id) {
+                this.state.ruleCategoryFields.some(function(field, index) {
+                    if(field.id === this.state.rules[ruleIndex].extra_field_id) {
+                        stateData.ruleCategoryFieldIndex = index;
+                        return true;
+                    }
+                }, this);
+                
+                if(scope === 'category_all') {
+                    stateData.ruleCategoryFieldOptionValue = 'all';
+                }
+                else if(this.state.rules[ruleIndex].extra_field_option_id) {
+                    this.state.ruleCategoryFields[stateData.ruleCategoryFieldIndex].extra_field_options.some(function(option, index) {
+                        if(option.id === this.state.rules[ruleIndex].extra_field_option_id) {
+                            stateData.ruleCategoryFieldOptionValue = option.value;
+                            return true;
+                        }
+                    }, this);
+                }
+            }
+        }
+    
+        this.setState(stateData);
     },
 
     handleRuleEditDialogClose: function() {
         this.setState({
             ruleEditDialogOpen: false,
+            ruleBeingEdited: null,
         });
     },
 
+    handleRuleCategoryFieldChange: function(event, value) {
+        this.setState({
+            ruleCategoryFieldIndex: value,
+            ruleCategoryFieldOptionValue: null,
+        });
+    },
+
+    handleRuleCategoryFieldOptionChange: function(event, value) {
+        this.setState({
+            ruleCategoryFieldOptionValue: value,
+        });
+    },
+
+    handleRuleScopeChange: function(event, value) {
+        this.setState({
+            ruleScope: value,
+            ruleCategoryFieldIndex: null,
+            ruleCategoryFieldOptionValue: null,
+        });
+    },
+
+    handleRuleTypeChange: function(event, value) {
+        var stateData = {
+            ruleCombinedType: value,
+        }
+        
+        var splitValue = value.split('_');
+        
+        stateData.ruleType = splitValue[0];
+        
+        if(typeof(splitValue[1]) !== "undefined") {
+            stateData.ruleValueType = splitValue[1];
+        }
+        else {
+            stateData.ruleValueType = null;
+        }
+    
+        this.setState(stateData);
+    },
+
     handleRuleSubmit: function(rule) {
-        /*this.setState({
+        this.setState({
             ruleSaveButtonEnabled: false,
             ruleSaveButtonLabel: 'Saving',
-        });*/
+        });
 
         //Get the wysiwyg editor data
         rule.instructions = this.state.ruleWysiwyg_instructions;
@@ -153,10 +239,11 @@ var FormContainer = React.createClass({
                 stateData.ruleSaveButtonEnabled = true;
                 stateData.ruleSaveButtonLabel = 'Save';
                 stateData.ruleEditDialogOpen = false;   //Close the Dialog
+                stateData.ruleBeingEdited = null;
                 
                 //Update the state instance
                 stateData.rules = returnedData.rules;
-                stateData.ruleIds = returnedData.ruleIds;
+                stateData.ruleIndexesById = returnedData.ruleIndexesById;
                 
                 this.setState(stateData);
             }.bind(this),
@@ -278,10 +365,14 @@ var FormContainer = React.createClass({
             handleWysiwygChange: this.handleSettingsWysiwygChange,
         };
         var rulesHandlers={
+            categoryFieldChange: this.handleRuleCategoryFieldChange,
+            categoryFieldOptionChange: this.handleRuleCategoryFieldOptionChange,
             dialogOpen: this.handleRuleEditDialogOpen,
             dialogClose: this.handleRuleEditDialogClose,
+            scopeChange: this.handleRuleScopeChange,
             settingsDialogOpen: this.handleSettingsDialogOpen,
             submit: this.handleRuleSubmit,
+            typeChange: this.handleRuleTypeChange,
             wysiwygChange: this.handleRuleWysiwygChange,
         };
 

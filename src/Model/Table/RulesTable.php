@@ -127,7 +127,7 @@ class RulesTable extends Table
             $rules = $instance->rules;
             
             //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
-            $ruleIds = [];
+            $ruleIndexesById = [];
             foreach($rules as $key => &$rule) {
                 if(!empty($rule['value_type'])) {
                     $rule['combined_type'] = $rule['type'] . '_' . $rule['value_type'];
@@ -157,10 +157,10 @@ class RulesTable extends Table
                     $rule['scope_text'] = '?';
                 }
                 
-                $ruleIds[$rule['id']] = $key;
+                $ruleIndexesById[$rule['id']] = $key;
             }
         
-            return array($rules, $ruleIds);
+            return array($rules, $ruleIndexesById);
         }
         else {
             return [];
