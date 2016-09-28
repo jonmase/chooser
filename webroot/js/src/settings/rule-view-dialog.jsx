@@ -62,14 +62,14 @@ var RuleViewDialog = React.createClass({
                         <Text 
                             field={{
                                 label: "Scope", 
-                                value: rule.scope.charAt(0).toUpperCase() + rule.scope.slice(1)
+                                value: rule.scope_text,
                             }} 
                             key="scope" 
                         />
                         <Toggle field={{
                             label: "Hard Rule?", 
                             value: rule.hard, 
-                            explanation: "Students can" + (rule.hard?"not submit":" still submit even") + " if they do not fulfil this rule",
+                            explanation: "Students can" + (rule.hard?"not submit":" still submit even") + " if they do not fulfil this rule" + (rule.hard?"":", but will be shown a warning"),
                         }} />
                     </div>
                 :

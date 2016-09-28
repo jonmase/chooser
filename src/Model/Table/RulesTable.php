@@ -144,7 +144,7 @@ class RulesTable extends Table
                     $rule['scope_text'] = $rule['extra_field']['label'];
                     
                     if($rule['scope'] === 'category_all') {
-                        $rule['scope_text'] .= ' > All Options';
+                        $rule['scope_text'] .= ' > All Categories';
                     }
                     else {
                         $rule['scope_text'] .= ' > ' . $rule['extra_field_option']['label'];
