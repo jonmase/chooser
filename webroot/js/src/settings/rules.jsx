@@ -137,7 +137,7 @@ var Rules = React.createClass({
                                             <TableHeaderColumn>Name</TableHeaderColumn>
                                             <TableHeaderColumn>Type</TableHeaderColumn>
                                             <TableHeaderColumn>Allowed Values</TableHeaderColumn>
-                                            <TableHeaderColumn>Scope</TableHeaderColumn>
+                                            <TableHeaderColumn>Applies To</TableHeaderColumn>
                                             <TableHeaderColumn>Hard</TableHeaderColumn>
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         </TableRow>
@@ -155,7 +155,7 @@ var Rules = React.createClass({
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.type.charAt(0).toUpperCase() + rule.type.slice(1)}</TableRowColumn>
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.values}</TableRowColumn>
-                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.scope.charAt(0).toUpperCase() + rule.scope.slice(1)}</TableRowColumn>
+                                                    <TableRowColumn style={styles.tableRowColumn}>{rule.scope_text}</TableRowColumn>
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.hard?
                                                         <FontIcon className="material-icons" style={{marginTop: '-2px'}}>check</FontIcon>
                                                         :

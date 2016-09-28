@@ -121,8 +121,14 @@ var FormContainer = React.createClass({
         if(rule.scope === 'category') {
             var extraField = this.state.ruleCategoryFields[rule.category_field];
             rule.extra_field_id = extraField.id;
-            var option = extraField.extra_field_options.find(function(option) { return option.value === rule.category; });
-            rule.extra_field_option_id = option.id;
+            
+            if(rule.category === 'all') {
+                rule.scope = 'category_all';
+            }
+            else {
+                var option = extraField.extra_field_options.find(function(option) { return option.value === rule.category; });
+                rule.extra_field_option_id = option.id;
+            }
         }
         
         console.log("Saving rule: ", rule);

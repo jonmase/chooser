@@ -140,6 +140,23 @@ class RulesTable extends Table
                     }
                 }
                 
+                if($rule['scope'] === 'category' || $rule['scope'] === 'category_all') {
+                    $rule['scope_text'] = $rule['extra_field']['label'];
+                    
+                    if($rule['scope'] === 'category_all') {
+                        $rule['scope_text'] .= ' > All Options';
+                    }
+                    else {
+                        $rule['scope_text'] .= ' > ' . $rule['extra_field_option']['label'];
+                    }
+                }
+                else if($rule['scope'] === 'choice') {
+                    $rule['scope_text'] = 'Entire Choice';
+                }
+                else {
+                    $rule['scope_text'] = '?';
+                }
+                
                 $ruleIds[$rule['id']] = $key;
             }
         

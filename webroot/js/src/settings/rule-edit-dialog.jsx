@@ -108,7 +108,7 @@ var RuleDialog = React.createClass({
         var rule = {};
         
         var allOptionsArray = [
-            {value: 'all', label: 'All Options'}
+            {value: 'all', label: 'All Categories (the rule will apply to all the categories for this field)'}
         ];
         
         return (
@@ -234,7 +234,7 @@ var RuleDialog = React.createClass({
                     <div className="col-xs-12 col-sm-6">
                         <Dropdown 
                             field={{
-                                label: "Rule Scope",
+                                label: "Rule Applies To",
                                 name: "scope",
                                 options: [
                                     {
@@ -264,9 +264,11 @@ var RuleDialog = React.createClass({
                                     onChange={this.handleRuleCategoryFieldChange}
                                 />
                                 {(this.state.ruleCategoryFieldIndex !== null)?
-                                    /*<Checkbox 
+                                    /*
+                                    //TODO - Maybe use checkboxes and if multiple are selected, split it into separate rules when saving
+                                    <Checkbox 
                                         field={{
-                                            instructions: "Select the option categories that you would like this rule to apply to.",
+                                            instructions: "Select the categories that you would like this rule to apply to.",
                                             label: "Categories",
                                             name: "categories",
                                             options: this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options,
@@ -277,7 +279,7 @@ var RuleDialog = React.createClass({
                                     />*/
                                     <Radio 
                                         field={{
-                                            instructions: "Select the option category that you would like this rule to apply to.",
+                                            instructions: "Select the category that you would like this rule to apply to. If you want it to apply to more than one category, but not all of them, you will need to create separate rules for each one.",
                                             label: "Categories",
                                             name: "category",
                                             options: allOptionsArray.concat(this.props.containerState.ruleCategoryFields[this.state.ruleCategoryFieldIndex].extra_field_options),
@@ -289,9 +291,8 @@ var RuleDialog = React.createClass({
                                 :""}
                                 
                             </div>
-                        :
-                            <p>This rule will be applied across all of the options.</p>
-                        }
+                        :""}
+                        {/*<p>This rule will be applied across all of the options.</p>*/}
                     </div>
                 </div>
             </FormsyDialog>
