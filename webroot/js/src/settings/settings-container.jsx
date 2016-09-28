@@ -66,10 +66,10 @@ var FormContainer = React.createClass({
             instanceLoaded: false,
             rules: [],
             ruleIndexesById: [],
-            rulesLoaded: false,
-            ruleBeingEdited: null,
             ruleCategoryFields: [],
+            rulesLoaded: false,
             ruleEditDialogOpen: false,
+            ruleBeingEdited: null,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',
             ruleType: 'number',
@@ -78,6 +78,10 @@ var FormContainer = React.createClass({
             ruleScope: 'choice',
             ruleCategoryFieldIndex: null,
             ruleCategoryFieldOptionValue: null,
+            ruleDeleteDialogOpen: false,
+            ruleBeingDeleted: null,
+            ruleDeleteButtonEnabled: true,
+            ruleDeleteButtonLabel: 'Delete',
             settingsDialogOpen: settingsDialogOpen,
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
@@ -102,6 +106,72 @@ var FormContainer = React.createClass({
         //this.loadRuleCategoryFieldsFromServer();
         //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
+    handleRuleDeleteDialogOpen: function(ruleIndex) {
+        this.setState({
+            ruleDeleteDialogOpen: true,
+            ruleBeingDeleted: ruleIndex,
+        });
+    },
+
+    handleRuleDeleteDialogClose: function() {
+        this.setState({
+            ruleDeleteDialogOpen: false,
+            ruleBeingDeleted: null,
+        });
+    },
+    
+    handleRuleDelete: function(rule) {
+        /*this.setState({
+            ruleDeleteButtonEnabled: false,
+            ruleDeleteButtonLabel: 'Deleting',
+        });*/
+
+        var rule = this.state.rules[this.state.ruleBeingDeleted];
+        console.log("Deleting rule: ", rule);
+        
+        //Save the Rule
+        var url = '../../rules/delete/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: rule,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                var stateData = {};
+                
+                //Show the response message in the snackbar
+                stateData.snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                stateData.ruleDeleteButtonEnabled = true;
+                stateData.ruleDeleteButtonLabel = 'Delete';
+                stateData.ruleDeleteDialogOpen = false;   //Close the Dialog
+                stateData.ruleBeingDeleted = null;
+                
+                //Update the state instance
+                stateData.rules = returnedData.rules;
+                stateData.ruleIndexesById = returnedData.ruleIndexesById;
+                
+                this.setState(stateData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    ruleSaveButtonEnabled: true,
+                    ruleSaveButtonLabel: 'Retry',
+                    snackbar: {
+                        open: true,
+                        message: 'Save error (' + err.toString() + ')',
+                    }
+                });
+            }.bind(this)
+        });
+    },
+
     handleRuleEditDialogOpen: function(ruleIndex) {
         var stateData = {
             ruleEditDialogOpen: true,
@@ -367,11 +437,14 @@ var FormContainer = React.createClass({
         var rulesHandlers={
             categoryFieldChange: this.handleRuleCategoryFieldChange,
             categoryFieldOptionChange: this.handleRuleCategoryFieldOptionChange,
-            dialogOpen: this.handleRuleEditDialogOpen,
-            dialogClose: this.handleRuleEditDialogClose,
+            deleteDialogOpen: this.handleRuleDeleteDialogOpen,
+            deleteDialogClose: this.handleRuleDeleteDialogClose,
+            delete: this.handleRuleDelete,
+            editDialogOpen: this.handleRuleEditDialogOpen,
+            editDialogClose: this.handleRuleEditDialogClose,
+            editSubmit: this.handleRuleSubmit,
             scopeChange: this.handleRuleScopeChange,
             settingsDialogOpen: this.handleSettingsDialogOpen,
-            submit: this.handleRuleSubmit,
             typeChange: this.handleRuleTypeChange,
             wysiwygChange: this.handleRuleWysiwygChange,
         };

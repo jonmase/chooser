@@ -20,6 +20,7 @@ import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
 import DeleteButton from '../elements/buttons/delete-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 
+import RuleDeleteDialog from './rule-delete-dialog.jsx';
 import RuleEditDialog from './rule-edit-dialog.jsx';
 import RuleViewDialog from './rule-view-dialog.jsx';
 
@@ -31,7 +32,7 @@ var styles = {
     },
     actionsTableRowColumn: {
         whiteSpace: 'normal',
-        width: '96px',
+        width: '144px',
         paddingLeft: '12px',
         paddingRight: '12px',
         textAlign: 'right',
@@ -94,7 +95,7 @@ var Rules = React.createClass({
                     <div style={{float: 'right'}}>
                         {(this.props.containerState.instance.id)?
                             <AddButton
-                                handleAdd={this.props.handlers.dialogOpen}
+                                handleAdd={this.props.handlers.editDialogOpen}
                                 tooltip="Add Rule"
                             />
                         :""}
@@ -120,7 +121,7 @@ var Rules = React.createClass({
                             (this.props.containerState.rules.length === 0)?
                                 <div>
                                     <p>There are no rules yet.</p>
-                                    <AddButtonRaised handleAdd={this.props.handlers.dialogOpen} label="Add Rule" />
+                                    <AddButtonRaised handleAdd={this.props.handlers.editDialogOpen} label="Add Rule" />
                                 </div>
                             :
                                 <Table 
@@ -168,7 +169,12 @@ var Rules = React.createClass({
                                                             tooltip=""
                                                         />
                                                         <EditButton
-                                                            handleEdit={this.props.handlers.dialogOpen} 
+                                                            handleEdit={this.props.handlers.editDialogOpen} 
+                                                            id={index}
+                                                            tooltip=""
+                                                        />
+                                                        <DeleteButton
+                                                            handleDelete={this.props.handlers.deleteDialogOpen} 
                                                             id={index}
                                                             tooltip=""
                                                         />
@@ -181,6 +187,10 @@ var Rules = React.createClass({
                     }
                 </CardText>
                 <RuleEditDialog
+                    handlers={this.props.handlers}
+                    containerState={this.props.containerState}
+                />
+                <RuleDeleteDialog
                     handlers={this.props.handlers}
                     containerState={this.props.containerState}
                 />

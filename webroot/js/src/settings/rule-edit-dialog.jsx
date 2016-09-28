@@ -25,13 +25,6 @@ var customDialogStyle = {
 var RuleDialog = React.createClass({
     getInitialState: function () {
         return {
-            //ruleCategoryFieldIndex: null,
-            //ruleCategoryFieldOptionIndex: null,
-            //ruleCategoryFieldOptionIndexes: [],
-            //ruleType: 'number',
-            //ruleValueType: 'range',
-            //ruleCombinedType: 'number_range',
-            //ruleScope: 'choice',
             canSubmit: false,
         };
     },
@@ -54,7 +47,7 @@ var RuleDialog = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.props.handlers.dialogClose}
+                onTouchTap={this.props.handlers.editDialogClose}
             />,
             <FlatButton
                 key="submit"
@@ -80,13 +73,13 @@ var RuleDialog = React.createClass({
             <FormsyDialog
                 actions={actions}
                 contentStyle={customDialogStyle}
-                dialogOnRequestClose={this.props.handlers.dialogClose}
+                dialogOnRequestClose={this.props.handlers.editDialogClose}
                 dialogOpen={this.props.containerState.ruleEditDialogOpen}
                 dialogTitle="Edit Rule"
                 formId="rule_form"
                 formOnValid={this.enableSubmitButton}
                 formOnInvalid={this.disableSubmitButton}
-                formOnValidSubmit={this.props.handlers.submit}
+                formOnValidSubmit={this.props.handlers.editSubmit}
             >
                 <Hidden name="id" value={rule.id} />
                 <Hidden name="type" value={this.props.containerState.ruleType} />

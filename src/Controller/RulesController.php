@@ -91,6 +91,44 @@ class RulesController extends AppController
     }
 
     /**
+     * Delete method
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     */
+    public function delete($choiceId = null)
+    {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to delete rules for this Choice.'));
+        }
+        
+        $this->request->allowMethod(['post', 'delete']);
+        
+        //pr($this->request->data);
+        $rule = $this->Rules->get($this->request->data['id'], [
+            'contain' => 'ChoosingInstances'
+        ]);
+        
+        if($rule['choosing_instance']['choice_id'] != $choiceId) {
+            throw new ForbiddenException(__('Not permitted to delete this rule (Choice IDs do not match).'));
+        }
+        
+        //pr($rule);
+        //exit;
+        
+        if ($this->Rules->delete($rule)) {
+            $response = 'Rule deleted';
+            list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
+
+            $this->set(compact('rules', 'ruleIndexesById', 'response'));
+            $this->set('_serialize', ['rules', 'ruleIndexesById', 'response']);
+        } else {
+            throw new InternalErrorException(__('Problem with deleting rule'));
+        }
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Network\Response|null
