@@ -111,7 +111,7 @@ class RulesTable extends Table
     
     public function getForChoice($choiceId = null) {
         if(!$choiceId) {
-            return [];
+            return [[],[]];
         }
         
         $instanceQuery = $this->ChoosingInstances->find('all', [
@@ -163,7 +163,7 @@ class RulesTable extends Table
             return array($rules, $ruleIndexesById);
         }
         else {
-            return [];
+            return [[],[]];
         }
     }
 }
