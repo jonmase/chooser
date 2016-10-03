@@ -45,7 +45,7 @@ var styles = {
     }
 };
     
-var UsersTable = React.createClass({
+var OptionsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
             optionBeingViewed: null,
@@ -121,6 +121,8 @@ var UsersTable = React.createClass({
             expandMore: this.handleExpandMore,
             expandLess: this.handleExpandLess,
         }
+        
+        var choiceActive = this.props.instance.id?true:false;
 
         return (
             <div>
@@ -163,17 +165,17 @@ var UsersTable = React.createClass({
                         style={styles.cardText}
                     >
                         <Table 
-                            //selectable={false}
+                            selectable={choiceActive}
                             multiSelectable={true}
                             onRowSelection={this._onRowSelection}
                             onCellClick={this.onCellClick}
                         >
                             <TableHeader 
-                                //adjustForCheckbox={false} 
-                                displaySelectAll={true}
+                                adjustForCheckbox={choiceActive} 
+                                displaySelectAll={choiceActive}
                             >
                                 <TableRow>
-                                    {(props.action === 'view')?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                    {(props.action === 'view' && choiceActive)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                         <FavouriteOption
                                             handlers={props.optionHandlers} 
                                             option="all"
@@ -190,7 +192,7 @@ var UsersTable = React.createClass({
                                 </TableRow>
                             </TableHeader>
                             <TableBody 
-                                //displayRowCheckbox={false}
+                                displayRowCheckbox={choiceActive}
                                 deselectOnClickaway={false}
                             >
                                 {props.state.options.map(function(option) {
@@ -201,7 +203,7 @@ var UsersTable = React.createClass({
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
-                                            {(props.action === 'view')?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                            {(props.action === 'view' && choiceActive)?<TableRowColumn style={styles.favouriteTableRowColumn}>
                                                 <FavouriteOption
                                                     handlers={props.optionHandlers} 
                                                     option={option}
@@ -253,4 +255,4 @@ var UsersTable = React.createClass({
     }
 });
 
-module.exports = UsersTable;
+module.exports = OptionsTable;

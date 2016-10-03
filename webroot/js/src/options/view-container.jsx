@@ -1,23 +1,14 @@
 import React from 'react';
 import update from 'react-addons-update';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
-
 import Snackbar from 'material-ui/Snackbar';
 
+import ChoiceInstructions from './choice-instructions.jsx';
 import OptionsTable from './option-table.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-var styles = {
-    cardText: {
-        paddingTop: '0px',
-    }
-};
-    
 var ViewContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
@@ -73,24 +64,14 @@ var ViewContainer = React.createClass({
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    <Card 
-                        className="page-card"
-                        initiallyExpanded={true}
-                    >
-                        <CardHeader
-                            title="Instructions"
-                            actAsExpander={true}
-                            showExpandableButton={true}
-                        />
-                        <CardText 
-                            expandable={true}
-                            style={styles.cardText}
-                        >
-                            Please select 4 projects for the options listed below.
-                        </CardText>
-                    </Card>
+                    <ChoiceInstructions
+                        state={this.state}
+                        choice={this.props.choice}
+                        instance={this.props.instance}
+                    />
                     <OptionsTable
                         action={'view'}
+                        instance={this.props.instance}
                         state={this.state}
                         choice={this.props.choice}
                         optionViewHandlers={optionViewHandlers}

@@ -20,6 +20,9 @@
     data.choice = <?= json_encode($choice); ?>;
     data.options = <?= json_encode($options); ?>;
     data.optionIds = <?= json_encode($optionIds); ?>;
+    <?php if($action === 'view'): ?>
+        data.instance = <?= json_encode($instance); ?>;
+    <?php endif; ?>
     <?php if($hasAdditionalRoles): ?>
         data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard', $choice->id]); ?>";
         data.sections = <?= json_encode($sections); ?>;

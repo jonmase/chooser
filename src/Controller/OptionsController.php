@@ -81,6 +81,9 @@ class OptionsController extends AppController
         else {
             //Get all of the published and approved options
             $options = $this->Options->getForView($choiceId, true, true);
+            $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->findActive($choiceId);
+            //pr($instance);
+            $this->set(compact('instance'));
         }
         
         //Create an array of optionIds mapped to index in options array

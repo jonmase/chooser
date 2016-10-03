@@ -25,6 +25,7 @@ switch(data.action) {
         var container = <ViewContainer 
             action={data.action} 
             choice={data.choice} 
+            instance={data.instance}
             options={data.options} 
             optionIds={data.optionIds} 
         />;
