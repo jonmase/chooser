@@ -14,6 +14,7 @@ var FavouriteOption = React.createClass({
                 <IconButton
                     onTouchTap={this.handleAddFavourite}
                     iconClassName="material-icons"
+                    iconStyle={{color: 'rgb(158,158,158)'}}
                 >
                     star_border
                 </IconButton>         

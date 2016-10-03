@@ -17,6 +17,18 @@ body {
     margin-bottom: 0;
 }
 
+/* GRID STYLES */
+@media (min-width: 64em) {
+    .col-md-lg-hidden {
+        display: none;
+    }
+}
+@media (max-width: 63.99em) {
+    .col-xs-sm-hidden {
+        display: none;
+    }
+}
+
 /* ALLOY EDITOR */
 .ae-toolbar, .ae-toolbar-styles, .ae-toolbar-add {
     z-index: 2000;

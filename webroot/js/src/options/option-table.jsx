@@ -173,6 +173,12 @@ var UsersTable = React.createClass({
                                 displaySelectAll={true}
                             >
                                 <TableRow>
+                                    {(props.action === 'view')?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                        <FavouriteOption
+                                            handlers={props.optionHandlers} 
+                                            option="all"
+                                        />
+                                    </TableHeaderColumn>:""}
                                     {(props.choice.use_code)?<TableHeaderColumn>Code</TableHeaderColumn>:""}
                                     {(props.choice.use_title)?<TableHeaderColumn style={{width: '60%'}}>Title</TableHeaderColumn>:""}
                                     {(props.choice.use_min_places)?<TableHeaderColumn>Min. Places</TableHeaderColumn>:""}
@@ -180,12 +186,6 @@ var UsersTable = React.createClass({
                                     {(props.choice.use_points)?<TableHeaderColumn>Points</TableHeaderColumn>:""}
                                     {(props.action === 'edit')?<TableHeaderColumn>Published</TableHeaderColumn>:""}
                                     {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn>Approved</TableHeaderColumn>:""*/}
-                                    {(props.action === 'view')?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
-                                        <FavouriteOption
-                                            handlers={props.optionHandlers} 
-                                            option="all"
-                                        />
-                                    </TableHeaderColumn>:""}
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
@@ -201,6 +201,12 @@ var UsersTable = React.createClass({
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
+                                            {(props.action === 'view')?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                                <FavouriteOption
+                                                    handlers={props.optionHandlers} 
+                                                    option={option}
+                                                />
+                                            </TableRowColumn>:""}
                                             {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
                                             {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumn} style={{width: '60%'}}>{option.title}</TableRowColumn>:""}
                                             {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
@@ -208,12 +214,6 @@ var UsersTable = React.createClass({
                                             {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
                                             {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
                                             {/*(props.action === 'approve' || props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>:""*/}
-                                            {(props.action === 'view')?<TableRowColumn style={styles.favouriteTableRowColumn}>
-                                                <FavouriteOption
-                                                    handlers={props.optionHandlers} 
-                                                    option={option}
-                                                />
-                                            </TableRowColumn>:""}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {props.action === 'edit'? 
                                                     <EditButton
