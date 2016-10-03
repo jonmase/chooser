@@ -190,6 +190,7 @@ class ChoicesTable extends Table
         }
         
         //If user is admin, find out whether there is an existing choosing schedule
+        $choosingSetupActions = [];
         if(in_array('admin', $userRoles)) {
             //TODO: Actually lookup the current situation
             $currentChoosingInstance = false;
@@ -201,7 +202,6 @@ class ChoicesTable extends Table
             $archivedInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
             $archivedChoosingInstance = !empty($archivedInstancesQuery);
             
-            $choosingSetupActions = [];
             
             if($activeChoosingInstance) {
                 $choosingSetupActions[] = [
@@ -358,8 +358,8 @@ class ChoicesTable extends Table
                             foreach($action['roles'] as $actionRole) {
                                 if(in_array($actionRole, $userRoles)) {
                                     $userSectionActions[] = $action;
+                                    break;
                                 }
-                                break;
                             }
                         }
                         else {
