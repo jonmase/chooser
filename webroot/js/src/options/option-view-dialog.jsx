@@ -50,6 +50,7 @@ var OptionViewDialog = React.createClass({
         return (
             <Dialog
                 actions={actions}
+                autoScrollBodyContent={true}
                 modal={false}
                 onRequestClose={this.props.handlers.dialogClose}
                 open={this.props.viewState.optionDialogOpen}
