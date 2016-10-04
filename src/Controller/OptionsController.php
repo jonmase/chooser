@@ -93,10 +93,10 @@ class OptionsController extends AppController
             $optionIds[$option['id']] = $key;
         }
         //pr(json_encode($options));
-        //pr($options);
+        pr($options);
 
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
-        //pr($choice);
+        pr($choice);
         //Get the sections to show in the menu  bar
 
         $this->set(compact('action', 'choice', 'hasAdditionalRoles', 'options', 'optionIds'));

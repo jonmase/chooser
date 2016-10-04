@@ -18,9 +18,29 @@ import FavouriteOption from './option-favourite-button.jsx';
 import OptionEditDialog from './option-edit-dialog.jsx';
 import OptionViewDialog from './option-view-dialog.jsx';
 
+//TODO: Sort out title styles, and keep these styles DRY
 var styles = {
+    tableHeaderColumn: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+    },
+    tableHeaderColumnTitle: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        width: '30%',
+    },
     tableRowColumn: {
-        whiteSpace: 'normal',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap'
+    },
+    tableRowColumnTitle: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        width: '30%',
     },
     actionsTableRowColumn: {
         whiteSpace: 'normal',
@@ -122,7 +142,19 @@ var OptionsTable = React.createClass({
             expandLess: this.handleExpandLess,
         }
         
-        var choiceActive = this.props.instance.id?true:false;
+        var activeInstance = this.props.instance.id?true:false;
+        
+        var sortableExtraFields = [];
+        var filterableExtraFields = [];
+        
+        props.choice.extra_fields.forEach(function(field, index) {
+            if(field.sortable) {
+                sortableExtraFields.push(index);
+            }
+            if(field.filterable) {
+                filterableExtraFields.push(index);
+            }
+        });
 
         return (
             <div>
@@ -165,57 +197,74 @@ var OptionsTable = React.createClass({
                         style={styles.cardText}
                     >
                         <Table 
-                            selectable={choiceActive}
+                            selectable={activeInstance}
                             multiSelectable={true}
                             onRowSelection={this._onRowSelection}
                             onCellClick={this.onCellClick}
                         >
                             <TableHeader 
-                                adjustForCheckbox={choiceActive} 
-                                displaySelectAll={choiceActive}
+                                adjustForCheckbox={activeInstance} 
+                                displaySelectAll={activeInstance}
                             >
                                 <TableRow>
-                                    {(props.action === 'view' && choiceActive)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                    {(props.action === 'view' && activeInstance)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                         <FavouriteOption
                                             handlers={props.optionHandlers} 
                                             option="all"
                                         />
                                     </TableHeaderColumn>:""}
-                                    {(props.choice.use_code)?<TableHeaderColumn>Code</TableHeaderColumn>:""}
-                                    {(props.choice.use_title)?<TableHeaderColumn style={{width: '60%'}}>Title</TableHeaderColumn>:""}
-                                    {(props.choice.use_min_places)?<TableHeaderColumn>Min. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_max_places)?<TableHeaderColumn>Max. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_points)?<TableHeaderColumn>Points</TableHeaderColumn>:""}
-                                    {(props.action === 'edit')?<TableHeaderColumn>Published</TableHeaderColumn>:""}
-                                    {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn>Approved</TableHeaderColumn>:""*/}
+                                    {(props.choice.use_code)?<TableHeaderColumn style={styles.tableHeaderColumn}>Code</TableHeaderColumn>:""}
+                                    {(props.choice.use_title)?<TableHeaderColumn style={styles.tableHeaderColumnTitle}>Title</TableHeaderColumn>:""}
+                                    {(props.choice.use_min_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Min. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_max_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Max. Places</TableHeaderColumn>:""}
+                                    {(props.choice.use_points)?<TableHeaderColumn style={styles.tableHeaderColumn}>Points</TableHeaderColumn>:""}
+                                    {sortableExtraFields.map(function(fieldIndex) {
+                                        return (
+                                            <TableHeaderColumn style={styles.tableHeaderColumn} key={props.choice.extra_fields[fieldIndex].name}>{props.choice.extra_fields[fieldIndex].label}</TableHeaderColumn>
+                                        );
+                                    })}
+                                    {(props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>:""}
+                                    {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
                             <TableBody 
-                                displayRowCheckbox={choiceActive}
+                                displayRowCheckbox={activeInstance}
                                 deselectOnClickaway={false}
                             >
                                 {props.state.options.map(function(option) {
                                     //var user = props.state.users[userIndex];
-                                    
+                                            
                                     return (
                                         <TableRow 
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
-                                            {(props.action === 'view' && choiceActive)?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                             {(props.action === 'view' && activeInstance)?<TableRowColumn style={styles.favouriteTableRowColumn}>
                                                 <FavouriteOption
                                                     handlers={props.optionHandlers} 
                                                     option={option}
                                                 />
                                             </TableRowColumn>:""}
                                             {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
-                                            {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumn} style={{width: '60%'}}>{option.title}</TableRowColumn>:""}
+                                            {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumnTitle}>{option.title}</TableRowColumn>:""}
                                             {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
                                             {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
                                             {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
                                             {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
-                                            {/*(props.action === 'approve' || props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.approved?"Yes":""}</TableRowColumn>:""*/}
+                                            {sortableExtraFields.map(function(fieldIndex) {
+                                                var content = option[props.choice.extra_fields[fieldIndex].name];
+                                                if(typeof(content) === 'string') {
+                                                    return (
+                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>{content}</TableRowColumn>
+                                                    );
+                                                }
+                                                else {
+                                                    return (
+                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>-</TableRowColumn>
+                                                    );
+                                                }
+                                            })}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {props.action === 'edit'? 
                                                     <EditButton
@@ -230,6 +279,7 @@ var OptionsTable = React.createClass({
                                                     tooltip=""
                                                 />
                                             </TableRowColumn>
+
                                         </TableRow>
                                     );
                                 }, this)}
