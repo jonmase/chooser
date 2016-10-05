@@ -4,7 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
 import DefaultFields from './default-fields.jsx';
-import ExtraField from './extra-field.jsx';
+import ExtraFieldLabelled from './extra-field-labelled.jsx';
 
 
 var customDialogStyle = {
@@ -70,7 +70,7 @@ var OptionViewDialog = React.createClass({
                     }
                 
                     return (
-                        <ExtraField
+                        <ExtraFieldLabelled
                             key={field.id}
                             field={field}
                             value={value}

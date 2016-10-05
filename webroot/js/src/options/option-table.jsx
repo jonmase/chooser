@@ -11,6 +11,7 @@ import TableBody from 'material-ui/Table/TableBody';
 import TableRow from 'material-ui/Table/TableRow';
 import TableRowColumn from 'material-ui/Table/TableRowColumn';
 
+import ExtraField from './extra-field.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
@@ -120,6 +121,7 @@ var OptionsTable = React.createClass({
             styles.actionsTableRowColumn.width = '96px';
         }
         
+        var enableSelection = true;
         switch(props.action) {
             case 'edit':
                 var title = 'Options';
@@ -128,6 +130,7 @@ var OptionsTable = React.createClass({
             case 'view':
                 var title = 'Choose Options';
                 var subtitle = false;
+                enableSelection = this.props.instance.id?true:false;
                 break;
             default:
                 var title = false;
@@ -141,8 +144,6 @@ var OptionsTable = React.createClass({
             expandMore: this.handleExpandMore,
             expandLess: this.handleExpandLess,
         }
-        
-        var activeInstance = this.props.instance.id?true:false;
         
         var sortableExtraFields = [];
         var filterableExtraFields = [];
@@ -197,17 +198,17 @@ var OptionsTable = React.createClass({
                         style={styles.cardText}
                     >
                         <Table 
-                            selectable={activeInstance}
+                            selectable={enableSelection}
                             multiSelectable={true}
                             onRowSelection={this._onRowSelection}
                             onCellClick={this.onCellClick}
                         >
                             <TableHeader 
-                                adjustForCheckbox={activeInstance} 
-                                displaySelectAll={activeInstance}
+                                adjustForCheckbox={enableSelection} 
+                                displaySelectAll={enableSelection}
                             >
                                 <TableRow>
-                                    {(props.action === 'view' && activeInstance)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                    {(props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                         <FavouriteOption
                                             handlers={props.optionHandlers} 
                                             option="all"
@@ -229,18 +230,18 @@ var OptionsTable = React.createClass({
                                 </TableRow>
                             </TableHeader>
                             <TableBody 
-                                displayRowCheckbox={activeInstance}
+                                displayRowCheckbox={enableSelection}
                                 deselectOnClickaway={false}
                             >
                                 {props.state.options.map(function(option) {
                                     //var user = props.state.users[userIndex];
-                                            
+                                    
                                     return (
                                         <TableRow 
                                             key={option.id} 
                                             //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
                                         >
-                                             {(props.action === 'view' && activeInstance)?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                             {(props.action === 'view' && enableSelection)?<TableRowColumn style={styles.favouriteTableRowColumn}>
                                                 <FavouriteOption
                                                     handlers={props.optionHandlers} 
                                                     option={option}
@@ -251,9 +252,17 @@ var OptionsTable = React.createClass({
                                             {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
                                             {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
                                             {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
-                                            {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
                                             {sortableExtraFields.map(function(fieldIndex) {
-                                                var content = option[props.choice.extra_fields[fieldIndex].name];
+                                                return (
+                                                    <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
+                                                        <ExtraField 
+                                                            field={props.choice.extra_fields[fieldIndex]}
+                                                            value={option[props.choice.extra_fields[fieldIndex].name]}
+                                                        />
+                                                    </TableRowColumn>
+                                                );
+                                                
+                                                /*var content = option[props.choice.extra_fields[fieldIndex].name];
                                                 if(typeof(content) === 'string') {
                                                     return (
                                                         <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>{content}</TableRowColumn>
@@ -263,8 +272,9 @@ var OptionsTable = React.createClass({
                                                     return (
                                                         <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>-</TableRowColumn>
                                                     );
-                                                }
+                                                }*/
                                             })}
+                                            {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {props.action === 'edit'? 
                                                     <EditButton

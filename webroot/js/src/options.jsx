@@ -50,8 +50,6 @@ switch(data.action) {
         break;
 }
 
-
-
 ReactDOM.render(
     container, 
     document.getElementById('index')

@@ -1,21 +1,17 @@
 import React from 'react';
 
-var TextDisplay = React.createClass({
+var CheckboxDisplay = React.createClass({
     render: function() {
-        var field = this.props.field;
-        
-        
         return (
-            <p>
-                <strong>{field.label}: </strong>
-                {field.options.map(function(option) {
-                    if(field.value && field.value[option.value]) {
+            <span>
+                {this.props.field.options.map(function(option) {
+                    if(this.props.field.value && this.props.field.value[option.value]) {
                         return option.label + "; ";
                     }
-                })}
-            </p>
+                }, this)}
+            </span>
         );
     }
 });
 
-module.exports = TextDisplay;
+module.exports = CheckboxDisplay;

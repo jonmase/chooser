@@ -1,10 +1,10 @@
 import React from 'react';
-import NumericField from '../numeric.jsx';
+import NumberField from '../number.jsx';
 
 var PointsField = React.createClass({
     render: function() {
         return (
-            <NumericField
+            <NumberField
                 field={{
                     hint: "Enter a number",
                     label: "Points*",

@@ -1,13 +1,10 @@
 import React from 'react';
 
 import Text from '../elements/display/text.jsx';
-import Numeric from '../elements/display/numeric.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
 import Email from '../elements/display/email.jsx';
 import Url from '../elements/display/url.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
-import Radio from '../elements/display/radio.jsx';
 import Checkbox from '../elements/display/checkbox.jsx';
-import Dropdown from '../elements/display/dropdown.jsx';
 import DateTime from '../elements/display/datetime.jsx';
 //import Person from '../elements/display/person.jsx';
 //import File from '../elements/display/file.jsx';
@@ -25,60 +22,62 @@ var ExtraField = React.createClass({
             field: field,
         };
         
-        var fieldComponent = null;
+        var ComponentClass = null;
         switch(field.type) {
-            case 'text': 
-                fieldComponent = <Text {...props} />;
+            case 'text':
+                ComponentClass = Text;
                 break;
             case 'wysiwyg': 
-                fieldComponent = <Wysiwyg {...props} />;
+                ComponentClass = Wysiwyg;
                 break;
             case 'number': 
-                fieldComponent = <Numeric {...props} />;
+                ComponentClass = Text;
                 break;
             case 'email': 
-                fieldComponent = <Email {...props} />;
+                ComponentClass = Email;
                 break;
             case 'url': 
-                fieldComponent = <Url {...props} />;
+                ComponentClass = Url;
                 break;
             case 'list':
                 switch(field.extra.list_type) {
                     case 'radio': 
-                        fieldComponent = <Radio {...props} />;
+                        ComponentClass = Text;
                         break;
                     case 'checkbox': 
-                        fieldComponent = <Checkbox {...props} />;
+                        ComponentClass = Checkbox;
                         break;
                     case 'dropdown': 
-                        fieldComponent = <Dropdown {...props} />;
+                        ComponentClass = Text;
                         break;
                     default:
-                        fieldComponent = 
-                            <div>Could not display list field ({field.extra.list_type}: {field.label})</div>;
+                        ComponentClass = null;
                         break;
                 }
                 break;
             case 'datetime': 
                 props.time = true;
             case 'date': 
-                fieldComponent = <DateTime {...props} />;
+                ComponentClass = DateTime;
                 break;
            /*case 'person':
-                fieldComponent = <Person {...props} />;
+                ComponentClass = Person;
                 break;
             case 'file':
-                fieldComponent = <File {...props} />;
+                ComponentClass = File;
                 break;*/
             default:
-                fieldComponent = 
-                    <div>Could not display field ({field.type}: {field.label})</div>;
+                ComponentClass = null;
                 break;
         }
 
         return (
             <div>
-                {fieldComponent}
+                {(ComponentClass)?
+                    <ComponentClass {...props} />
+                :
+                    <span>-</span>
+                }
             </div>
         );
     }

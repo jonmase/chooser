@@ -2,13 +2,8 @@ import React from 'react';
 
 var EmailDisplay = React.createClass({
     render: function() {
-        var field = this.props.field;
-
         return (
-            <p>
-                <strong>{field.label}: </strong>
-                <a href={"mailto:" + field.value}>{field.value}</a>
-            </p>
+            <a href={"mailto:" + this.props.field.value}>{this.props.field.value}</a>
         );
     }
 });

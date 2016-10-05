@@ -7,11 +7,10 @@ import CardText  from 'material-ui/Card/CardText';
 import EditButton from '../elements/buttons/edit-button.jsx';
 import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
 
-import Text from '../elements/display/text.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
-import Numeric from '../elements/display/numeric.jsx';
-import DateTime from '../elements/display/datetime.jsx';
-import Toggle from '../elements/display/toggle.jsx';
+import Text from '../elements/display/text-labelled.jsx';
+import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
+import DateTime from '../elements/display/datetime-labelled.jsx';
+import Toggle from '../elements/display/toggle-labelled.jsx';
 
 import Loader from '../elements/loader.jsx';
 

@@ -1,10 +1,10 @@
 import React from 'react';
-import NumericField from '../numeric.jsx';
+import NumberField from '../number.jsx';
 
 var MaxPlacesField = React.createClass({
     render: function() {
         return (
-            <NumericField
+            <NumberField
                 field={{
                     instructions: "Enter a number",
                     label: "Maximum places*",

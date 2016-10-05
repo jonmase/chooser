@@ -2,7 +2,7 @@ import React from 'react';
 
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import NumericField from '../elements/fields/numeric.jsx';
+import NumberField from '../elements/fields/number.jsx';
 
 var NumberFields = React.createClass({
     render: function() {
@@ -24,7 +24,7 @@ var NumberFields = React.createClass({
                     />
                 </div>
                 <div>
-                    <NumericField
+                    <NumberField
                         field={{
                             hint: "Enter minimum",
                             label: "Minimum value",
@@ -34,7 +34,7 @@ var NumberFields = React.createClass({
                     />
                 </div>
                 <div className="section">
-                    <NumericField
+                    <NumberField
                         field={{
                             hint: "Enter maximum",
                             label: "Maximum value",

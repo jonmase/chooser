@@ -1,16 +1,16 @@
 import React from 'react';
 
-import TextField from '../text.jsx';
-import NumericField from '../numeric.jsx';
-import EmailField from '../email.jsx';
-import UrlField from '../url.jsx';
+import Text from '../text.jsx';
 import Wysiwyg from '../wysiwyg.jsx';
-import RadioField from '../radio.jsx';
-import CheckboxField from '../checkbox.jsx';
-import DropdownField from '../dropdown.jsx';
-import DateTimeField from '../datetime.jsx';
-import PersonField from '../person.jsx';
-import FileField from '../file.jsx';
+import Number from '../number.jsx';
+import Email from '../email.jsx';
+import Url from '../url.jsx';
+import Radio from '../radio.jsx';
+import Checkbox from '../checkbox.jsx';
+import Dropdown from '../dropdown.jsx';
+import DateTime from '../datetime.jsx';
+import Person from '../person.jsx';
+import File from '../file.jsx';
 
 var ExtraField = React.createClass({
     render: function() {
@@ -21,60 +21,65 @@ var ExtraField = React.createClass({
             field: field,
         };
         
-        var fieldComponent = null;
+        var ComponentClass = null;
         switch(field.type) {
             case 'text': 
-                fieldComponent = <TextField {...props} />;
+                ComponentClass = Text;
                 break;
             case 'wysiwyg': 
-                fieldComponent = <Wysiwyg {...props} />;
+                ComponentClass = Wysiwyg;
                 break;
             case 'number': 
-                fieldComponent = <NumericField {...props} />;
+                ComponentClass = Number;
                 break;
             case 'email': 
-                fieldComponent = <EmailField {...props} />;
+                ComponentClass = Email;
                 break;
             case 'url': 
-                fieldComponent = <UrlField {...props} />;
+                ComponentClass = Url;
                 break;
             case 'list':
                 switch(field.extra.list_type) {
                     case 'radio': 
-                        fieldComponent = <RadioField {...props} />;
+                        ComponentClass = Radio;
                         break;
                     case 'checkbox': 
-                        fieldComponent = <CheckboxField {...props} />;
+                        ComponentClass = Checkbox;
                         break;
                     case 'dropdown': 
-                        fieldComponent = <DropdownField {...props} />;
+                        ComponentClass = Dropdown;
                         break;
                     default:
-                        fieldComponent = 
-                            <div>Could not display list field ({field.extra.list_type}: {field.label})</div>;
+                        ComponentClass = null;
                         break;
                 }
                 break;
             case 'datetime': 
                 props.time = true;
             case 'date': 
-                fieldComponent = <DateTimeField {...props} />;
+                ComponentClass = DateTime;
                 break;
             /*case 'person':
-                fieldComponent = <PersonField {...props} />;
+                ComponentClass = Person;
                 break;
             case 'file':
-                fieldComponent = <FileField {...props} />;
+                ComponentClass = File;
                 break;*/
             default:
-                fieldComponent = 
-                    <div>Could not display field ({field.type}: {field.label})</div>;
+                ComponentClass = null;
                 break;
         }
 
         return (
             <div>
-                {fieldComponent}
+                {(ComponentClass)?
+                    <ComponentClass {...props} />
+                :
+                    (field.type === 'list')?
+                        <div>Could not display list field ({field.extra.list_type}: {field.label})</div>
+                    :
+                        <div>Could not display field ({field.type}: {field.label})</div>
+                }
             </div>
         );
     }

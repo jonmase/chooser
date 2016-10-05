@@ -3,10 +3,9 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
-import Text from '../elements/display/text.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
-import Numeric from '../elements/display/numeric.jsx';
-import Toggle from '../elements/display/toggle.jsx';
+import Text from '../elements/display/text-labelled.jsx';
+import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
+import Toggle from '../elements/display/toggle-labelled.jsx';
 
 var customDialogStyle = {
     width: '95%',

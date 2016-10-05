@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Text from '../elements/display/text.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
-import Numeric from '../elements/display/numeric.jsx';
+import Text from '../elements/display/text-labelled.jsx';
+import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
+import Number from '../elements/display/number-labelled.jsx';
 
 
 var DefaultFields = React.createClass({
@@ -71,7 +71,7 @@ var DefaultFields = React.createClass({
                 value: option.points,
             };
             defaultsFields.push(
-                <Numeric field={field} key="points" />
+                <Number field={field} key="points" />
             );
         }
     

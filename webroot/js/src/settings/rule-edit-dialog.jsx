@@ -12,7 +12,7 @@ import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
-import Numeric from '../elements/fields/numeric.jsx';
+import Number from '../elements/fields/number.jsx';
 import Checkbox from '../elements/fields/checkbox.jsx';
 import Radio from '../elements/fields/radio.jsx';
 
@@ -154,7 +154,7 @@ var RuleDialog = React.createClass({
                         />
                         {(this.props.containerState.ruleValueType === "range")?
                             <div>
-                                <Numeric
+                                <Number
                                     field={{
                                         instructions: "Enter minimum",
                                         label: "Minimum",
@@ -163,7 +163,7 @@ var RuleDialog = React.createClass({
                                         value: rule.min,
                                     }}
                                 />
-                                <Numeric
+                                <Number
                                     field={{
                                         instructions: "Enter maximum",
                                         label: "Maximum",
