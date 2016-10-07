@@ -43,13 +43,12 @@ var FormContainer = React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data) {
-                var stateDate = {
+                this.setState({
                     rules: data.rules,
                     ruleCategoryFields: data.ruleCategoryFields,
                     ruleIndexesById: data.ruleIndexesById,
                     rulesLoaded: true,
-                }
-                this.setState(stateDate);
+                });
             }.bind(this),
                 error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
@@ -103,8 +102,6 @@ var FormContainer = React.createClass({
     componentDidMount: function() {
         this.loadInstanceFromServer();
         this.loadRulesFromServer();
-        //this.loadRuleCategoryFieldsFromServer();
-        //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
     handleRuleDeleteDialogOpen: function(ruleIndex) {
         this.setState({

@@ -19,6 +19,8 @@ import FavouriteOption from './option-favourite-button.jsx';
 import OptionEditDialog from './option-edit-dialog.jsx';
 import OptionViewDialog from './option-view-dialog.jsx';
 
+import Loader from '../elements/loader.jsx';
+
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
     tableHeaderColumn: {
@@ -130,7 +132,7 @@ var OptionsTable = React.createClass({
             case 'view':
                 var title = 'Choose Options';
                 var subtitle = false;
-                enableSelection = this.props.instance.id?true:false;
+                enableSelection = this.props.containerState.instance.id?true:false;
                 break;
             default:
                 var title = false;
@@ -171,12 +173,12 @@ var OptionsTable = React.createClass({
                     >
                         <div style={{float: 'right'}}>
                             {/*<SortUsers 
-                                state={props.state}
+                                state={props.containerState}
                                 handlers={props.sortUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
                             />&nbsp;
                             <FilterUsers
-                                state={props.state} 
+                                state={props.containerState} 
                                 roleOptions={props.roleOptions} 
                                 handlers={props.filterUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
@@ -197,119 +199,123 @@ var OptionsTable = React.createClass({
                         //expandable={true}
                         style={styles.cardText}
                     >
-                        <Table 
-                            selectable={enableSelection}
-                            multiSelectable={true}
-                            onRowSelection={this._onRowSelection}
-                            onCellClick={this.onCellClick}
-                        >
-                            <TableHeader 
-                                adjustForCheckbox={enableSelection} 
-                                displaySelectAll={enableSelection}
+                        {(!this.props.containerState.optionsLoaded)?
+                            <Loader />
+                        :
+                            <Table 
+                                selectable={enableSelection}
+                                multiSelectable={true}
+                                onRowSelection={this._onRowSelection}
+                                onCellClick={this.onCellClick}
                             >
-                                <TableRow>
-                                    {(props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
-                                        <FavouriteOption
-                                            handlers={props.optionHandlers} 
-                                            option="all"
-                                        />
-                                    </TableHeaderColumn>:""}
-                                    {(props.choice.use_code)?<TableHeaderColumn style={styles.tableHeaderColumn}>Code</TableHeaderColumn>:""}
-                                    {(props.choice.use_title)?<TableHeaderColumn style={styles.tableHeaderColumnTitle}>Title</TableHeaderColumn>:""}
-                                    {(props.choice.use_min_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Min. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_max_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Max. Places</TableHeaderColumn>:""}
-                                    {(props.choice.use_points)?<TableHeaderColumn style={styles.tableHeaderColumn}>Points</TableHeaderColumn>:""}
-                                    {sortableExtraFields.map(function(fieldIndex) {
+                                <TableHeader 
+                                    adjustForCheckbox={enableSelection} 
+                                    displaySelectAll={enableSelection}
+                                >
+                                    <TableRow>
+                                        {(props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                            <FavouriteOption
+                                                handlers={props.optionHandlers} 
+                                                option="all"
+                                            />
+                                        </TableHeaderColumn>:""}
+                                        {(props.choice.use_code)?<TableHeaderColumn style={styles.tableHeaderColumn}>Code</TableHeaderColumn>:""}
+                                        {(props.choice.use_title)?<TableHeaderColumn style={styles.tableHeaderColumnTitle}>Title</TableHeaderColumn>:""}
+                                        {(props.choice.use_min_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Min. Places</TableHeaderColumn>:""}
+                                        {(props.choice.use_max_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Max. Places</TableHeaderColumn>:""}
+                                        {(props.choice.use_points)?<TableHeaderColumn style={styles.tableHeaderColumn}>Points</TableHeaderColumn>:""}
+                                        {sortableExtraFields.map(function(fieldIndex) {
+                                            return (
+                                                <TableHeaderColumn style={styles.tableHeaderColumn} key={props.choice.extra_fields[fieldIndex].name}>{props.choice.extra_fields[fieldIndex].label}</TableHeaderColumn>
+                                            );
+                                        })}
+                                        {(props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>:""}
+                                        {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
+                                        <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody 
+                                    displayRowCheckbox={enableSelection}
+                                    deselectOnClickaway={false}
+                                >
+                                    {props.containerState.options.map(function(option) {
+                                        //var user = props.containerState.users[userIndex];
+                                        
                                         return (
-                                            <TableHeaderColumn style={styles.tableHeaderColumn} key={props.choice.extra_fields[fieldIndex].name}>{props.choice.extra_fields[fieldIndex].label}</TableHeaderColumn>
-                                        );
-                                    })}
-                                    {(props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>:""}
-                                    {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
-                                    <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody 
-                                displayRowCheckbox={enableSelection}
-                                deselectOnClickaway={false}
-                            >
-                                {props.state.options.map(function(option) {
-                                    //var user = props.state.users[userIndex];
-                                    
-                                    return (
-                                        <TableRow 
-                                            key={option.id} 
-                                            //selected={props.state.optionssSelected.indexOf(user.username) !== -1}
-                                        >
-                                             {(props.action === 'view' && enableSelection)?<TableRowColumn style={styles.favouriteTableRowColumn}>
-                                                <FavouriteOption
-                                                    handlers={props.optionHandlers} 
-                                                    option={option}
-                                                />
-                                            </TableRowColumn>:""}
-                                            {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
-                                            {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumnTitle}>{option.title}</TableRowColumn>:""}
-                                            {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
-                                            {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
-                                            {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
-                                            {sortableExtraFields.map(function(fieldIndex) {
-                                                return (
-                                                    <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
-                                                        <ExtraField 
-                                                            field={props.choice.extra_fields[fieldIndex]}
-                                                            value={option[props.choice.extra_fields[fieldIndex].name]}
+                                            <TableRow 
+                                                key={option.id} 
+                                                //selected={props.containerState.optionssSelected.indexOf(user.username) !== -1}
+                                            >
+                                                 {(props.action === 'view' && enableSelection)?<TableRowColumn style={styles.favouriteTableRowColumn}>
+                                                    <FavouriteOption
+                                                        handlers={props.optionHandlers} 
+                                                        option={option}
+                                                    />
+                                                </TableRowColumn>:""}
+                                                {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
+                                                {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumnTitle}>{option.title}</TableRowColumn>:""}
+                                                {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
+                                                {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
+                                                {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
+                                                {sortableExtraFields.map(function(fieldIndex) {
+                                                    return (
+                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
+                                                            <ExtraField 
+                                                                field={props.choice.extra_fields[fieldIndex]}
+                                                                value={option[props.choice.extra_fields[fieldIndex].name]}
+                                                            />
+                                                        </TableRowColumn>
+                                                    );
+                                                    
+                                                    /*var content = option[props.choice.extra_fields[fieldIndex].name];
+                                                    if(typeof(content) === 'string') {
+                                                        return (
+                                                            <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>{content}</TableRowColumn>
+                                                        );
+                                                    }
+                                                    else {
+                                                        return (
+                                                            <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>-</TableRowColumn>
+                                                        );
+                                                    }*/
+                                                })}
+                                                {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
+                                                <TableRowColumn style={styles.actionsTableRowColumn}>
+                                                    {props.action === 'edit'? 
+                                                        <EditButton
+                                                            handleEdit={props.optionEditHandlers.dialogOpen} 
+                                                            id={option.id}
+                                                            tooltip=""
                                                         />
-                                                    </TableRowColumn>
-                                                );
-                                                
-                                                /*var content = option[props.choice.extra_fields[fieldIndex].name];
-                                                if(typeof(content) === 'string') {
-                                                    return (
-                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>{content}</TableRowColumn>
-                                                    );
-                                                }
-                                                else {
-                                                    return (
-                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>-</TableRowColumn>
-                                                    );
-                                                }*/
-                                            })}
-                                            {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
-                                            <TableRowColumn style={styles.actionsTableRowColumn}>
-                                                {props.action === 'edit'? 
-                                                    <EditButton
-                                                        handleEdit={props.optionEditHandlers.dialogOpen} 
+                                                    :""}
+                                                    <ExpandButton
+                                                        handleMore={optionViewHandlers.dialogOpen} 
                                                         id={option.id}
                                                         tooltip=""
                                                     />
-                                                :""}
-                                                <ExpandButton
-                                                    handleMore={optionViewHandlers.dialogOpen} 
-                                                    id={option.id}
-                                                    tooltip=""
-                                                />
-                                            </TableRowColumn>
+                                                </TableRowColumn>
 
-                                        </TableRow>
-                                    );
-                                }, this)}
-                            </TableBody>
-                        </Table>
+                                            </TableRow>
+                                        );
+                                    }, this)}
+                                </TableBody>
+                                <OptionViewDialog
+                                    choice={props.choice}
+                                    handlers={optionViewHandlers}
+                                    containerState={props.containerState} 
+                                    viewState={this.state}
+                                />
+                                {(props.action === 'edit')?
+                                    <OptionEditDialog
+                                        choice={props.choice}
+                                        handlers={props.optionEditHandlers}
+                                        containerState={props.containerState} 
+                                    />
+                                :""}
+                            </Table>
+                        }
                     </CardText>
                 </Card>
-                <OptionViewDialog
-                    choice={props.choice}
-                    handlers={optionViewHandlers}
-                    state={props.state} 
-                    viewState={this.state}
-                />
-                {(props.action === 'edit')?
-                    <OptionEditDialog
-                        choice={props.choice}
-                        handlers={props.optionEditHandlers}
-                        state={props.state} 
-                    />
-                :""}
             </div>
         );
     }

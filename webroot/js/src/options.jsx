@@ -21,36 +21,22 @@ ReactDOM.render(
 );
 
 switch(data.action) {
-    case 'view': 
-        var container = <ViewContainer 
-            action={data.action} 
-            choice={data.choice} 
-            instance={data.instance}
-            options={data.options} 
-            optionIds={data.optionIds} 
-        />;
-        break;
     case 'edit': 
-        var container = <EditContainer 
-            action={data.action} 
-            choice={data.choice} 
-            options={data.options} 
-            optionIds={data.optionIds} 
-        />;
+        var ContainerClass = EditContainer;
         break;
     case 'approve': 
-        var container = <ApproveContainer 
-            action={data.action} 
-            choice={data.choice} 
-            options={data.options} 
-            optionIds={data.optionIds} 
-        />;
+        var ContainerClass = ApproveContainer
         break;
+    case 'view': 
     default:
+        var ContainerClass = ViewContainer;
         break;
 }
 
 ReactDOM.render(
-    container, 
+    <ContainerClass 
+        action={data.action} 
+        choice={data.choice} 
+    />, 
     document.getElementById('index')
 );

@@ -79,10 +79,11 @@ class ChoosingInstancesController extends AppController
     public function getActive($choiceId = null)
     {
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        //Not just for admins, needed for viewing choices as well. Can't think of any security issue here that needs admin check
+        /*$isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
-        }
+        }*/
         
         $choosingInstance = $this->ChoosingInstances->findActive($choiceId);
         //pr($choosingInstance);

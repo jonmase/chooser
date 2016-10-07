@@ -10,10 +10,58 @@ import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var ViewContainer = React.createClass({
+    loadInstanceFromServer: function() {
+        var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    instance: data.choosingInstance,
+                    instanceLoaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    loadOptionsFromServer: function(orderField, orderDirection) {
+        var url = '../get-options/' + this.props.choice.id + '/view';
+        if(typeof(orderField) !== "undefined") {
+            url += '/' + orderField;
+            if(typeof(orderDirection) !== "undefined") {
+                url += '/' + orderDirection;
+            }
+            else {
+                url += '/asc';
+            }
+        }
+        url += '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    options: data.options,
+                    optionIndexesById: data.optionIndexesById,
+                    optionsLoaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
     getInitialState: function () {
         var initialState = {
-            options: this.props.options,
-            optionIndexesById: this.props.optionIds,
+            instance: [],
+            instanceLoaded: false,
+            options: [],
+            optionIndexesById: [],
+            optionsLoaded: false,
             snackbar: {
                 open: false,
                 message: '',
@@ -21,6 +69,10 @@ var ViewContainer = React.createClass({
         };
         
         return initialState;
+    },
+    componentDidMount: function() {
+        this.loadOptionsFromServer();
+        this.loadInstanceFromServer();
     },
     
     handleAddFavourite: function() {
@@ -65,14 +117,12 @@ var ViewContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     <ChoiceInstructions
-                        state={this.state}
+                        containerState={this.state}
                         choice={this.props.choice}
-                        instance={this.props.instance}
                     />
                     <OptionsTable
                         action={'view'}
-                        instance={this.props.instance}
-                        state={this.state}
+                        containerState={this.state}
                         choice={this.props.choice}
                         optionViewHandlers={optionViewHandlers}
                     />

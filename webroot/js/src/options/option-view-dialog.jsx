@@ -32,7 +32,7 @@ var OptionViewDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var option = this.props.state.options[this.props.state.optionIndexesById[this.props.viewState.optionBeingViewed]];
+        var option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.viewState.optionBeingViewed]];
         
         var title = '';
         if(typeof(option) !== "undefined" && option) {

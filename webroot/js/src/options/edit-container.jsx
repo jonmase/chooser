@@ -9,15 +9,44 @@ import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var IndexContainer = React.createClass({
+    loadOptionsFromServer: function(orderField, orderDirection) {
+        var url = '../get-options/' + this.props.choice.id + '/edit';
+        if(typeof(orderField) !== "undefined") {
+            url += '/' + orderField;
+            if(typeof(orderDirection) !== "undefined") {
+                url += '/' + orderDirection;
+            }
+            else {
+                url += '/asc';
+            }
+        }
+        url += '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    options: data.options,
+                    optionIndexesById: data.optionIndexesById,
+                    optionsLoaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
     getInitialState: function () {
         var initialState = {
+            options: [],
+            optionIndexesById: [],
+            optionsLoaded: false,
             optionBeingEdited: null,
             optionDialogOpen: false,
             optionDialogTitle: 'Add Option',
-            optionIndexesById: this.props.optionIds,
             optionSaveButtonEnabled: true,
             optionSaveButtonLabel: 'Save',
-            options: this.props.options,
             snackbar: {
                 open: false,
                 message: '',
@@ -35,6 +64,9 @@ var IndexContainer = React.createClass({
         }
 
         return initialState;
+    },
+    componentDidMount: function() {
+        this.loadOptionsFromServer();
     },
     
     handleOptionChange: function() {
@@ -203,7 +235,7 @@ var IndexContainer = React.createClass({
                 <div>
                     <OptionsTable
                         action={'edit'}
-                        state={this.state}
+                        containerState={this.state}
                         choice={this.props.choice}
                         optionEditHandlers={optionEditHandlers}
                     />

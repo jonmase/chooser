@@ -78,7 +78,7 @@ class OptionsTable extends Table
         return $validator;
     }
     
-    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $userId = null, $editableOnly = false) {
+    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $orderField = 'code', $orderDirection = 'ASC', $editableOnly = false, $userId = null) {
         $conditions = [
             'ChoicesOptions.choice_id' => $choiceId,
             'ChoicesOptions.revision_parent' => 0,
@@ -93,9 +93,12 @@ class OptionsTable extends Table
         $optionsQuery = $this->ChoicesOptions->find('all', [
             'conditions' => $conditions,
             'contain' => ['Options'],
+            'order' => 'Options.' . $orderField . ' ' . $orderDirection,
         ]);
-        
-        if($userId) {
+                
+        //If $userId is specified and user is not admin, only let them see options they are associated, optionally only those that they can edit
+        $isAdmin = $this->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $userId);
+        if($userId && !$isAdmin) {
             $optionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId, $editableOnly) {
                 $conditions = ['ChoicesOptionsUsers.user_id' => $userId];
                 if($editableOnly) {

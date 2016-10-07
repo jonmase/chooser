@@ -4,6 +4,8 @@ import Card  from 'material-ui/Card/Card';
 import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 
+import Loader from '../elements/loader.jsx';
+
 var styles = {
     cardText: {
         paddingTop: '0px',
@@ -26,12 +28,14 @@ var ChoiceInstructions = React.createClass({
                     expandable={true}
                     style={styles.cardText}
                 >
-                    {
-                        (this.props.instance.id)?
-                            <div>Instance specified</div>
+                    {(!this.props.containerState.instanceLoaded)?
+                            <Loader />
                         :
-                            <div>This Choice is in 'read-only' mode. You can browse the available options, but not make selections.</div>
-                    
+                            (this.props.containerState.instance.id)?
+                                <div>Instance info will be shown here</div>
+                            :
+                                <div>This Choice is in 'read-only' mode. You can browse the available options, but not make selections.</div>
+                        
                     }
                 </CardText>
             </Card>

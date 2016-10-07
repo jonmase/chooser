@@ -41,10 +41,10 @@ var OptionDialog = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label={this.props.state.optionSaveButtonLabel}
+                label={this.props.containerState.optionSaveButtonLabel}
                 primary={true}
                 type="submit"
-                disabled={!this.state.canSubmit || !this.props.state.optionSaveButtonEnabled}
+                disabled={!this.state.canSubmit || !this.props.containerState.optionSaveButtonEnabled}
             />,
         ];
         
@@ -57,16 +57,16 @@ var OptionDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        //var option = this.props.state.options[this.props.state.optionBeingEdited];
-        var option = this.props.state.options[this.props.state.optionIndexesById[this.props.state.optionBeingEdited]];
+        //var option = this.props.containerState.options[this.props.containerState.optionBeingEdited];
+        var option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.containerState.optionBeingEdited]];
 
         return (
             <FormsyDialog
                 actions={actions}
                 contentStyle={customDialogStyle}
                 dialogOnRequestClose={this.props.handlers.dialogClose}
-                dialogOpen={this.props.state.optionDialogOpen}
-                dialogTitle={this.props.state.optionDialogTitle}
+                dialogOpen={this.props.containerState.optionDialogOpen}
+                dialogTitle={this.props.containerState.optionDialogTitle}
                 formId="option_form"
                 formOnValid={this.enableSubmitButton}
                 formOnInvalid={this.disableSubmitButton}

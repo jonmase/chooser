@@ -34,6 +34,55 @@ class OptionsController extends AppController
         $this->set(compact('choice', 'options'));
         //$this->set('_serialize', ['choice']);
     }*/
+    
+    /**
+     * getOptions method
+     *
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not Editor
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException If Choice is not found.
+     */
+    public function getOptions($choiceId = null, $action = 'view', $orderField = 'code', $orderDirection = 'ASC')
+    {
+        //If action is edit, make sure the user is an editor for this Choice
+        if($action === 'edit') {
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
+            if(!$isEditor) {
+                throw new ForbiddenException(__('Not an editor for this Choice.'));
+            }
+            
+            //Get the options for which this user is an editor
+            $options = $this->Options->getForView($choiceId, false, false, $orderField, $orderDirection, true, $this->Auth->user('id'));
+        }
+        
+        //If action is approve, make sure the user is an approver for this Choice
+        /*else if($action === 'approve') {
+            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $this->Auth->user('id'));
+            if(!$isApprover) {
+                throw new ForbiddenException(__('Not an approver for this Choice.'));
+            }
+            
+            //Get the options for which this user is an approver
+            $options = $this->Options->getForView($choiceId, true, false, $orderField, $orderDirection);
+        }*/
+        
+        else {
+            //Get all of the published and approved options
+            $options = $this->Options->getForView($choiceId, true, true, $orderField, $orderDirection);
+        }
+        
+        //Create an array of optionIds mapped to index in options array
+        //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
+        $optionIds = [];
+        foreach($options as $key => $option) {
+            $optionIds[$option['id']] = $key;
+        }
+        //pr($options);
+
+        $this->set(compact('options', 'optionIds'));
+        $this->set('_serialize', ['options', 'optionIds']);
+    }
+    
 
     /**
      * Index method
@@ -65,7 +114,7 @@ class OptionsController extends AppController
             }
             
             //Get the options for which this user is an editor
-            $options = $this->Options->getForView($choiceId, false, false, $this->Auth->user('id'), true);
+            //$options = $this->Options->getForView($choiceId, false, false, $this->Auth->user('id'), true);
         }
         
         //If action is approve, make sure the user is an approver for this Choice
@@ -75,23 +124,23 @@ class OptionsController extends AppController
             }
             
             //Get the options for which this user is an approver
-            $options = $this->Options->getForView($choiceId, true, false, $this->Auth->user('id'), true);
+            //$options = $this->Options->getForView($choiceId, true, false, $this->Auth->user('id'), true);
         }
         
         else {
             //Get all of the published and approved options
-            $options = $this->Options->getForView($choiceId, true, true);
-            $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->findActive($choiceId);
+            //$options = $this->Options->getForView($choiceId, true, true);
+            //$instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->findActive($choiceId);
             //pr($instance);
-            $this->set(compact('instance'));
+            //$this->set(compact('instance'));
         }
         
         //Create an array of optionIds mapped to index in options array
         //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
-        $optionIds = [];
-        foreach($options as $key => $option) {
-            $optionIds[$option['id']] = $key;
-        }
+        //$optionIds = [];
+        //foreach($options as $key => $option) {
+        //    $optionIds[$option['id']] = $key;
+        //}
         //pr(json_encode($options));
         //pr($options);
 
@@ -99,7 +148,8 @@ class OptionsController extends AppController
         //pr($choice);
         //Get the sections to show in the menu  bar
 
-        $this->set(compact('action', 'choice', 'hasAdditionalRoles', 'options', 'optionIds'));
+        //$this->set(compact('action', 'choice', 'hasAdditionalRoles', 'options', 'optionIds'));
+        $this->set(compact('action', 'choice', 'hasAdditionalRoles'));
         //$this->set('_serialize', ['options']);
     }
 
