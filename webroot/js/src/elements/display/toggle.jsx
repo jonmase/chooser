@@ -4,15 +4,16 @@ import FontIcon from 'material-ui/FontIcon';
 
 var ToggleDisplay = React.createClass({
     render: function() {
+        if(this.props.value) {
+            var icon = 'check';
+            var marginTop = '-2px';
+        }
+        else {
+            var icon = 'close';
+            var marginTop = '-1px';
+        }
         return (
-            <span>
-                {this.props.field.value?
-                    <FontIcon className="material-icons" style={{marginTop: '-2px'}}>check</FontIcon>
-                    :
-                    <FontIcon className="material-icons" style={{marginTop: '-1px'}}>close</FontIcon>
-                }
-                <span style={{verticalAlign: 'top'}}>{this.props.field.explanation}</span>
-            </span>
+            <FontIcon className="material-icons" style={{marginTop: marginTop}}>{icon}</FontIcon>
         );
     }
 });

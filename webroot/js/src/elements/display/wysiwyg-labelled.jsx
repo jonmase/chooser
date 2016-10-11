@@ -6,8 +6,8 @@ var WysiwygLabelled = React.createClass({
     render: function() {
         return (
             <div style={{marginTop: '1em'}}>
-                <strong>{this.props.field.label}: </strong><br />
-                <Wysiwyg field={this.props.field} />
+                <strong>{this.props.label}: </strong><br />
+                <Wysiwyg {...this.props} />
             </div>
         );
     }

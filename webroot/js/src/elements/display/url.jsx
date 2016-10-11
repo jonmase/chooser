@@ -2,15 +2,15 @@ import React from 'react';
 
 var UrlDisplay = React.createClass({
     render: function() {
-        if(this.props.field.value && this.props.field.value.substr(0,4) !== "http") {
-            this.props.field.url = "http://" + this.props.field.value;
+        if(this.props.value && this.props.value.substr(0,4) !== "http") {
+            var url = "http://" + this.props.value;
         }
         else {
-            this.props.field.url = this.props.field.value;
+            var url = this.props.value;
         }
         
         return (
-            <a href={this.props.field.url} target="_blank">{this.props.field.value}</a>
+            <a href={url} target="_blank">{this.props.value}</a>
         );
     }
 });

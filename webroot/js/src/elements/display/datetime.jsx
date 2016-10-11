@@ -4,7 +4,7 @@ var DateTimeDisplay = React.createClass({
     render: function() {
         return (
             <span>
-                {this.props.field.value?this.props.field.value.formatted:""}
+                {this.props.value?this.props.value.formatted:""}
             </span>
         );
     }

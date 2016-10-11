@@ -6,8 +6,8 @@ var UrlLabelled = React.createClass({
     render: function() {
         return (
             <p>
-                <strong>{this.props.field.label}: </strong>
-                <Url field={this.props.field} />
+                <strong>{this.props.label}: </strong>
+                <Url {...this.props} />
             </p>
         );
     }

@@ -6,8 +6,8 @@ var DateTimeLabelled = React.createClass({
     render: function() {
         return (
             <p>
-                <strong>{this.props.field.label}: </strong>
-                <DateTime field={this.props.field} />
+                <strong>{this.props.label}: </strong>
+                <DateTime {...this.props} />
             </p>
         );
     }

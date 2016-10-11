@@ -15,30 +15,30 @@ var DefaultFields = React.createClass({
         
         var defaultsFields = [];
         if(defaults.code) {
-            var field = {
-                label: "Code",
-                value: option.code,
-            };
             defaultsFields.push(
-                <Text field={field} key="code" />
+                <Text 
+                    key="code" 
+                    label="Code"
+                    value={option.code}
+                />
             );
         }
         if(defaults.title) {
-            var field = {
-                label: "Title",
-                value: option.title,
-            };
             defaultsFields.push(
-                <Text field={field} key="title" />
+                <Text 
+                    key="title" 
+                    label="Title"
+                    value={option.title}
+                />
             );
         }
         if(defaults.description) {
-            var field = {
-                label: "Description",
-                value: option.description,
-            };
             defaultsFields.push(
-                <Wysiwyg field={field} key="description" />
+                <Wysiwyg 
+                    key="description" 
+                    label="Description"
+                    value={option.description}
+                />
             );
         }
         if(defaults.min_places || defaults.max_places) {
@@ -55,23 +55,21 @@ var DefaultFields = React.createClass({
                 var content = "";
             }
             
-            var field = {
-                label: "Places",
-                value: content,
-            }
-        
             defaultsFields.push(
-                <Text field={field} key="places" />
+                <Text 
+                    key="places" 
+                    label="Places"
+                    value={content}
+                />
             );
         }
         if(defaults.points) {
-            var field = {};
-            var field = {
-                label: "Points",
-                value: option.points,
-            };
             defaultsFields.push(
-                <Number field={field} key="points" />
+                <Number
+                    key="points" 
+                    label="Points"
+                    value={option.points}
+                />
             );
         }
     

@@ -57,8 +57,10 @@ var OptionDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        //var option = this.props.containerState.options[this.props.containerState.optionBeingEdited];
-        var option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.containerState.optionBeingEdited]];
+        var option = {};
+        if(this.props.containerState.optionBeingEdited) {
+            option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.containerState.optionBeingEdited]];
+        }
 
         return (
             <FormsyDialog

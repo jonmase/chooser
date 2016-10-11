@@ -2,7 +2,7 @@ import React from 'react';
 
 var WysiwygDisplay = React.createClass({
     createMarkup: function() {
-        return {__html: this.props.field.value};
+        return {__html: this.props.value};
     },
 
     render: function() {

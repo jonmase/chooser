@@ -73,14 +73,14 @@ class OptionsController extends AppController
         
         //Create an array of optionIds mapped to index in options array
         //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
-        $optionIds = [];
+        $optionIndexesById = [];
         foreach($options as $key => $option) {
-            $optionIds[$option['id']] = $key;
+            $optionIndexesById[$option['id']] = $key;
         }
         //pr($options);
 
-        $this->set(compact('options', 'optionIds'));
-        $this->set('_serialize', ['options', 'optionIds']);
+        $this->set(compact('options', 'optionIndexesById'));
+        $this->set('_serialize', ['options', 'optionIndexesById']);
     }
     
 

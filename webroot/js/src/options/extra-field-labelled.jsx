@@ -14,19 +14,21 @@ import DateTime from '../elements/display/datetime-labelled.jsx';
 
 var ExtraField = React.createClass({
     render: function() {
-        var field = this.props.field;
+        //var field = this.props.field;
         
         //For some reason, setting field.value in option-view-dialog.jsx did not work for the edit page, so passing as separate prop and adding to field here
-        if(this.props.value) {
-            field.value = this.props.value;
-        }
+        //if(this.props.value) {
+        //    field.value = this.props.value;
+        //}
         
-        var props = {
-            field: field,
-        };
+        //var props = {
+        //    field: field,
+        //};
+        
+        var time = false;
         
         var ComponentClass = null;
-        switch(field.type) {
+        switch(this.props.type) {
             case 'text':
                 ComponentClass = Text;
                 break;
@@ -43,7 +45,7 @@ var ExtraField = React.createClass({
                 ComponentClass = Url;
                 break;
             case 'list':
-                switch(field.extra.list_type) {
+                switch(this.props.extra.list_type) {
                     case 'radio': 
                         ComponentClass = Radio;
                         break;
@@ -59,7 +61,7 @@ var ExtraField = React.createClass({
                 }
                 break;
             case 'datetime': 
-                props.time = true;
+                time = true;
             case 'date': 
                 ComponentClass = DateTime;
                 break;
@@ -77,12 +79,12 @@ var ExtraField = React.createClass({
         return (
             <div>
                 {(ComponentClass)?
-                    <ComponentClass {...props} />
+                    <ComponentClass {...this.props} time={time} />
                 :
-                    (field.type === 'list')?
-                        <div>Could not display list field ({field.extra.list_type}: {field.label})</div>
+                    (this.props.type === 'list')?
+                        <div>Could not display list field ({this.props.extra.list_type}: {this.props.label})</div>
                     :
-                        <div>Could not display field ({field.type}: {field.label})</div>
+                        <div>Could not display field ({this.props.type}: {this.props.label})</div>
                 }
             </div>
         );

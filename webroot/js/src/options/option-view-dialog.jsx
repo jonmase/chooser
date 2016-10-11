@@ -32,7 +32,10 @@ var OptionViewDialog = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.viewState.optionBeingViewed]];
+        var option = {};
+        if(this.props.viewState.optionBeingViewed) {
+            option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.viewState.optionBeingViewed]];
+        }
         
         var title = '';
         if(typeof(option) !== "undefined" && option) {
@@ -71,8 +74,13 @@ var OptionViewDialog = React.createClass({
                 
                     return (
                         <ExtraFieldLabelled
+                            explanation={field.explanation}
+                            extra={field.extra}
+                            //field={field}
                             key={field.id}
-                            field={field}
+                            label={field.label}
+                            options={field.options}
+                            type={field.type}
                             value={value}
                         />
                     );

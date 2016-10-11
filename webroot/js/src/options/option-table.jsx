@@ -15,6 +15,7 @@ import ExtraField from './extra-field.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
+import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
 import FavouriteOption from './option-favourite-button.jsx';
 import OptionEditDialog from './option-edit-dialog.jsx';
 import OptionViewDialog from './option-view-dialog.jsx';
@@ -23,17 +24,6 @@ import Loader from '../elements/loader.jsx';
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
-    tableHeaderColumn: {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
-    },
-    tableHeaderColumnTitle: {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        width: '30%',
-    },
     tableRowColumn: {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -140,7 +130,7 @@ var OptionsTable = React.createClass({
                 break;
         }
         
-        var optionViewHandlers = {
+        var optionTableHandlers = {
             dialogOpen: this.handleDialogOpen,
             dialogClose: this.handleDialogClose,
             expandMore: this.handleExpandMore,
@@ -219,14 +209,61 @@ var OptionsTable = React.createClass({
                                                 option="all"
                                             />
                                         </TableHeaderColumn>:""}
-                                        {(props.choice.use_code)?<TableHeaderColumn style={styles.tableHeaderColumn}>Code</TableHeaderColumn>:""}
-                                        {(props.choice.use_title)?<TableHeaderColumn style={styles.tableHeaderColumnTitle}>Title</TableHeaderColumn>:""}
-                                        {(props.choice.use_min_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Min. Places</TableHeaderColumn>:""}
-                                        {(props.choice.use_max_places)?<TableHeaderColumn style={styles.tableHeaderColumn}>Max. Places</TableHeaderColumn>:""}
-                                        {(props.choice.use_points)?<TableHeaderColumn style={styles.tableHeaderColumn}>Points</TableHeaderColumn>:""}
+                                        {(props.choice.use_code)?
+                                            <SortableTableHeaderColumn
+                                                containerState={props.containerState}
+                                                field="code"
+                                                fieldType="text"
+                                                label="Code"
+                                                sortHandler={props.sortHandler}
+                                            />
+                                        :""}
+                                        {(props.choice.use_title)?
+                                            <SortableTableHeaderColumn
+                                                containerState={props.containerState}
+                                                field="title"
+                                                fieldType="text"
+                                                label="Title"
+                                                sortHandler={props.sortHandler}
+                                            />
+                                        :""}
+                                        {(props.choice.use_min_places)?
+                                            <SortableTableHeaderColumn
+                                                containerState={props.containerState}
+                                                field="min_places"
+                                                fieldType="number"
+                                                label="Min. Places"
+                                                sortHandler={props.sortHandler}
+                                            />
+                                        :""}
+                                        {(props.choice.use_max_places)?
+                                            <SortableTableHeaderColumn
+                                                containerState={props.containerState}
+                                                field="max_places"
+                                                fieldType="number"
+                                                label="Max. Places"
+                                                sortHandler={props.sortHandler}
+                                            />
+                                        :""}
+                                        {(props.choice.use_points)?
+                                            <SortableTableHeaderColumn
+                                                containerState={props.containerState}
+                                                field="points"
+                                                fieldType="number"
+                                                label="Points"
+                                                sortHandler={props.sortHandler}
+                                            />
+                                        :""}
                                         {sortableExtraFields.map(function(fieldIndex) {
                                             return (
-                                                <TableHeaderColumn style={styles.tableHeaderColumn} key={props.choice.extra_fields[fieldIndex].name}>{props.choice.extra_fields[fieldIndex].label}</TableHeaderColumn>
+                                                <SortableTableHeaderColumn
+                                                    containerState={props.containerState}
+                                                    field={props.choice.extra_fields[fieldIndex].name}
+                                                    fieldType={props.choice.extra_fields[fieldIndex].type}
+                                                    key={props.choice.extra_fields[fieldIndex].name}
+                                                    label={props.choice.extra_fields[fieldIndex].label}
+                                                    sortHandler={props.sortHandler}
+                                                />
                                             );
                                         })}
                                         {(props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>:""}
@@ -261,7 +298,11 @@ var OptionsTable = React.createClass({
                                                     return (
                                                         <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
                                                             <ExtraField 
-                                                                field={props.choice.extra_fields[fieldIndex]}
+                                                                extra={props.choice.extra_fields[fieldIndex].extra}
+                                                                label={props.choice.extra_fields[fieldIndex].label}
+                                                                options={props.choice.extra_fields[fieldIndex].options}
+                                                                //field={props.choice.extra_fields[fieldIndex]}
+                                                                type={props.choice.extra_fields[fieldIndex].type}
                                                                 value={option[props.choice.extra_fields[fieldIndex].name]}
                                                             />
                                                         </TableRowColumn>
@@ -289,7 +330,7 @@ var OptionsTable = React.createClass({
                                                         />
                                                     :""}
                                                     <ExpandButton
-                                                        handleMore={optionViewHandlers.dialogOpen} 
+                                                        handleMore={optionTableHandlers.dialogOpen} 
                                                         id={option.id}
                                                         tooltip=""
                                                     />
@@ -299,23 +340,23 @@ var OptionsTable = React.createClass({
                                         );
                                     }, this)}
                                 </TableBody>
-                                <OptionViewDialog
-                                    choice={props.choice}
-                                    handlers={optionViewHandlers}
-                                    containerState={props.containerState} 
-                                    viewState={this.state}
-                                />
-                                {(props.action === 'edit')?
-                                    <OptionEditDialog
-                                        choice={props.choice}
-                                        handlers={props.optionEditHandlers}
-                                        containerState={props.containerState} 
-                                    />
-                                :""}
                             </Table>
                         }
                     </CardText>
                 </Card>
+                    <OptionViewDialog
+                        choice={props.choice}
+                        handlers={optionTableHandlers}
+                        containerState={props.containerState} 
+                        viewState={this.state}
+                    />
+                    {(props.action === 'edit')?
+                        <OptionEditDialog
+                            choice={props.choice}
+                            handlers={props.optionEditHandlers}
+                            containerState={props.containerState} 
+                        />
+                    :""}
             </div>
         );
     }

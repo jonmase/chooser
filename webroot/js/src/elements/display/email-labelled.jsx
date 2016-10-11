@@ -6,8 +6,8 @@ var EmailLabelled = React.createClass({
     render: function() {
         return (
             <p>
-                <strong>{this.props.field.label}: </strong>
-                <Email field={this.props.field} />
+                <strong>{this.props.label}: </strong>
+                <Email {...this.props} />
             </p>
         );
     }

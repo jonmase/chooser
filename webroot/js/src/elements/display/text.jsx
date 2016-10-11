@@ -4,7 +4,7 @@ var TextDisplay = React.createClass({
     render: function() {
         return (
             <span>
-                {this.props.field.value}
+                {this.props.value}
             </span>
         );
     }
