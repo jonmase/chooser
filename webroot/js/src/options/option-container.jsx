@@ -9,7 +9,7 @@ import OptionsTable from './option-table.jsx';
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-var ViewContainer = React.createClass({
+var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
         var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
         $.ajax({
@@ -28,7 +28,7 @@ var ViewContainer = React.createClass({
         });
     },
     loadOptionsFromServer: function(orderField, orderDirection) {
-        var url = '../get-options/' + this.props.choice.id + '/view';
+        var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
         if(typeof(orderField) !== "undefined") {
             url += '/' + orderField;
             if(typeof(orderDirection) !== "undefined") {
@@ -70,11 +70,32 @@ var ViewContainer = React.createClass({
             },
         };
         
+        if(this.props.action === 'edit') {
+            initialState.optionBeingEdited = null;
+            initialState.optionDialogOpen = false;
+            initialState.optionDialogTitle = 'Add Option';
+            initialState.optionSaveButtonEnabled = true;
+            initialState.optionSaveButtonLabel = 'Save';
+        
+            if(this.props.choice.use_description) {
+                initialState.optionValue_description = '';
+            }
+            for(var extra in this.props.choice.extra_fields) {
+                var field = this.props.choice.extra_fields[extra];
+                if(field.type === 'wysiwyg') {
+                    initialState['optionValue_' + field.name] = '';
+                }
+            }
+        }
+
         return initialState;
     },
+
     componentDidMount: function() {
         this.loadOptionsFromServer();
-        this.loadInstanceFromServer();
+        if(this.props.action === 'view') {
+            this.loadInstanceFromServer();
+        }
     },
     
     handleAddFavourite: function() {
@@ -83,6 +104,137 @@ var ViewContainer = React.createClass({
     
     handleRemoveFavourite: function() {
     
+    },
+    
+    handleOptionChange: function() {
+    
+    },
+    
+    handleOptionDialogOpen: function(optionId) {
+        var stateData = {
+            optionDialogOpen: true,    //Open the dialog
+        };
+        
+        //If no option is specified, a new option is being added so set optionBeingEdited to null
+        if(optionId) {
+            console.log("Editing option: ", optionId);
+            stateData.optionDialogTitle = 'Edit Option';
+            stateData.optionBeingEdited = optionId;
+            
+            //Get the WYSIWYG field values
+            if(optionId && this.props.choice.use_description) {
+                stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
+            }
+            else {
+                stateData.optionValue_description = '';
+            }
+            for(var extra in this.props.choice.extra_fields) {
+                var field = this.props.choice.extra_fields[extra];
+                if(field.type === 'wysiwyg') {
+                    stateData['optionValue_' + field.name] = this.state.options[this.state.optionIndexesById[optionId]][field.name];
+                }
+            }
+        }
+        else {
+            console.log("Adding option");
+            stateData.optionDialogTitle = 'Add Option';
+            stateData.optionBeingEdited = null;
+        }
+        
+        this.setState(stateData);
+    },
+    
+    handleOptionDialogClose: function() {
+        this.setState({
+            optionBeingEdited: null,    //Clear the option being edited
+            optionDialogOpen: false,    //Close the dialog
+        });
+    },
+    
+    //Submit the add option form
+    handleOptionSubmit: function (option) {
+        this.setState({
+            optionSaveButtonEnabled: false,
+            optionSaveButtonLabel: 'Saving',
+        });
+
+        //Get the alloy editor data
+        if(this.props.choice.use_description) {
+            option.description = this.state.optionValue_description;
+        }
+        for(var extra in this.props.choice.extra_fields) {
+            var field = this.props.choice.extra_fields[extra];
+            if(field.type === 'wysiwyg') {
+                option[field.name] = this.state['optionValue_' + field.name];
+            }
+        }
+        
+        if(this.state.optionBeingEdited) {
+            option.choices_option_id = this.state.optionBeingEdited;
+        }
+        
+        console.log("Saving option: ", option);
+        
+        //Save the settings
+        var url = '../save/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: option,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                var stateData = {};
+                
+                //Show the response message in the snackbar
+                stateData.snackbar = {
+                    open: true,
+                    message: returnedData.response,
+                }
+                stateData.optionSaveButtonEnabled = true;
+                stateData.optionSaveButtonLabel = 'Save';
+                stateData.optionDialogOpen = false;   //Close the Dialog
+                
+                //Update the state options list
+                stateData.options = this.state.options;    //Get the current options
+                
+                //If editing an option, replace the old option with the new one
+                if(this.state.optionBeingEdited) {
+                    stateData.options.splice(this.state.optionIndexesById[returnedData.option.id], 1, returnedData.option);   //Replace the field in current extraFields
+                
+                }
+                //If adding an option, add the new option to the enf of the list
+                else {
+                    stateData.options.push(returnedData.option);   //Add the new option to current options
+                }
+                
+                //Update the optionIndexesById in state
+                this.updateOptionIndexesById(stateData.options);
+                
+                this.setState(stateData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    optionSaveButtonEnabled: true,
+                    optionSaveButtonLabel: 'Resave',
+                    snackbar: {
+                        open: true,
+                        message: 'Save error (' + err.toString() + ')',
+                    }
+                });
+            }.bind(this)
+        });
+    },
+
+    handleOptionWysiwygChange: function(element, value) {
+        var stateData = {};
+        stateData['optionValue_' + element] = value;
+        this.setState(stateData);
+        
+        this.handleOptionChange();
     },
     
     handleSnackbarClose: function() {
@@ -208,27 +360,37 @@ var ViewContainer = React.createClass({
     },
 
     render: function() {
-        var optionHandlers = {
+        var containerHandlers = {
+            sort: this.handleSort,
         };
+    
+        if(this.props.action === 'view') {
+            containerHandlers.addFavourite = this.handleAddFavourite;
+            containerHandlers.removeFavourite = this.handleRemoveFavourite;
+        }
+        else if(this.props.action === 'edit') {
+            containerHandlers.change = this.handleOptionChange;
+            containerHandlers.submit = this.handleOptionSubmit;
+            containerHandlers.dialogOpen = this.handleOptionDialogOpen;
+            containerHandlers.dialogClose = this.handleOptionDialogClose;
+            containerHandlers.wysiwygChange = this.handleWysiwygChange;
+        }
         
-        var optionViewHandlers = {
-            addFavourite: this.handleAddFavourite,
-            removeFavourite: this.handleRemoveFavourite,
-        };
         
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    <ChoiceInstructions
-                        containerState={this.state}
-                        choice={this.props.choice}
-                    />
+                    {(this.props.action === 'view')?
+                        <ChoiceInstructions
+                            containerState={this.state}
+                            choice={this.props.choice}
+                        />
+                    :""}
                     <OptionsTable
-                        action={'view'}
+                        action={this.props.action}
                         containerState={this.state}
                         choice={this.props.choice}
-                        optionViewHandlers={optionViewHandlers}
-                        sortHandler={this.handleSort}
+                        optionContainerHandlers={containerHandlers}
                     />
                     <Snackbar
                         open={this.state.snackbar.open}
@@ -242,4 +404,4 @@ var ViewContainer = React.createClass({
     }
 });
 
-module.exports = ViewContainer;
+module.exports = OptionContainer;

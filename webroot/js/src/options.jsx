@@ -4,9 +4,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import TopBar from './elements/topbar.jsx';
 
-import ViewContainer from './options/view-container.jsx';
-import EditContainer from './options/edit-container.jsx';
-import ApproveContainer from './options/approve-container.jsx';
+import OptionContainer from './options/option-container.jsx';
 
 injectTapEventPlugin();
 
@@ -20,21 +18,8 @@ ReactDOM.render(
     document.getElementById('topbar')
 );
 
-switch(data.action) {
-    case 'edit': 
-        var ContainerClass = EditContainer;
-        break;
-    case 'approve': 
-        var ContainerClass = ApproveContainer
-        break;
-    case 'view': 
-    default:
-        var ContainerClass = ViewContainer;
-        break;
-}
-
 ReactDOM.render(
-    <ContainerClass 
+    <OptionContainer 
         action={data.action} 
         choice={data.choice} 
     />, 

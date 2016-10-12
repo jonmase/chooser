@@ -175,7 +175,7 @@ var OptionsTable = React.createClass({
                             />&nbsp;*/}
                             {props.action === 'edit'? 
                                 <AddButton 
-                                    handleAdd={props.optionEditHandlers.dialogOpen} 
+                                    handleAdd={props.optionContainerHandlers.dialogOpen} 
                                     tooltip="Add Options"
                                 />
                             :""}
@@ -215,7 +215,7 @@ var OptionsTable = React.createClass({
                                                 field="code"
                                                 fieldType="text"
                                                 label="Code"
-                                                sortHandler={props.sortHandler}
+                                                sortHandler={props.optionContainerHandlers.sort}
                                             />
                                         :""}
                                         {(props.choice.use_title)?
@@ -224,7 +224,7 @@ var OptionsTable = React.createClass({
                                                 field="title"
                                                 fieldType="text"
                                                 label="Title"
-                                                sortHandler={props.sortHandler}
+                                                sortHandler={props.optionContainerHandlers.sort}
                                             />
                                         :""}
                                         {(props.choice.use_min_places)?
@@ -233,7 +233,7 @@ var OptionsTable = React.createClass({
                                                 field="min_places"
                                                 fieldType="number"
                                                 label="Min. Places"
-                                                sortHandler={props.sortHandler}
+                                                sortHandler={props.optionContainerHandlers.sort}
                                             />
                                         :""}
                                         {(props.choice.use_max_places)?
@@ -242,7 +242,7 @@ var OptionsTable = React.createClass({
                                                 field="max_places"
                                                 fieldType="number"
                                                 label="Max. Places"
-                                                sortHandler={props.sortHandler}
+                                                sortHandler={props.optionContainerHandlers.sort}
                                             />
                                         :""}
                                         {(props.choice.use_points)?
@@ -251,7 +251,7 @@ var OptionsTable = React.createClass({
                                                 field="points"
                                                 fieldType="number"
                                                 label="Points"
-                                                sortHandler={props.sortHandler}
+                                                sortHandler={props.optionContainerHandlers.sort}
                                             />
                                         :""}
                                         {sortableExtraFields.map(function(fieldIndex) {
@@ -262,7 +262,7 @@ var OptionsTable = React.createClass({
                                                     fieldType={props.choice.extra_fields[fieldIndex].type}
                                                     key={props.choice.extra_fields[fieldIndex].name}
                                                     label={props.choice.extra_fields[fieldIndex].label}
-                                                    sortHandler={props.sortHandler}
+                                                    sortHandler={props.optionContainerHandlers.sort}
                                                 />
                                             );
                                         })}
@@ -324,7 +324,7 @@ var OptionsTable = React.createClass({
                                                 <TableRowColumn style={styles.actionsTableRowColumn}>
                                                     {props.action === 'edit'? 
                                                         <EditButton
-                                                            handleEdit={props.optionEditHandlers.dialogOpen} 
+                                                            handleEdit={props.optionContainerHandlers.dialogOpen} 
                                                             id={option.id}
                                                             tooltip=""
                                                         />
@@ -353,7 +353,7 @@ var OptionsTable = React.createClass({
                     {(props.action === 'edit')?
                         <OptionEditDialog
                             choice={props.choice}
-                            handlers={props.optionEditHandlers}
+                            handlers={props.optionContainerHandlers}
                             containerState={props.containerState} 
                         />
                     :""}
