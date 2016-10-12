@@ -211,7 +211,8 @@ var OptionsTable = React.createClass({
                                         </TableHeaderColumn>:""}
                                         {(props.choice.use_code)?
                                             <SortableTableHeaderColumn
-                                                containerState={props.containerState}
+                                                sortField={props.containerState.sortField}
+                                                sortDirection={props.containerState.sortDirection}
                                                 field="code"
                                                 fieldType="text"
                                                 label="Code"
@@ -220,7 +221,8 @@ var OptionsTable = React.createClass({
                                         :""}
                                         {(props.choice.use_title)?
                                             <SortableTableHeaderColumn
-                                                containerState={props.containerState}
+                                                sortField={props.containerState.sortField}
+                                                sortDirection={props.containerState.sortDirection}
                                                 field="title"
                                                 fieldType="text"
                                                 label="Title"
@@ -229,7 +231,8 @@ var OptionsTable = React.createClass({
                                         :""}
                                         {(props.choice.use_min_places)?
                                             <SortableTableHeaderColumn
-                                                containerState={props.containerState}
+                                                sortField={props.containerState.sortField}
+                                                sortDirection={props.containerState.sortDirection}
                                                 field="min_places"
                                                 fieldType="number"
                                                 label="Min. Places"
@@ -238,7 +241,8 @@ var OptionsTable = React.createClass({
                                         :""}
                                         {(props.choice.use_max_places)?
                                             <SortableTableHeaderColumn
-                                                containerState={props.containerState}
+                                                sortField={props.containerState.sortField}
+                                                sortDirection={props.containerState.sortDirection}
                                                 field="max_places"
                                                 fieldType="number"
                                                 label="Max. Places"
@@ -247,7 +251,8 @@ var OptionsTable = React.createClass({
                                         :""}
                                         {(props.choice.use_points)?
                                             <SortableTableHeaderColumn
-                                                containerState={props.containerState}
+                                                sortField={props.containerState.sortField}
+                                                sortDirection={props.containerState.sortDirection}
                                                 field="points"
                                                 fieldType="number"
                                                 label="Points"
@@ -255,11 +260,17 @@ var OptionsTable = React.createClass({
                                             />
                                         :""}
                                         {sortableExtraFields.map(function(fieldIndex) {
+                                            var fieldType = props.choice.extra_fields[fieldIndex].type;
+                                            if(fieldType === 'list') {
+                                                fieldType = props.choice.extra_fields[fieldIndex].extra['list_type'];
+                                            }
+                                        
                                             return (
                                                 <SortableTableHeaderColumn
-                                                    containerState={props.containerState}
+                                                    sortField={props.containerState.sortField}
+                                                    sortDirection={props.containerState.sortDirection}
                                                     field={props.choice.extra_fields[fieldIndex].name}
-                                                    fieldType={props.choice.extra_fields[fieldIndex].type}
+                                                    fieldType={fieldType}
                                                     key={props.choice.extra_fields[fieldIndex].name}
                                                     label={props.choice.extra_fields[fieldIndex].label}
                                                     sortHandler={props.optionContainerHandlers.sort}

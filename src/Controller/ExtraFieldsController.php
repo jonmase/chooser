@@ -91,6 +91,7 @@ class ExtraFieldsController extends AppController
                     unset($data['list_type']);
                     
                     $listOptions = explode("\n", $data['list_options']);
+                    natcasesort($listOptions);
                     $data['extra_field_options'] = [];
                     foreach($listOptions as $option) {
                         if($option) {   //Make sure the option isn't blank

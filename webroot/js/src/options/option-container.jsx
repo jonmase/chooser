@@ -27,6 +27,7 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
     },
+    
     loadOptionsFromServer: function(orderField, orderDirection) {
         var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
         if(typeof(orderField) !== "undefined") {
@@ -55,6 +56,7 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
     },
+    
     getInitialState: function () {
         var initialState = {
             instance: [],
@@ -307,8 +309,19 @@ var OptionContainer = React.createClass({
                     var valueB = b[field];
                 }
                 else if(fieldType === 'checkbox') {
-                    var valueA = a[field];
-                    var valueB = b[field];
+                    //Checkbox options should be in alphabetical order, so can concatenate the selected values for each option then compare
+                    var valueA = '';
+                    for(var value in a[field]) {
+                        if(a[field][value]) {
+                            valueA += value.toUpperCase();
+                        }
+                    }
+                    var valueB = '';
+                    for(var value in b[field]) {
+                        if(b[field][value]) {
+                            valueB += value.toUpperCase();
+                        }
+                    }
                 }
                 //if(textTypes.indexOf(fieldType) > -1) {
                 else {  //Otherwise, assume text search

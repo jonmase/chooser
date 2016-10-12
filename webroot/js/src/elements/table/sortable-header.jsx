@@ -30,12 +30,11 @@ var SortableHeader = React.createClass({
             var style = styles.tableHeaderColumn;
         }
     
-    
         return (
             <TableHeaderColumn style={style}>
                 <div onTouchTap={this.handleSort} style={{cursor: 'hand', cursor: 'pointer'}}>
-                    {(this.props.containerState.sortField === this.props.field)?
-                        <SortIcon direction={this.props.containerState.sortDirection} />
+                    {(this.props.sortField === this.props.field)?
+                        <SortIcon direction={this.props.sortDirection} />
                     :""}
                     &nbsp;
                     <span>{this.props.label}</span>
