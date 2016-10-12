@@ -204,11 +204,7 @@ var OptionsTable = React.createClass({
                         //showExpandableButton={true}
                     >
                         <div style={{float: 'right'}}>
-                            {/*<SortUsers 
-                                state={props.containerState}
-                                handlers={props.sortUsersHandlers} 
-                                titleStyle={styles.sortFilterTitles}
-                            />&nbsp;
+                            {/*
                             <FilterUsers
                                 state={props.containerState} 
                                 roleOptions={props.roleOptions} 
@@ -221,10 +217,6 @@ var OptionsTable = React.createClass({
                                     tooltip="Add Options"
                                 />
                             :""}
-                            
-                            {/*<UsersActionMenu
-                            
-                            />*/}
                         </div>
                     </CardHeader>
                     <CardText 
