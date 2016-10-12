@@ -130,6 +130,48 @@ var OptionsTable = React.createClass({
                 break;
         }
         
+        var defaultFields = [];
+        if(props.choice.use_code) {
+            defaultFields.push({
+                name: 'code',
+                label: 'Code',
+                type: 'text',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(props.choice.use_title) {
+            defaultFields.push({
+                name: 'title',
+                label: 'Title',
+                type: 'text',
+                rowStyle: styles.tableRowColumnTitle,
+            })
+        }
+        if(props.choice.use_min_places) {
+            defaultFields.push({
+                name: 'min_places',
+                label: 'Min. Places',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(props.choice.use_max_places) {
+            defaultFields.push({
+                name: 'max_places',
+                label: 'Max. Places',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(props.choice.use_points) {
+            defaultFields.push({
+                name: 'points',
+                label: 'Points',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        
         var optionTableHandlers = {
             dialogOpen: this.handleDialogOpen,
             dialogClose: this.handleDialogClose,
@@ -209,56 +251,19 @@ var OptionsTable = React.createClass({
                                                 option="all"
                                             />
                                         </TableHeaderColumn>:""}
-                                        {(props.choice.use_code)?
-                                            <SortableTableHeaderColumn
-                                                sortField={props.containerState.sortField}
-                                                sortDirection={props.containerState.sortDirection}
-                                                field="code"
-                                                fieldType="text"
-                                                label="Code"
-                                                sortHandler={props.optionContainerHandlers.sort}
-                                            />
-                                        :""}
-                                        {(props.choice.use_title)?
-                                            <SortableTableHeaderColumn
-                                                sortField={props.containerState.sortField}
-                                                sortDirection={props.containerState.sortDirection}
-                                                field="title"
-                                                fieldType="text"
-                                                label="Title"
-                                                sortHandler={props.optionContainerHandlers.sort}
-                                            />
-                                        :""}
-                                        {(props.choice.use_min_places)?
-                                            <SortableTableHeaderColumn
-                                                sortField={props.containerState.sortField}
-                                                sortDirection={props.containerState.sortDirection}
-                                                field="min_places"
-                                                fieldType="number"
-                                                label="Min. Places"
-                                                sortHandler={props.optionContainerHandlers.sort}
-                                            />
-                                        :""}
-                                        {(props.choice.use_max_places)?
-                                            <SortableTableHeaderColumn
-                                                sortField={props.containerState.sortField}
-                                                sortDirection={props.containerState.sortDirection}
-                                                field="max_places"
-                                                fieldType="number"
-                                                label="Max. Places"
-                                                sortHandler={props.optionContainerHandlers.sort}
-                                            />
-                                        :""}
-                                        {(props.choice.use_points)?
-                                            <SortableTableHeaderColumn
-                                                sortField={props.containerState.sortField}
-                                                sortDirection={props.containerState.sortDirection}
-                                                field="points"
-                                                fieldType="number"
-                                                label="Points"
-                                                sortHandler={props.optionContainerHandlers.sort}
-                                            />
-                                        :""}
+                                        {defaultFields.map(function(field) {
+                                            return (
+                                                <SortableTableHeaderColumn
+                                                    sortField={props.containerState.sortField}
+                                                    sortDirection={props.containerState.sortDirection}
+                                                    field={field.name}
+                                                    fieldType={field.type}
+                                                    label={field.label}
+                                                    sortHandler={props.optionContainerHandlers.sort}
+                                                />
+                                            );
+                                        })}
+
                                         {sortableExtraFields.map(function(fieldIndex) {
                                             var fieldType = props.choice.extra_fields[fieldIndex].type;
                                             if(fieldType === 'list') {
@@ -294,17 +299,21 @@ var OptionsTable = React.createClass({
                                                 key={option.id} 
                                                 //selected={props.containerState.optionssSelected.indexOf(user.username) !== -1}
                                             >
-                                                 {(props.action === 'view' && enableSelection)?<TableRowColumn style={styles.favouriteTableRowColumn}>
-                                                    <FavouriteOption
-                                                        handlers={props.optionHandlers} 
-                                                        option={option}
-                                                    />
-                                                </TableRowColumn>:""}
-                                                {(props.choice.use_code)?<TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>:""}
-                                                {(props.choice.use_title)?<TableRowColumn style={styles.tableRowColumnTitle}>{option.title}</TableRowColumn>:""}
-                                                {(props.choice.use_min_places)?<TableRowColumn style={styles.tableRowColumn}>{option.min_places}</TableRowColumn>:""}
-                                                {(props.choice.use_max_places)?<TableRowColumn style={styles.tableRowColumn}>{option.max_places}</TableRowColumn>:""}
-                                                {(props.choice.use_points)?<TableRowColumn style={styles.tableRowColumn}>{option.points}</TableRowColumn>:""}
+                                                 {(props.action === 'view' && enableSelection)?
+                                                     <TableRowColumn style={styles.favouriteTableRowColumn}>
+                                                        <FavouriteOption
+                                                            handlers={props.optionHandlers} 
+                                                            option={option}
+                                                        />
+                                                    </TableRowColumn>
+                                                :""}
+                                                
+                                                {defaultFields.map(function(field) {
+                                                    return (
+                                                        <TableRowColumn style={field.rowStyle}>{option[field.name]}</TableRowColumn>
+                                                    );
+                                                })}
+                                                
                                                 {sortableExtraFields.map(function(fieldIndex) {
                                                     return (
                                                         <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
@@ -318,20 +327,12 @@ var OptionsTable = React.createClass({
                                                             />
                                                         </TableRowColumn>
                                                     );
-                                                    
-                                                    /*var content = option[props.choice.extra_fields[fieldIndex].name];
-                                                    if(typeof(content) === 'string') {
-                                                        return (
-                                                            <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>{content}</TableRowColumn>
-                                                        );
-                                                    }
-                                                    else {
-                                                        return (
-                                                            <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>-</TableRowColumn>
-                                                        );
-                                                    }*/
                                                 })}
-                                                {(props.action === 'edit')?<TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>:""}
+                                                
+                                                {(props.action === 'edit')?
+                                                    <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
+                                                :""}
+                                                
                                                 <TableRowColumn style={styles.actionsTableRowColumn}>
                                                     {props.action === 'edit'? 
                                                         <EditButton
@@ -346,7 +347,6 @@ var OptionsTable = React.createClass({
                                                         tooltip=""
                                                     />
                                                 </TableRowColumn>
-
                                             </TableRow>
                                         );
                                     }, this)}
