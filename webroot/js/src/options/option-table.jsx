@@ -16,6 +16,7 @@ import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
+import UnselectableCell from '../elements/table/unselectable-cell.jsx';
 import FavouriteOption from './option-favourite-button.jsx';
 import OptionEditDialog from './option-edit-dialog.jsx';
 import OptionViewDialog from './option-view-dialog.jsx';
@@ -38,7 +39,7 @@ var styles = {
     actionsTableRowColumn: {
         whiteSpace: 'normal',
         paddingLeft: '12px',
-        paddingRight: '12px',
+        paddingRight: 0,
         textAlign: 'right',
     },
     favouriteTableRowColumn: {
@@ -68,6 +69,7 @@ var OptionsTable = React.createClass({
         return initialState;
     },
     onCellClick: function(rowNumber, columnId, event){
+        console.log("cell Clicked");
         //Trying to stop the row from being selected when certain cells are clicked (.e.g actions)
         //console.log(rowNumber, columnId, event);
         //event.stopPropagation();
@@ -88,6 +90,7 @@ var OptionsTable = React.createClass({
             optionBeingViewed: optionId,
             optionDialogOpen: true,    //Open the dialog
         });
+        return false;
     },
     
     handleDialogClose: function() {
@@ -95,6 +98,7 @@ var OptionsTable = React.createClass({
             optionBeingViewed: null,    //Clear the option being viewed
             optionDialogOpen: false,    //Close the dialog
         });
+        return false;
     },
     
     handleExpandMore: function(option) {
@@ -106,12 +110,12 @@ var OptionsTable = React.createClass({
     render: function() {
         var props = this.props;
         
-        if(props.action === 'view') {
+        /*if(props.action === 'view') {
             styles.actionsTableRowColumn.width = '48px';
         }
         else {
             styles.actionsTableRowColumn.width = '96px';
-        }
+        }*/
         
         var enableSelection = true;
         switch(props.action) {
@@ -229,8 +233,8 @@ var OptionsTable = React.createClass({
                             <Table 
                                 selectable={enableSelection}
                                 multiSelectable={true}
-                                onRowSelection={this._onRowSelection}
-                                onCellClick={this.onCellClick}
+                                //onRowSelection={this._onRowSelection}
+                                //onCellClick={this.onCellClick}
                             >
                                 <TableHeader 
                                     adjustForCheckbox={enableSelection} 
@@ -239,7 +243,7 @@ var OptionsTable = React.createClass({
                                     <TableRow>
                                         {(props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                             <FavouriteOption
-                                                handlers={props.optionHandlers} 
+                                                handlers={props.optionContainerHandlers} 
                                                 option="all"
                                             />
                                         </TableHeaderColumn>:""}
@@ -250,6 +254,7 @@ var OptionsTable = React.createClass({
                                                     sortDirection={props.containerState.sortDirection}
                                                     field={field.name}
                                                     fieldType={field.type}
+                                                    key={field.name}
                                                     label={field.label}
                                                     sortHandler={props.optionContainerHandlers.sort}
                                                 />
@@ -274,8 +279,13 @@ var OptionsTable = React.createClass({
                                                 />
                                             );
                                         })}
-                                        {(props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>:""}
+                                        {(props.action === 'edit')?
+                                            <TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>
+                                        :""}
                                         {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
+                                        {props.action === 'edit'? 
+                                            <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                        :""}
                                         <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                     </TableRow>
                                 </TableHeader>
@@ -292,17 +302,17 @@ var OptionsTable = React.createClass({
                                                 //selected={props.containerState.optionssSelected.indexOf(user.username) !== -1}
                                             >
                                                  {(props.action === 'view' && enableSelection)?
-                                                     <TableRowColumn style={styles.favouriteTableRowColumn}>
+                                                    <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteOption
-                                                            handlers={props.optionHandlers} 
+                                                            handlers={props.optionContainerHandlers} 
                                                             option={option}
                                                         />
-                                                    </TableRowColumn>
+                                                    </UnselectableCell>
                                                 :""}
                                                 
                                                 {defaultFields.map(function(field) {
                                                     return (
-                                                        <TableRowColumn style={field.rowStyle}>{option[field.name]}</TableRowColumn>
+                                                        <TableRowColumn style={field.rowStyle} key={field.name}>{option[field.name]}</TableRowColumn>
                                                     );
                                                 })}
                                                 
@@ -325,20 +335,22 @@ var OptionsTable = React.createClass({
                                                     <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
                                                 :""}
                                                 
-                                                <TableRowColumn style={styles.actionsTableRowColumn}>
-                                                    {props.action === 'edit'? 
+                                                {props.action === 'edit'? 
+                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
                                                         <EditButton
                                                             handleEdit={props.optionContainerHandlers.dialogOpen} 
                                                             id={option.id}
                                                             tooltip=""
                                                         />
-                                                    :""}
+                                                    </UnselectableCell>
+                                                :""}
+                                                <UnselectableCell style={styles.actionsTableRowColumn}>
                                                     <ExpandButton
                                                         handleMore={optionTableHandlers.dialogOpen} 
                                                         id={option.id}
                                                         tooltip=""
                                                     />
-                                                </TableRowColumn>
+                                                </UnselectableCell>
                                             </TableRow>
                                         );
                                     }, this)}

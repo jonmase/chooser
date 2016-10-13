@@ -1,9 +1,12 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
 
 var ExpandButton = React.createClass({
     handleMore: function() {
-        this.props.handleMore(this.props.id);
+        if(this.props.handleMore) {
+            this.props.handleMore(this.props.id);
+        }
     },
     /*handleLess: function() {
         this.props.handleLess(this.props.id);
@@ -27,7 +30,8 @@ var ExpandButton = React.createClass({
                     iconClassName="material-icons"
                 >
                     expand_less
-                </IconButton>*/}
+                </IconButton>
+                <FontIcon className="material-icons">more_horiz</FontIcon>*/}
             </span>
         );
     }
