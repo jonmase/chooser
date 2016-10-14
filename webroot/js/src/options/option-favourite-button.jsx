@@ -1,29 +1,39 @@
 import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
+var styles = {
+    iconStyle: {
+        color: 'rgb(158,158,158)'
+    },
+}
+
 var FavouriteOption = React.createClass({
     handleAddFavourite: function() {
-        this.props.handlers.addFavourite(this.props.option.id);
+        this.props.handler(this.props.optionId, 'add');
     },
     handleRemoveFavourite: function() {
-        this.props.handlers.removeFavourite(this.props.option.id);
+        this.props.handler(this.props.optionId, 'remove');
     },
     render: function() {
         return (
             <span>
-                <IconButton
-                    onTouchTap={this.handleAddFavourite}
-                    iconClassName="material-icons"
-                    iconStyle={{color: 'rgb(158,158,158)'}}
-                >
-                    star_border
-                </IconButton>         
-                {/*<IconButton
-                    onTouchTap={this.handleRemoveFavourite}
-                    iconClassName="material-icons"
-                >
-                    star
-                </IconButton>*/}
+                {(this.props.favourited)?
+                    <IconButton
+                        onTouchTap={this.handleRemoveFavourite}
+                        iconClassName="material-icons"
+                        iconStyle={styles.iconStyle}
+                    >
+                        star
+                    </IconButton>         
+                :
+                    <IconButton
+                        onTouchTap={this.handleAddFavourite}
+                        iconClassName="material-icons"
+                        iconStyle={styles.iconStyle}
+                    >
+                        star_border
+                    </IconButton>
+                }
             </span>
         );
     }

@@ -85,12 +85,16 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }*/
         
-        $choosingInstance = $this->ChoosingInstances->findActive($choiceId);
-        //pr($choosingInstance);
-        //exit;
+        $choosingInstance = $this->ChoosingInstances->findActive($choiceId, true, $this->Auth->user('id'));
         
-        $this->set(compact('choosingInstance'));
-        $this->set('_serialize', ['choosingInstance']);
+        $favourites = [];
+        foreach($choosingInstance->shortlisted_options as $option) {
+            $favourites[] = $option['choices_option_id'];
+        }
+        unset($choosingInstance->shortlisted_options);
+        
+        $this->set(compact('choosingInstance', 'favourites'));
+        $this->set('_serialize', ['choosingInstance', 'favourites']);
     }
     
     

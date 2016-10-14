@@ -19,6 +19,7 @@ var OptionContainer = React.createClass({
             success: function(data) {
                 this.setState({
                     instance: data.choosingInstance,
+                    favourites: data.favourites,
                     instanceLoaded: true,
                 });
             }.bind(this),
@@ -59,6 +60,7 @@ var OptionContainer = React.createClass({
     
     getInitialState: function () {
         var initialState = {
+            favourites: [],
             instance: [],
             instanceLoaded: false,
             options: [],
@@ -100,12 +102,53 @@ var OptionContainer = React.createClass({
         }
     },
     
-    handleAddFavourite: function() {
+    handleFavourite: function(optionId, action) {
+        if(!optionId || !action) {
+            return false;
+        }
     
-    },
-    
-    handleRemoveFavourite: function() {
-    
+        console.log('add fav ' + optionId + '; ins: ' + this.state.instance.id);
+        
+        //Optimistically update the favourites array
+        var favourites = this.state.favourites;
+        if(action === 'add') {
+            var newFavourites = favourites.concat(optionId);
+        }
+        else {
+            var newFavourites = favourites.filter(function(value) {
+                return value !== optionId;
+            });
+        }
+        this.setState({
+            favourites: newFavourites,
+        });
+        
+        //Save the settings
+        /*var url = '../save/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: option,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                
+                
+            },
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    favourites: favourites,
+                    snackbar: {
+                        open: true,
+                        message: 'Error adding favourite (' + err.toString() + ')',
+                    }
+                });
+            }.bind(this)
+        });*/
+        
     },
     
     handleOptionChange: function() {
@@ -378,8 +421,7 @@ var OptionContainer = React.createClass({
         };
     
         if(this.props.action === 'view') {
-            containerHandlers.addFavourite = this.handleAddFavourite;
-            containerHandlers.removeFavourite = this.handleRemoveFavourite;
+            containerHandlers.favourite = this.handleFavourite;
         }
         else if(this.props.action === 'edit') {
             containerHandlers.change = this.handleOptionChange;

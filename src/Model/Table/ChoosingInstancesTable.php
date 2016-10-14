@@ -241,8 +241,8 @@ class ChoosingInstancesTable extends Table
         return $rules;
     }
     
-    public function findActive($choiceId) {
-        if($result = $this->findByChoiceId($choiceId, true)->first()) {
+    public function findActive($choiceId, $getFavourites = false, $userId = null) {
+        if($result = $this->findByChoiceId($choiceId, true, $getFavourites, $userId)->first()) {
             $result = $this->processForView($result);
             return $result;
         }
@@ -253,9 +253,19 @@ class ChoosingInstancesTable extends Table
         return $this->findByChoiceId($choiceId, false)->toArray();
     }
     
-    public function findByChoiceId($choiceId = null, $active = true) {
+    public function findByChoiceId($choiceId = null, $active = true, $getFavourites = false, $userId = null) {
         if(!$choiceId) {
             return [];
+        }
+        
+        $contain = [];
+        //$contain = ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
+        if($getFavourites && $userId) {
+            $contain['ShortlistedOptions'] = function($q) use ($userId) {
+                return $q
+                    ->select(['id', 'choices_option_id', 'choosing_instance_id'])
+                    ->where(['ShortlistedOptions.user_id' => $userId]);
+            };
         }
         
         $choosingInstanceQuery = $this->find('all', [
@@ -263,8 +273,8 @@ class ChoosingInstancesTable extends Table
                 'choice_id' => $choiceId,
                 'active' => $active,
             ],
-            //'contain' => ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
-        ]);
+            //'contain' => $contain,
+        ])->contain($contain);
         
         return $choosingInstanceQuery;
     }
@@ -299,7 +309,7 @@ class ChoosingInstancesTable extends Table
         return $requestData;
     }
     
-    public function processForView($instance) {
+    public function processForView($instance, $processFavourites = false) {
         foreach($this->_datetimeFields as $field) {
             $datetimeField = [];
             if(!empty($instance[$field])) {
@@ -309,6 +319,7 @@ class ChoosingInstancesTable extends Table
                 //pr($instance[$field]);
             }
         }
+        
         //exit;
         return $instance;
     }

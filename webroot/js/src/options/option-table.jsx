@@ -299,13 +299,14 @@ var OptionsTable = React.createClass({
                                         return (
                                             <TableRow 
                                                 key={option.id} 
-                                                //selected={props.containerState.optionssSelected.indexOf(user.username) !== -1}
+                                                //selected={props.containerState.optionsSelected.indexOf(user.username) !== -1}
                                             >
                                                  {(props.action === 'view' && enableSelection)?
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteOption
-                                                            handlers={props.optionContainerHandlers} 
-                                                            option={option}
+                                                            handler={props.optionContainerHandlers.favourite} 
+                                                            optionId={option.id}
+                                                            favourited={props.containerState.favourites.indexOf(option.id) > -1}
                                                         />
                                                     </UnselectableCell>
                                                 :""}
