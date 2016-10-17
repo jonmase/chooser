@@ -26,11 +26,12 @@ class LtiConsumerController extends AppController
      * Verifies LTI Launch, processes user information and then redirects appropriately
      *
      * @return \Cake\Network\Response|void Redirects to Choice view (if Choice is linked) or Choice link action
-     * @throws \Cake\Network\Exception\ForbiddenException When not an LTI request, or LTI request fails.
+     * @throws \Cake\Network\Exception\ForbiddenException When not an LTI request, LTI request fails, or no choice and user does not have config permissions.
      * @throws \Cake\Network\Exception\InternalErrorException When user cannot be saved.
-     * @throws \Cake\Network\Exception\ForbiddenException When choice is not found and user does not have permission to configure it.
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
     public function launch() {
+        $this->request->allowMethod(['post']);
         $this->autoRender = false;
         if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
             //lis_result_sourcedid is not sent by WebLearn, but is required for the LTI_Tool_Provider to save the user

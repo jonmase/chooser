@@ -87,7 +87,6 @@ class ChoicesController extends AppController
      *
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
-     * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function dashboard($id = null)
@@ -102,7 +101,6 @@ class ChoicesController extends AppController
         $choice = $this->Choices->get($id);
 
         $this->set(compact('choice', 'sections'));
-        //$this->set('_serialize', ['choice']);
     }
     
     /**
@@ -136,8 +134,8 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function formDefaults($id = null) {
@@ -156,8 +154,6 @@ class ChoicesController extends AppController
             $choice['use_' . $field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
         }
         
-        //pr($this->request->data);
-       // pr($choice);
         if($this->Choices->save($choice)) {
             $this->set('response', 'Default field settings saved');
         } 
@@ -265,16 +261,11 @@ class ChoicesController extends AppController
             $defaultRolesObject[$role['id']] = in_array($role['id'], $defaultRolesArray);
         }
         $choice->instructor_default_roles = $defaultRolesObject;
-        //pr($roleOptions); 
-        //pr($defaultRolesObject); 
-        //exit;
         
         //Get the sections to show in the menu  bar
         $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
-        //pr($sections);
         
         $this->set(compact('choice', 'users', 'roleOptions', 'roleDescriptions', 'sections', 'userSortField'));
-        //$this->set('_serialize', ['choice']);
     }
     
     /**
@@ -283,8 +274,8 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function roleSettings($id = null)
@@ -325,5 +316,4 @@ class ChoicesController extends AppController
             throw new InternalErrorException(__('Problem with saving role settings'));
         }
     }
-
 }

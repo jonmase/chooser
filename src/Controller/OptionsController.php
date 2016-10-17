@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\InternalErrorException;
 
 /**
  * Options Controller
@@ -12,35 +13,10 @@ use Cake\Network\Exception\ForbiddenException;
 class OptionsController extends AppController
 {
     /**
-     * View method
-     *
-     * @param string|null $id Choice id.
-     * @return \Cake\Network\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    /*public function view($choiceId = null)
-    {
-        $choice = $this->Options->ChoicesOptions->Choices->get($choiceId);
-        $options = $this->Options->getForView($choiceId); //Get all the published options
-
-        //If user is editor, show the menu with appropriate dashboard sections
-        $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
-        if($isEditor) {
-            //Get the sections to show in the menu  bar
-            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
-            $this->set(compact('sections'));
-        }
-        
-        $this->set(compact('choice', 'options'));
-        //$this->set('_serialize', ['choice']);
-    }*/
-    
-    /**
      * getOptions method
      *
      * @return \Cake\Network\Response|null
-     * @throws \Cake\Network\Exception\ForbiddenException If user is not Editor
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException If Choice is not found.
+     * @throws \Cake\Network\Exception\ForbiddenException If user does not have correct permissions for the action
      */
     public function getOptions($choiceId = null, $action = 'view', $orderField = 'code', $orderDirection = 'ASC')
     {
@@ -67,6 +43,11 @@ class OptionsController extends AppController
         }*/
         
         else {
+            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'));
+            if(!$isViewer) {
+                throw new ForbiddenException(__('Not allowed to view this Choice.'));
+            }
+
             //Get all of the published and approved options
             $options = $this->Options->getForView($choiceId, true, true, $orderField, $orderDirection);
         }
@@ -77,7 +58,6 @@ class OptionsController extends AppController
         foreach($options as $key => $option) {
             $optionIndexesById[$option['id']] = $key;
         }
-        //pr($options);
 
         $this->set(compact('options', 'optionIndexesById'));
         $this->set('_serialize', ['options', 'optionIndexesById']);
@@ -159,8 +139,8 @@ class OptionsController extends AppController
      * @param string|null $id Profile id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Editor, or cannot edit this option
-	 * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+	 * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      */
     public function save($choiceId = null) {
         $this->request->allowMethod(['patch', 'post', 'put']);
@@ -226,69 +206,4 @@ class OptionsController extends AppController
             throw new InternalErrorException(__('Problem with saving option'));
         }
     }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
-     */
-    /*public function add()
-    {
-        $option = $this->Options->newEntity();
-        if ($this->request->is('post')) {
-            $option = $this->Options->patchEntity($option, $this->request->data);
-            if ($this->Options->save($option)) {
-                $this->Flash->success(__('The option has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The option could not be saved. Please, try again.'));
-            }
-        }
-        $this->set(compact('option'));
-        $this->set('_serialize', ['option']);
-    }*/
-
-    /**
-     * Edit method
-     *
-     * @param string|null $id Option id.
-     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
-     */
-    /*public function edit($id = null)
-    {
-        $option = $this->Options->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $option = $this->Options->patchEntity($option, $this->request->data);
-            if ($this->Options->save($option)) {
-                $this->Flash->success(__('The option has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            } else {
-                $this->Flash->error(__('The option could not be saved. Please, try again.'));
-            }
-        }
-        $this->set(compact('option'));
-        $this->set('_serialize', ['option']);
-    }*/
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Option id.
-     * @return \Cake\Network\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    /*public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $option = $this->Options->get($id);
-        if ($this->Options->delete($option)) {
-            $this->Flash->success(__('The option has been deleted.'));
-        } else {
-            $this->Flash->error(__('The option could not be deleted. Please, try again.'));
-        }
-        return $this->redirect(['action' => 'index']);
-    }*/
 }

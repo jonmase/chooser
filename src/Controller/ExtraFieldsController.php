@@ -19,8 +19,8 @@ class ExtraFieldsController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
      */
     public function save($id = null) {
@@ -33,8 +33,6 @@ class ExtraFieldsController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
-        //pr($this->request->data);
-        //exit;
         $data = $this->request->data;
         $data['choice_id'] = $id;
         
@@ -50,7 +48,7 @@ class ExtraFieldsController extends AppController
             if($extraFieldInDB->choice_id != $data['choice_id']) {
                 throw new InternalErrorException(__('Problem with updating extra field - Choice IDs do not match'));
             }
-            //pr($extraFieldInDB);
+
             $listTypes = $this->ExtraFields->getListTypes();
             if(in_array($extraFieldInDB->type, $listTypes)) {
                 $type = 'list';
@@ -84,8 +82,6 @@ class ExtraFieldsController extends AppController
                 throw new InternalErrorException(__('Please specify list type and options'));
             }
             else {
-                //$extraFieldNames = ['list_type'];
-                //$data = $this->ExtraFields->processExtraFieldsForSave($data, $extraFieldNames);
                 $data['type'] = $data['list_type'];
                 unset($data['list_type']);
                 
@@ -117,7 +113,6 @@ class ExtraFieldsController extends AppController
             $extraFieldNames = ['number_min', 'number_max', 'integer'];
             $data = $this->ExtraFields->processExtraFieldsForSave($data, $extraFieldNames);
         }
-        //pr($data);
 
         //If updating, patch the existing record with the updated data
         if($updating) {
@@ -127,8 +122,6 @@ class ExtraFieldsController extends AppController
         else {
             $extraField = $this->ExtraFields->newEntity($data, ['associated' => ['ExtraFieldOptions']]);
         }
-        //pr($extraField);
-        //exit;
         
         if($this->ExtraFields->save($extraField)) {
             $this->set('response', 'Extra field ' . ($updating?'updated':'added'));
@@ -147,8 +140,8 @@ class ExtraFieldsController extends AppController
      * 
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\InternalErrorException When delete fails.
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Network\Exception\InternalErrorException When delete fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
      */
     public function delete() {
