@@ -158,9 +158,12 @@ class OptionsController extends AppController
      *
      * @param string|null $id Profile id.
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Editor, or cannot edit this option
+	 * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
      */
     public function save($choiceId = null) {
+        $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an editor for this Choice
@@ -170,62 +173,57 @@ class OptionsController extends AppController
             throw new ForbiddenException(__('Not permitted to create/edit options for this Choice.'));
         }
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            //pr($this->request->data);
-            $originalChoicesOption = null;
-            if(!empty($this->request->data['choices_option_id'])) {
-                $choicesOptionsQuery = $this->Options->ChoicesOptions->find('all', [
-                    'conditions' => [
-                        'ChoicesOptions.id' => $this->request->data['choices_option_id'],
-                    ],
-                    'contain' => [
-                        'Options',
-                    ]
+        //pr($this->request->data);
+        $originalChoicesOption = null;
+        if(!empty($this->request->data['choices_option_id'])) {
+            $choicesOptionsQuery = $this->Options->ChoicesOptions->find('all', [
+                'conditions' => [
+                    'ChoicesOptions.id' => $this->request->data['choices_option_id'],
+                ],
+                'contain' => [
+                    'Options',
+                ]
+            ]);
+            $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
+                return $q->where([
+                    'ChoicesOptionsUsers.user_id' => $userId,
+                    'ChoicesOptionsUsers.editor' => true,
                 ]);
-                $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
-                    return $q->where([
-                        'ChoicesOptionsUsers.user_id' => $userId,
-                        'ChoicesOptionsUsers.editor' => true,
-                    ]);
-                });
-                
-                unset($this->request->data['choices_option_id']);
-                
-                $originalChoicesOption = $choicesOptionsQuery->first();
-                if(empty($originalChoicesOption)) {
-                    throw new ForbiddenException(__('Not permitted to edit this option.'));
-                }
-                unset($originalChoicesOption->_matchingData);
-                //pr($originalChoicesOption);
-            }
-            $updatedChoicesOption = $this->Options->processForSave($choiceId, $userId, $this->request->data, $originalChoicesOption);
-            $choicesOptions = [$updatedChoicesOption];
+            });
             
-            if($originalChoicesOption) {
-                $originalChoicesOption = $originalChoicesOption->toArray();
-                $originalChoicesOption['revision_parent'] = $originalChoicesOption['id'];
-                $originalChoicesOption['option']['revision_parent'] = $originalChoicesOption['option']['id'];
-                unset($originalChoicesOption['id'], $originalChoicesOption['option']['id']);
-                $choicesOptions[] = $this->Options->ChoicesOptions->newEntity($originalChoicesOption);
+            unset($this->request->data['choices_option_id']);
+            
+            $originalChoicesOption = $choicesOptionsQuery->first();
+            if(empty($originalChoicesOption)) {
+                throw new ForbiddenException(__('Not permitted to edit this option.'));
             }
-
-            //pr($choicesOptions);
-            //exit;
-       
-            if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
-                $this->set('response', 'Option saved');
-                
-                $option = $this->Options->processForView($updatedChoicesOption, $choiceId);
-                //pr($option);
-                //exit;
-                $this->set('option', $option);
-            } 
-            else {
-                throw new InternalErrorException(__('Problem with saving option'));
-            }
+            unset($originalChoicesOption->_matchingData);
+            //pr($originalChoicesOption);
         }
+        $updatedChoicesOption = $this->Options->processForSave($choiceId, $userId, $this->request->data, $originalChoicesOption);
+        $choicesOptions = [$updatedChoicesOption];
+        
+        if($originalChoicesOption) {
+            $originalChoicesOption = $originalChoicesOption->toArray();
+            $originalChoicesOption['revision_parent'] = $originalChoicesOption['id'];
+            $originalChoicesOption['option']['revision_parent'] = $originalChoicesOption['option']['id'];
+            unset($originalChoicesOption['id'], $originalChoicesOption['option']['id']);
+            $choicesOptions[] = $this->Options->ChoicesOptions->newEntity($originalChoicesOption);
+        }
+
+        //pr($choicesOptions);
+        //exit;
+   
+        if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
+            $this->set('response', 'Option saved');
+            
+            $option = $this->Options->processForView($updatedChoicesOption, $choiceId);
+            //pr($option);
+            //exit;
+            $this->set('option', $option);
+        } 
         else {
-            throw new MethodNotAllowedException(__('Saving option requires POST'));
+            throw new InternalErrorException(__('Problem with saving option'));
         }
     }
 
@@ -234,7 +232,7 @@ class OptionsController extends AppController
      *
      * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    /*public function add()
     {
         $option = $this->Options->newEntity();
         if ($this->request->is('post')) {
@@ -248,7 +246,7 @@ class OptionsController extends AppController
         }
         $this->set(compact('option'));
         $this->set('_serialize', ['option']);
-    }
+    }*/
 
     /**
      * Edit method
@@ -257,7 +255,7 @@ class OptionsController extends AppController
      * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Network\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    /*public function edit($id = null)
     {
         $option = $this->Options->get($id, [
             'contain' => []
@@ -273,7 +271,7 @@ class OptionsController extends AppController
         }
         $this->set(compact('option'));
         $this->set('_serialize', ['option']);
-    }
+    }*/
 
     /**
      * Delete method
@@ -282,7 +280,7 @@ class OptionsController extends AppController
      * @return \Cake\Network\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    /*public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $option = $this->Options->get($id);
@@ -292,5 +290,5 @@ class OptionsController extends AppController
             $this->Flash->error(__('The option could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
-    }
+    }*/
 }

@@ -102,21 +102,21 @@ var OptionContainer = React.createClass({
         }
     },
     
-    handleFavourite: function(optionId, action) {
-        if(!optionId || !action) {
+    handleFavourite: function(choicesOptionId, action) {
+        if(!choicesOptionId || !action) {
             return false;
         }
     
-        console.log('add fav ' + optionId + '; ins: ' + this.state.instance.id);
+        console.log('add fav ' + choicesOptionId + '; ins: ' + this.state.instance.id);
         
         //Optimistically update the favourites array
         var favourites = this.state.favourites;
         if(action === 'add') {
-            var newFavourites = favourites.concat(optionId);
+            var newFavourites = favourites.concat(choicesOptionId);
         }
         else {
             var newFavourites = favourites.filter(function(value) {
-                return value !== optionId;
+                return value !== choicesOptionId;
             });
         }
         this.setState({
@@ -124,30 +124,30 @@ var OptionContainer = React.createClass({
         });
         
         //Save the settings
-        /*var url = '../save/' + this.props.choice.id;
+        var url = '../../shortlisted-options/favourite/' + action + '/' + this.state.instance.id + '/' + choicesOptionId;
         $.ajax({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: option,
+            //data: {,
             success: function(returnedData) {
                 console.log(returnedData.response);
-
                 
-                
+                //No further action needed as favourites optimistically updated
             },
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    favourites: favourites,
+                    favourites: favourites, //Revert to the previous favourites
+                    //Show error in snackbar
                     snackbar: {
                         open: true,
                         message: 'Error adding favourite (' + err.toString() + ')',
                     }
                 });
             }.bind(this)
-        });*/
+        });
         
     },
     

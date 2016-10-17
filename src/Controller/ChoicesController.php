@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
-use Cake\Network\Exception\MethodNotAllowedException;
 
 /**
  * Choices Controller
@@ -89,7 +88,7 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Staff or Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function dashboard($id = null)
     {
@@ -113,7 +112,7 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function form($id = null) {
         //Make sure the user is an admin for this Choice
@@ -137,11 +136,12 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function formDefaults($id = null) {
+        $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
@@ -150,24 +150,19 @@ class ChoicesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
-        if ($this->request->is('post')) {
-            $choice = $this->Choices->get($id);
-            
-            foreach($this->request->data as $field => $value) {
-                $choice['use_' . $field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            }
-            
-            //pr($this->request->data);
-           // pr($choice);
-            if($this->Choices->save($choice)) {
-                $this->set('response', 'Default field settings saved');
-            } 
-            else {
-                throw new InternalErrorException(__('Problem with saving default field settings'));
-            }
+        $choice = $this->Choices->get($id);
+        
+        foreach($this->request->data as $field => $value) {
+            $choice['use_' . $field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
         }
+        
+        //pr($this->request->data);
+       // pr($choice);
+        if($this->Choices->save($choice)) {
+            $this->set('response', 'Default field settings saved');
+        } 
         else {
-            throw new MethodNotAllowedException(__('Saving default field settings requires POST'));
+            throw new InternalErrorException(__('Problem with saving default field settings'));
         }
     }
 
@@ -230,7 +225,7 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function roles($id = null)
     {
@@ -288,11 +283,13 @@ class ChoicesController extends AppController
      * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails.
      * @throws \Cake\Datasource\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function roleSettings($id = null)
     {
+        $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
@@ -301,36 +298,31 @@ class ChoicesController extends AppController
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $choice = $this->Choices->get($id, [
-                'contain' => []
-            ]);
-            
-            $data = [];
-            
-            //Set the notify value
-            $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
-            
-            //Set the default roles value
-            $defaultRoles = [];
-            foreach($this->request->data['defaultRoles'] as $role => $default) {
-                if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
-                    $defaultRoles[] = $role;
-                }
-            }
-            $data['instructor_default_roles'] = implode(',', $defaultRoles);
-            
-            $choice = $this->Choices->patchEntity($choice, $data);
-
-            if ($this->Choices->save($choice)) {
-                $this->set('response', 'Role settings saved');
-            } 
-            else {
-                throw new InternalErrorException(__('Problem with saving role settings'));
+        $choice = $this->Choices->get($id, [
+            'contain' => []
+        ]);
+        
+        $data = [];
+        
+        //Set the notify value
+        $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+        
+        //Set the default roles value
+        $defaultRoles = [];
+        foreach($this->request->data['defaultRoles'] as $role => $default) {
+            if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
+                $defaultRoles[] = $role;
             }
         }
+        $data['instructor_default_roles'] = implode(',', $defaultRoles);
+        
+        $choice = $this->Choices->patchEntity($choice, $data);
+
+        if ($this->Choices->save($choice)) {
+            $this->set('response', 'Role settings saved');
+        } 
         else {
-            throw new MethodNotAllowedException(__('Role settings requires POST, PUT or PATCH'));
+            throw new InternalErrorException(__('Problem with saving role settings'));
         }
     }
 

@@ -163,6 +163,31 @@ class ChoicesUsersTable extends Table
     }
 
     /**
+     * getChoicesUser method
+     * Looks up the User's roles for a Choice and returns array of arrays
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @param boolean $includeView Whether or not include 'view' as one of the roles
+     * @return array $roles array of the User's roles with full role info (or empty array if not associated)
+     */
+    public function getChoicesUser($choiceId = null, $userId = null) {
+        //If either choiceId or userId isn't set, return empty array (i.e. no result)
+        if(!$choiceId || !$userId) {
+            return [];
+        }
+        
+        //Look up user's for this Choice in the ChoicesUsers table
+        $choicesUsersQuery = $this->find('all', [
+            'conditions' => ['choice_id' => $choiceId, 'user_id' => $userId],
+        ]);
+        
+        $choicesUser = $choicesUsersQuery->first();
+
+        return $choicesUser;
+    }
+
+    /**
      * getRoles method
      * Looks up the User's roles for a Choice and returns array of arrays
      *
@@ -177,12 +202,8 @@ class ChoicesUsersTable extends Table
             $roles = [];
         }
         
-        //Look up user's permissions over this Choice in the ChoicesUsers table
-        $choicesUsersQuery = $this->find('all', [
-            'conditions' => ['choice_id' => $choiceId, 'user_id' => $userId],
-        ]);
-        
-        $choicesUser = $choicesUsersQuery->first();
+        $choicesUser = $this->getChoicesUser($choiceId, $userId);
+
         $roles = $this->processRoles($choicesUser, $includeView);
 
         return $roles;
@@ -271,6 +292,20 @@ class ChoicesUsersTable extends Table
         }
     }
     
+    /**
+     * isViewer method
+     * Checks whether a User is allowed to view a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @return boolean True if the User is allowed to view, false if not
+     */
+    public function isViewer($choiceId = null, $userId = null) {
+        $choicesUser = $this->getChoicesUser($choiceId, $userId);
+        
+        return !empty($choicesUser);
+    }
+
     /**
      * isAdmin method
      * Checks whether a User is an admin for a Choice

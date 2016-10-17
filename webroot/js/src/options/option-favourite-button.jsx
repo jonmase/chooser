@@ -12,7 +12,7 @@ var FavouriteOption = React.createClass({
         this.props.handler(this.props.optionId, 'add');
     },
     handleRemoveFavourite: function() {
-        this.props.handler(this.props.optionId, 'remove');
+        this.props.handler(this.props.optionId, 'delete');
     },
     render: function() {
         return (
