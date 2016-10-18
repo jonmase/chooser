@@ -29,13 +29,15 @@ class RulesController extends AppController
         }
         
         list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
-        $this->set(compact('rules'));
-        $this->set('_serialize', ['rules']);
         
         if($action === 'settings') {
             $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
-            $this->set(compact('ruleIndexesById', 'ruleCategoryFields'));
-            $this->set('_serialize', ['ruleIndexesById', 'ruleCategoryFields']);
+            $this->set(compact('rules', 'ruleIndexesById', 'ruleCategoryFields'));
+            $this->set('_serialize', ['rules', 'ruleIndexesById', 'ruleCategoryFields']);
+        }
+        else {
+            $this->set(compact('rules'));
+            $this->set('_serialize', ['rules']);
         }
     }
 

@@ -43,33 +43,29 @@ var RuleViewDialog = React.createClass({
             >
                 {rule?
                     <div>
-                        <Text field={{label: "Name", value: rule.name}} key="name" />
-                        <Wysiwyg field={{label: "Instructions", value: rule.instructions}} key="instructions" />
-                        <Wysiwyg field={{label: "Warning", value: rule.warning}} key="warning" />
-                        <Text field={{label: "Type", value: rule.type.charAt(0).toUpperCase() + rule.type.slice(1)}} key="type" />
+                        <Text label="Name" value={rule.name} key="name" />
+                        <Wysiwyg label="Instructions" value={rule.instructions} key="instructions" />
+                        <Wysiwyg label="Warning" value={rule.warning} key="warning" />
+                        <Text label="Type" value={rule.type.charAt(0).toUpperCase() + rule.type.slice(1)} key="type" />
                         
                         {(rule.type === 'points' || rule.type === 'number')?
                             <Text 
-                                field={{
-                                    label: "Alowed Values", 
-                                    value: rule.values,
-                                }} 
+                                label="Alowed Values"
+                                value={rule.values}
                                 key="values" 
                             />
                         :""}
                         
                         <Text 
-                            field={{
-                                label: "Scope", 
-                                value: rule.scope_text,
-                            }} 
+                            label="Scope"
+                            value={rule.scope_text}
                             key="scope" 
                         />
-                        <Toggle field={{
-                            label: "Hard Rule?", 
-                            value: rule.hard, 
-                            explanation: "Students can" + (rule.hard?"not submit":" still submit even") + " if they do not fulfil this rule" + (rule.hard?"":", but will be shown a warning"),
-                        }} />
+                        <Toggle
+                            label="Hard Rule?" 
+                            value={rule.hard} 
+                            explanation={"Students can" + (rule.hard?"not submit":" still submit even") + " if they do not fulfil this rule" + (rule.hard?"":", but will be shown a warning")}
+                        />
                     </div>
                 :
                     <p>No rule</p>
