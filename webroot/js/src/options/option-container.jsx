@@ -28,7 +28,6 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
     },
-    
     loadOptionsFromServer: function(orderField, orderDirection) {
         var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
         if(typeof(orderField) !== "undefined") {
@@ -57,6 +56,23 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
     },
+    loadRulesFromServer: function() {
+        var url = '../../rules/get/' + this.props.choice.id + '/view.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    rules: data.rules,
+                    rulesLoaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
     
     getInitialState: function () {
         var initialState = {
@@ -66,6 +82,8 @@ var OptionContainer = React.createClass({
             options: [],
             optionIndexesById: [],
             optionsLoaded: false,
+            rules: [],
+            rulesLoaded: false,
             sortField: 'code',
             sortDirection: 'asc',
             snackbar: {
@@ -99,6 +117,7 @@ var OptionContainer = React.createClass({
         this.loadOptionsFromServer();
         if(this.props.action === 'view') {
             this.loadInstanceFromServer();
+            this.loadRulesFromServer();
         }
     },
     

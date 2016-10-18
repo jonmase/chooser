@@ -19,7 +19,7 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function get($choiceId) {
+    public function get($choiceId = null, $action = 'settings') {
         //Make sure the user is an admin for this Choice or the Choice is visible to viewers
         $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
         if(empty($isAdmin)) {
@@ -29,11 +29,14 @@ class RulesController extends AppController
         }
         
         list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
+        $this->set(compact('rules'));
+        $this->set('_serialize', ['rules']);
         
-        $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
-
-        $this->set(compact('rules', 'ruleIndexesById', 'ruleCategoryFields'));
-        $this->set('_serialize', ['rules', 'ruleIndexesById', 'ruleCategoryFields']);
+        if($action === 'settings') {
+            $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
+            $this->set(compact('ruleIndexesById', 'ruleCategoryFields'));
+            $this->set('_serialize', ['ruleIndexesById', 'ruleCategoryFields']);
+        }
     }
 
     /**
