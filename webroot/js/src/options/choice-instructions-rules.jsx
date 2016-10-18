@@ -11,9 +11,7 @@ var ChoiceInstructionsRules = React.createClass({
                     <div>
                         {this.props.rules.map(function(rule) {
                             return (
-                                <div>
-                                    <Text label={rule.name} value={rule.instructions} />
-                                </div>
+                                <Text key={rule.name} label={rule.name} value={rule.instructions} />
                             );
                         })}
                     </div>
