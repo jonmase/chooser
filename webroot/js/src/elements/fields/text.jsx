@@ -7,9 +7,19 @@ var TextField = React.createClass({
         
         var required=field.required?true:false;
         
+        var divClass = '';
+        var inputClass = '';
+        if(field.section) {
+            divClass += 'section';
+        }
+        if(field.fullWidth) {
+            inputClass += 'full-width';
+        }
+        
         return (
-            <div className={field.section?'section':''}>
+            <div className={divClass}>
                 <FormsyText
+                    className={inputClass}
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}

@@ -8,7 +8,7 @@ import FormsyDialog from '../elements/formsy-dialog.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
 
 import Text from '../elements/fields/text.jsx';
-import Wysiwyg from '../elements/fields/wysiwyg.jsx';
+//import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
@@ -90,27 +90,32 @@ var RuleDialog = React.createClass({
                         label: "Name*",
                         instructions: "Enter name",
                         name: "name",
-                        section: true,
+                        section: false,
                         required: true,
                         value: rule.name,
                     }}
                 />
-                <Wysiwyg field={{
+                <Text field={{
+                    fullWidth: true,
                     label: "Instructions",
                     instructions: "Provide instructions for the students on fulfilling this rule.",
                     name: "instructions",
-                    onChange: this.props.handlers.wysiwygChange,
-                    section: true,
+                    //onChange: this.props.handlers.wysiwygChange,
+                    section: false,
                     value: rule.instructions,
                 }} />
-                <Wysiwyg field={{
+                <Text field={{
+                    fullWidth: true,
                     label: "Warning Message",
                     instructions: "This message will be shown to students if they fail to fulfil this rule.",
                     name: "warning",
-                    onChange: this.props.handlers.wysiwygChange,
+                    //onChange: this.props.handlers.wysiwygChange,
                     section: true,
                     value: rule.instructions,
                 }} />
+                <p>
+                    <strong>Please Note:</strong> If you do not provide instructions or a warning message, these will be generated using the rule details provided below.
+                </p>
                 <div className="section" id="hard">
                     <FormsyToggle
                         defaultToggled={(typeof(rule.hard) !== "undefined")?rule.hard:true}
