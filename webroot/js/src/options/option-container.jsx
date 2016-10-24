@@ -82,6 +82,7 @@ var OptionContainer = React.createClass({
             options: [],
             optionIndexesById: [],
             optionsLoaded: false,
+            optionsSelected: [],
             rules: [],
             rulesLoaded: false,
             sortField: 'code',
@@ -168,6 +169,27 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
         
+    },
+    
+    handleOptionSelect: function(rowsSeleted) {
+        console.log(rowsSeleted);
+        var optionsSelected = [];
+        if(rowsSeleted === 'all') {
+            this.state.options.map(function(option) {
+                optionsSelected.push(option.id);
+            }, this);
+        }
+        else if(rowsSeleted === 'none') {
+            //Leave optionsSelected empty
+        }
+        else {
+            rowsSeleted.map(function(rowIndex) {
+                optionsSelected.push(this.state.options[rowIndex].id);
+            }, this);
+        }
+        
+        console.log(optionsSelected);
+        this.setState({optionsSelected: optionsSelected});
     },
     
     handleOptionChange: function() {
@@ -437,6 +459,7 @@ var OptionContainer = React.createClass({
     render: function() {
         var containerHandlers = {
             sort: this.handleSort,
+            selectOption: this.handleOptionSelect,
         };
     
         if(this.props.action === 'view') {

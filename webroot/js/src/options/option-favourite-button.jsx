@@ -8,10 +8,14 @@ var styles = {
 }
 
 var FavouriteOption = React.createClass({
-    handleAddFavourite: function() {
+    handleAddFavourite: function(e) {
+                                                          e.preventDefault();
+                                                          e.stopPropagation();
         this.props.handler(this.props.optionId, 'add');
     },
-    handleRemoveFavourite: function() {
+    handleRemoveFavourite: function(e) {
+                                                          e.preventDefault();
+                                                          e.stopPropagation();
         this.props.handler(this.props.optionId, 'delete');
     },
     render: function() {

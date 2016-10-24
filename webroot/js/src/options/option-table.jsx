@@ -68,22 +68,8 @@ var OptionsTable = React.createClass({
         
         return initialState;
     },
-    onCellClick: function(rowNumber, columnId, event){
-        console.log("cell Clicked");
-        //Trying to stop the row from being selected when certain cells are clicked (.e.g actions)
-        //console.log(rowNumber, columnId, event);
-        //event.stopPropagation();
-        //console.log(event.pageX);
-        //if(columnId === 6) {
-            return false;
-        //}
-    },
     _onRowSelection: function(selectedRows){
-        //console.log(selectedRows);
-        //this.props.selectUserHandlers.change(selectedRows);
-    },
-    _onSelectAll: function(selectedRows){
-        //this.props.selectUserHandlers.change(selectedRows);
+        this.props.optionContainerHandlers.selectOption(selectedRows);
     },
     handleDialogOpen: function(optionId) {
         this.setState({
@@ -195,6 +181,8 @@ var OptionsTable = React.createClass({
             }
         });
 
+        console.log(props.containerState.optionsSelected);
+        
         return (
             <div>
                 <Card 
@@ -233,8 +221,7 @@ var OptionsTable = React.createClass({
                             <Table 
                                 selectable={enableSelection}
                                 multiSelectable={true}
-                                //onRowSelection={this._onRowSelection}
-                                //onCellClick={this.onCellClick}
+                                onRowSelection={this._onRowSelection}
                             >
                                 <TableHeader 
                                     adjustForCheckbox={enableSelection} 
@@ -295,13 +282,13 @@ var OptionsTable = React.createClass({
                                 >
                                     {props.containerState.options.map(function(option) {
                                         //var user = props.containerState.users[userIndex];
-                                        
+                                        console.log(option.id + ": " + props.containerState.optionsSelected.indexOf(option.id));
                                         return (
                                             <TableRow 
                                                 key={option.id} 
-                                                //selected={props.containerState.optionsSelected.indexOf(user.username) !== -1}
+                                                selected={props.containerState.optionsSelected.indexOf(option.id) !== -1}
                                             >
-                                                 {(props.action === 'view' && enableSelection)?
+                                                {(props.action === 'view' && enableSelection)?
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteOption
                                                             handler={props.optionContainerHandlers.favourite} 
