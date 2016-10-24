@@ -126,14 +126,24 @@ class RulesTable extends Table
             $instance = $instanceQuery->first();
             $rules = $instance->rules;
             
-            //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
             $ruleIndexesById = [];
             foreach($rules as $key => &$rule) {
                 if(!empty($rule['value_type'])) {
                     $rule['combined_type'] = $rule['type'] . '_' . $rule['value_type'];
                     
                     if($rule['value_type'] === 'range') {
-                        $rule['values'] = $rule['min'] . ' to ' . $rule['max'];
+                        if(!$rule['min'] && !$rule['max']) {
+                            $rule['values'] = '-';
+                        }
+                        else if(!$rule['min']) {
+                            $rule['values'] = 'Up to ' . $rule['max'];
+                        }
+                        else if(!$rule['max']) {
+                            $rule['values'] = 'At least ' . $rule['min'];
+                        }
+                        else {
+                            $rule['values'] = $rule['min'] . ' to ' . $rule['max'];
+                        }
                     }
                     else {
                         $rule['values'] = $rule['allowed_values'];
@@ -157,6 +167,9 @@ class RulesTable extends Table
                     $rule['scope_text'] = '?';
                 }
                 
+                list($rule['instructions'], $rule['warning']) = $this->generateInstructionsAndWarning($rule);
+
+                //TODO: Doing this feels quite ugly, but is intended to save time repeatedly looping through the array of rules to find the one with the right ID
                 $ruleIndexesById[$rule['id']] = $key;
             }
         
@@ -165,5 +178,118 @@ class RulesTable extends Table
         else {
             return [[],[]];
         }
+    }
+    
+    public function generateInstructionsAndWarning($rule) {
+        if(empty($rule)) {
+            return ['', ''];
+        }
+        
+        //If the trimmed instructions value is an empty string, generate it
+        $instructions = trim($rule['instructions']);
+        $warning = trim($rule['warning']);
+        
+        if(!$instructions || !$warning) {
+            $text = '';
+            if($rule['hard']) {
+                $text .= 'You must';
+            }
+            else {
+                $text .= 'You should';
+            }
+            
+            $text .= ' select ';
+            
+            //Work out the value text
+            $pluraliseNoun = true;
+            if($rule['value_type'] === 'values') {
+                $values = explode(',', $rule['allowed_values']);
+
+                $valueCount = count($values);
+                if($valueCount === 1) {
+                    $value = trim($values[0]);
+                    $number = 'exactly ' . $value;
+                    if(($value + 0) === 1) {
+                        $pluraliseNoun = false;
+                    }
+                }
+                else if($valueCount > 1) {
+                    $number = 'either ';
+                    $i = 1;
+                    foreach($values as $value) {
+                        $number = trim($value);
+                        
+                        //Work out the correct joining text
+                        $i++;   //Increment i first
+                        if($i < $valueCount) { //Next value is not the last
+                            $number = ', ';
+                        }
+                        else if($i === $valueCount) {   //Next value is the last
+                            $number = ' or ';
+                        }
+                    }
+                }
+                //Value count is 0
+                else {
+                    $number = 'an unspecified number of';
+                }
+            }
+            else if($rule['value_type'] === 'range') {
+                //Is there a min (can ignore it if it is 0)
+                if($rule['min']) {
+                    //Both min and max
+                    if($rule['max']) {
+                        $number = 'between ' . $rule['min'] . ' and ' . $rule['max'];
+                    }
+                    //Min only
+                    else {
+                        $number = 'at least ' . $rule['min'];
+                        if(($rule['min'] + 0) === 1) {
+                            $pluraliseNoun = false;
+                        }
+                    }
+                }
+                //Max only
+                else if($rule['max']) {
+                    $number = 'at most ' . $rule['max'];
+                        if(($rule['max'] + 0) === 1) {
+                            $pluraliseNoun = false;
+                        }
+                }
+                //Both null
+                else {
+                    $number = 'an unspecified range of';
+                }
+            }
+
+            if($rule['type'] === 'number') {
+                $text .= $number . ' option' . ($pluraliseNoun?"s":"");
+            }
+            else if($rule['type'] === 'points') {
+                $text .= 'options totalling ' . $number . ' point' . ($pluraliseNoun?"s":"");
+            }
+            
+            //If scope is Choice, finish the sentence with a full stop
+            if($rule['scope'] === 'choice') {
+                $text .= '.';
+            }
+            //If scope is category/category_all, show the category and category field name
+            //TODO: how should this be expressed? Likewise for all from field
+            else if($rule['scope'] === 'category') {
+                $text .= ' from the ' . $rule['extra_field']['label'] . ' category called ' . $rule['extra_field_option']['label'];
+            }
+            else if($rule['scope'] === 'category_all') {
+                $text .= ' from each ' . $rule['extra_field']['label'] . ' category.';
+            }
+        }
+        
+        if(!$instructions) {
+            $instructions = $text;
+        }
+        if(!$warning) {
+            $warning = $text;
+        }
+        
+        return [$instructions, $warning];
     }
 }
