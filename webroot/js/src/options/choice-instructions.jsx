@@ -26,7 +26,7 @@ var ChoiceInstructions = React.createClass({
                 initiallyExpanded={true}
             >
                 <CardHeader
-                    title="Instructions"
+                    title="Instructions & Rules"
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
@@ -38,8 +38,8 @@ var ChoiceInstructions = React.createClass({
                             <Loader />
                         :
                             (instance.id)?
-                                <div>
-                                    <div>
+                                <div className="row">
+                                    <div className="col-md-6">
                                         <Wysiwyg value={instance.choosing_instructions} />
                                         {(instance.opens)?
                                             <DateTime label="Opens" value={instance.opens} />
@@ -51,7 +51,9 @@ var ChoiceInstructions = React.createClass({
                                             <DateTime label="Extension" value={instance.extension} />
                                         :""}
                                     </div>
-                                    <Rules rules={this.props.containerState.rules} />
+                                    <div className="col-md-6">
+                                        <Rules rules={this.props.containerState.rules} />
+                                    </div>
                                 </div>
                             :
                                 <div>This Choice is in 'read-only' mode. You can browse the available options, but not make selections.</div>
