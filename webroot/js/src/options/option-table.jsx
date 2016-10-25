@@ -181,7 +181,7 @@ var OptionsTable = React.createClass({
             }
         });
 
-        console.log(props.containerState.optionsSelected);
+        //console.log(props.containerState.optionsSelected);
         
         return (
             <div>
@@ -282,7 +282,7 @@ var OptionsTable = React.createClass({
                                 >
                                     {props.containerState.options.map(function(option) {
                                         //var user = props.containerState.users[userIndex];
-                                        console.log(option.id + ": " + props.containerState.optionsSelected.indexOf(option.id));
+                                        //console.log(option.id + ": " + props.containerState.optionsSelected.indexOf(option.id));
                                         return (
                                             <TableRow 
                                                 key={option.id} 

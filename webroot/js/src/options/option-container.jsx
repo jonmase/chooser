@@ -172,7 +172,7 @@ var OptionContainer = React.createClass({
     },
     
     handleOptionSelect: function(rowsSeleted) {
-        console.log(rowsSeleted);
+        //console.log(rowsSeleted);
         var optionsSelected = [];
         if(rowsSeleted === 'all') {
             this.state.options.map(function(option) {
@@ -188,7 +188,7 @@ var OptionContainer = React.createClass({
             }, this);
         }
         
-        console.log(optionsSelected);
+        //console.log(optionsSelected);
         this.setState({optionsSelected: optionsSelected});
     },
     
@@ -357,14 +357,14 @@ var OptionContainer = React.createClass({
                 if(fieldType === 'date') {
                     if(a[field]) {
                         var dateA = a[field].date;
-                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month), parseInt(dateA.day));
+                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day));
                     }
                     else {
                         valueA = null;
                     }
                     if(b[field]) {
                         var dateB = b[field].date;
-                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month), parseInt(dateB.day));
+                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day));
                     }
                     else {
                         valueB = null;
@@ -374,7 +374,7 @@ var OptionContainer = React.createClass({
                     if(a[field]) {
                         var dateA = a[field].date;
                         var timeA = a[field].time;
-                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month), parseInt(dateA.day), parseInt(timeA.hour), parseInt(timeA.minute), 0);
+                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day), parseInt(timeA.hour), parseInt(timeA.minute), 0);
                     }
                     else {
                         valueA = null;
@@ -382,7 +382,7 @@ var OptionContainer = React.createClass({
                     if(b[field]) {
                         var dateB = b[field].date;
                         var timeB = b[field].time;
-                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month), parseInt(dateB.day), parseInt(timeB.hour), parseInt(timeB.minute), 0);
+                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day), parseInt(timeB.hour), parseInt(timeB.minute), 0);
                     }
                     else {
                         valueB = null;
