@@ -96,12 +96,12 @@ var OptionsTable = React.createClass({
     render: function() {
         var props = this.props;
         
-        if(props.action === 'view') {
+        /*if(props.action === 'view') {
             styles.actionsTableRowColumn.width = '48px';
         }
         else {
             styles.actionsTableRowColumn.width = '96px';
-        }
+        }*/
         
         var enableSelection = true;
         switch(props.action) {
@@ -180,8 +180,6 @@ var OptionsTable = React.createClass({
                 filterableExtraFields.push(index);
             }
         });
-
-        //console.log(props.containerState.optionsSelected);
         
         return (
             <div>
@@ -282,7 +280,6 @@ var OptionsTable = React.createClass({
                                 >
                                     {props.containerState.options.map(function(option) {
                                         //var user = props.containerState.users[userIndex];
-                                        //console.log(option.id + ": " + props.containerState.optionsSelected.indexOf(option.id));
                                         return (
                                             <TableRow 
                                                 key={option.id} 

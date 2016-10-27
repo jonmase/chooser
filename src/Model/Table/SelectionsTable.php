@@ -47,6 +47,7 @@ class SelectionsTable extends Table
         ]);
         $this->hasMany('OptionsSelections', [
             'foreignKey' => 'selection_id',
+            'saveStrategy' => 'replace',    //Replace the OptionsSelections records when saving a selection
         ]);
     }
 
@@ -63,22 +64,22 @@ class SelectionsTable extends Table
             ->allowEmpty('id', 'create');
 
         $validator
-            ->boolean('archived')
-            ->requirePresence('archived', 'create')
-            ->notEmpty('archived');
+            ->boolean('archived');
+            //->requirePresence('archived', 'create')
+            //->notEmpty('archived');
 
         $validator
             ->allowEmpty('comments');
 
         $validator
-            ->boolean('allocations_flag')
-            ->requirePresence('allocations_flag', 'create')
-            ->notEmpty('allocations_flag');
+            ->boolean('allocations_flag');
+            //->requirePresence('allocations_flag', 'create')
+            //->notEmpty('allocations_flag');
 
         $validator
-            ->boolean('allocations_hidden')
-            ->requirePresence('allocations_hidden', 'create')
-            ->notEmpty('allocations_hidden');
+            ->boolean('allocations_hidden');
+            //->requirePresence('allocations_hidden', 'create')
+            //->notEmpty('allocations_hidden');
 
         return $validator;
     }

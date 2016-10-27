@@ -4,6 +4,7 @@ import update from 'react-addons-update';
 import Snackbar from 'material-ui/Snackbar';
 
 import ChoiceInstructions from './choice-instructions.jsx';
+import OptionsBasket from './option-basket.jsx';
 import OptionsTable from './option-table.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
@@ -173,6 +174,7 @@ var OptionContainer = React.createClass({
     
     handleOptionSelect: function(rowsSeleted) {
         //console.log(rowsSeleted);
+        var previousOptionsSelected = this.state.optionsSelected;
         var optionsSelected = [];
         if(rowsSeleted === 'all') {
             this.state.options.map(function(option) {
@@ -188,8 +190,45 @@ var OptionContainer = React.createClass({
             }, this);
         }
         
-        //console.log(optionsSelected);
+        console.log(optionsSelected);
+        
+        //Optimistically update the options selected
         this.setState({optionsSelected: optionsSelected});
+        
+        //Check the selected options against the rules
+        //Save the settings
+        var url = '../../selections/save';
+        var data = {
+            choosing_instance_id: this.state.instance.id,
+            confirmed: false,
+            options_selected: optionsSelected,
+        };
+        
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                //No further action needed as selected options optimistically updated
+            },
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    optionsSelected: previousOptionsSelected, //Revert to the previous favourites
+                    //Show error in snackbar
+                    snackbar: {
+                        open: true,
+                        message: 'Error selecting option (' + err.toString() + ')',
+                    }
+                });
+            }.bind(this)
+        });
+        
+        
     },
     
     handleOptionChange: function() {
@@ -478,10 +517,16 @@ var OptionContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     {(this.props.action === 'view')?
-                        <ChoiceInstructions
-                            containerState={this.state}
-                            choice={this.props.choice}
-                        />
+                        <div>
+                            <ChoiceInstructions
+                                containerState={this.state}
+                                choice={this.props.choice}
+                            />
+                            <OptionsBasket
+                                containerState={this.state}
+                                choice={this.props.choice}
+                            />
+                        </div>
                     :""}
                     <OptionsTable
                         action={this.props.action}
