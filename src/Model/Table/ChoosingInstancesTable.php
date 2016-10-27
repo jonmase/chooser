@@ -241,8 +241,8 @@ class ChoosingInstancesTable extends Table
         return $rules;
     }
     
-    public function findActive($choiceId, $getFavourites = false, $userId = null) {
-        if($result = $this->findByChoiceId($choiceId, true, $getFavourites, $userId)->first()) {
+    public function findActive($choiceId, $getSelectedAndFavourites = false, $userId = null) {
+        if($result = $this->findByChoiceId($choiceId, true, $getSelectedAndFavourites, $userId)->first()) {
             $result = $this->processForView($result);
             return $result;
         }
@@ -253,21 +253,31 @@ class ChoosingInstancesTable extends Table
         return $this->findByChoiceId($choiceId, false)->toArray();
     }
     
-    public function findByChoiceId($choiceId = null, $active = true, $getFavourites = false, $userId = null) {
+    public function findByChoiceId($choiceId = null, $active = true, $getSelectedAndFavourites = false, $userId = null) {
         if(!$choiceId) {
             return [];
         }
         
         $contain = [];
         //$contain = ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
-        if($getFavourites && $userId) {
+        if($getSelectedAndFavourites && $userId) {
             $contain['ShortlistedOptions'] = function($q) use ($userId) {
                 return $q
-                    ->select(['id', 'choices_option_id', 'choosing_instance_id'])
+                    ->select(['id', 'user_id', 'choices_option_id', 'choosing_instance_id'])
                     ->where(['ShortlistedOptions.user_id' => $userId]);
             };
+            
+            $contain['Selections'] = function($q) use ($userId) {
+                return $q
+                    //->select(['id', 'user_id', 'choices_option_id', 'choosing_instance_id'])
+                    ->where([
+                        'Selections.user_id' => $userId,
+                        'archived' => false,
+                    ])
+                    ->contain(['OptionsSelections']);
+            };
         }
-        
+
         $choosingInstanceQuery = $this->find('all', [
             'conditions' => [
                 'choice_id' => $choiceId,
@@ -275,7 +285,7 @@ class ChoosingInstancesTable extends Table
             ],
             //'contain' => $contain,
         ])->contain($contain);
-        
+
         return $choosingInstanceQuery;
     }
     
@@ -309,7 +319,7 @@ class ChoosingInstancesTable extends Table
         return $requestData;
     }
     
-    public function processForView($instance, $processFavourites = false) {
+    public function processForView($instance) {
         foreach($this->_datetimeFields as $field) {
             $datetimeField = [];
             if(!empty($instance[$field])) {

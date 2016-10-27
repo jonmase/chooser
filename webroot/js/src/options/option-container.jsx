@@ -21,6 +21,7 @@ var OptionContainer = React.createClass({
                 this.setState({
                     instance: data.choosingInstance,
                     favourites: data.favourites,
+                    optionsSelected: data.selected,
                     instanceLoaded: true,
                 });
             }.bind(this),

@@ -78,8 +78,16 @@ class ChoosingInstancesController extends AppController
         }
         unset($choosingInstance->shortlisted_options);
         
-        $this->set(compact('choosingInstance', 'favourites'));
-        $this->set('_serialize', ['choosingInstance', 'favourites']);
+        $selected = [];
+        if(!empty($choosingInstance->selections)) {
+            foreach($choosingInstance->selections[0]['options_selections'] as $option) {
+                $selected[] = $option['choices_option_id'];
+            }
+        }
+        unset($choosingInstance->selections);
+        
+        $this->set(compact('choosingInstance', 'favourites', 'selected'));
+        $this->set('_serialize', ['choosingInstance', 'favourites', 'selected']);
     }
 
     /**
