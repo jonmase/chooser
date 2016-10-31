@@ -175,6 +175,10 @@ class ChoicesTable extends Table
      * @return array
      */
     public function getExtraFieldTypes($choiceId = null) {
+        if(!$choiceId) {
+            return [];  //Return empty array so that it doesn't cause error when iterated
+        }
+        
         $extraTypes = $this->ChoicesOptions->Choices->ExtraFields->find('list', [
             'conditions' => ['choice_id' => $choiceId],
             'keyField' => 'name',

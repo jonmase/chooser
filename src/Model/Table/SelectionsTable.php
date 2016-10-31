@@ -97,4 +97,40 @@ class SelectionsTable extends Table
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
     }
+    
+    public function processForSave($instance, $requestData, $userId) {
+        //If there is already an unconfirmed selection for this user/instance, use this as the basic data
+        if(!empty($instance['selections'])) {
+            $selection = $instance['selections'][0];
+        }
+        //Otherwise, use the request data
+        else {
+            $selectionData = $requestData;
+            unset($selectionData['options_selected']);   //Remove options_selected from the data to save
+            
+            $selectionData['user_id'] = $userId; //Add user_id to data
+            
+            $selection = $this->newEntity($selectionData);
+        }
+        
+        $optionsSelectionsData = [];
+        if(!empty($requestData['options_selected'])) {
+            foreach($requestData['options_selected'] as $choicesOptionId) {
+                $optionsSelection = [
+                    'choices_option_id' => $choicesOptionId,
+                ];
+                
+                //If we have a selection ID, add this to the optionsSelection data
+                if(!empty($selectionData['id'])) {
+                    $optionsSelection['selection_id'] = $selectionData['id'];
+                }
+                
+                $optionsSelectionsData[] = $optionsSelection;
+            }
+        }
+        
+        $selection['options_selections'] = $this->OptionsSelections->newEntities($optionsSelectionsData);
+
+        return $selection;
+    }
 }

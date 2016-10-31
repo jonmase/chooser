@@ -197,7 +197,7 @@ class OptionsController extends AppController
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');
             
-            $option = $this->Options->processForView($updatedChoicesOption, $choiceId);
+            $option = $this->Options->processForView($updatedChoicesOption, null, $choiceId);
             //pr($option);
             //exit;
             $this->set('option', $option);

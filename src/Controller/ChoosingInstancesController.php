@@ -84,10 +84,12 @@ class ChoosingInstancesController extends AppController
                 $selected[] = $option['choices_option_id'];
             }
         }
+        list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
+
         unset($choosingInstance->selections);
         
-        $this->set(compact('choosingInstance', 'favourites', 'selected'));
-        $this->set('_serialize', ['choosingInstance', 'favourites', 'selected']);
+        $this->set(compact('choosingInstance', 'favourites', 'selected', 'allowSubmit', 'ruleWarnings'));
+        $this->set('_serialize', ['choosingInstance', 'favourites', 'selected', 'allowSubmit', 'ruleWarnings']);
     }
 
     /**

@@ -19,10 +19,13 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
+            allowSubmit: false,
+                    allowSubmit: data.allowSubmit,
                     instance: data.choosingInstance,
+                    instanceLoaded: true,
                     favourites: data.favourites,
                     optionsSelected: data.selected,
-                    instanceLoaded: true,
+                    ruleWarnings: data.ruleWarnings,
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -67,6 +70,7 @@ var OptionContainer = React.createClass({
             success: function(data) {
                 this.setState({
                     rules: data.rules,
+                    ruleIndexesById: data.ruleIndexesById,
                     rulesLoaded: true,
                 });
             }.bind(this),
@@ -78,6 +82,7 @@ var OptionContainer = React.createClass({
     
     getInitialState: function () {
         var initialState = {
+            allowSubmit: false,
             favourites: [],
             instance: [],
             instanceLoaded: false,
@@ -86,7 +91,9 @@ var OptionContainer = React.createClass({
             optionsLoaded: false,
             optionsSelected: [],
             rules: [],
+            ruleIndexesById: [],
             rulesLoaded: false,
+            ruleWarnings: false,
             sortField: 'code',
             sortDirection: 'asc',
             snackbar: {
@@ -194,11 +201,12 @@ var OptionContainer = React.createClass({
         console.log(optionsSelected);
         
         //Optimistically update the options selected
-        this.setState({optionsSelected: optionsSelected});
+        //Not doing this, as wnat to check rules etc before confirming selection
+        //this.setState({optionsSelected: optionsSelected});
         
         //Check the selected options against the rules
         //Save the settings
-        var url = '../../selections/save';
+        var url = '../../selections/save.json';
         var data = {
             choosing_instance_id: this.state.instance.id,
             confirmed: false,
@@ -213,13 +221,17 @@ var OptionContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                //No further action needed as selected options optimistically updated
-            },
+                this.setState({
+                    allowSubmit: returnedData.allowSubmit,
+                    optionsSelected: returnedData.optionsSelected,
+                    ruleWarnings: returnedData.ruleWarnings,
+                });
+            }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    optionsSelected: previousOptionsSelected, //Revert to the previous favourites
+                    //optionsSelected: previousOptionsSelected, //Revert to the previous selected Options (commented out as not now optimistically set)
                     //Show error in snackbar
                     snackbar: {
                         open: true,
@@ -363,6 +375,10 @@ var OptionContainer = React.createClass({
         this.handleOptionChange();
     },
     
+    handleSelectionSubmit() {
+        console.log("selection submitted");
+    },
+    
     handleSnackbarClose: function() {
         this.setState({
             snackbar: {
@@ -504,6 +520,7 @@ var OptionContainer = React.createClass({
     
         if(this.props.action === 'view') {
             containerHandlers.favourite = this.handleFavourite;
+            containerHandlers.submit = this.handleSelectionSubmit;
         }
         else if(this.props.action === 'edit') {
             containerHandlers.change = this.handleOptionChange;
@@ -518,28 +535,29 @@ var OptionContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     {(this.props.action === 'view')?
-                        <div>
-                            <ChoiceInstructions
-                                containerState={this.state}
-                                choice={this.props.choice}
-                            />
-                            <OptionsBasket
-                                containerState={this.state}
-                                choice={this.props.choice}
-                            />
-                        </div>
+                        <ChoiceInstructions
+                            choice={this.props.choice}
+                            containerState={this.state}
+                        />
                     :""}
                     <OptionsTable
                         action={this.props.action}
-                        containerState={this.state}
                         choice={this.props.choice}
+                        containerState={this.state}
                         optionContainerHandlers={containerHandlers}
                     />
+                    {(this.props.action === 'view')?
+                        <OptionsBasket
+                            choice={this.props.choice}
+                            containerState={this.state}
+                            optionContainerHandlers={containerHandlers}
+                        />
+                    :""}
                     <Snackbar
-                        open={this.state.snackbar.open}
-                        message={this.state.snackbar.message}
                         autoHideDuration={3000}
+                        message={this.state.snackbar.message}
                         onRequestClose={this.handleSnackbarClose}
+                        open={this.state.snackbar.open}
                     />
                 </div>
             </MuiThemeProvider>

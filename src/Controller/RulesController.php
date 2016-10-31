@@ -36,8 +36,8 @@ class RulesController extends AppController
             $this->set('_serialize', ['rules', 'ruleIndexesById', 'ruleCategoryFields']);
         }
         else {
-            $this->set(compact('rules'));
-            $this->set('_serialize', ['rules']);
+            $this->set(compact('rules', 'ruleIndexesById'));
+            $this->set('_serialize', ['rules', 'ruleIndexesById']);
         }
     }
 

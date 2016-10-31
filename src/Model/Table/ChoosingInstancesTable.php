@@ -289,6 +289,37 @@ class ChoosingInstancesTable extends Table
         return $choosingInstanceQuery;
     }
     
+    /**
+     * getWithSelection method
+     * Get an instance by ID, with Selections for the specified user
+     *
+     * @param string|null $choosingInstanceId Choosing Instance id.
+     * @param string|null $userId User id.
+     * @return array|null $instance The instance
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function getWithSelection($choosingInstanceId = null, $userId = null) {
+        if(!$choosingInstanceId || !$userId) {
+            return null;
+        }
+        
+        $instance = $this->get($choosingInstanceId, [
+            'contain' => [
+                'Selections' => function ($q) use ($userId) {
+                   return $q
+                        ->select(['id', 'choosing_instance_id', 'user_id', 'confirmed', 'archived'])
+                        ->where([
+                            'Selections.user_id' => $userId,
+                            //'Selections.confirmed' => filter_var($this->request->data['confirmed'], FILTER_VALIDATE_BOOLEAN),
+                            'Selections.archived' => false
+                        ]);
+                }
+            ]
+        ]);
+
+        return $instance;
+    }
+    
     public function processForSave($requestData) {
         foreach($this->_datetimeFields as $field) {
             if(!empty($requestData[$field . '_date'])) {

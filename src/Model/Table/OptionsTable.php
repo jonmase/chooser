@@ -112,8 +112,9 @@ class OptionsTable extends Table
         $options = $optionsQuery->toArray();
         //pr($options); 
         //exit;
+        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
         foreach($options as &$option) {
-            $option = $this->processForView($option, $choiceId);
+            $option = $this->processForView($option, $extraTypes);
         }
         
         return $options;
@@ -190,6 +191,9 @@ class OptionsTable extends Table
                 else {
                     $extraValues[$name] = null;
                 }
+            }
+            else if($type === 'checkbox') {
+                $extraValues[$name] = get_object_vars($extraValues[$name]);
             }
         }        
         //pr($extraValues);
@@ -269,7 +273,11 @@ class OptionsTable extends Table
         return $choicesOption;
     }
     
-    public function processForView($option, $choiceId) {
+    public function processForView($option, $extraTypes = null, $choiceId = null) {
+        if(!$option) {
+            return null;
+        }
+        
         foreach($this->_optionsTableProperties as $property) {
             if(isset($option->option[$property])) {
                 $option[$property] = $option->option[$property];
@@ -278,7 +286,9 @@ class OptionsTable extends Table
         unset($option->option);
        
         //Process the extra fields for displaying
-        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        if($extraTypes === null) {
+            $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        }
         $extras = $this->processExtrasForView($option->extra, $extraTypes);
         foreach($extras as $key => $value) {
             $option[$key] = $value;
