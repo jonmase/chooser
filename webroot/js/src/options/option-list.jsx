@@ -2,6 +2,7 @@ import React from 'react';
 
 import {List, ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
+import Divider from 'material-ui/Divider';
 
 import Text from '../elements/display/text.jsx';
 import TextField from '../elements/fields/text.jsx';
@@ -65,6 +66,7 @@ var OptionList = React.createClass({
                                 secondaryTextLines={1}
                                 style={listItemStyle}
                             />
+                            <Divider />
                         </div>
                     );
                 }, this)}
