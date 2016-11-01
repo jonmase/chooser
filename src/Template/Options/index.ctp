@@ -18,7 +18,7 @@
     var data = {};
     data.action = "<?= $action; ?>";
     data.choice = <?= json_encode($choice); ?>;
-    <?php if($hasAdditionalRoles): ?>
+    <?php if(!empty($sections)): ?>
         data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard', $choice->id]); ?>";
         data.sections = <?= json_encode($sections); ?>;
     <?php endif; ?>

@@ -6,6 +6,7 @@ import Snackbar from 'material-ui/Snackbar';
 import ChoiceInstructions from './choice-instructions.jsx';
 import OptionsBasket from './option-basket.jsx';
 import OptionsTable from './option-table.jsx';
+import OptionsConfirm from './option-confirm.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -34,7 +35,7 @@ var OptionContainer = React.createClass({
         });
     },
     loadOptionsFromServer: function(orderField, orderDirection) {
-        var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
+        var url = '../get-options/' + this.props.choice.id + '/' + this.state.action;
         if(typeof(orderField) !== "undefined") {
             url += '/' + orderField;
             if(typeof(orderDirection) !== "undefined") {
@@ -82,6 +83,7 @@ var OptionContainer = React.createClass({
     
     getInitialState: function () {
         var initialState = {
+            action: this.props.action,
             allowSubmit: false,
             favourites: [],
             instance: [],
@@ -125,7 +127,7 @@ var OptionContainer = React.createClass({
 
     componentDidMount: function() {
         this.loadOptionsFromServer();
-        if(this.props.action === 'view') {
+        if(this.state.action === 'view' || this.state.action === 'confirm') {
             this.loadInstanceFromServer();
             this.loadRulesFromServer();
         }
@@ -242,6 +244,9 @@ var OptionContainer = React.createClass({
         });
         
         
+    },
+    
+    handleOptionEditSelect: function(rowsSeleted) {
     },
     
     handleOptionChange: function() {
@@ -377,6 +382,19 @@ var OptionContainer = React.createClass({
     
     handleSelectionSubmit() {
         console.log("selection submitted");
+        this.setState({
+            action: 'confirm'
+        });
+    },
+    
+    handleSelectionConfirm() {
+        console.log("selection confirmed");
+    },
+    
+    handleSelectionBackToEdit() {
+        this.setState({
+            action: 'view'
+        });
     },
     
     handleSnackbarClose: function() {
@@ -513,20 +531,25 @@ var OptionContainer = React.createClass({
     },
 
     render: function() {
-        var containerHandlers = {
-            sort: this.handleSort,
-            selectOption: this.handleOptionSelect,
-        };
+        var containerHandlers = {};
     
-        if(this.props.action === 'view') {
+        if(this.state.action === 'view') {
             containerHandlers.favourite = this.handleFavourite;
+            containerHandlers.selectOption = this.handleOptionSelect;
+            containerHandlers.sort = this.handleSort;
             containerHandlers.submit = this.handleSelectionSubmit;
         }
-        else if(this.props.action === 'edit') {
+        else if(this.state.action === 'confirm') {
+            containerHandlers.confirm = this.handleSelectionConfirm;
+            containerHandlers.backToEdit = this.handleSelectionBackToEdit;
+        }
+        else if(this.state.action === 'edit') {
             containerHandlers.change = this.handleOptionChange;
             containerHandlers.submit = this.handleOptionSubmit;
             containerHandlers.dialogOpen = this.handleOptionDialogOpen;
             containerHandlers.dialogClose = this.handleOptionDialogClose;
+            containerHandlers.selectOption = this.handleOptionEditSelect;
+            containerHandlers.sort = this.handleSort;
             containerHandlers.wysiwygChange = this.handleWysiwygChange;
         }
         
@@ -534,20 +557,29 @@ var OptionContainer = React.createClass({
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    {(this.props.action === 'view')?
+                    {(this.state.action === 'view')?
                         <ChoiceInstructions
                             choice={this.props.choice}
                             containerState={this.state}
                         />
                     :""}
-                    <OptionsTable
-                        action={this.props.action}
-                        choice={this.props.choice}
-                        containerState={this.state}
-                        optionContainerHandlers={containerHandlers}
-                    />
-                    {(this.props.action === 'view')?
+                    {(this.state.action === 'view' || this.state.action === 'edit')?
+                        <OptionsTable
+                            action={this.state.action}
+                            choice={this.props.choice}
+                            containerState={this.state}
+                            optionContainerHandlers={containerHandlers}
+                        />
+                    :""}
+                    {(this.state.action === 'view')?
                         <OptionsBasket
+                            choice={this.props.choice}
+                            containerState={this.state}
+                            optionContainerHandlers={containerHandlers}
+                        />
+                    :""}
+                    {(this.state.action === 'confirm')?
+                        <OptionsConfirm
                             choice={this.props.choice}
                             containerState={this.state}
                             optionContainerHandlers={containerHandlers}

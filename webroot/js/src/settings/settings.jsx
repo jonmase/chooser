@@ -82,7 +82,7 @@ var Settings = React.createClass({
                                         />
                                         {instance.preference?
                                             <div>
-                                                {instance.preference_points?
+                                                {(instance.preference_type === 'points')?
                                                     <Text label="Points Available" value={instance.preference_points} />
                                                 :""}
                                                 <Wysiwyg label="Instructions" value={instance.preference_instructions} />
