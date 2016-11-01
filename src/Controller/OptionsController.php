@@ -73,64 +73,41 @@ class OptionsController extends AppController
      */
     public function index($choiceId = null, $action = 'view')
     {
-        $isEditor = $isApprover = false;
+        //If action is edit, make sure the user is an editor for this Choice
+        if($action === 'edit') {
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
+            if(!$isEditor) {
+                throw new ForbiddenException(__('Not an editor for this Choice.'));
+            }
+        }
         
-        //Check whether the User has additional roles on this Choice
+        //If action is approve, make sure the user is an approver for this Choice
+        else if($action === 'approve') {
+            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $this->Auth->user('id'));
+            if(!$isApprover) {
+                throw new ForbiddenException(__('Not an approver for this Choice.'));
+            }
+        }
+        else {
+            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'));
+            if(!$isViewer) {
+                throw new ForbiddenException(__('Not a viewer for this Choice.'));
+            }
+            $action = 'confirm';
+        }
+        
+        //Does the user have additional roles? I.e., should the dashboard menu be shown?
         $hasAdditionalRoles = $this->Options->ChoicesOptions->Choices->ChoicesUsers->hasAdditionalRoles($choiceId, $this->Auth->user('id'));
         if($hasAdditionalRoles) {
-            //Is the User an Editor or Approver?
-            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
-            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $this->Auth->user('id'));
-            
             //Get the sections to display in the Dashboard menu
             $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
             $this->set(compact('sections'));
         }
         
-        //If action is edit, make sure the user is an editor for this Choice
-        if($action === 'edit') {
-            if(!$isEditor) {
-                throw new ForbiddenException(__('Not an editor for this Choice.'));
-            }
-            
-            //Get the options for which this user is an editor
-            //$options = $this->Options->getForView($choiceId, false, false, $this->Auth->user('id'), true);
-        }
-        
-        //If action is approve, make sure the user is an approver for this Choice
-        else if($action === 'approve') {
-            if(!$isApprover) {
-                throw new ForbiddenException(__('Not an approver for this Choice.'));
-            }
-            
-            //Get the options for which this user is an approver
-            //$options = $this->Options->getForView($choiceId, true, false, $this->Auth->user('id'), true);
-        }
-        
-        else {
-            //Get all of the published and approved options
-            //$options = $this->Options->getForView($choiceId, true, true);
-            //$instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->findActive($choiceId);
-            //pr($instance);
-            //$this->set(compact('instance'));
-        }
-        
-        //Create an array of optionIds mapped to index in options array
-        //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
-        //$optionIds = [];
-        //foreach($options as $key => $option) {
-        //    $optionIds[$option['id']] = $key;
-        //}
-        //pr(json_encode($options));
-        //pr($options);
-
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);
-        //Get the sections to show in the menu  bar
 
-        //$this->set(compact('action', 'choice', 'hasAdditionalRoles', 'options', 'optionIds'));
-        $this->set(compact('action', 'choice', 'hasAdditionalRoles'));
-        //$this->set('_serialize', ['options']);
+        $this->set(compact('action', 'choice'));
     }
 
     /**
