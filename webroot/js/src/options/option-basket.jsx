@@ -50,11 +50,13 @@ var OptionBasket = React.createClass({
                             :
                                 <div>No options chosen</div>
                             }
+                            
                             {(this.props.containerState.ruleWarnings)?
                                 <OptionWarnings
                                     containerState={this.props.containerState}
                                 />
                             :""}
+                            
                             <div style={{marginTop: '15px'}}>
                                 <RaisedButton
                                     disabled={!this.props.containerState.allowSubmit}

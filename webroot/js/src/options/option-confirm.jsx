@@ -68,16 +68,19 @@ var OptionConfirm = React.createClass({
                             onValidSubmit={this.props.optionContainerHandlers.confirm}
                             noValidate={true}
                         >
-                            <p>You have chosen the following options:</p>
                             {(this.props.containerState.optionsSelected.length > 0)?
-                                <OptionList
-                                    containerState={this.props.containerState}
-                                    deleteButton={false}
-                                    useCode={this.props.choice.use_code}
-                                />
+                                <div>
+                                    {/*<p>You have chosen the following options:</p>*/}
+                                    <OptionList
+                                        containerState={this.props.containerState}
+                                        deleteButton={false}
+                                        useCode={this.props.choice.use_code}
+                                    />
+                                </div>
                             :
                                 <div>No options chosen</div>
                             }
+                            
                             {(this.props.containerState.instance.comments_overall)?
                                 <MultilineField field={{
                                     label: "Comments",
@@ -87,7 +90,6 @@ var OptionConfirm = React.createClass({
                                     value: null, //this.props.containerState.comments_overall,
                                 }} />
                             :""}
-                            
                             
                             {(this.props.containerState.ruleWarnings)?
                                 <OptionWarnings
