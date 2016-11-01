@@ -11,7 +11,7 @@ var OptionList = React.createClass({
     render: function() {
         return (
             <List>
-                {this.props.containerState.optionsSelected.map(function(optionId) {
+                {this.props.containerState.optionsSelected.map(function(optionId, optionIndex) {
                     var option = this.props.containerState.options[this.props.containerState.optionIndexesById[optionId]];
                     
                     if(this.props.useCode) {
@@ -36,16 +36,23 @@ var OptionList = React.createClass({
                         var rightIconButton = null;
                     }
                     
-                    var listItemStyle = null;
+                    var listItemStyle = {};
                     var showCommentsPerOption = this.props.containerState.action === 'confirm' && this.props.containerState.instance.comments_per_option;
                     if(showCommentsPerOption) {
-                        listItemStyle = {marginRight: '270px'}
+                        listItemStyle.marginRight = '270px';
                     }
                     
                     var showPreferenceInputs = this.props.containerState.action === 'confirm' && this.props.containerState.instance.preference;
+                    if(showPreferenceInputs) {
+                        listItemStyle.marginLeft = '50px';
+                    }
                     
                     return (
                         <div key={option.id}>
+                            {(showPreferenceInputs)?
+                                <div style={{float: 'left'}}>{optionIndex}</div>
+                            :""}
+                        
                             {(showCommentsPerOption)?
                                 <div style={{float: 'right', marginTop: '-8px'}}>
                                     <TextField field={{
