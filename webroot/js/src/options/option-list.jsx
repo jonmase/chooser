@@ -5,13 +5,7 @@ import IconButton from 'material-ui/IconButton';
 
 import Text from '../elements/display/text.jsx';
 
-var styles = {
-    cardText: {
-        paddingTop: '0px',
-    }
-};
-    
-var OptionBasket = React.createClass({
+var OptionList = React.createClass({
     render: function() {
         return (
             <List>
@@ -55,4 +49,4 @@ var OptionBasket = React.createClass({
     }
 });
 
-module.exports = OptionBasket;
+module.exports = OptionList;

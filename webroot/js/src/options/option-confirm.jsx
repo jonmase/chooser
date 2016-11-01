@@ -7,13 +7,11 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import Formsy from 'formsy-react';
 
-import OptionsList from './option-list.jsx';
+import OptionList from './option-list.jsx';
+import OptionWarnings from './option-warnings.jsx';
 
 import Loader from '../elements/loader.jsx';
-import Text from '../elements/display/text.jsx';
-//import Wysiwyg from '../elements/display/wysiwyg.jsx';
 import DateTime from '../elements/display/datetime.jsx';
-import TextLabelled from '../elements/display/text-labelled.jsx';
 
 import MultilineField from '../elements/fields/multiline-text.jsx';
 
@@ -23,7 +21,7 @@ var styles = {
     }
 };
     
-var OptionBasket = React.createClass({
+var OptionConfirm = React.createClass({
     getInitialState: function () {
         var initialState = {
             canConfirm: true,
@@ -72,7 +70,7 @@ var OptionBasket = React.createClass({
                         >
                             <p>You have chosen the following options:</p>
                             {(this.props.containerState.optionsSelected.length > 0)?
-                                <OptionsList
+                                <OptionList
                                     containerState={this.props.containerState}
                                     deleteButton={false}
                                     useCode={this.props.choice.use_code}
@@ -92,39 +90,11 @@ var OptionBasket = React.createClass({
                             
                             
                             {(this.props.containerState.ruleWarnings)?
-                                <div>
-                                    <h5>Warnings</h5>
-                                    {this.props.containerState.ruleWarnings.map(function(warning) {
-                                        var rule = this.props.containerState.rules[this.props.containerState.ruleIndexesById[warning.ruleId]];
-                                        
-                                        if(rule.scope === 'category_all') {
-                                            var warningComponent = warning.ruleWarning.map(function(category) {
-                                                var ruleKey = rule.name + '_' + category.categoryOption;
-                                                var ruleName = rule.name + ' - ' + category.categoryLabel;
-                                                
-                                                return (
-                                                    <TextLabelled
-                                                        key={ruleKey}                                                 
-                                                        label={ruleName}                                                 
-                                                        value={category.ruleWarning}
-                                                    />
-                                                );
-                                            });
-                                            return warningComponent;
-                                        }
-                                        else {
-                                            return (
-                                                <TextLabelled
-                                                    key={rule.name}                                                 
-                                                    label={rule.name}                                                 
-                                                    value={warning.ruleWarning}
-                                                />
-                                            );
-                                        }
-
-                                    }, this)}
-                                </div>
+                                <OptionWarnings
+                                    containerState={this.props.containerState}
+                                />
                             :""}
+                            
                             <p>
                                 If you wish to go back and change the options you have chosen, select Change below. If you are happy with your choices, select Confirm.
                             </p>
@@ -136,6 +106,7 @@ var OptionBasket = React.createClass({
                                     <span>Once you Confirm, you will not be able to change your choices.</span>
                                 }
                             </p>
+                            
                             <div style={{marginTop: '15px'}}>
                                 <RaisedButton
                                     label="Change"
@@ -158,4 +129,4 @@ var OptionBasket = React.createClass({
     }
 });
 
-module.exports = OptionBasket;
+module.exports = OptionConfirm;

@@ -5,7 +5,8 @@ import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import OptionsList from './option-list.jsx';
+import OptionList from './option-list.jsx';
+import OptionWarnings from './option-warnings.jsx';
 
 import Loader from '../elements/loader.jsx';
 import Text from '../elements/display/text.jsx';
@@ -40,7 +41,7 @@ var OptionBasket = React.createClass({
                     :
                         <div>
                             {(this.props.containerState.optionsSelected.length > 0)?
-                                <OptionsList
+                                <OptionList
                                     containerState={this.props.containerState}
                                     removeButton={true}
                                     removeHandler={this.props.optionContainerHandlers.removeOption}
@@ -50,38 +51,9 @@ var OptionBasket = React.createClass({
                                 <div>No options chosen</div>
                             }
                             {(this.props.containerState.ruleWarnings)?
-                                <div>
-                                    <h5>Warnings</h5>
-                                    {this.props.containerState.ruleWarnings.map(function(warning) {
-                                        var rule = this.props.containerState.rules[this.props.containerState.ruleIndexesById[warning.ruleId]];
-                                        
-                                        if(rule.scope === 'category_all') {
-                                            var warningComponent = warning.ruleWarning.map(function(category) {
-                                                var ruleKey = rule.name + '_' + category.categoryOption;
-                                                var ruleName = rule.name + ' - ' + category.categoryLabel;
-                                                
-                                                return (
-                                                    <TextLabelled
-                                                        key={ruleKey}                                                 
-                                                        label={ruleName}                                                 
-                                                        value={category.ruleWarning}
-                                                    />
-                                                );
-                                            });
-                                            return warningComponent;
-                                        }
-                                        else {
-                                            return (
-                                                <TextLabelled
-                                                    key={rule.name}                                                 
-                                                    label={rule.name}                                                 
-                                                    value={warning.ruleWarning}
-                                                />
-                                            );
-                                        }
-
-                                    }, this)}
-                                </div>
+                                <OptionWarnings
+                                    containerState={this.props.containerState}
+                                />
                             :""}
                             <div style={{marginTop: '15px'}}>
                                 <RaisedButton
