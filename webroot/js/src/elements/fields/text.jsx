@@ -24,6 +24,7 @@ var TextField = React.createClass({
                     hintText={field.instructions}
                     name={field.name}
                     required={required}
+                    style={field.style}
                     value={field.value}
                 />
             </div>

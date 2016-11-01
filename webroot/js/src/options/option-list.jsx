@@ -4,6 +4,7 @@ import {List, ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 
 import Text from '../elements/display/text.jsx';
+import TextField from '../elements/fields/text.jsx';
 
 var OptionList = React.createClass({
     render: function() {
@@ -41,6 +42,7 @@ var OptionList = React.createClass({
                             primaryText={primaryText}
                             rightIconButton={rightIconButton}
                             secondaryText={secondaryText}
+                            secondaryTextLines={1}
                         />
                     );
                 }, this)}

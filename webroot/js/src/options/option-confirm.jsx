@@ -8,6 +8,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Formsy from 'formsy-react';
 
 import OptionList from './option-list.jsx';
+import OptionCommentsList from './option-comments-list.jsx';
 import OptionWarnings from './option-warnings.jsx';
 
 import Loader from '../elements/loader.jsx';
@@ -68,18 +69,28 @@ var OptionConfirm = React.createClass({
                             onValidSubmit={this.props.optionContainerHandlers.confirm}
                             noValidate={true}
                         >
-                            {(this.props.containerState.optionsSelected.length > 0)?
-                                <div>
-                                    {/*<p>You have chosen the following options:</p>*/}
-                                    <OptionList
-                                        containerState={this.props.containerState}
-                                        deleteButton={false}
-                                        useCode={this.props.choice.use_code}
-                                    />
-                                </div>
-                            :
-                                <div>No options chosen</div>
-                            }
+                            <div className="row">
+                                {(this.props.containerState.optionsSelected.length > 0)?
+                                    <div className={(this.props.containerState.instance.comments_per_option)?"col-xs-6 col-md-8":"col-xs-12"}>
+                                        {/*<p>You have chosen the following options:</p>*/}
+                                        <OptionList
+                                            containerState={this.props.containerState}
+                                            deleteButton={false}
+                                            useCode={this.props.choice.use_code}
+                                        />
+                                    </div>
+                                :
+                                    <div>No options chosen</div>
+                                }
+                                
+                                {(this.props.containerState.instance.comments_per_option)?
+                                    <div className="col-xs-6 col-md-4">
+                                        <OptionCommentsList
+                                            containerState={this.props.containerState}
+                                        />
+                                    </div>
+                                :""}
+                            </div>
                             
                             {(this.props.containerState.instance.comments_overall)?
                                 <MultilineField field={{
