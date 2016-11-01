@@ -7,6 +7,7 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
 import Text from '../elements/fields/text.jsx';
+import Multiline from '../elements/fields/multiline-text.jsx';
 import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
@@ -189,13 +190,13 @@ var SettingsDialog = React.createClass({
                                 value: instance.preference_points || null,
                             }} />
                         </div>
-                        <Wysiwyg field={{
+                        <Multiline field={{
                             label: "Preference Instructions",
                             instructions: "Provide instructions for the students on expressing their preferences.",
                             name: "preference_instructions",
-                            onChange: this.props.handlers.handleWysiwygChange,
+                            //onChange: this.props.handlers.handleWysiwygChange,
                             section: true,
-                            value: this.props.containerState.settingsWysiwyg_preference_instructions,
+                            value: instance.preference_instructions || null, //this.props.containerState.settingsWysiwyg_preference_instructions,
                         }} />
                     </div>
                 </div>
@@ -210,13 +211,13 @@ var SettingsDialog = React.createClass({
                         />
                     </div>
                     <div className={this.props.containerState.settingsToggle_comments_overall?"":"hidden"}>
-                        <Wysiwyg field={{
+                        <Multiline field={{
                             label: "Choice Comments Instructions",
-                            instructions: "Provide instructions for the students on what they should include in their comments about their choice as a whole",
+                            instructions: "Instructions for adding comments about their choice as a whole",
                             name: "comments_overall_instructions",
                             onChange: this.props.handlers.handleWysiwygChange,
                             section: false,
-                            value: this.props.containerState.settingsWysiwyg_comments_overall_instructions,
+                            value: instance.comments_overall_instructions || null, //this.props.containerState.settingsWysiwyg_comments_overall_instructions,
                         }} />
                         <div>
                             <Text field={{
@@ -240,13 +241,13 @@ var SettingsDialog = React.createClass({
                         />
                     </div>
                     <div className={this.props.containerState.settingsToggle_comments_per_option?"":"hidden"}>
-                        <Wysiwyg field={{
+                        <Multiline field={{
                             label: "Option Comments Instructions",
-                            instructions: "Provide instructions for the students on what they should include in their comments about each option",
+                            instructions: "Instructions for adding comments about each option",
                             name: "comments_per_option_instructions",
-                            onChange: this.props.handlers.handleWysiwygChange,
+                            //onChange: this.props.handlers.handleWysiwygChange,
                             section: false,
-                            value: this.props.containerState.settingsWysiwyg_comments_per_option_instructions,
+                            value: instance.comments_per_option_instructions || null, //this.props.containerState.settingsWysiwyg_comments_per_option_instructions,
                         }} />
                         <div>
                             <Text field={{

@@ -26,9 +26,9 @@ var FormContainer = React.createClass({
                     settingsToggle_comments_overall: data.choosingInstance.comments_overall,
                     settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
                     settingsWysiwyg_choosing_instructions: data.choosingInstance.choosing_instructions,
-                    settingsWysiwyg_preference_instructions: data.choosingInstance.preference_instructions,
-                    settingsWysiwyg_comments_overall_instructions: data.choosingInstance.comments_overall_instructions,
-                    settingsWysiwyg_comments_per_option_instructions: data.choosingInstance.comments_per_option_instructions,
+                    //settingsWysiwyg_preference_instructions: data.choosingInstance.preference_instructions,
+                    //settingsWysiwyg_comments_overall_instructions: data.choosingInstance.comments_overall_instructions,
+                    //settingsWysiwyg_comments_per_option_instructions: data.choosingInstance.comments_per_option_instructions,
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -88,9 +88,9 @@ var FormContainer = React.createClass({
             settingsToggle_comments_overall: false,
             settingsToggle_comments_per_option: false,
             settingsWysiwyg_choosing_instructions: '',
-            settingsWysiwyg_preference_instructions: '',
-            settingsWysiwyg_comments_overall_instructions: '',
-            settingsWysiwyg_comments_per_option_instructions: '',
+            //settingsWysiwyg_preference_instructions: '',
+            //settingsWysiwyg_comments_overall_instructions: '',
+            //settingsWysiwyg_comments_per_option_instructions: '',
             snackbar: {
                 open: false,
                 message: '',
@@ -349,9 +349,9 @@ var FormContainer = React.createClass({
 
         //Get the wysiwyg editor data
         settings.choosing_instructions = this.state.settingsWysiwyg_choosing_instructions;
-        settings.preference_instructions = this.state.settingsWysiwyg_preference_instructions;
-        settings.comments_overall_instructions = this.state.settingsWysiwyg_comments_overall_instructions;
-        settings.comments_per_option_instructions = this.state.settingsWysiwyg_comments_per_option_instructions;
+        //settings.preference_instructions = this.state.settingsWysiwyg_preference_instructions;
+        //settings.comments_overall_instructions = this.state.settingsWysiwyg_comments_overall_instructions;
+        //settings.comments_per_option_instructions = this.state.settingsWysiwyg_comments_per_option_instructions;
         
         console.log("Saving settings: ", settings);
         
