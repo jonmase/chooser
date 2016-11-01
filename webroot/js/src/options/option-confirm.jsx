@@ -107,6 +107,14 @@ var OptionBasket = React.createClass({
                             <p>
                                 If you wish to go back and change the options you have chosen, select Change below. If you are happy with your choices, select Confirm.
                             </p>
+                            <p>
+                                <strong>Please Note: </strong>
+                                {(this.props.containerState.instance.editable)?
+                                    <span>You will be able to return and change your choices until the deadline: <DateTime value={this.props.containerState.instance.deadline} /></span>
+                                :
+                                    <span>Once you Confirm, you will not be able to change your choices.</span>
+                                }
+                            </p>
                             <div style={{marginTop: '15px'}}>
                                 <RaisedButton
                                     label="Change"
