@@ -5,11 +5,15 @@ import CardHeader from 'material-ui/Card/CardHeader';
 import CardText  from 'material-ui/Card/CardText';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import Formsy from 'formsy-react';
+
 import Loader from '../elements/loader.jsx';
 import Text from '../elements/display/text.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
+//import Wysiwyg from '../elements/display/wysiwyg.jsx';
 import DateTime from '../elements/display/datetime.jsx';
 import TextLabelled from '../elements/display/text-labelled.jsx';
+
+import MultilineField from '../elements/fields/multiline-text.jsx';
 
 var styles = {
     cardText: {
@@ -20,10 +24,22 @@ var styles = {
 var OptionBasket = React.createClass({
     getInitialState: function () {
         var initialState = {
-            allowConfirm: true,
+            canConfirm: true,
         }
         
         return initialState;
+    },
+    
+    enableConfirmButton: function () {
+        this.setState({
+            canConfirm: true
+        });
+    },
+
+    disableConfirmButton: function () {
+        this.setState({
+            canConfirm: false
+        });
     },
     
     render: function() {
@@ -44,7 +60,14 @@ var OptionBasket = React.createClass({
                     {(!this.props.containerState.optionsLoaded || !this.props.containerState.instanceLoaded || !this.props.containerState.rulesLoaded)?
                         <Loader />
                     :
-                        <div>
+                        <Formsy.Form
+                            id="selection_confirm"
+                            method="POST"
+                            onValid={this.enableConfirmButton}
+                            onInvalid={this.disableConfirmButton}
+                            onValidSubmit={this.props.optionContainerHandlers.confirm}
+                            noValidate={true}
+                        >
                             <p>You have chosen the following options:</p>
                             <div>
                                 {(this.props.containerState.optionsSelected.length > 0)?
@@ -70,6 +93,17 @@ var OptionBasket = React.createClass({
                                     <div>No options chosen</div>
                                 }
                             </div>
+                            {(this.props.containerState.instance.comments_overall)?
+                                <MultilineField field={{
+                                    label: "Comments",
+                                    instructions: this.props.containerState.instance.comments_overall_instructions,
+                                    name: "comments_overall",
+                                    section: true,
+                                    value: null, //this.props.containerState.comments_overall,
+                                }} />
+                            :""}
+                            
+                            
                             {(this.props.containerState.ruleWarnings)?
                                 <div>
                                     <h5>Warnings</h5>
@@ -123,13 +157,13 @@ var OptionBasket = React.createClass({
                                     style={{marginRight: '15px'}}
                                 />
                                 <RaisedButton
-                                    disabled={!this.state.allowConfirm}
+                                    disabled={!this.state.canConfirm}
                                     label="Confirm"
                                     onTouchTap={this.props.optionContainerHandlers.confirm}
                                     primary={true}
                                 />
                             </div>
-                        </div>
+                        </Formsy.Form>
                     }
                 </CardText>
             </Card>
