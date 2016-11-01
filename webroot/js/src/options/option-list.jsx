@@ -35,15 +35,37 @@ var OptionList = React.createClass({
                         var rightIconButton = null;
                     }
                     
+                    var listItemStyle = null;
+                    var showCommentsPerOption = this.props.containerState.action === 'confirm' && this.props.containerState.instance.comments_per_option;
+                    if(showCommentsPerOption) {
+                        listItemStyle = {marginRight: '270px'}
+                    }
+                    
+                    var showPreferenceInputs = this.props.containerState.action === 'confirm' && this.props.containerState.instance.preference;
+                    
                     return (
-                        <ListItem
-                            disabled={typeof(this.props.disabled) !== "undefined"?this.props.disabled:true}
-                            key={option.id}
-                            primaryText={primaryText}
-                            rightIconButton={rightIconButton}
-                            secondaryText={secondaryText}
-                            secondaryTextLines={1}
-                        />
+                        <div key={option.id}>
+                            {(showCommentsPerOption)?
+                                <div style={{float: 'right', marginTop: '-8px'}}>
+                                    <TextField field={{
+                                        label: "Option-specific comments",
+                                        //instructions: this.props.containerState.instance.comments_overall_instructions,
+                                        name: "comments_option_" + option.id,
+                                        section: false,
+                                        value: null, //this.props.containerState.comments_overall,
+                                    }} />
+                                </div>
+                            :""}
+                            
+                            <ListItem
+                                disabled={typeof(this.props.disabled) !== "undefined"?this.props.disabled:true}
+                                primaryText={primaryText}
+                                rightIconButton={rightIconButton}
+                                secondaryText={secondaryText}
+                                secondaryTextLines={1}
+                                style={listItemStyle}
+                            />
+                        </div>
                     );
                 }, this)}
             </List>
