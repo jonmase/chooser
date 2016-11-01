@@ -200,6 +200,15 @@ var OptionContainer = React.createClass({
             }, this);
         }
         
+        this.saveSelectedOptions(optionsSelected);
+    },
+    
+    saveSelectedOptions: function(optionsSelected) {
+        //Prevent submitting while request is sent
+        this.setState({
+            allowSubmit: false,
+        });
+
         console.log(optionsSelected);
         
         //Optimistically update the options selected
@@ -242,8 +251,16 @@ var OptionContainer = React.createClass({
                 });
             }.bind(this)
         });
+    
+    },
+    
+    handleOptionRemove: function(optionId) {
+        console.log("remove option: " + optionId);
         
+        var optionsSelected = this.state.optionsSelected;
+        optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
         
+        this.saveSelectedOptions(optionsSelected);
     },
     
     handleOptionEditSelect: function(rowsSeleted) {
@@ -535,6 +552,7 @@ var OptionContainer = React.createClass({
     
         if(this.state.action === 'view') {
             containerHandlers.favourite = this.handleFavourite;
+            containerHandlers.removeOption = this.handleOptionRemove;
             containerHandlers.selectOption = this.handleOptionSelect;
             containerHandlers.sort = this.handleSort;
             containerHandlers.submit = this.handleSelectionSubmit;

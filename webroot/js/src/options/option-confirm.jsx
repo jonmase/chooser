@@ -7,6 +7,8 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import Formsy from 'formsy-react';
 
+import OptionsList from './option-list.jsx';
+
 import Loader from '../elements/loader.jsx';
 import Text from '../elements/display/text.jsx';
 //import Wysiwyg from '../elements/display/wysiwyg.jsx';
@@ -69,30 +71,15 @@ var OptionBasket = React.createClass({
                             noValidate={true}
                         >
                             <p>You have chosen the following options:</p>
-                            <div>
-                                {(this.props.containerState.optionsSelected.length > 0)?
-                                    this.props.containerState.optionsSelected.map(function(optionId) {
-                                        var option = this.props.containerState.options[this.props.containerState.optionIndexesById[optionId]];
-                                        
-                                        return (
-                                            <div key={option.id}>
-                                                {this.props.choice.use_code?
-                                                    <Text 
-                                                        value={option.code + (this.props.choice.use_title?" - ":"")}
-                                                    />
-                                                :""}
-                                                {this.props.choice.use_title?
-                                                    <Text 
-                                                        value={option.title}
-                                                    />
-                                                :""}
-                                            </div>
-                                        );
-                                    }, this)
-                                :
-                                    <div>No options chosen</div>
-                                }
-                            </div>
+                            {(this.props.containerState.optionsSelected.length > 0)?
+                                <OptionsList
+                                    containerState={this.props.containerState}
+                                    deleteButton={false}
+                                    useCode={this.props.choice.use_code}
+                                />
+                            :
+                                <div>No options chosen</div>
+                            }
                             {(this.props.containerState.instance.comments_overall)?
                                 <MultilineField field={{
                                     label: "Comments",
