@@ -9,6 +9,10 @@ import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
 
 var OptionList = React.createClass({
+    handleOrderChange: function() {
+    
+    },
+
     render: function() {
         if(this.props.removeButton) {
             var rightIconButton =
@@ -33,9 +37,10 @@ var OptionList = React.createClass({
         if(showPreferenceInputs) {
             listItemStyle.marginLeft = '50px';
             
+            //Generate the options for the ranking list
             if(this.props.containerState.instance.preference_type === 'rank') {
                 var rankDropdownOptions = [];
-                var optionCount = this.props.containerState.optionsSelected.length;
+                var optionCount = this.props.optionIds.length;
                 for(var i = 0; i < optionCount; i++) {
                     rankDropdownOptions.push({
                         value: i,
@@ -47,7 +52,7 @@ var OptionList = React.createClass({
                     
         return (
             <List>
-                {this.props.containerState.optionsSelected.map(function(optionId, optionIndex) {
+                {this.props.optionIds.map(function(optionId, optionIndex) {
                     var option = this.props.containerState.options[this.props.containerState.optionIndexesById[optionId]];
                     
                     if(this.props.useCode) {
@@ -66,6 +71,7 @@ var OptionList = React.createClass({
                                     {(this.props.containerState.instance.preference_type === 'rank')?
                                         <DropdownField
                                             field={{
+                                                disabled: this.props.rankSelectsDisabled,
                                                 label: false,
                                                 name: "rank_" + option.id,
                                                 options: rankDropdownOptions,
@@ -73,7 +79,7 @@ var OptionList = React.createClass({
                                                 style: {width: '40px', marginTop: '12px'},
                                                 value: optionIndex,
                                             }}
-                                            //onChange={this.props.handlers.orderChange}
+                                            onChange={this.props.handleOrderChange}
                                         />
                                     :""}
                                 </div>

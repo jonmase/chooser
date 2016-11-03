@@ -25,9 +25,18 @@ var OptionConfirm = React.createClass({
     getInitialState: function () {
         var initialState = {
             canConfirm: true,
+            rankSelectsDisabled: false,
         }
         
         return initialState;
+    },
+    //TODO: Not sure if componentWillMount is the right place to do this, but it works fine given that this component will never be shown when the page first loads
+    componentWillMount: function() {
+        //Clone the optionsSelected as optionsSelectedOrdered
+        var optionsSelectedOrdered = this.props.containerState.optionsSelected.slice(0);
+        this.setState({
+            optionsSelectedOrdered: optionsSelectedOrdered,
+        });
     },
     
     enableConfirmButton: function () {
@@ -39,6 +48,34 @@ var OptionConfirm = React.createClass({
     disableConfirmButton: function () {
         this.setState({
             canConfirm: false
+        });
+    },
+    
+    handleOrderChange: function(event, value, ignore, inputName) {
+        //Prevent further changes to ranking during reordering
+        this.setState({
+            rankSelectsDisabled: true,
+        });
+        
+        //Get the option ID from the input name
+        var optionId = parseInt(inputName.substr(5),10);
+        
+        console.log(optionId + ": " + value);
+        
+        //Get the optionsSelectedOrdered array from state
+        var optionsSelectedOrdered = this.state.optionsSelectedOrdered;
+       
+        //Remove this option from the ordered options array
+        optionsSelectedOrdered.splice(optionsSelectedOrdered.indexOf(optionId),1);
+        
+        //Put this option back in the required position
+        optionsSelectedOrdered.splice(value,0,optionId);
+        
+        console.log(optionsSelectedOrdered);
+        
+        this.setState({
+            optionsSelectedOrdered: optionsSelectedOrdered,
+            rankSelectsDisabled: false,
         });
     },
     
@@ -73,7 +110,10 @@ var OptionConfirm = React.createClass({
                                     {/*<p>You have chosen the following options:</p>*/}
                                     <OptionList
                                         containerState={this.props.containerState}
+                                        optionIds={this.state.optionsSelectedOrdered}
                                         deleteButton={false}
+                                        handleOrderChange={this.handleOrderChange}
+                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
                                         useCode={this.props.choice.use_code}
                                     />
                                 </div>

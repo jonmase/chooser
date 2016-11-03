@@ -20,7 +20,7 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
-            allowSubmit: false,
+                    allowSubmit: false,
                     allowSubmit: data.allowSubmit,
                     instance: data.choosingInstance,
                     instanceLoaded: true,

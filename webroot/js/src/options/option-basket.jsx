@@ -43,6 +43,7 @@ var OptionBasket = React.createClass({
                             {(this.props.containerState.optionsSelected.length > 0)?
                                 <OptionList
                                     containerState={this.props.containerState}
+                                    optionIds={this.props.containerState.optionsSelected}
                                     removeButton={true}
                                     removeHandler={this.props.optionContainerHandlers.removeOption}
                                     useCode={this.props.choice.use_code}

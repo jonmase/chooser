@@ -93,7 +93,7 @@ class OptionsController extends AppController
             if(!$isViewer) {
                 throw new ForbiddenException(__('Not a viewer for this Choice.'));
             }
-            $action = 'confirm';
+            //$action = 'confirm';
         }
         
         //Does the user have additional roles? I.e., should the dashboard menu be shown?

@@ -4,12 +4,20 @@ import FormsySelect from 'formsy-material-ui/lib/FormsySelect';
 import MenuItem from 'material-ui/MenuItem';
 
 var DropdownField = React.createClass({
+    handleChange: function(event, value, index) {
+        this.props.onChange(event, value, index, this.props.field.name);
+    },
+
     render: function() {
         var field = this.props.field;
 
         var menuItems = field.options.map(function(option) {
             return (
-                <MenuItem value={option.value} key={option.value} primaryText={option.label} />
+                <MenuItem 
+                    key={option.value} 
+                    primaryText={option.label} 
+                    value={option.value} 
+                />
             );
         });
     
@@ -18,11 +26,12 @@ var DropdownField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsySelect
-                    name={field.name}
-                    required={required}
+                    disabled={field.disabled}
                     floatingLabelText={field.label}
-                    onChange={this.props.onChange}
+                    name={field.name}
+                    onChange={this.handleChange}
                     style={field.style}
+                    required={required}
                     value={field.value}
                 >
                     {menuItems}
