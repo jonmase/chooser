@@ -22,6 +22,7 @@ var DropdownField = React.createClass({
                     required={required}
                     floatingLabelText={field.label}
                     onChange={this.props.onChange}
+                    style={field.style}
                     value={field.value}
                 >
                     {menuItems}
