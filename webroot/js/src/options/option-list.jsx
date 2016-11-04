@@ -28,17 +28,17 @@ var OptionList = React.createClass({
         }
         
         var listItemStyle = {};
-        var showCommentsPerOption = this.props.containerState.action === 'confirm' && this.props.containerState.instance.comments_per_option;
+        var showCommentsPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
         if(showCommentsPerOption) {
             listItemStyle.marginRight = '270px';
         }
         
-        var showPreferenceInputs = this.props.containerState.action === 'confirm' && this.props.containerState.instance.preference;
+        var showPreferenceInputs = this.props.action === 'confirm' && this.props.instance.preference;
         if(showPreferenceInputs) {
             listItemStyle.marginLeft = '50px';
             
             //Generate the options for the ranking list
-            if(this.props.containerState.instance.preference_type === 'rank') {
+            if(this.props.instance.preference_type === 'rank') {
                 var rankDropdownOptions = [];
                 var optionCount = this.props.optionIds.length;
                 for(var i = 0; i < optionCount; i++) {
@@ -49,11 +49,16 @@ var OptionList = React.createClass({
                 }
             }
         }
+        
+        //If not using code and action is confirm, move the listItem down slightly so they are in the centre of the block
+        if(!this.props.useCode && this.props.action === 'confirm') {
+            listItemStyle.top = '8px';
+        }
                     
         return (
             <List>
                 {this.props.optionIds.map(function(optionId, optionIndex) {
-                    var option = this.props.containerState.options[this.props.containerState.optionIndexesById[optionId]];
+                    var option = this.props.options[this.props.optionIndexesById[optionId]];
                     
                     if(this.props.useCode) {
                         var primaryText = option.code;
@@ -61,14 +66,20 @@ var OptionList = React.createClass({
                     }
                     else {
                         var primaryText = option.title;
-                        var secondaryText = null;
+                        
+                        //Make secondary text blank...
+                        var secondaryText = "";
+                        //...unless action is confirm, in which case make it a space, so that it is still there to pad out the list item block
+                        if(this.props.action === 'confirm') {
+                            secondaryText = " ";
+                        }
                     }
                     
                     return (
                         <div key={option.id}>
                             {(showPreferenceInputs)?
                                 <div style={{float: 'left'}}>
-                                    {(this.props.containerState.instance.preference_type === 'rank')?
+                                    {(this.props.instance.preference_type === 'rank')?
                                         <DropdownField
                                             field={{
                                                 disabled: this.props.rankSelectsDisabled,
@@ -89,10 +100,10 @@ var OptionList = React.createClass({
                                 <div style={{float: 'right', marginTop: '-8px'}}>
                                     <TextField field={{
                                         label: "Option-specific comments",
-                                        //instructions: this.props.containerState.instance.comments_overall_instructions,
+                                        //instructions: this.props.instance.comments_overall_instructions,
                                         name: "comments_option_" + option.id,
                                         section: false,
-                                        value: null, //this.props.containerState.comments_overall,
+                                        value: null,
                                     }} />
                                 </div>
                             :""}

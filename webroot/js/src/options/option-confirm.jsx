@@ -109,9 +109,12 @@ var OptionConfirm = React.createClass({
                                 <div style={{width: '100%'}}>
                                     {/*<p>You have chosen the following options:</p>*/}
                                     <OptionList
-                                        containerState={this.props.containerState}
+                                        action={this.props.containerState.action}
+                                        instance={this.props.containerState.instance}
                                         optionIds={this.state.optionsSelectedOrdered}
-                                        deleteButton={false}
+                                        optionIndexesById={this.props.containerState.optionIndexesById}
+                                        options={this.props.containerState.options}
+                                        removeButton={false}
                                         handleOrderChange={this.handleOrderChange}
                                         rankSelectsDisabled={this.state.rankSelectsDisabled}
                                         useCode={this.props.choice.use_code}
