@@ -1,8 +1,6 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 import EditButton from '../elements/buttons/edit-button.jsx';
 import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';

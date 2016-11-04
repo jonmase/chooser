@@ -1,9 +1,6 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
-
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';

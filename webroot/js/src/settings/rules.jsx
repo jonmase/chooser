@@ -1,16 +1,7 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
-
-import Table from 'material-ui/Table/Table';
-import TableHeader from 'material-ui/Table/TableHeader';
-import TableHeaderColumn from 'material-ui/Table/TableHeaderColumn';
-import TableBody from 'material-ui/Table/TableBody';
-import TableRow from 'material-ui/Table/TableRow';
-import TableRowColumn from 'material-ui/Table/TableRowColumn';
-
+import {Card, CardHeader, CardText} from 'material-ui/Card';
+import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 import FontIcon from 'material-ui/FontIcon';
 
 import AddButton from '../elements/buttons/add-button.jsx';

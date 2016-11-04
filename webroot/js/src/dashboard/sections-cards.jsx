@@ -1,9 +1,6 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardTitle  from 'material-ui/Card/CardTitle';
-import CardText  from 'material-ui/Card/CardText';
-import CardActions  from 'material-ui/Card/CardActions';
+import {Card, CardTitle, CardText, CardActions} from 'material-ui/Card';
 
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
