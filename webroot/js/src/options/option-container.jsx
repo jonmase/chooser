@@ -1,5 +1,5 @@
 import React from 'react';
-import update from 'react-addons-update';
+import update from 'immutability-helper';
 
 import Snackbar from 'material-ui/Snackbar';
 
@@ -11,6 +11,17 @@ import OptionsConfirm from './option-confirm.jsx';
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
+var optionEditingDefaults = {
+    optionBeingEdited: null,
+    dialogOpen: false,
+    dialogTitle: 'Add Option',
+};
+var optionSaveButtonDefaults = {
+    enabled: true,
+    label: 'Save',
+};
+
+
 var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
         var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
@@ -20,13 +31,16 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
-                    allowSubmit: false,
-                    allowSubmit: data.allowSubmit,
-                    instance: data.choosingInstance,
-                    instanceLoaded: true,
                     favourites: data.favourites,
-                    optionsSelected: data.selected,
-                    ruleWarnings: data.ruleWarnings,
+                    instance: {
+                        instance: data.choosingInstance,
+                        loaded: true,
+                    },
+                    selection: {
+                        allowSubmit: data.allowSubmit,
+                        optionsSelected: data.selected,
+                        ruleWarnings: data.ruleWarnings,
+                    },
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -34,17 +48,8 @@ var OptionContainer = React.createClass({
             }.bind(this)
         });
     },
-    loadOptionsFromServer: function(orderField, orderDirection) {
+    loadOptionsFromServer: function() {
         var url = '../get-options/' + this.props.choice.id + '/' + this.state.action;
-        if(typeof(orderField) !== "undefined") {
-            url += '/' + orderField;
-            if(typeof(orderDirection) !== "undefined") {
-                url += '/' + orderDirection;
-            }
-            else {
-                url += '/asc';
-            }
-        }
         url += '.json';
         $.ajax({
             url: url,
@@ -52,9 +57,11 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
-                    options: data.options,
-                    optionIndexesById: data.optionIndexesById,
-                    optionsLoaded: true,
+                    options: {
+                        options: data.options,
+                        indexesById: data.optionIndexesById,
+                        loaded: true,
+                    },
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -70,9 +77,11 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
-                    rules: data.rules,
-                    ruleIndexesById: data.ruleIndexesById,
-                    rulesLoaded: true,
+                    rules: {
+                        rules: data.rules,
+                        indexesById: data.ruleIndexesById,
+                        loaded: true,
+                    }
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -84,20 +93,31 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
-            allowSubmit: false,
             favourites: [],
-            instance: [],
-            instanceLoaded: false,
-            options: [],
-            optionIndexesById: [],
-            optionsLoaded: false,
-            optionsSelected: [],
-            rules: [],
-            ruleIndexesById: [],
-            rulesLoaded: false,
-            ruleWarnings: false,
-            sortField: 'code',
-            sortDirection: 'asc',
+            instance: {
+                instance: [],
+                loaded: false,
+            },
+            options: {
+                options: [],
+                indexesById: [],
+                loaded: false,
+            },
+            optionsSort: {
+                field: 'code',
+                fieldType: 'text',
+                direction: 'asc',
+            },
+            rules: {
+                rules: [],
+                indexesById: [],
+                loaded: false,
+            },
+            selection: {
+                allowSubmit: false,
+                optionsSelected: [],
+                ruleWarnings: false,
+            },
             snackbar: {
                 open: false,
                 message: '',
@@ -105,21 +125,20 @@ var OptionContainer = React.createClass({
         };
         
         if(this.props.action === 'edit') {
-            initialState.optionBeingEdited = null;
-            initialState.optionDialogOpen = false;
-            initialState.optionDialogTitle = 'Add Option';
-            initialState.optionSaveButtonEnabled = true;
-            initialState.optionSaveButtonLabel = 'Save';
+            initialState.optionEditing = optionEditingDefaults;
+            initialState.optionSaveButton = optionSaveButtonDefaults;
         
+            var optionValuesState = {};
             if(this.props.choice.use_description) {
-                initialState.optionValue_description = '';
+                optionValuesState.value_description = '';
             }
             for(var extra in this.props.choice.extra_fields) {
                 var field = this.props.choice.extra_fields[extra];
                 if(field.type === 'wysiwyg') {
-                    initialState['optionValue_' + field.name] = '';
+                    optionValuesState['value_' + field.name] = '';
                 }
             }
+            initialState.optionValues = optionValuesState;
         }
 
         return initialState;
@@ -138,7 +157,7 @@ var OptionContainer = React.createClass({
             return false;
         }
     
-        console.log('add fav ' + choicesOptionId + '; ins: ' + this.state.instance.id);
+        console.log('add fav ' + choicesOptionId + '; ins: ' + this.state.instance.instance.id);
         
         //Optimistically update the favourites array
         var favourites = this.state.favourites;
@@ -155,7 +174,7 @@ var OptionContainer = React.createClass({
         });
         
         //Save the settings
-        var url = '../../shortlisted-options/favourite/' + action + '/' + this.state.instance.id + '/' + choicesOptionId;
+        var url = '../../shortlisted-options/favourite/' + action + '/' + this.state.instance.instance.id + '/' + choicesOptionId;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -184,10 +203,10 @@ var OptionContainer = React.createClass({
     
     handleOptionSelect: function(rowsSeleted) {
         //console.log(rowsSeleted);
-        var previousOptionsSelected = this.state.optionsSelected;
+        var previousOptionsSelected = this.state.selection.optionsSelected;
         var optionsSelected = [];
         if(rowsSeleted === 'all') {
-            this.state.options.map(function(option) {
+            this.state.options.options.map(function(option) {
                 optionsSelected.push(option.id);
             }, this);
         }
@@ -196,7 +215,7 @@ var OptionContainer = React.createClass({
         }
         else {
             rowsSeleted.map(function(rowIndex) {
-                optionsSelected.push(this.state.options[rowIndex].id);
+                optionsSelected.push(this.state.options.options[rowIndex].id);
             }, this);
         }
         
@@ -205,21 +224,19 @@ var OptionContainer = React.createClass({
     
     saveSelectedOptions: function(optionsSelected) {
         //Prevent submitting while request is sent
+        var selectionState = this.state.selection;
+        var newSelectionState = update(selectionState, {allowSubmit: {$set: false}});
         this.setState({
-            allowSubmit: false,
+            selection: newSelectionState,
         });
 
         console.log(optionsSelected);
-        
-        //Optimistically update the options selected
-        //Not doing this, as wnat to check rules etc before confirming selection
-        //this.setState({optionsSelected: optionsSelected});
         
         //Check the selected options against the rules
         //Save the settings
         var url = '../../selections/save.json';
         var data = {
-            choosing_instance_id: this.state.instance.id,
+            choosing_instance_id: this.state.instance.instance.id,
             confirmed: false,
             options_selected: optionsSelected,
         };
@@ -231,18 +248,20 @@ var OptionContainer = React.createClass({
             data: data,
             success: function(returnedData) {
                 console.log(returnedData.response);
-                
-                this.setState({
+                var selectionState = {
                     allowSubmit: returnedData.allowSubmit,
                     optionsSelected: returnedData.optionsSelected,
                     ruleWarnings: returnedData.ruleWarnings,
+                };
+
+                this.setState({
+                    selection: selectionState,
                 });
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    //optionsSelected: previousOptionsSelected, //Revert to the previous selected Options (commented out as not now optimistically set)
                     //Show error in snackbar
                     snackbar: {
                         open: true,
@@ -257,7 +276,7 @@ var OptionContainer = React.createClass({
     handleOptionRemove: function(optionId) {
         console.log("remove option: " + optionId);
         
-        var optionsSelected = this.state.optionsSelected;
+        var optionsSelected = this.state.selection.optionsSelected.splice(0);
         optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
         
         this.saveSelectedOptions(optionsSelected);
@@ -271,66 +290,82 @@ var OptionContainer = React.createClass({
     },
     
     handleOptionDialogOpen: function(optionId) {
-        var stateData = {
-            optionDialogOpen: true,    //Open the dialog
-        };
-        
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
             console.log("Editing option: ", optionId);
-            stateData.optionDialogTitle = 'Edit Option';
-            stateData.optionBeingEdited = optionId;
             
-            //Get the WYSIWYG field values
+            var optionEditingState = {
+                dialogOpen: true,
+                dialogTitle: 'Edit Option',
+                optionBeingEdited: optionId,
+            };
+            
+            //Update the WYSIWYG field values
             if(optionId && this.props.choice.use_description) {
-                stateData.optionValue_description = this.state.options[this.state.optionIndexesById[optionId]].description;
+                var description = this.state.options.options[this.state.options.indexesById[optionId]].description;
             }
             else {
-                stateData.optionValue_description = '';
+                var description = '';
             }
+            
+            var optionValuesState = this.state.optionValues;
+            var newOptionValuesState = update(optionValuesState, {
+                value_description: {$set: description},
+            });
+
             for(var extra in this.props.choice.extra_fields) {
                 var field = this.props.choice.extra_fields[extra];
                 if(field.type === 'wysiwyg') {
-                    stateData['optionValue_' + field.name] = this.state.options[this.state.optionIndexesById[optionId]][field.name];
+                    var value = this.state.options.options[this.state.options.indexesById[optionId]][field.name];
+                    //stateData['optionValue_' + field.name] = value;
+                    var newOptionValuesState = update(newOptionValuesState, {['optionValue_' + field.name]: {$set: value}});
                 }
             }
+            this.setState({optionValues: newOptionValuesState});
         }
         else {
             console.log("Adding option");
-            stateData.optionDialogTitle = 'Add Option';
-            stateData.optionBeingEdited = null;
+            var optionEditingState = {
+                dialogOpen: true,
+                dialogTitle: 'Add Option',
+                optionBeingEdited: null,
+            };
         }
         
-        this.setState(stateData);
+        this.setState({optionEditing: optionEditingState});
     },
     
     handleOptionDialogClose: function() {
-        this.setState({
-            optionBeingEdited: null,    //Clear the option being edited
-            optionDialogOpen: false,    //Close the dialog
-        });
+        var optionEditingState = {
+            dialogOpen: false,
+            dialogTitle: 'Add Option',
+            optionBeingEdited: null,
+        };
+        this.setState({optionEditing: optionEditingState});
     },
     
     //Submit the add option form
     handleOptionSubmit: function (option) {
         this.setState({
-            optionSaveButtonEnabled: false,
-            optionSaveButtonLabel: 'Saving',
+            optionSaveButton: {
+                enabled: false,
+                label: 'Saving',
+            },
         });
 
         //Get the alloy editor data
         if(this.props.choice.use_description) {
-            option.description = this.state.optionValue_description;
+            option.description = this.state.optionValues.value_description;
         }
         for(var extra in this.props.choice.extra_fields) {
             var field = this.props.choice.extra_fields[extra];
             if(field.type === 'wysiwyg') {
-                option[field.name] = this.state['optionValue_' + field.name];
+                option[field.name] = this.state.optionValues['value_' + field.name];
             }
         }
         
-        if(this.state.optionBeingEdited) {
-            option.choices_option_id = this.state.optionBeingEdited;
+        if(this.state.optionEditing.optionBeingEdited) {
+            option.choices_option_id = this.state.optionEditing.optionBeingEdited;
         }
         
         console.log("Saving option: ", option);
@@ -345,41 +380,32 @@ var OptionContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
 
-                var stateData = {};
+                var unsortedOptions = returnedData.options;
                 
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                stateData.optionSaveButtonEnabled = true;
-                stateData.optionSaveButtonLabel = 'Save';
-                stateData.optionDialogOpen = false;   //Close the Dialog
+                var sortedOptions = this.sortOptions(unsortedOptions, this.state.optionsSort.field, this.state.optionsSort.fieldType, this.state.optionsSort.direction);
                 
-                //Update the state options list
-                stateData.options = this.state.options;    //Get the current options
-                
-                //If editing an option, replace the old option with the new one
-                if(this.state.optionBeingEdited) {
-                    stateData.options.splice(this.state.optionIndexesById[returnedData.option.id], 1, returnedData.option);   //Replace the field in current extraFields
-                
-                }
-                //If adding an option, add the new option to the enf of the list
-                else {
-                    stateData.options.push(returnedData.option);   //Add the new option to current options
-                }
-                
-                //Update the optionIndexesById in state
-                this.updateOptionIndexesById(stateData.options);
-                
-                this.setState(stateData);
+                this.setState({
+                    optionEditing: optionEditingDefaults,
+                    options: {
+                        options: sortedOptions,
+                        indexesById: this.updateOptionIndexesById(sortedOptions),
+                        loaded: true,
+                    },
+                    optionSaveButton: optionSaveButtonDefaults,
+                    snackbar: {
+                        open: true,
+                        message: returnedData.response,
+                    },
+                });
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    optionSaveButtonEnabled: true,
-                    optionSaveButtonLabel: 'Resave',
+                    optionSaveButton: {
+                        enabled: true,
+                        label: 'Resave',
+                    },
                     snackbar: {
                         open: true,
                         message: 'Save error (' + err.toString() + ')',
@@ -390,9 +416,11 @@ var OptionContainer = React.createClass({
     },
 
     handleOptionWysiwygChange: function(element, value) {
-        var stateData = {};
-        stateData['optionValue_' + element] = value;
-        this.setState(stateData);
+        var optionValuesState = this.state.optionValues;
+        var newOptionValuesState = update(optionValuesState, {
+            ['value_' + element]: {$set: value},
+        });
+        this.setState({optionValues: newOptionValuesState});
         
         this.handleOptionChange();
     },
@@ -424,23 +452,33 @@ var OptionContainer = React.createClass({
     },
     
     handleSort: function(field, fieldType) {
-        var sortDirection = 'asc';
-        if(field === this.state.sortField) {
-            if(this.state.sortDirection === 'asc') {
-                sortDirection = 'desc';
+        var direction = 'asc';
+        if(field === this.state.optionsSort.field) {
+            if(this.state.optionsSort.direction === 'asc') {
+                direction = 'desc';
             }
         }
     
-        console.log("sort " + sortDirection + " by " + field);
+        console.log("sort " + direction + " by " + field);
         
-        var stateData = {
-            sortDirection: sortDirection,
-            sortField: field
-        };
+        var optionsState = this.sortOptions(this.deepCopy(this.state.options.options), field, fieldType, direction);
         
-        stateData.options = this.deepCopy(this.state.options);
-        
-        stateData.options.sort(
+        this.setState({
+            options: {
+                options: optionsState,
+                indexesById: this.updateOptionIndexesById(optionsState),
+                loaded: true,
+            },
+            optionsSort: {
+                direction: direction,
+                field: field,
+                fieldType: fieldType,
+            },
+        });
+    },
+    
+    sortOptions: function(options, field, fieldType, direction) {
+        options.sort(
             function(a, b) {
                 var textTypes = ['text', 'wysiwyg', 'list', 'email', 'url'];
             
@@ -506,10 +544,10 @@ var OptionContainer = React.createClass({
                 
                 
                 if (valueA < valueB) {
-                    return (sortDirection === 'asc')?-1:1;
+                    return (direction === 'asc')?-1:1;
                 }
                 if (valueA > valueB) {
-                    return (sortDirection === 'asc')?1:-1;
+                    return (direction === 'asc')?1:-1;
                 }
 
                 // values must be equal
@@ -517,9 +555,7 @@ var OptionContainer = React.createClass({
             }
         );
         
-        this.updateOptionIndexesById(stateData.options);
-        
-        this.setState(stateData);
+        return options;
     },
     
     deepCopy: function(o) {
@@ -541,10 +577,7 @@ var OptionContainer = React.createClass({
             optionIndexesById[option.id] = index;
         });
         
-        this.setState({
-            optionIndexesById: optionIndexesById,
-        });
-        //return optionIndexesById;
+        return optionIndexesById;
     },
 
     render: function() {
@@ -577,30 +610,44 @@ var OptionContainer = React.createClass({
                 <div>
                     {(this.state.action === 'view')?
                         <ChoiceInstructions
-                            choice={this.props.choice}
-                            containerState={this.state}
+                            instance={this.state.instance}
+                            rules={this.state.rules.rules}
                         />
                     :""}
                     {(this.state.action === 'view' || this.state.action === 'edit')?
                         <OptionsTable
                             action={this.state.action}
                             choice={this.props.choice}
-                            containerState={this.state}
+                            favourites={this.state.favourites}
+                            instance={this.state.instance}
                             optionContainerHandlers={containerHandlers}
+                            optionEditing={this.state.optionEditing}
+                            options={this.state.options}
+                            optionSaveButton={this.state.optionSaveButton}
+                            optionsSelected={this.state.selection.optionsSelected}
+                            optionsSort={this.state.optionsSort}
                         />
                     :""}
                     {(this.state.action === 'view')?
                         <OptionsBasket
+                            action={this.state.action}
                             choice={this.props.choice}
-                            containerState={this.state}
+                            instance={this.state.instance}
                             optionContainerHandlers={containerHandlers}
+                            options={this.state.options}
+                            rules={this.state.rules}
+                            selection={this.state.selection}
                         />
                     :""}
                     {(this.state.action === 'confirm')?
                         <OptionsConfirm
+                            action={this.state.action}
                             choice={this.props.choice}
-                            containerState={this.state}
+                            instance={this.state.instance}
                             optionContainerHandlers={containerHandlers}
+                            options={this.state.options}
+                            rules={this.state.rules}
+                            selection={this.state.selection}
                         />
                     :""}
                     <Snackbar

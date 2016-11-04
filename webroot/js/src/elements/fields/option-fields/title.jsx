@@ -6,6 +6,7 @@ var TitleField = React.createClass({
         return (
             <TextField
                 field={{
+                    fullWidth: true,
                     instructions: "Enter text",
                     label: "Title*",
                     name: "title",

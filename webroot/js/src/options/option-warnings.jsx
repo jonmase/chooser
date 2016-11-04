@@ -7,8 +7,8 @@ var OptionWarnings = React.createClass({
         return (
             <div>
                 <h5>Warnings</h5>
-                {this.props.containerState.ruleWarnings.map(function(warning) {
-                    var rule = this.props.containerState.rules[this.props.containerState.ruleIndexesById[warning.ruleId]];
+                {this.props.ruleWarnings.map(function(warning) {
+                    var rule = this.props.rules.rules[this.props.rules.indexesById[warning.ruleId]];
                     
                     if(rule.scope === 'category_all') {
                         var warningComponent = warning.ruleWarning.map(function(category) {

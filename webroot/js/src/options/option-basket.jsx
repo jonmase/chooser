@@ -1,18 +1,12 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import OptionList from './option-list.jsx';
 import OptionWarnings from './option-warnings.jsx';
 
 import Loader from '../elements/loader.jsx';
-import Text from '../elements/display/text.jsx';
-import Wysiwyg from '../elements/display/wysiwyg.jsx';
-import DateTime from '../elements/display/datetime.jsx';
-import TextLabelled from '../elements/display/text-labelled.jsx';
 
 var styles = {
     cardText: {
@@ -36,17 +30,16 @@ var OptionBasket = React.createClass({
                     expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.containerState.optionsLoaded || !this.props.containerState.instanceLoaded || !this.props.containerState.rulesLoaded)?
+                    {(!this.props.options.loaded || !this.props.instance.loaded || !this.props.rules.loaded)?
                         <Loader />
                     :
                         <div>
-                            {(this.props.containerState.optionsSelected.length > 0)?
+                            {(this.props.selection.optionsSelected.length > 0)?
                                 <OptionList
-                                    action={this.props.containerState.action}
-                                    instance={this.props.containerState.instance}
-                                    optionIds={this.props.containerState.optionsSelected}
-                                    optionIndexesById={this.props.containerState.optionIndexesById}
-                                    options={this.props.containerState.options}
+                                    action={this.props.action}
+                                    instance={this.props.instance.instance}
+                                    optionIds={this.props.selection.optionsSelected}
+                                    options={this.props.options}
                                     removeButton={true}
                                     removeHandler={this.props.optionContainerHandlers.removeOption}
                                     useCode={this.props.choice.use_code}
@@ -55,15 +48,16 @@ var OptionBasket = React.createClass({
                                 <div>No options chosen</div>
                             }
                             
-                            {(this.props.containerState.ruleWarnings)?
+                            {(this.props.selection.ruleWarnings)?
                                 <OptionWarnings
-                                    containerState={this.props.containerState}
+                                    rules={this.props.rules}
+                                    ruleWarnings={this.props.selection.ruleWarnings}
                                 />
                             :""}
                             
                             <div style={{marginTop: '15px'}}>
                                 <RaisedButton
-                                    disabled={!this.props.containerState.allowSubmit}
+                                    disabled={!this.props.selection.allowSubmit}
                                     label="Submit"
                                     onTouchTap={this.props.optionContainerHandlers.submit}
                                     primary={true}

@@ -18,7 +18,7 @@ class OptionsController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user does not have correct permissions for the action
      */
-    public function getOptions($choiceId = null, $action = 'view', $orderField = 'code', $orderDirection = 'ASC')
+    public function getOptions($choiceId = null, $action = 'view')
     {
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
@@ -28,7 +28,7 @@ class OptionsController extends AppController
             }
             
             //Get the options for which this user is an editor
-            $options = $this->Options->getForView($choiceId, false, false, $orderField, $orderDirection, true, $this->Auth->user('id'));
+            $options = $this->Options->getForView($choiceId, false, false, true, $this->Auth->user('id'));
         }
         
         //If action is approve, make sure the user is an approver for this Choice
@@ -39,7 +39,7 @@ class OptionsController extends AppController
             }
             
             //Get the options for which this user is an approver
-            $options = $this->Options->getForView($choiceId, true, false, $orderField, $orderDirection);
+            $options = $this->Options->getForView($choiceId, true, false);
         }*/
         
         else {
@@ -49,15 +49,10 @@ class OptionsController extends AppController
             }
 
             //Get all of the published and approved options
-            $options = $this->Options->getForView($choiceId, true, true, $orderField, $orderDirection);
+            $options = $this->Options->getForView($choiceId, true, true);
         }
         
-        //Create an array of optionIds mapped to index in options array
-        //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
-        $optionIndexesById = [];
-        foreach($options as $key => $option) {
-            $optionIndexesById[$option['id']] = $key;
-        }
+        $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
         $this->set(compact('options', 'optionIndexesById'));
         $this->set('_serialize', ['options', 'optionIndexesById']);
@@ -174,10 +169,10 @@ class OptionsController extends AppController
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');
             
-            $option = $this->Options->processForView($updatedChoicesOption, null, $choiceId);
-            //pr($option);
-            //exit;
-            $this->set('option', $option);
+            $options = $this->Options->getForView($choiceId, false, false, true, $this->Auth->user('id'));
+            $optionIndexesById = $this->Options->getOptionIndexesById($options);
+
+            $this->set(compact('options', 'optionIndexesById'));
         } 
         else {
             throw new InternalErrorException(__('Problem with saving option'));

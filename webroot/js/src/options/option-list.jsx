@@ -4,7 +4,6 @@ import {List, ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Divider from 'material-ui/Divider';
 
-import Text from '../elements/display/text.jsx';
 import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
 
@@ -14,19 +13,6 @@ var OptionList = React.createClass({
     },
 
     render: function() {
-        if(this.props.removeButton) {
-            var rightIconButton =
-                <IconButton
-                    onTouchTap={() => this.props.removeHandler(optionId)}
-                    iconClassName="material-icons"
-                >
-                    close
-                </IconButton>;
-        }
-        else {
-            var rightIconButton = null;
-        }
-        
         var listItemStyle = {};
         var showCommentsPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
         if(showCommentsPerOption) {
@@ -58,7 +44,7 @@ var OptionList = React.createClass({
         return (
             <List>
                 {this.props.optionIds.map(function(optionId, optionIndex) {
-                    var option = this.props.options[this.props.optionIndexesById[optionId]];
+                    var option = this.props.options.options[this.props.options.indexesById[optionId]];
                     
                     if(this.props.useCode) {
                         var primaryText = option.code;
@@ -76,7 +62,7 @@ var OptionList = React.createClass({
                     }
                     
                     return (
-                        <div key={option.id}>
+                        <div key={optionId}>
                             {(showPreferenceInputs)?
                                 <div style={{float: 'left'}}>
                                     {(this.props.instance.preference_type === 'rank')?
@@ -84,7 +70,7 @@ var OptionList = React.createClass({
                                             field={{
                                                 disabled: this.props.rankSelectsDisabled,
                                                 label: false,
-                                                name: "rank_" + option.id,
+                                                name: "rank_" + optionId,
                                                 options: rankDropdownOptions,
                                                 required: true,
                                                 style: {width: '40px', marginTop: '12px'},
@@ -101,7 +87,7 @@ var OptionList = React.createClass({
                                     <TextField field={{
                                         label: "Option-specific comments",
                                         //instructions: this.props.instance.comments_overall_instructions,
-                                        name: "comments_option_" + option.id,
+                                        name: "comments_option_" + optionId,
                                         section: false,
                                         value: null,
                                     }} />
@@ -111,7 +97,16 @@ var OptionList = React.createClass({
                             <ListItem
                                 disabled={typeof(this.props.disabled) !== "undefined"?this.props.disabled:true}
                                 primaryText={primaryText}
-                                rightIconButton={rightIconButton}
+                                rightIconButton={
+                                    (this.props.removeButton)?
+                                        <IconButton
+                                            onTouchTap={() => this.props.removeHandler(optionId)}
+                                            iconClassName="material-icons"
+                                        >
+                                            close
+                                        </IconButton>
+                                    :""
+                                }
                                 secondaryText={secondaryText}
                                 secondaryTextLines={1}
                                 style={listItemStyle}

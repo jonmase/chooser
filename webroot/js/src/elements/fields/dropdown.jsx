@@ -5,7 +5,10 @@ import MenuItem from 'material-ui/MenuItem';
 
 var DropdownField = React.createClass({
     handleChange: function(event, value, index) {
-        this.props.onChange(event, value, index, this.props.field.name);
+        //If this.props.onChange is a function, call it, adding the field name to the callback parameters
+        if(typeof(this.props.onChange) === 'function') {
+            this.props.onChange(event, value, index, this.props.field.name);
+        }
     },
 
     render: function() {

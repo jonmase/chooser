@@ -1,8 +1,6 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 import Loader from '../elements/loader.jsx';
 import Wysiwyg from '../elements/display/wysiwyg.jsx';
@@ -17,8 +15,7 @@ var styles = {
     
 var ChoiceInstructions = React.createClass({
     render: function() {
-        var instance = this.props.containerState.instance;
-        var rules = this.props.containerState.rules;
+        var instance = this.props.instance.instance;
         
         return (
             <Card 
@@ -34,7 +31,7 @@ var ChoiceInstructions = React.createClass({
                     expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.containerState.instanceLoaded)?
+                    {(!this.props.instance.loaded)?
                             <Loader />
                         :
                             (instance.id)?
@@ -52,7 +49,7 @@ var ChoiceInstructions = React.createClass({
                                         :""}
                                     </div>
                                     <div className="col-md-6">
-                                        <Rules rules={this.props.containerState.rules} />
+                                        <Rules rules={this.props.rules} />
                                     </div>
                                 </div>
                             :

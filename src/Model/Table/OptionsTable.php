@@ -78,7 +78,7 @@ class OptionsTable extends Table
         return $validator;
     }
     
-    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $orderField = 'code', $orderDirection = 'ASC', $editableOnly = false, $userId = null) {
+    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
         $conditions = [
             'ChoicesOptions.choice_id' => $choiceId,
             'ChoicesOptions.revision_parent' => 0,
@@ -93,7 +93,7 @@ class OptionsTable extends Table
         $optionsQuery = $this->ChoicesOptions->find('all', [
             'conditions' => $conditions,
             'contain' => ['Options'],
-            'order' => 'Options.' . $orderField . ' ' . $orderDirection,
+            'order' => 'Options.code ASC',  //Always sort by code - sorting will be done on frontend
         ]);
                 
         //If $userId is specified and user is not admin, only let them see options they are associated, optionally only those that they can edit
@@ -125,6 +125,20 @@ class OptionsTable extends Table
     }
     public function getOptionsTableProperties() {
         return $this->_optionsTableProperties;
+    }
+    
+    //Create an array of optionIds mapped to index in options array
+    //TODO: This feels quite ugly/hard work, but is intended to save time repeatedly looping through the array of options to find the one with the right ID
+    public function getOptionIndexesById($options = null) {
+        if(empty($options)) {
+            return [];
+        }
+        
+        $optionIndexesById = [];
+        foreach($options as $key => $option) {
+            $optionIndexesById[$option['id']] = $key;
+        }
+        return $optionIndexesById;
     }
     
     public function processExtrasForSave($choiceId, $extraValues, $extraTypes) {

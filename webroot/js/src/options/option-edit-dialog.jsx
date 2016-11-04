@@ -3,7 +3,6 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
-import FieldLabel from '../elements/fields/label.jsx';
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
@@ -12,7 +11,7 @@ var customDialogStyle = {
     maxWidth: 'none',
 };
 
-var OptionDialog = React.createClass({
+var OptionEditDialog = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
@@ -41,10 +40,10 @@ var OptionDialog = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label={this.props.containerState.optionSaveButtonLabel}
+                label={this.props.optionSaveButton.label}
                 primary={true}
                 type="submit"
-                disabled={!this.state.canSubmit || !this.props.containerState.optionSaveButtonEnabled}
+                disabled={!this.state.canSubmit || !this.props.optionSaveButton.enabled}
             />,
         ];
         
@@ -58,8 +57,8 @@ var OptionDialog = React.createClass({
         };
         
         var option = {};
-        if(this.props.containerState.optionBeingEdited) {
-            option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.containerState.optionBeingEdited]];
+        if(this.props.optionEditing.optionBeingEdited) {
+            option = this.props.options.options[this.props.options.indexesById[this.props.optionEditing.optionBeingEdited]];
         }
 
         return (
@@ -67,8 +66,8 @@ var OptionDialog = React.createClass({
                 actions={actions}
                 contentStyle={customDialogStyle}
                 dialogOnRequestClose={this.props.handlers.dialogClose}
-                dialogOpen={this.props.containerState.optionDialogOpen}
-                dialogTitle={this.props.containerState.optionDialogTitle}
+                dialogOpen={this.props.optionEditing.dialogOpen}
+                dialogTitle={this.props.optionEditing.dialogTitle}
                 formId="option_form"
                 formOnValid={this.enableSubmitButton}
                 formOnInvalid={this.disableSubmitButton}
@@ -108,4 +107,4 @@ var OptionDialog = React.createClass({
     }
 });
 
-module.exports = OptionDialog;
+module.exports = OptionEditDialog;

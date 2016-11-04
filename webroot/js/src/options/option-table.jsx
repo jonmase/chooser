@@ -37,21 +37,22 @@ var styles = {
         width: '30%',
     },
     actionsTableRowColumn: {
-        whiteSpace: 'normal',
         paddingLeft: '12px',
         paddingRight: 0,
         textAlign: 'right',
-    },
-    favouriteTableRowColumn: {
         whiteSpace: 'normal',
         width: '48px',
+    },
+    favouriteTableRowColumn: {
         paddingLeft: '12px',
         paddingRight: '12px',
+        whiteSpace: 'normal',
+        width: '48px',
     },
     sortFilterTitles: {
-        verticalAlign: '30%', 
         display: 'inline-block', 
         fontWeight: '500',
+        verticalAlign: '30%', 
         width: '120px',
     },
     cardText: {
@@ -94,9 +95,7 @@ var OptionsTable = React.createClass({
         console.log(option);
     },
     render: function() {
-        var props = this.props;
-        
-        /*if(props.action === 'view') {
+        /*if(this.props.action === 'view') {
             styles.actionsTableRowColumn.width = '48px';
         }
         else {
@@ -104,7 +103,7 @@ var OptionsTable = React.createClass({
         }*/
         
         var enableSelection = true;
-        switch(props.action) {
+        switch(this.props.action) {
             case 'edit':
                 var title = 'Options';
                 var subtitle = 'Create, edit and manage options';
@@ -112,7 +111,7 @@ var OptionsTable = React.createClass({
             case 'view':
                 var title = 'Choose Options';
                 var subtitle = false;
-                enableSelection = this.props.containerState.instance.id?true:false;
+                enableSelection = this.props.instance.instance.id?true:false;
                 break;
             default:
                 var title = false;
@@ -121,7 +120,7 @@ var OptionsTable = React.createClass({
         }
         
         var defaultFields = [];
-        if(props.choice.use_code) {
+        if(this.props.choice.use_code) {
             defaultFields.push({
                 name: 'code',
                 label: 'Code',
@@ -129,7 +128,7 @@ var OptionsTable = React.createClass({
                 rowStyle: styles.tableRowColumn,
             })
         }
-        if(props.choice.use_title) {
+        if(this.props.choice.use_title) {
             defaultFields.push({
                 name: 'title',
                 label: 'Title',
@@ -137,7 +136,7 @@ var OptionsTable = React.createClass({
                 rowStyle: styles.tableRowColumnTitle,
             })
         }
-        if(props.choice.use_min_places) {
+        if(this.props.choice.use_min_places) {
             defaultFields.push({
                 name: 'min_places',
                 label: 'Min. Places',
@@ -145,7 +144,7 @@ var OptionsTable = React.createClass({
                 rowStyle: styles.tableRowColumn,
             })
         }
-        if(props.choice.use_max_places) {
+        if(this.props.choice.use_max_places) {
             defaultFields.push({
                 name: 'max_places',
                 label: 'Max. Places',
@@ -153,7 +152,7 @@ var OptionsTable = React.createClass({
                 rowStyle: styles.tableRowColumn,
             })
         }
-        if(props.choice.use_points) {
+        if(this.props.choice.use_points) {
             defaultFields.push({
                 name: 'points',
                 label: 'Points',
@@ -172,7 +171,7 @@ var OptionsTable = React.createClass({
         var sortableExtraFields = [];
         var filterableExtraFields = [];
         
-        props.choice.extra_fields.forEach(function(field, index) {
+        this.props.choice.extra_fields.forEach(function(field, index) {
             if(field.sortable) {
                 sortableExtraFields.push(index);
             }
@@ -196,14 +195,13 @@ var OptionsTable = React.createClass({
                         <div style={{float: 'right'}}>
                             {/*
                             <FilterUsers
-                                state={props.containerState} 
-                                roleOptions={props.roleOptions} 
-                                handlers={props.filterUsersHandlers} 
-                                titleStyle={styles.sortFilterTitles}
+                                //roleOptions={this.props.roleOptions} 
+                                //handlers={this.props.filterUsersHandlers} 
+                                //titleStyle={styles.sortFilterTitles}
                             />&nbsp;*/}
-                            {props.action === 'edit'? 
+                            {this.props.action === 'edit'? 
                                 <AddButton 
-                                    handleAdd={props.optionContainerHandlers.dialogOpen} 
+                                    handleAdd={this.props.optionContainerHandlers.dialogOpen} 
                                     tooltip="Add Options"
                                 />
                             :""}
@@ -213,7 +211,7 @@ var OptionsTable = React.createClass({
                         //expandable={true}
                         style={styles.cardText}
                     >
-                        {(!this.props.containerState.optionsLoaded)?
+                        {(!this.props.options.loaded)?
                             <Loader />
                         :
                             <Table 
@@ -226,49 +224,49 @@ var OptionsTable = React.createClass({
                                     displaySelectAll={enableSelection}
                                 >
                                     <TableRow>
-                                        {(props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                        {(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                             <FavouriteOption
-                                                handlers={props.optionContainerHandlers} 
+                                                handlers={this.props.optionContainerHandlers} 
                                                 option="all"
                                             />
                                         </TableHeaderColumn>:""}
                                         {defaultFields.map(function(field) {
                                             return (
                                                 <SortableTableHeaderColumn
-                                                    sortField={props.containerState.sortField}
-                                                    sortDirection={props.containerState.sortDirection}
+                                                    sortField={this.props.optionsSort.field}
+                                                    sortDirection={this.props.optionsSort.direction}
                                                     field={field.name}
                                                     fieldType={field.type}
                                                     key={field.name}
                                                     label={field.label}
-                                                    sortHandler={props.optionContainerHandlers.sort}
+                                                    sortHandler={this.props.optionContainerHandlers.sort}
                                                 />
                                             );
-                                        })}
+                                        }, this)}
 
                                         {sortableExtraFields.map(function(fieldIndex) {
-                                            var fieldType = props.choice.extra_fields[fieldIndex].type;
+                                            var fieldType = this.props.choice.extra_fields[fieldIndex].type;
                                             if(fieldType === 'list') {
-                                                fieldType = props.choice.extra_fields[fieldIndex].extra['list_type'];
+                                                fieldType = this.props.choice.extra_fields[fieldIndex].extra['list_type'];
                                             }
                                         
                                             return (
                                                 <SortableTableHeaderColumn
-                                                    sortField={props.containerState.sortField}
-                                                    sortDirection={props.containerState.sortDirection}
-                                                    field={props.choice.extra_fields[fieldIndex].name}
+                                                    sortField={this.props.optionsSort.field}
+                                                    sortDirection={this.props.optionsSort.direction}
+                                                    field={this.props.choice.extra_fields[fieldIndex].name}
                                                     fieldType={fieldType}
-                                                    key={props.choice.extra_fields[fieldIndex].name}
-                                                    label={props.choice.extra_fields[fieldIndex].label}
-                                                    sortHandler={props.optionContainerHandlers.sort}
+                                                    key={this.props.choice.extra_fields[fieldIndex].name}
+                                                    label={this.props.choice.extra_fields[fieldIndex].label}
+                                                    sortHandler={this.props.optionContainerHandlers.sort}
                                                 />
                                             );
-                                        })}
-                                        {(props.action === 'edit')?
+                                        }, this)}
+                                        {(this.props.action === 'edit')?
                                             <TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>
                                         :""}
-                                        {/*(props.action === 'approve' || props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
-                                        {props.action === 'edit'? 
+                                        {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
+                                        {this.props.action === 'edit'? 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         :""}
                                         <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
@@ -278,19 +276,18 @@ var OptionsTable = React.createClass({
                                     displayRowCheckbox={enableSelection}
                                     deselectOnClickaway={false}
                                 >
-                                    {props.containerState.options.map(function(option) {
-                                        //var user = props.containerState.users[userIndex];
+                                    {this.props.options.options.map(function(option) {
                                         return (
                                             <TableRow 
                                                 key={option.id} 
-                                                selected={props.containerState.optionsSelected.indexOf(option.id) !== -1}
+                                                selected={this.props.optionsSelected.indexOf(option.id) !== -1}
                                             >
-                                                {(props.action === 'view' && enableSelection)?
+                                                {(this.props.action === 'view' && enableSelection)?
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteOption
-                                                            handler={props.optionContainerHandlers.favourite} 
+                                                            handler={this.props.optionContainerHandlers.favourite} 
                                                             optionId={option.id}
-                                                            favourited={props.containerState.favourites.indexOf(option.id) > -1}
+                                                            favourited={this.props.favourites.indexOf(option.id) > -1}
                                                         />
                                                     </UnselectableCell>
                                                 :""}
@@ -303,27 +300,27 @@ var OptionsTable = React.createClass({
                                                 
                                                 {sortableExtraFields.map(function(fieldIndex) {
                                                     return (
-                                                        <TableRowColumn style={styles.tableRowColumn} key={props.choice.extra_fields[fieldIndex].label}>
+                                                        <TableRowColumn style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
                                                             <ExtraField 
-                                                                extra={props.choice.extra_fields[fieldIndex].extra}
-                                                                label={props.choice.extra_fields[fieldIndex].label}
-                                                                options={props.choice.extra_fields[fieldIndex].options}
-                                                                //field={props.choice.extra_fields[fieldIndex]}
-                                                                type={props.choice.extra_fields[fieldIndex].type}
-                                                                value={option[props.choice.extra_fields[fieldIndex].name]}
+                                                                extra={this.props.choice.extra_fields[fieldIndex].extra}
+                                                                label={this.props.choice.extra_fields[fieldIndex].label}
+                                                                options={this.props.choice.extra_fields[fieldIndex].options}
+                                                                //field={this.props.choice.extra_fields[fieldIndex]}
+                                                                type={this.props.choice.extra_fields[fieldIndex].type}
+                                                                value={option[this.props.choice.extra_fields[fieldIndex].name]}
                                                             />
                                                         </TableRowColumn>
                                                     );
-                                                })}
+                                                }, this)}
                                                 
-                                                {(props.action === 'edit')?
+                                                {(this.props.action === 'edit')?
                                                     <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
                                                 :""}
                                                 
-                                                {props.action === 'edit'? 
+                                                {this.props.action === 'edit'? 
                                                     <UnselectableCell style={styles.actionsTableRowColumn}>
                                                         <EditButton
-                                                            handleEdit={props.optionContainerHandlers.dialogOpen} 
+                                                            handleEdit={this.props.optionContainerHandlers.dialogOpen} 
                                                             id={option.id}
                                                             tooltip=""
                                                         />
@@ -345,16 +342,19 @@ var OptionsTable = React.createClass({
                     </CardText>
                 </Card>
                     <OptionViewDialog
-                        choice={props.choice}
+                        choice={this.props.choice}
+                        dialogOpen={this.state.optionDialogOpen}
                         handlers={optionTableHandlers}
-                        containerState={props.containerState} 
-                        viewState={this.state}
+                        optionBeingViewed={this.state.optionBeingViewed}
+                        options={this.props.options}
                     />
-                    {(props.action === 'edit')?
+                    {(this.props.action === 'edit')?
                         <OptionEditDialog
-                            choice={props.choice}
-                            handlers={props.optionContainerHandlers}
-                            containerState={props.containerState} 
+                            choice={this.props.choice}
+                            handlers={this.props.optionContainerHandlers}
+                            optionEditing={this.props.optionEditing} 
+                            options={this.props.options}
+                            optionSaveButton={this.props.optionSaveButton}
                         />
                     :""}
             </div>

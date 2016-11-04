@@ -1,8 +1,6 @@
 import React from 'react';
 
-import Card  from 'material-ui/Card/Card';
-import CardHeader from 'material-ui/Card/CardHeader';
-import CardText  from 'material-ui/Card/CardText';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import Formsy from 'formsy-react';
@@ -33,7 +31,7 @@ var OptionConfirm = React.createClass({
     //TODO: Not sure if componentWillMount is the right place to do this, but it works fine given that this component will never be shown when the page first loads
     componentWillMount: function() {
         //Clone the optionsSelected as optionsSelectedOrdered
-        var optionsSelectedOrdered = this.props.containerState.optionsSelected.slice(0);
+        var optionsSelectedOrdered = this.props.selection.optionsSelected.slice(0);
         this.setState({
             optionsSelectedOrdered: optionsSelectedOrdered,
         });
@@ -94,7 +92,7 @@ var OptionConfirm = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.containerState.optionsLoaded || !this.props.containerState.instanceLoaded || !this.props.containerState.rulesLoaded)?
+                    {(!this.props.options.loaded || !this.props.instance.loaded || !this.props.rules.loaded)?
                         <Loader />
                     :
                         <Formsy.Form
@@ -105,18 +103,17 @@ var OptionConfirm = React.createClass({
                             onValidSubmit={this.props.optionContainerHandlers.confirm}
                             noValidate={true}
                         >
-                            {(this.props.containerState.optionsSelected.length > 0)?
+                            {(this.state.optionsSelectedOrdered.length > 0)?
                                 <div style={{width: '100%'}}>
                                     {/*<p>You have chosen the following options:</p>*/}
                                     <OptionList
-                                        action={this.props.containerState.action}
-                                        instance={this.props.containerState.instance}
-                                        optionIds={this.state.optionsSelectedOrdered}
-                                        optionIndexesById={this.props.containerState.optionIndexesById}
-                                        options={this.props.containerState.options}
-                                        removeButton={false}
+                                        action={this.props.action}
                                         handleOrderChange={this.handleOrderChange}
+                                        instance={this.props.instance.instance}
+                                        optionIds={this.state.optionsSelectedOrdered}
+                                        options={this.props.options}
                                         rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                        removeButton={false}
                                         useCode={this.props.choice.use_code}
                                     />
                                 </div>
@@ -124,19 +121,20 @@ var OptionConfirm = React.createClass({
                                 <div>No options chosen</div>
                             }
                             
-                            {(this.props.containerState.instance.comments_overall)?
+                            {(this.props.instance.instance.comments_overall)?
                                 <MultilineField field={{
                                     label: "Comments",
-                                    instructions: this.props.containerState.instance.comments_overall_instructions,
+                                    instructions: this.props.instance.instance.comments_overall_instructions,
                                     name: "comments_overall",
                                     section: true,
-                                    value: null, //this.props.containerState.comments_overall,
+                                    value: null,
                                 }} />
                             :""}
                             
-                            {(this.props.containerState.ruleWarnings)?
+                            {(this.props.selection.ruleWarnings)?
                                 <OptionWarnings
-                                    containerState={this.props.containerState}
+                                    rules={this.props.rules}
+                                    ruleWarnings={this.props.selection.ruleWarnings}
                                 />
                             :""}
                             
@@ -145,8 +143,8 @@ var OptionConfirm = React.createClass({
                             </p>
                             <p>
                                 <strong>Please Note: </strong>
-                                {(this.props.containerState.instance.editable)?
-                                    <span>You will be able to return and change your choices until the deadline: <DateTime value={this.props.containerState.instance.deadline} /></span>
+                                {(this.props.instance.instance.editable)?
+                                    <span>You will be able to return and change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} /></span>
                                 :
                                     <span>Once you Confirm, you will not be able to change your choices.</span>
                                 }

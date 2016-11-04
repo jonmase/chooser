@@ -33,8 +33,8 @@ var OptionViewDialog = React.createClass({
         };
         
         var option = {};
-        if(this.props.viewState.optionBeingViewed) {
-            option = this.props.containerState.options[this.props.containerState.optionIndexesById[this.props.viewState.optionBeingViewed]];
+        if(this.props.optionBeingViewed) {
+            option = this.props.options.options[this.props.options.indexesById[this.props.optionBeingViewed]];
         }
         
         var title = '';
@@ -56,7 +56,7 @@ var OptionViewDialog = React.createClass({
                 autoScrollBodyContent={true}
                 modal={false}
                 onRequestClose={this.props.handlers.dialogClose}
-                open={this.props.viewState.optionDialogOpen}
+                open={this.props.dialogOpen}
                 style={customDialogStyle}
                 title={title}
             >
