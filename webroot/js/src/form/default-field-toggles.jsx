@@ -18,11 +18,11 @@ var DefaultFieldToggles = React.createClass({
                 label: "Code",
                 defaultToggled: this.props.choice.use_code,
             },
-            {
+            /*{
                 name: "title",
                 label: "Title",
                 defaultToggled: this.props.choice.use_title,
-            },
+            },*/
             {
                 name: "description",
                 label: "Description",
@@ -66,7 +66,7 @@ var DefaultFieldToggles = React.createClass({
             >
                 <CardHeader
                     title="Default Fields"
-                    subtitle="Change which of the default fields are used for this Choice"
+                    subtitle="Change which of the default fields are used for this Choice. Title is always used."
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
