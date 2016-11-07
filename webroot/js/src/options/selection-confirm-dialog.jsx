@@ -7,6 +7,11 @@ import Warnings from './selection-warnings.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
 
 var SelectionConfirmDialog = React.createClass({
+    handleConfirm: function() {
+        //Confirm the submit, with fromDialog set to true
+        this.props.handlers.submit(null, true);
+    },
+
     render: function() {
         var actions = [
             <FlatButton
@@ -18,7 +23,7 @@ var SelectionConfirmDialog = React.createClass({
             <FlatButton
                 key="submit"
                 label="Confirm"
-                onTouchTap={this.props.handlers.submit}
+                onTouchTap={this.handleConfirm}
                 primary={true}
                 type="submit"
             />,

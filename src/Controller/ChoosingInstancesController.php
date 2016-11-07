@@ -93,6 +93,8 @@ class ChoosingInstancesController extends AppController
         if($action === 'view') {
             $selection = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
             //pr($selection); exit;
+            
+            $selected = [];
             if(!empty($selection)) {
                 foreach($selection['options_selections'] as $option) {
                     $selected[] = $option['choices_option_id'];

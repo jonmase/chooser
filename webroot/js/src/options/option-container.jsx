@@ -7,7 +7,6 @@ import Instructions from './choice-instructions.jsx';
 import Basket from './selection-basket.jsx';
 import OptionsTable from './option-table.jsx';
 import Confirm from './selection-confirm.jsx';
-import ConfirmDialog from './selection-confirm-dialog.jsx';
 import Review from './selection-review.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
@@ -45,6 +44,7 @@ var OptionContainer = React.createClass({
                     selection: {
                         allowSubmit: data.allowSubmit,
                         optionsSelected: data.selected,
+                        //optionsSelectedOrdered: data.selectedOrdered,
                         ruleWarnings: data.ruleWarnings,
                         selection: data.selection,
                     },
@@ -103,6 +103,7 @@ var OptionContainer = React.createClass({
             selection: {
                 allowSubmit: false,
                 optionsSelected: [],
+                //optionsSelectedOrdered: [],
                 ruleWarnings: false,
                 selection: [],
             },
@@ -421,32 +422,53 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleSelectionConfirm(event, fromDialog) {
-        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
-        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
-            this.setState({
-                confirmDialogOpen: true,
-            });
-        }
-        //Otherwise, confirmed in the dialog, or editable and no warning
-        else {
-            this.setState({
-                confirmDialogOpen: false,
-                action: "review",
-            });
-            console.log("selection completely confirmed");
-            //TODO: In DB, change selection status to confirmed and save preferences and comments
-        }
-    },
-    
-    handleSelectionConfirmDialogClose() {
+    handleSelectionFinalSubmit(data, a1, a2) {
+        console.log("selection finally submitted");
+        //Don't actually need to do anything at this stage, just change to confirm view
         this.setState({
-            confirmDialogOpen: false,
+            action: 'review'
         });
-    },
-    
-    handleSelectionConfirmDialogSubmit() {
-        this.handleSelectionConfirm(null, true);  //Confirm, with fromDialog set to true
+     
+        /*
+        //TODO: In DB, change selection status to confirmed and save preferences and comments
+        //Save the selection
+        var url = '../../selections/save.json';
+        var data = {
+            choosing_instance_id: this.state.instance.instance.id,
+            confirmed: true,
+            options_selected: optionsSelected,
+        };
+        
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                var selectionState = {
+                    allowSubmit: returnedData.allowSubmit,
+                    optionsSelected: returnedData.optionsSelected,
+                    ruleWarnings: returnedData.ruleWarnings,
+                    selection: returnedData.selection,
+                };
+
+                this.setState({
+                    selection: selectionState,
+                });
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    //Show error in snackbar
+                    snackbar: {
+                        open: true,
+                        message: 'Error selecting option (' + err.toString() + ')',
+                    }
+                });
+            }.bind(this)
+        });*/
     },
     
     handleSelectionBackToEdit() {
@@ -606,6 +628,10 @@ var OptionContainer = React.createClass({
         else if(this.state.action === 'confirm') {
             containerHandlers.confirm = this.handleSelectionConfirm;
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
+            containerHandlers.finalSubmit = this.handleSelectionFinalSubmit;
+            containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
+            containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
+            containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
         }
         else if(this.state.action === 'review') {
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
@@ -662,16 +688,6 @@ var OptionContainer = React.createClass({
                                 instance={this.state.instance}
                                 optionContainerHandlers={containerHandlers}
                                 options={this.state.options}
-                                rules={this.state.rules}
-                                selection={this.state.selection}
-                            />
-                            <ConfirmDialog 
-                                open={this.state.confirmDialogOpen}
-                                handlers={{
-                                    close: this.handleSelectionConfirmDialogClose,
-                                    submit: this.handleSelectionConfirmDialogSubmit
-                                }}
-                                instance={this.state.instance}
                                 rules={this.state.rules}
                                 selection={this.state.selection}
                             />

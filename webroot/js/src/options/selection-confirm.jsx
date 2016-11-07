@@ -8,6 +8,7 @@ import Formsy from 'formsy-react';
 import OptionList from './option-list.jsx';
 import Warnings from './selection-warnings.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
+import ConfirmDialog from './selection-confirm-dialog.jsx';
 
 import Loader from '../elements/loader.jsx';
 
@@ -23,6 +24,8 @@ var SelectionConfirm = React.createClass({
     getInitialState: function () {
         var initialState = {
             canConfirm: true,
+            confirmDialogOpen: false,
+            optionsSelectedOrdered: [],
             rankSelectsDisabled: false,
         }
         
@@ -49,6 +52,18 @@ var SelectionConfirm = React.createClass({
         });
     },
     
+    handleConfirmDialogOpen() {
+        this.setState({
+            confirmDialogOpen: true,
+        });
+    },
+    
+    handleConfirmDialogClose() {
+        this.setState({
+            confirmDialogOpen: false,
+        });
+    },
+    
     handleOrderChange: function(event, value, ignore, inputName) {
         //Prevent further changes to ranking during reordering
         this.setState({
@@ -56,7 +71,7 @@ var SelectionConfirm = React.createClass({
         });
         
         //Get the option ID from the input name
-        var optionId = parseInt(inputName.substr(5),10);
+        var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
         
         console.log(optionId + ": " + value);
         
@@ -75,6 +90,17 @@ var SelectionConfirm = React.createClass({
             optionsSelectedOrdered: optionsSelectedOrdered,
             rankSelectsDisabled: false,
         });
+    },
+    
+    handleConfirm: function(event, fromDialog) {
+        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
+        if(!fromDialog && (!this.props.instance.instance.editable || this.props.selection.ruleWarnings)) {
+            this.handleConfirmDialogOpen();
+        }
+        //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
+        else {
+            this.refs.confirm.submit();
+        }
     },
     
     render: function() {
@@ -100,8 +126,9 @@ var SelectionConfirm = React.createClass({
                             method="POST"
                             onValid={this.enableConfirmButton}
                             onInvalid={this.disableConfirmButton}
-                            onValidSubmit={this.props.optionContainerHandlers.confirm}
+                            onValidSubmit={this.props.optionContainerHandlers.finalSubmit}
                             noValidate={true}
+                            ref="confirm"
                         >
                             {(this.state.optionsSelectedOrdered.length > 0)?
                                 <div style={{width: '100%'}}>
@@ -150,12 +177,24 @@ var SelectionConfirm = React.createClass({
                                 <RaisedButton
                                     disabled={!this.state.canConfirm}
                                     label="Confirm"
-                                    onTouchTap={this.props.optionContainerHandlers.confirm}
+                                    onTouchTap={this.handleConfirm}
                                     primary={true}
+                                    //type="submit"
                                 />
                             </div>
                         </Formsy.Form>
                     }
+                    <ConfirmDialog 
+                        open={this.state.confirmDialogOpen}
+                        handlers={{
+                            close: this.handleConfirmDialogClose,
+                            submit: this.handleConfirm,
+                        }}
+                        instance={this.props.instance}
+                        rules={this.props.rules}
+                        selection={this.props.selection}
+                    />
+
                 </CardText>
             </Card>
         );

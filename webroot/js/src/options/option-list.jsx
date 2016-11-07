@@ -8,10 +8,6 @@ import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
 
 var OptionList = React.createClass({
-    handleOrderChange: function() {
-    
-    },
-
     render: function() {
         var listItemStyle = {};
         var showCommentsPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
@@ -70,7 +66,7 @@ var OptionList = React.createClass({
                                             field={{
                                                 disabled: this.props.rankSelectsDisabled,
                                                 label: false,
-                                                name: "rank_" + optionId,
+                                                name: "ranks." + optionId,
                                                 options: rankDropdownOptions,
                                                 required: true,
                                                 style: {width: '40px', marginTop: '12px'},
