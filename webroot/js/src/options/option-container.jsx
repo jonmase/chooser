@@ -8,6 +8,7 @@ import Basket from './selection-basket.jsx';
 import OptionsTable from './option-table.jsx';
 import Confirm from './selection-confirm.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
+import Review from './selection-review.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -148,7 +149,7 @@ var OptionContainer = React.createClass({
 
     componentDidMount: function() {
         this.loadOptionsFromServer();
-        if(this.state.action === 'view' || this.state.action === 'confirm') {
+        if(this.state.action !== 'edit') {
             this.loadInstanceFromServer();
             this.loadRulesFromServer();
         }
@@ -446,10 +447,10 @@ var OptionContainer = React.createClass({
         else {
             this.setState({
                 confirmDialogOpen: false,
-                //action: review,
+                action: "review",
             });
             console.log("selection completely confirmed");
-            //TODO: Change selection status to confirmed in DB
+            //TODO: In DB, change selection status to confirmed and save preferences and comments
         }
     },
     
@@ -621,6 +622,9 @@ var OptionContainer = React.createClass({
             containerHandlers.confirm = this.handleSelectionConfirm;
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
         }
+        else if(this.state.action === 'review') {
+            containerHandlers.backToEdit = this.handleSelectionBackToEdit;
+        }
         else if(this.state.action === 'edit') {
             containerHandlers.change = this.handleOptionChange;
             containerHandlers.submit = this.handleOptionSubmit;
@@ -665,6 +669,7 @@ var OptionContainer = React.createClass({
                             selection={this.state.selection}
                         />
                     :""}
+                    
                     {(this.state.action === 'confirm')?
                         <div>
                             <Confirm
@@ -688,6 +693,17 @@ var OptionContainer = React.createClass({
                         </div>
                     :""}
                     
+                    {(this.state.action === 'review')?
+                        <Review
+                            choice={this.props.choice}
+                            instance={this.state.instance}
+                            optionContainerHandlers={containerHandlers}
+                            options={this.state.options}
+                            rulesLoaded={this.state.rules.loaded}
+                            selection={this.state.selection}
+                        />
+                    :""}
+
                     <Snackbar
                         autoHideDuration={3000}
                         message={this.state.snackbar.message}
