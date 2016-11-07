@@ -105,7 +105,7 @@ var OptionList = React.createClass({
                                         >
                                             close
                                         </IconButton>
-                                    :""
+                                    :null
                                 }
                                 secondaryText={secondaryText}
                                 secondaryTextLines={1}

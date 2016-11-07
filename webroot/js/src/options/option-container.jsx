@@ -3,10 +3,11 @@ import update from 'immutability-helper';
 
 import Snackbar from 'material-ui/Snackbar';
 
-import ChoiceInstructions from './choice-instructions.jsx';
-import OptionsBasket from './option-basket.jsx';
+import Instructions from './choice-instructions.jsx';
+import Basket from './selection-basket.jsx';
 import OptionsTable from './option-table.jsx';
-import OptionsConfirm from './option-confirm.jsx';
+import Confirm from './selection-confirm.jsx';
+import ConfirmDialog from './selection-confirm-dialog.jsx';
 
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -93,6 +94,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
+            confirmDialogOpen: false,
             favourites: [],
             instance: {
                 instance: [],
@@ -427,13 +429,38 @@ var OptionContainer = React.createClass({
     
     handleSelectionSubmit() {
         console.log("selection submitted");
+        //Don't actually need to do anything at this stage, just change to confirm view
         this.setState({
             action: 'confirm'
         });
     },
     
-    handleSelectionConfirm() {
-        console.log("selection confirmed");
+    handleSelectionConfirm(event, fromDialog) {
+        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
+        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
+            this.setState({
+                confirmDialogOpen: true,
+            });
+        }
+        //Otherwise, confirmed in the dialog, or editable and no warning
+        else {
+            this.setState({
+                confirmDialogOpen: false,
+                //action: review,
+            });
+            console.log("selection completely confirmed");
+            //TODO: Change selection status to confirmed in DB
+        }
+    },
+    
+    handleSelectionConfirmDialogClose() {
+        this.setState({
+            confirmDialogOpen: false,
+        });
+    },
+    
+    handleSelectionConfirmDialogSubmit() {
+        this.handleSelectionConfirm(null, true);  //Confirm, with fromDialog set to true
     },
     
     handleSelectionBackToEdit() {
@@ -609,7 +636,7 @@ var OptionContainer = React.createClass({
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
                     {(this.state.action === 'view')?
-                        <ChoiceInstructions
+                        <Instructions
                             instance={this.state.instance}
                             rules={this.state.rules.rules}
                         />
@@ -629,8 +656,7 @@ var OptionContainer = React.createClass({
                         />
                     :""}
                     {(this.state.action === 'view')?
-                        <OptionsBasket
-                            action={this.state.action}
+                        <Basket
                             choice={this.props.choice}
                             instance={this.state.instance}
                             optionContainerHandlers={containerHandlers}
@@ -640,16 +666,28 @@ var OptionContainer = React.createClass({
                         />
                     :""}
                     {(this.state.action === 'confirm')?
-                        <OptionsConfirm
-                            action={this.state.action}
-                            choice={this.props.choice}
-                            instance={this.state.instance}
-                            optionContainerHandlers={containerHandlers}
-                            options={this.state.options}
-                            rules={this.state.rules}
-                            selection={this.state.selection}
-                        />
+                        <div>
+                            <Confirm
+                                choice={this.props.choice}
+                                instance={this.state.instance}
+                                optionContainerHandlers={containerHandlers}
+                                options={this.state.options}
+                                rules={this.state.rules}
+                                selection={this.state.selection}
+                            />
+                            <ConfirmDialog 
+                                open={this.state.confirmDialogOpen}
+                                handlers={{
+                                    close: this.handleSelectionConfirmDialogClose,
+                                    submit: this.handleSelectionConfirmDialogSubmit
+                                }}
+                                instance={this.state.instance}
+                                rules={this.state.rules}
+                                selection={this.state.selection}
+                            />
+                        </div>
                     :""}
+                    
                     <Snackbar
                         autoHideDuration={3000}
                         message={this.state.snackbar.message}
