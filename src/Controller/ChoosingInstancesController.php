@@ -61,7 +61,7 @@ class ChoosingInstancesController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not a Viewer
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function getActive($choiceId = null)
+    public function getActive($choiceId = null, $action = 'view')
     {
         //Make sure the user is an admin for this Choice
         //Not just for admins, needed for viewing choices as well. Can't think of any security issue here that needs admin check
@@ -71,25 +71,42 @@ class ChoosingInstancesController extends AppController
         }
         
         $choosingInstance = $this->ChoosingInstances->findActive($choiceId, true, $this->Auth->user('id'));
-        
+        //pr($choosingInstance);
         $favourites = [];
         foreach($choosingInstance->shortlisted_options as $option) {
             $favourites[] = $option['choices_option_id'];
         }
         unset($choosingInstance->shortlisted_options);
         
-        $selected = [];
-        if(!empty($choosingInstance->selections)) {
-            foreach($choosingInstance->selections[0]['options_selections'] as $option) {
-                $selected[] = $option['choices_option_id'];
-            }
-        }
-        list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
-
-        unset($choosingInstance->selections);
+        list($rules, $ruleIndexesById) = $this->ChoosingInstances->Rules->getForInstance($choosingInstance->id);
         
-        $this->set(compact('choosingInstance', 'favourites', 'selected', 'allowSubmit', 'ruleWarnings'));
-        $this->set('_serialize', ['choosingInstance', 'favourites', 'selected', 'allowSubmit', 'ruleWarnings']);
+        $serialize = ['choosingInstance', 'favourites', 'rules', 'ruleIndexesById'];
+        
+        //If getting the instance for settings, get the ruleCategoryFields
+        if($action === 'settings') {
+            $ruleCategoryFields = $this->ChoosingInstances->Rules->ExtraFields->getRuleCategoryFields($choiceId);
+            $this->set(compact('ruleCategoryFields'));
+            $serialize = array_merge($serialize, ['ruleCategoryFields']);
+        }
+        
+        //If getting the instance for view, get the selection-related info
+        if($action === 'view') {
+            $selection = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
+            //pr($selection); exit;
+            if(!empty($selection)) {
+                foreach($selection['options_selections'] as $option) {
+                    $selected[] = $option['choices_option_id'];
+                }
+                //unset($selection['options_selections']);
+            }
+            list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
+
+            $this->set(compact('selection', 'selected', 'allowSubmit', 'ruleWarnings'));
+            $serialize = array_merge($serialize, ['selection', 'selected', 'allowSubmit', 'ruleWarnings']);
+        }
+
+        $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));
+        $this->set('_serialize', $serialize);
     }
 
     /**

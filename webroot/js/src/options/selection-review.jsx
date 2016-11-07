@@ -32,7 +32,7 @@ var SelectionReview = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.options.loaded || !this.props.instance.loaded || !this.props.rulesLoaded)?
+                    {(!this.props.options.loaded || !this.props.instance.loaded)?
                         <Loader />
                     :
                         <div>

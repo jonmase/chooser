@@ -348,24 +348,21 @@ class RulesTable extends Table
         return $ruleWarning;
     }
     
-    
-    public function getForChoice($choiceId = null) {
-        if(!$choiceId) {
+    public function getForInstance($instanceId = null) {
+        if(!$instanceId) {
             return [[],[]];
         }
         
-        $instanceQuery = $this->ChoosingInstances->find('all', [
+        $rulesQuery = $this->find('all', [
             'conditions' => [
-                'choice_id' => $choiceId,
-                'active' => 1,
+                'choosing_instance_id' => $instanceId,
             ],
-            'contain' => ['Rules' => ['ExtraFields', 'ExtraFieldOptions']],
+            'contain' => ['ExtraFields', 'ExtraFieldOptions'],
         ]);
+        $rules = $rulesQuery->toArray();
+        //pr($rules); exit;
         
-        if(!$instanceQuery->isEmpty()) {
-            $instance = $instanceQuery->first();
-            $rules = $instance->rules;
-            
+        if(!empty($rules)) {
             $ruleIndexesById = [];
             foreach($rules as $key => &$rule) {
                 if(!empty($rule['value_type'])) {

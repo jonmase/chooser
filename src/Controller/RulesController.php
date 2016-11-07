@@ -19,7 +19,8 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function get($choiceId = null, $action = 'settings') {
+     //Now do this as part of getting instance
+    /*public function get($choiceId = null, $instanceId = null, $action = 'settings') {
         //Make sure the user is an admin for this Choice or the Choice is visible to viewers
         $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
         if(empty($isAdmin)) {
@@ -28,7 +29,7 @@ class RulesController extends AppController
             //}
         }
         
-        list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
+        list($rules, $ruleIndexesById) = $this->Rules->getForInstance($instanceId);
         
         if($action === 'settings') {
             $ruleCategoryFields = $this->Rules->ExtraFields->getRuleCategoryFields($choiceId);
@@ -40,7 +41,7 @@ class RulesController extends AppController
             $this->set('_serialize', ['rules', 'ruleIndexesById']);
         }
     }
-
+*/
     /**
      * Save method
      *
@@ -50,7 +51,7 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function save($choiceId = null)
+    public function save($choiceId = null, $instanceId = null)
     {
         $this->request->allowMethod(['post']);
 
@@ -75,7 +76,7 @@ class RulesController extends AppController
         if ($this->Rules->save($rule)) {
             $response = 'Rule saved';
             
-            list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
+            list($rules, $ruleIndexesById) = $this->Rules->getForInstance($instanceId);
 
             $this->set(compact('rules', 'ruleIndexesById', 'response'));
             $this->set('_serialize', ['rules', 'ruleIndexesById', 'response']);
@@ -94,7 +95,7 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function delete($choiceId = null)
+    public function delete($choiceId = null, $instanceId = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         
@@ -115,7 +116,7 @@ class RulesController extends AppController
         
         if ($this->Rules->delete($rule)) {
             $response = 'Rule deleted';
-            list($rules, $ruleIndexesById) = $this->Rules->getForChoice($choiceId);
+            list($rules, $ruleIndexesById) = $this->Rules->getForInstance($instanceId);
 
             $this->set(compact('rules', 'ruleIndexesById', 'response'));
             $this->set('_serialize', ['rules', 'ruleIndexesById', 'response']);

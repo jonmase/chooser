@@ -30,7 +30,7 @@ var SelectionBasket = React.createClass({
                     expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.options.loaded || !this.props.instance.loaded || !this.props.rules.loaded)?
+                    {(!this.props.options.loaded || !this.props.instance.loaded)?
                         <Loader />
                     :
                         <div>

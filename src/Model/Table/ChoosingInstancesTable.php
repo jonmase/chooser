@@ -267,6 +267,8 @@ class ChoosingInstancesTable extends Table
                     ->where(['ShortlistedOptions.user_id' => $userId]);
             };
             
+            //This is now done as a separate query in the Selections controller
+            /*
             $contain['Selections'] = function($q) use ($userId) {
                 return $q
                     //->select(['id', 'user_id', 'choices_option_id', 'choosing_instance_id'])
@@ -275,7 +277,7 @@ class ChoosingInstancesTable extends Table
                         'archived' => false,
                     ])
                     ->contain(['OptionsSelections']);
-            };
+            };*/
         }
 
         $choosingInstanceQuery = $this->find('all', [
@@ -283,7 +285,6 @@ class ChoosingInstancesTable extends Table
                 'choice_id' => $choiceId,
                 'active' => $active,
             ],
-            //'contain' => $contain,
         ])->contain($contain);
 
         return $choosingInstanceQuery;

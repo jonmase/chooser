@@ -95,7 +95,7 @@ var Rules = React.createClass({
                 <CardText 
                     expandable={true}
                 >
-                    {(!this.props.containerState.instanceLoaded || !this.props.containerState.rulesLoaded)?
+                    {(!this.props.containerState.instanceLoaded)?
                         //Show loader until both instance and rules have been loaded, as rules rely on instance
                         <Loader />
                     :

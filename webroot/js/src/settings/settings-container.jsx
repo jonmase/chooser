@@ -13,7 +13,7 @@ var update = require('react-addons-update');
 
 var FormContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = '../getActive/' + this.props.choice.id + '.json';
+        var url = '../getActive/' + this.props.choice.id + '/settings.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -22,6 +22,9 @@ var FormContainer = React.createClass({
                 this.setState({
                     instance: data.choosingInstance,
                     instanceLoaded: true,
+                    rules: data.rules,
+                    ruleCategoryFields: data.ruleCategoryFields,
+                    ruleIndexesById: data.ruleIndexesById,
                     settingsToggle_preference: data.choosingInstance.preference,
                     settingsToggle_comments_overall: data.choosingInstance.comments_overall,
                     settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
@@ -29,25 +32,6 @@ var FormContainer = React.createClass({
                     //settingsWysiwyg_preference_instructions: data.choosingInstance.preference_instructions,
                     //settingsWysiwyg_comments_overall_instructions: data.choosingInstance.comments_overall_instructions,
                     //settingsWysiwyg_comments_per_option_instructions: data.choosingInstance.comments_per_option_instructions,
-                });
-            }.bind(this),
-                error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    loadRulesFromServer: function() {
-        var url = '../../rules/get/' + this.props.choice.id + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({
-                    rules: data.rules,
-                    ruleCategoryFields: data.ruleCategoryFields,
-                    ruleIndexesById: data.ruleIndexesById,
-                    rulesLoaded: true,
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -66,7 +50,6 @@ var FormContainer = React.createClass({
             rules: [],
             ruleIndexesById: [],
             ruleCategoryFields: [],
-            rulesLoaded: false,
             ruleEditDialogOpen: false,
             ruleBeingEdited: null,
             ruleSaveButtonEnabled: true,
@@ -101,7 +84,7 @@ var FormContainer = React.createClass({
     },
     componentDidMount: function() {
         this.loadInstanceFromServer();
-        this.loadRulesFromServer();
+        //this.loadRulesFromServer();
     },
     handleRuleDeleteDialogOpen: function(ruleIndex) {
         this.setState({
@@ -127,7 +110,7 @@ var FormContainer = React.createClass({
         console.log("Deleting rule: ", rule);
         
         //Save the Rule
-        var url = '../../rules/delete/' + this.props.choice.id + '.json';
+        var url = '../../rules/delete/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -287,7 +270,7 @@ var FormContainer = React.createClass({
         console.log("Saving rule: ", rule);
         
         //Save the Rule
-        var url = '../../rules/save/' + this.props.choice.id + '.json';
+        var url = '../../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',

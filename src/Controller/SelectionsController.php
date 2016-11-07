@@ -12,6 +12,28 @@ use Cake\Network\Exception\InternalErrorException;
  */
 class SelectionsController extends AppController
 {
+    /*public function get($instanceId) {
+        if(!$instanceId) {
+            return [];
+        }
+        
+        $selection = $this->Selections->findByInstanceAndUser($instanceId, $this->Auth->user('id'));
+
+        $selected = [];
+        if(!empty($selection)) {
+            foreach($selection['options_selections'] as $option) {
+                $selected[] = $option['choices_option_id'];
+            }
+            //unset($selection['options_selections']);
+        }
+        list($allowSubmit, $ruleWarnings) = $this->Selections->ChoosingInstances->Rules->checkSelection($selected, $instanceId, $choiceId);
+
+        unset($choosingInstance->selections);
+        
+        $this->set(compact('choosingInstance', 'favourites', 'selection', 'selected', 'allowSubmit', 'ruleWarnings'));
+        $this->set('_serialize', ['choosingInstance', 'favourites', 'selection', 'selected', 'allowSubmit', 'ruleWarnings']);
+    }*/
+    
     /**
      * Save method
      *

@@ -38,10 +38,15 @@ var OptionContainer = React.createClass({
                         instance: data.choosingInstance,
                         loaded: true,
                     },
+                    rules: {
+                        rules: data.rules,
+                        indexesById: data.ruleIndexesById,
+                    },
                     selection: {
                         allowSubmit: data.allowSubmit,
                         optionsSelected: data.selected,
                         ruleWarnings: data.ruleWarnings,
+                        selection: data.selection,
                     },
                 });
             }.bind(this),
@@ -64,26 +69,6 @@ var OptionContainer = React.createClass({
                         indexesById: data.optionIndexesById,
                         loaded: true,
                     },
-                });
-            }.bind(this),
-                error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-            }.bind(this)
-        });
-    },
-    loadRulesFromServer: function() {
-        var url = '../../rules/get/' + this.props.choice.id + '/view.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({
-                    rules: {
-                        rules: data.rules,
-                        indexesById: data.ruleIndexesById,
-                        loaded: true,
-                    }
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -114,12 +99,12 @@ var OptionContainer = React.createClass({
             rules: {
                 rules: [],
                 indexesById: [],
-                loaded: false,
             },
             selection: {
                 allowSubmit: false,
                 optionsSelected: [],
                 ruleWarnings: false,
+                selection: [],
             },
             snackbar: {
                 open: false,
@@ -151,7 +136,7 @@ var OptionContainer = React.createClass({
         this.loadOptionsFromServer();
         if(this.state.action !== 'edit') {
             this.loadInstanceFromServer();
-            this.loadRulesFromServer();
+            //this.loadRulesFromServer();
         }
     },
     
@@ -235,7 +220,6 @@ var OptionContainer = React.createClass({
 
         console.log(optionsSelected);
         
-        //Check the selected options against the rules
         //Save the settings
         var url = '../../selections/save.json';
         var data = {
@@ -255,6 +239,7 @@ var OptionContainer = React.createClass({
                     allowSubmit: returnedData.allowSubmit,
                     optionsSelected: returnedData.optionsSelected,
                     ruleWarnings: returnedData.ruleWarnings,
+                    selection: returnedData.selection,
                 };
 
                 this.setState({
@@ -699,7 +684,6 @@ var OptionContainer = React.createClass({
                             instance={this.state.instance}
                             optionContainerHandlers={containerHandlers}
                             options={this.state.options}
-                            rulesLoaded={this.state.rules.loaded}
                             selection={this.state.selection}
                         />
                     :""}

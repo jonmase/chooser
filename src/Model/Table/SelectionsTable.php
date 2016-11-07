@@ -98,6 +98,24 @@ class SelectionsTable extends Table
         return $rules;
     }
     
+    public function findByInstanceAndUser($instanceId = null, $userId = null) {
+        if(!$instanceId || !$userId) {
+            return [];
+        }
+        
+        $selectionsQuery = $this->find('all')
+            ->where([
+                'Selections.choosing_instance_id' => $instanceId,
+                'Selections.user_id' => $userId,
+                'Selections.archived' => false,
+            ])
+            ->contain(['OptionsSelections']);
+
+        $selection = $selectionsQuery->first()->toArray();
+        //pr($selection); exit;
+        return $selection;
+    }
+    
     public function processForSave($instance, $requestData, $userId) {
         //If there is already an unconfirmed selection for this user/instance, use this as the basic data
         if(!empty($instance['selections'])) {
