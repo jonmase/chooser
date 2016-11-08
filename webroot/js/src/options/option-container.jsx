@@ -9,6 +9,8 @@ import OptionsTable from './option-table.jsx';
 import Confirm from './selection-confirm.jsx';
 import Review from './selection-review.jsx';
 
+import Loader from '../elements/loader.jsx';
+
 import ChooserTheme from '../elements/theme.jsx';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
@@ -32,6 +34,7 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
+                    action: data.action,
                     favourites: data.favourites,
                     instance: {
                         instance: data.choosingInstance,
@@ -635,59 +638,63 @@ var OptionContainer = React.createClass({
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    {(this.state.action === 'view')?
-                        <Instructions
-                            instance={this.state.instance}
-                            rules={this.state.rules.rules}
-                        />
-                    :""}
-                    {(this.state.action === 'view' || this.state.action === 'edit')?
-                        <OptionsTable
-                            action={this.state.action}
-                            choice={this.props.choice}
-                            favourites={this.state.favourites}
-                            instance={this.state.instance}
-                            optionContainerHandlers={containerHandlers}
-                            optionEditing={this.state.optionEditing}
-                            options={this.state.options}
-                            optionSaveButton={this.state.optionSaveButton}
-                            optionsSelected={this.state.selection.optionsSelected}
-                            optionsSort={this.state.optionsSort}
-                        />
-                    :""}
-                    {(this.state.action === 'view')?
-                        <Basket
-                            choice={this.props.choice}
-                            instance={this.state.instance}
-                            optionContainerHandlers={containerHandlers}
-                            options={this.state.options}
-                            rules={this.state.rules}
-                            selection={this.state.selection}
-                        />
-                    :""}
-                    
-                    {(this.state.action === 'confirm')?
+                    {(!this.state.options.loaded || (this.state.action !== "edit" && !this.state.instance.loaded))?
+                        <Loader />
+                    :
                         <div>
-                            <Confirm
-                                choice={this.props.choice}
-                                instance={this.state.instance}
-                                optionContainerHandlers={containerHandlers}
-                                options={this.state.options}
-                                rules={this.state.rules}
-                                selection={this.state.selection}
-                            />
+                            {(this.state.action === 'view')?
+                                <Instructions
+                                    instance={this.state.instance}
+                                    rules={this.state.rules.rules}
+                                />
+                            :""}
+                            {(this.state.action === 'view' || this.state.action === 'edit')?
+                                <OptionsTable
+                                    action={this.state.action}
+                                    choice={this.props.choice}
+                                    favourites={this.state.favourites}
+                                    instance={this.state.instance}
+                                    optionContainerHandlers={containerHandlers}
+                                    optionEditing={this.state.optionEditing}
+                                    options={this.state.options}
+                                    optionSaveButton={this.state.optionSaveButton}
+                                    optionsSelected={this.state.selection.optionsSelected}
+                                    optionsSort={this.state.optionsSort}
+                                />
+                            :""}
+                            {(this.state.action === 'view')?
+                                <Basket
+                                    choice={this.props.choice}
+                                    instance={this.state.instance}
+                                    optionContainerHandlers={containerHandlers}
+                                    options={this.state.options}
+                                    rules={this.state.rules}
+                                    selection={this.state.selection}
+                                />
+                            :""}
+                            
+                            {(this.state.action === 'confirm')?
+                                <Confirm
+                                    choice={this.props.choice}
+                                    instance={this.state.instance}
+                                    optionContainerHandlers={containerHandlers}
+                                    options={this.state.options}
+                                    rules={this.state.rules}
+                                    selection={this.state.selection}
+                                />
+                            :""}
+                            
+                            {(this.state.action === 'review')?
+                                <Review
+                                    choice={this.props.choice}
+                                    instance={this.state.instance}
+                                    optionContainerHandlers={containerHandlers}
+                                    options={this.state.options}
+                                    selection={this.state.selection}
+                                />
+                            :""}
                         </div>
-                    :""}
-                    
-                    {(this.state.action === 'review')?
-                        <Review
-                            choice={this.props.choice}
-                            instance={this.state.instance}
-                            optionContainerHandlers={containerHandlers}
-                            options={this.state.options}
-                            selection={this.state.selection}
-                        />
-                    :""}
+                    }
 
                     <Snackbar
                         autoHideDuration={3000}

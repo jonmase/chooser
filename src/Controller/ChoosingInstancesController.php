@@ -92,7 +92,15 @@ class ChoosingInstancesController extends AppController
         //If getting the instance for view, get the selection-related info
         if($action === 'view') {
             $selection = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
-            //pr($selection); exit;
+            //pr($selection); exit;#
+            
+            //Update the action based on the confirmed status of the selection
+            if($selection['confirmed']) {
+                $action = 'review';
+            }
+            else {
+                $action = 'view';
+            }
             
             $selected = [];
             if(!empty($selection)) {
@@ -103,8 +111,8 @@ class ChoosingInstancesController extends AppController
             }
             list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
 
-            $this->set(compact('selection', 'selected', 'allowSubmit', 'ruleWarnings'));
-            $serialize = array_merge($serialize, ['selection', 'selected', 'allowSubmit', 'ruleWarnings']);
+            $this->set(compact('action', 'selection', 'selected', 'allowSubmit', 'ruleWarnings'));
+            $serialize = array_merge($serialize, ['action', 'selection', 'selected', 'allowSubmit', 'ruleWarnings']);
         }
 
         $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));

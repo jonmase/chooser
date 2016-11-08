@@ -10,8 +10,6 @@ import Warnings from './selection-warnings.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 
-import Loader from '../elements/loader.jsx';
-
 import MultilineField from '../elements/fields/multiline-text.jsx';
 
 var styles = {
@@ -120,72 +118,68 @@ var SelectionConfirm = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
-                    {(!this.props.options.loaded || !this.props.instance.loaded)?
-                        <Loader />
-                    :
-                        <Formsy.Form
-                            id="selection_confirm"
-                            method="POST"
-                            onValid={this.enableConfirmButton}
-                            onInvalid={this.disableConfirmButton}
-                            onValidSubmit={this.props.optionContainerHandlers.finalConfirm}
-                            noValidate={true}
-                            ref="confirm"
-                        >
-                            {(this.state.optionsSelectedOrdered.length > 0)?
-                                <div style={{width: '100%'}}>
-                                    {/*<p>You have chosen the following options:</p>*/}
-                                    <OptionList
-                                        action="confirm"
-                                        handleOrderChange={this.handleOrderChange}
-                                        instance={this.props.instance.instance}
-                                        optionIds={this.state.optionsSelectedOrdered}
-                                        options={this.props.options}
-                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                        removeButton={false}
-                                        useCode={this.props.choice.use_code}
-                                    />
-                                </div>
-                            :
-                                <div>No options chosen</div>
-                            }
-                            
-                            {(this.props.instance.instance.comments_overall)?
-                                <MultilineField field={{
-                                    label: "Comments",
-                                    instructions: this.props.instance.instance.comments_overall_instructions,
-                                    name: "selection.comments",
-                                    section: true,
-                                    value: null,
-                                }} />
-                            :""}
-                            
-                            <Warnings
-                                rules={this.props.rules}
-                                ruleWarnings={this.props.selection.ruleWarnings}
-                            />
-                            
-                            <EditableWarning
-                                instance={this.props.instance.instance}
-                            />
-                            
-                            <div style={{marginTop: '15px'}}>
-                                <RaisedButton
-                                    label="Change"
-                                    onTouchTap={this.props.optionContainerHandlers.backToEdit}
-                                    primary={false}
-                                    style={{marginRight: '15px'}}
-                                />
-                                <RaisedButton
-                                    disabled={!this.state.canConfirm}
-                                    label="Confirm"
-                                    onTouchTap={this.handleConfirm}
-                                    primary={true}
-                                    //type="submit"
+                    <Formsy.Form
+                        id="selection_confirm"
+                        method="POST"
+                        onValid={this.enableConfirmButton}
+                        onInvalid={this.disableConfirmButton}
+                        onValidSubmit={this.props.optionContainerHandlers.finalConfirm}
+                        noValidate={true}
+                        ref="confirm"
+                    >
+                        {(this.state.optionsSelectedOrdered.length > 0)?
+                            <div style={{width: '100%'}}>
+                                {/*<p>You have chosen the following options:</p>*/}
+                                <OptionList
+                                    action="confirm"
+                                    handleOrderChange={this.handleOrderChange}
+                                    instance={this.props.instance.instance}
+                                    optionIds={this.state.optionsSelectedOrdered}
+                                    options={this.props.options}
+                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                    removeButton={false}
+                                    useCode={this.props.choice.use_code}
                                 />
                             </div>
-                        </Formsy.Form>
-                    }
+                        :
+                            <div>No options chosen</div>
+                        }
+                        
+                        {(this.props.instance.instance.comments_overall)?
+                            <MultilineField field={{
+                                label: "Comments",
+                                instructions: this.props.instance.instance.comments_overall_instructions,
+                                name: "selection.comments",
+                                section: true,
+                                value: null,
+                            }} />
+                        :""}
+                        
+                        <Warnings
+                            rules={this.props.rules}
+                            ruleWarnings={this.props.selection.ruleWarnings}
+                        />
+                        
+                        <EditableWarning
+                            instance={this.props.instance.instance}
+                        />
+                        
+                        <div style={{marginTop: '15px'}}>
+                            <RaisedButton
+                                label="Change"
+                                onTouchTap={this.props.optionContainerHandlers.backToEdit}
+                                primary={false}
+                                style={{marginRight: '15px'}}
+                            />
+                            <RaisedButton
+                                disabled={!this.state.canConfirm}
+                                label="Confirm"
+                                onTouchTap={this.handleConfirm}
+                                primary={true}
+                                //type="submit"
+                            />
+                        </div>
+                    </Formsy.Form>
                     <ConfirmDialog 
                         open={this.state.confirmDialogOpen}
                         handlers={{
@@ -196,7 +190,6 @@ var SelectionConfirm = React.createClass({
                         rules={this.props.rules}
                         selection={this.props.selection}
                     />
-
                 </CardText>
             </Card>
         );
