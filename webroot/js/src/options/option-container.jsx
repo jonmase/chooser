@@ -190,90 +190,6 @@ var OptionContainer = React.createClass({
         
     },
     
-    handleOptionSelect: function(rowsSeleted) {
-        //console.log(rowsSeleted);
-        var previousOptionsSelected = this.state.selection.optionsSelected;
-        var optionsSelected = [];
-        if(rowsSeleted === 'all') {
-            this.state.options.options.map(function(option) {
-                optionsSelected.push(option.id);
-            }, this);
-        }
-        else if(rowsSeleted === 'none') {
-            //Leave optionsSelected empty
-        }
-        else {
-            rowsSeleted.map(function(rowIndex) {
-                optionsSelected.push(this.state.options.options[rowIndex].id);
-            }, this);
-        }
-        
-        this.saveSelectedOptions(optionsSelected);
-    },
-    
-    saveSelectedOptions: function(optionsSelected) {
-        //Prevent submitting while request is sent
-        var selectionState = this.state.selection;
-        var newSelectionState = update(selectionState, {allowSubmit: {$set: false}});
-        this.setState({
-            selection: newSelectionState,
-        });
-
-        console.log(optionsSelected);
-        
-        //Save the settings
-        var url = '../../selections/save.json';
-        var data = {
-            choosing_instance_id: this.state.instance.instance.id,
-            confirmed: false,
-            options_selected: optionsSelected,
-        };
-        
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: data,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                var selectionState = {
-                    allowSubmit: returnedData.allowSubmit,
-                    optionsSelected: returnedData.optionsSelected,
-                    ruleWarnings: returnedData.ruleWarnings,
-                    selection: returnedData.selection,
-                };
-
-                this.setState({
-                    selection: selectionState,
-                });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.setState({
-                    //Show error in snackbar
-                    snackbar: {
-                        open: true,
-                        message: 'Error selecting option (' + err.toString() + ')',
-                    }
-                });
-            }.bind(this)
-        });
-    
-    },
-    
-    handleOptionRemove: function(optionId) {
-        console.log("remove option: " + optionId);
-        
-        var optionsSelected = this.state.selection.optionsSelected.splice(0);
-        optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
-        
-        this.saveSelectedOptions(optionsSelected);
-    },
-    
-    handleOptionEditSelect: function(rowsSeleted) {
-    },
-    
     handleOptionChange: function() {
     
     },
@@ -331,6 +247,9 @@ var OptionContainer = React.createClass({
             optionBeingEdited: null,
         };
         this.setState({optionEditing: optionEditingState});
+    },
+    
+    handleOptionEditSelect: function(rowsSeleted) {
     },
     
     //Submit the add option form
@@ -414,6 +333,42 @@ var OptionContainer = React.createClass({
         this.handleOptionChange();
     },
     
+    handleOptionRemove: function(optionId) {
+        console.log("remove option: " + optionId);
+        
+        var optionsSelected = this.state.selection.optionsSelected.splice(0);
+        optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
+        
+        this.saveSelectedOptions(optionsSelected);
+    },
+    
+    handleOptionSelect: function(rowsSeleted) {
+        //console.log(rowsSeleted);
+        var previousOptionsSelected = this.state.selection.optionsSelected;
+        var optionsSelected = [];
+        if(rowsSeleted === 'all') {
+            this.state.options.options.map(function(option) {
+                optionsSelected.push(option.id);
+            }, this);
+        }
+        else if(rowsSeleted === 'none') {
+            //Leave optionsSelected empty
+        }
+        else {
+            rowsSeleted.map(function(rowIndex) {
+                optionsSelected.push(this.state.options.options[rowIndex].id);
+            }, this);
+        }
+        
+        this.saveSelectedOptions(optionsSelected);
+    },
+    
+    handleSelectionBackToEdit() {
+        this.setState({
+            action: 'view'
+        });
+    },
+    
     handleSelectionSubmit() {
         console.log("selection submitted");
         //Don't actually need to do anything at this stage, just change to confirm view
@@ -422,23 +377,46 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleSelectionFinalSubmit(data, a1, a2) {
+    handleSelectionFinalConfirm(data) {
         console.log("selection finally submitted");
-        //Don't actually need to do anything at this stage, just change to confirm view
-        this.setState({
-            action: 'review'
-        });
      
-        /*
         //TODO: In DB, change selection status to confirmed and save preferences and comments
         //Save the selection
-        var url = '../../selections/save.json';
+        data.selection.confirmed = true,
+        
+        this.saveSelection(data, 'confirm');
+    },
+    
+    saveSelectedOptions: function(optionsSelected) {
+        //Prevent submitting while request is sent
+        var selectionState = this.state.selection;
+        var newSelectionState = update(selectionState, {allowSubmit: {$set: false}});
+        this.setState({
+            selection: newSelectionState,
+        });
+
+        console.log(optionsSelected);
+        
+        //Save the settings
         var data = {
-            choosing_instance_id: this.state.instance.instance.id,
-            confirmed: true,
+            selection: {
+                confirmed: false,
+            },
             options_selected: optionsSelected,
         };
         
+        this.saveSelection(data, 'select');
+    },
+    
+    saveSelection: function(data, action) {
+        if(typeof(action) === "undefined") {
+            action = "select";
+        }
+    
+        data.selection.choosing_instance_id = this.state.instance.instance.id;
+        data.selection.id = this.state.selection.selection.id;
+       
+        var url = '../../selections/save.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -452,6 +430,12 @@ var OptionContainer = React.createClass({
                     ruleWarnings: returnedData.ruleWarnings,
                     selection: returnedData.selection,
                 };
+                
+                if(action === "confirm") {
+                    this.setState({
+                        action: "review",
+                    });
+                }
 
                 this.setState({
                     selection: selectionState,
@@ -460,20 +444,21 @@ var OptionContainer = React.createClass({
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
                 
+                if(action === "select") {
+                    var errorMessage = 'Error selecting option';
+                }
+                else if(action === "confirm") {
+                    var errorMessage = 'Error confirming selection';
+                }
+                
                 this.setState({
                     //Show error in snackbar
                     snackbar: {
                         open: true,
-                        message: 'Error selecting option (' + err.toString() + ')',
+                        message:  errorMessage + ' (' + err.toString() + ')',
                     }
                 });
             }.bind(this)
-        });*/
-    },
-    
-    handleSelectionBackToEdit() {
-        this.setState({
-            action: 'view'
         });
     },
     
@@ -626,12 +611,12 @@ var OptionContainer = React.createClass({
             containerHandlers.submit = this.handleSelectionSubmit;
         }
         else if(this.state.action === 'confirm') {
-            containerHandlers.confirm = this.handleSelectionConfirm;
+            //containerHandlers.confirm = this.handleSelectionConfirm;
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
-            containerHandlers.finalSubmit = this.handleSelectionFinalSubmit;
-            containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
-            containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
-            containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
+            containerHandlers.finalConfirm = this.handleSelectionFinalConfirm;
+            //containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
+            //containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
+            //containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
         }
         else if(this.state.action === 'review') {
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;

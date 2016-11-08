@@ -116,22 +116,48 @@ class SelectionsTable extends Table
         return $selection;
     }
     
-    public function processForSave($instance, $requestData, $userId) {
-        //If there is already an unconfirmed selection for this user/instance, use this as the basic data
-        if(!empty($instance['selections'])) {
-            $selection = $instance['selections'][0];
+    /**
+     * getIdInstanceAndUser method
+     * Get a selection by ID, but also use instance and user as conditions, to ensure the selection ID is for this instance and user
+     *
+     */
+    public function getByIdInstanceAndUser($selectionId = null, $instanceId = null, $userId = null) {
+        if(!$selectionId || !$instanceId || !$userId) {
+            return [];
+        }
+        
+        $selectionsQuery = $this->find('all')
+            ->where([
+                'Selections.id' => $selectionId,
+                'Selections.choosing_instance_id' => $instanceId,
+                'Selections.user_id' => $userId,
+                'Selections.archived' => false,
+            ]);
+            //->contain(['OptionsSelections']);
+
+        $selection = $selectionsQuery->first();
+        //pr($selection); exit;
+        return $selection;
+    }
+    
+    public function processForSave($currentSelectionEntity, $requestData, $userId) {
+        //pr($requestData);
+        
+        //If there is already an unconfirmed selection for this user/instance, patch the selection data
+        if(!empty($currentSelectionEntity)) {
+            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
         }
         //Otherwise, use the request data
         else {
-            $selectionData = $requestData;
-            unset($selectionData['options_selected']);   //Remove options_selected from the data to save
-            
+            $selectionData = $requestData['selection'];
             $selectionData['user_id'] = $userId; //Add user_id to data
             
             $selection = $this->newEntity($selectionData);
         }
         
         $optionsSelectionsData = [];
+        
+        //If just selecting options (not confirming), options_selected will contain an array of option ids
         if(!empty($requestData['options_selected'])) {
             foreach($requestData['options_selected'] as $choicesOptionId) {
                 $optionsSelection = [
@@ -139,8 +165,21 @@ class SelectionsTable extends Table
                 ];
                 
                 //If we have a selection ID, add this to the optionsSelection data
-                if(!empty($selectionData['id'])) {
-                    $optionsSelection['selection_id'] = $selectionData['id'];
+                if(!empty($selection->id)) {
+                    $optionsSelection['selection_id'] = $selection->id;
+                }
+                
+                $optionsSelectionsData[] = $optionsSelection;
+            }
+        }
+        //If confirming options (not selecting), options will be an array of option details, with the ID as the key
+        else if(!empty($requestData['options'])) {
+            foreach($requestData['options'] as $choicesOptionId => $optionsSelection) {
+                $optionsSelection['choices_option_id'] = $choicesOptionId;
+                
+                //If we have a selection ID, add this to the optionsSelection data
+                if(!empty($selection->id)) {
+                    $optionsSelection['selection_id'] = $selection->id;
                 }
                 
                 $optionsSelectionsData[] = $optionsSelection;

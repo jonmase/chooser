@@ -66,7 +66,7 @@ var OptionList = React.createClass({
                                             field={{
                                                 disabled: this.props.rankSelectsDisabled,
                                                 label: false,
-                                                name: "ranks." + optionId,
+                                                name: "options." + optionId + ".rank",
                                                 options: rankDropdownOptions,
                                                 required: true,
                                                 style: {width: '40px', marginTop: '12px'},
@@ -83,7 +83,7 @@ var OptionList = React.createClass({
                                     <TextField field={{
                                         label: "Option-specific comments",
                                         //instructions: this.props.instance.comments_overall_instructions,
-                                        name: "comments_option_" + optionId,
+                                        name: "options." + optionId + ".comments",
                                         section: false,
                                         value: null,
                                     }} />

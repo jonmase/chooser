@@ -70,8 +70,10 @@ var SelectionConfirm = React.createClass({
             rankSelectsDisabled: true,
         });
         
-        //Get the option ID from the input name
-        var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
+        //Get the option ID from the input name (options.##.ranks)
+        var splitInputName = inputName.split(".");
+        //var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
+        var optionId = parseInt(splitInputName[1]);
         
         console.log(optionId + ": " + value);
         
@@ -126,7 +128,7 @@ var SelectionConfirm = React.createClass({
                             method="POST"
                             onValid={this.enableConfirmButton}
                             onInvalid={this.disableConfirmButton}
-                            onValidSubmit={this.props.optionContainerHandlers.finalSubmit}
+                            onValidSubmit={this.props.optionContainerHandlers.finalConfirm}
                             noValidate={true}
                             ref="confirm"
                         >
@@ -152,7 +154,7 @@ var SelectionConfirm = React.createClass({
                                 <MultilineField field={{
                                     label: "Comments",
                                     instructions: this.props.instance.instance.comments_overall_instructions,
-                                    name: "comments_overall",
+                                    name: "selection.comments",
                                     section: true,
                                     value: null,
                                 }} />

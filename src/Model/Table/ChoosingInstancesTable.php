@@ -295,11 +295,12 @@ class ChoosingInstancesTable extends Table
      * Get an instance by ID, with Selections for the specified user
      *
      * @param string|null $choosingInstanceId Choosing Instance id.
+     * @param string|null $selectionId Selection id.
      * @param string|null $userId User id.
      * @return array|null $instance The instance
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function getWithSelection($choosingInstanceId = null, $userId = null) {
+    /*public function getWithSelection($choosingInstanceId = null, $selectionId = null, $userId = null) {
         if(!$choosingInstanceId || !$userId) {
             return null;
         }
@@ -319,7 +320,7 @@ class ChoosingInstancesTable extends Table
         ]);
 
         return $instance;
-    }
+    }*/
     
     public function processForSave($requestData) {
         foreach($this->_datetimeFields as $field) {
