@@ -33,6 +33,7 @@ class SelectionsTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Datetime');
 
         $this->belongsTo('ChoosingInstances', [
             'foreignKey' => 'choosing_instance_id',
@@ -98,6 +99,15 @@ class SelectionsTable extends Table
         return $rules;
     }
     
+    public function formatDate($date = null) {
+        if(!$date) {
+            return null;
+        }
+        
+        $formattedDate = $this->formatDatetimeObjectForView($date);
+        return $formattedDate;
+    }
+    
     public function findByInstanceAndUser($instanceId = null, $userId = null) {
         if(!$instanceId || !$userId) {
             return [];
@@ -112,6 +122,8 @@ class SelectionsTable extends Table
             ->contain(['OptionsSelections']);
 
         $selection = $selectionsQuery->first()->toArray();
+        
+        $selection['modified'] = $this->formatDate($selection['modified']);
         //pr($selection); exit;
         return $selection;
     }

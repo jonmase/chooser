@@ -30,6 +30,8 @@ var SelectionReview = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
+                    <p>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />:</p>
+                    
                     {(this.props.selection.optionsSelected.length > 0)?
                         <div style={{width: '100%'}}>
                             <OptionList

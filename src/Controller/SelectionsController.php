@@ -79,6 +79,8 @@ class SelectionsController extends AppController
             }
             unset($selection['options_selections']);
             
+            $selection['modified'] = $this->Selections->formatDate($selection['modified']);
+            
             /*$optionsSelected = $this->Selections->OptionsSelections->find('list', [
                 'conditions' => ['selection_id' => $selection->id],
                 'valueField' => 'choices_option_id'
