@@ -91,8 +91,14 @@ class ChoosingInstancesController extends AppController
         
         //If getting the instance for view, get the selection-related info
         if($action === 'view') {
-            $selection = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
-            //pr($selection); exit;#
+            //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
+            $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
+
+            //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
+            $selection = array_shift($selections);
+            
+            //Archive the remaining selections (should only ever be one)
+            $this->ChoosingInstances->Selections->archive($selections);
             
             //Update the action based on the confirmed status of the selection
             if($selection['confirmed']) {

@@ -57,16 +57,8 @@ class SelectionsController extends AppController
         if(!$isViewer) {
             throw new ForbiddenException(__('Not allowed to view this Choice.'));
         }
-        $selectionId = $this->request->data['selection']['id'];
-        unset($this->request->data['selection']['id']);
-        if($selectionId) {
-            $currentSelectionEntity = $this->Selections->getByIdInstanceAndUser($selectionId, $instance['id'], $this->Auth->user('id'));
-        }
-        else {
-            $currentSelection = null;
-        }
         
-        $selection = $this->Selections->processForSave($currentSelectionEntity, $this->request->data, $this->Auth->user('id'));
+        $selection = $this->Selections->processForSave($this->request->data, $this->Auth->user('id'));
         //pr($selection);
         //exit;
         
@@ -81,16 +73,7 @@ class SelectionsController extends AppController
             
             $selection['modified'] = $this->Selections->formatDate($selection['modified']);
             
-            /*$optionsSelected = $this->Selections->OptionsSelections->find('list', [
-                'conditions' => ['selection_id' => $selection->id],
-                'valueField' => 'choices_option_id'
-            ]);
-            $optionsSelected = array_values($optionsSelected->toArray());*/
-            //pr($optionsSelected);
-            
             list($allowSubmit, $ruleWarnings) = $this->Selections->ChoosingInstances->Rules->checkSelection($optionsSelected, $instance['id'], $instance['choice_id']);
-            //pr($allowSubmit);
-            //pr($ruleOutcomes);
             
             $this->set(compact('selection', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
         } 

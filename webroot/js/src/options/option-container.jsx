@@ -385,7 +385,7 @@ var OptionContainer = React.createClass({
      
         //TODO: In DB, change selection status to confirmed and save preferences and comments
         //Save the selection
-        data.selection.confirmed = true,
+        data.selection.confirmed = true;
         
         this.saveSelection(data, 'confirm');
     },
@@ -405,7 +405,7 @@ var OptionContainer = React.createClass({
             selection: {
                 confirmed: false,
             },
-            options_selected: optionsSelected,
+            options: optionsSelected,
         };
         
         this.saveSelection(data, 'select');

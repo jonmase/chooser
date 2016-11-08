@@ -13,7 +13,7 @@ var update = require('react-addons-update');
 
 var FormContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = '../getActive/' + this.props.choice.id + '/settings.json';
+        var url = '../get-active/' + this.props.choice.id + '/settings.json';
         $.ajax({
             url: url,
             dataType: 'json',

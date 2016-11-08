@@ -108,24 +108,33 @@ class SelectionsTable extends Table
         return $formattedDate;
     }
     
-    public function findByInstanceAndUser($instanceId = null, $userId = null) {
+    public function findByInstanceAndUser($instanceId = null, $userId = null, $selectionIdsToOmit = []) {
         if(!$instanceId || !$userId) {
             return [];
         }
         
-        $selectionsQuery = $this->find('all')
-            ->where([
-                'Selections.choosing_instance_id' => $instanceId,
-                'Selections.user_id' => $userId,
-                'Selections.archived' => false,
-            ])
-            ->contain(['OptionsSelections']);
-
-        $selection = $selectionsQuery->first()->toArray();
+        $conditions = [
+            'Selections.choosing_instance_id' => $instanceId,
+            'Selections.user_id' => $userId,
+            'Selections.archived' => false,
+        ];
         
-        $selection['modified'] = $this->formatDate($selection['modified']);
-        //pr($selection); exit;
-        return $selection;
+        if(!empty($selectionIdsToOmit)) {
+            $conditions['Selections.id NOT IN'] = $selectionIdsToOmit;
+        }
+        
+        $selectionsQuery = $this->find('all')
+            ->where($conditions)
+            ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC'])
+            ->contain(['OptionsSelections']);
+            
+        $selections = $selectionsQuery->toArray();
+
+        foreach($selections as &$selection) {
+            $selection['modified'] = $this->formatDate($selection['modified']);
+        }
+
+        return $selections;
     }
     
     /**
@@ -152,26 +161,62 @@ class SelectionsTable extends Table
         return $selection;
     }
     
-    public function processForSave($currentSelectionEntity, $requestData, $userId) {
-        //pr($requestData);
-        
-        //If there is already an unconfirmed selection for this user/instance, patch the selection data
-        if(!empty($currentSelectionEntity)) {
-            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
+    public function archive($selections = []) {
+        if(!empty($selections)) {
+            $selectionsToArchive = [];
+            foreach($selections as $selection) {
+                $selectionEntity = $this->get($selection['id']);
+                $selectionEntity->archived = true;
+                $this->save($selectionEntity);
+            }
         }
-        //Otherwise, use the request data
+    }
+    
+    public function processForSave($requestData, $userId) {
+        //Extract the instance and selection IDs from the request data
+        $instanceId = $requestData['selection']['choosing_instance_id'];
+        $selectionId = $requestData['selection']['id'];
+        //Unset the selection ID in the request data, as we do not necessarily want to save to the same selection
+        unset($requestData['selection']['id']);
+        
+        //Make sure the confirmed value is a bool not a string
+        $requestData['selection']['confirmed'] = filter_var($requestData['selection']['confirmed'], FILTER_VALIDATE_BOOLEAN);
+        
+        if($selectionId) {
+            $currentSelectionEntity = $this->getByIdInstanceAndUser($selectionId, $instanceId, $userId);
+        }
         else {
+            $currentSelectionEntity = null;
+        }
+        
+        //No Existing selection 
+        //Or Existing Confirmed, New Unconfirmed, i.e. Editing an already confirmed selection
+        // -> create new selection for saving edits (leaving confirmed as is if there is one)
+        if(empty($currentSelectionEntity) || ($currentSelectionEntity->confirmed && !$requestData['selection']['confirmed'])) {
             $selectionData = $requestData['selection'];
             $selectionData['user_id'] = $userId; //Add user_id to data
             
             $selection = $this->newEntity($selectionData);
         }
+        else {
+            //Both Unconfirmed, i.e. Saving selected options to existing unconfirmed selection
+            //Or New Confirmed (Existing either confirmed or not), i.e. Confirming selection
+            // -> Just patch requestData onto entity
+            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
+
+            //If new selection is confirmed, it should be the only unarchived selection
+            if($selection->confirmed) {
+                //So check for any other unarchived selections for this instance and user, and archive them
+                $otherSelections = $this->findByInstanceAndUser($instanceId, $userId, [$currentSelectionEntity->id]);
+                $this->archive($otherSelections);
+            }
+        }
         
         $optionsSelectionsData = [];
         
-        //If just selecting options (not confirming), options_selected will contain an array of option ids
-        if(!empty($requestData['options_selected'])) {
-            foreach($requestData['options_selected'] as $choicesOptionId) {
+        //If just selecting options (not confirming), options will contain an array of option ids
+        if(!$selection->confirmed) {
+            foreach($requestData['options'] as $choicesOptionId) {
                 $optionsSelection = [
                     'choices_option_id' => $choicesOptionId,
                 ];
@@ -185,7 +230,7 @@ class SelectionsTable extends Table
             }
         }
         //If confirming options (not selecting), options will be an array of option details, with the ID as the key
-        else if(!empty($requestData['options'])) {
+        else {
             foreach($requestData['options'] as $choicesOptionId => $optionsSelection) {
                 $optionsSelection['choices_option_id'] = $choicesOptionId;
                 
