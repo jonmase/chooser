@@ -127,15 +127,16 @@ var SelectionConfirm = React.createClass({
                         noValidate={true}
                         ref="confirm"
                     >
-                        {(this.props.optionsSelectedOrdered.length > 0)?
+                        {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                             <div style={{width: '100%'}}>
                                 {/*<p>You have chosen the following options:</p>*/}
                                 <OptionList
                                     action="confirm"
                                     handleOrderChange={this.props.optionContainerHandlers.orderChange}
                                     instance={this.props.instance.instance}
-                                    optionIds={this.props.optionsSelectedOrdered}
+                                    optionIds={this.props.optionsSelectedPreferenceOrder}
                                     options={this.props.options}
+                                    optionsSelected={this.props.optionsSelected}
                                     rankSelectsDisabled={this.props.rankSelectsDisabled}
                                     removeButton={false}
                                     useCode={this.props.choice.use_code}

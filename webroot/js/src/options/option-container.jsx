@@ -40,14 +40,15 @@ var OptionContainer = React.createClass({
                         instance: data.choosingInstance,
                         loaded: true,
                     },
-                    optionsSelectedOrdered: data.selectedOrdered,
+                    optionsSelected: data.optionsSelected,
+                    optionsSelectedTableOrder: data.optionsSelectedIds,
+                    optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
                     rules: {
                         rules: data.rules,
                         indexesById: data.ruleIndexesById,
                     },
                     selection: {
                         allowSubmit: data.allowSubmit,
-                        optionsSelected: data.selected,
                         ruleWarnings: data.ruleWarnings,
                         selection: data.selection,
                     },
@@ -93,12 +94,14 @@ var OptionContainer = React.createClass({
                 indexesById: [],
                 loaded: false,
             },
+            optionsSelected: {},
+            optionsSelectedTableOrder: [],
+            optionsSelectedPreferenceOrder: [],
             optionsSort: {
                 field: 'code',
                 fieldType: 'text',
                 direction: 'asc',
             },
-            optionsSelectedOrdered: [],
             rankSelectsDisabled: false,
             rules: {
                 rules: [],
@@ -106,7 +109,6 @@ var OptionContainer = React.createClass({
             },
             selection: {
                 allowSubmit: false,
-                optionsSelected: [],
                 ruleWarnings: false,
                 selection: [],
             },
@@ -339,26 +341,25 @@ var OptionContainer = React.createClass({
     handleOptionRemove: function(optionId) {
         console.log("remove option: " + optionId);
         
-        var optionsSelected = this.state.selection.optionsSelected.splice(0);
+        var optionsSelected = this.state.optionsSelectedTableOrder.splice(0);
         optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
         
         this.saveSelectedOptions(optionsSelected);
     },
     
-    handleOptionSelect: function(rowsSeleted) {
-        //console.log(rowsSeleted);
-        var previousOptionsSelected = this.state.selection.optionsSelected;
+    handleOptionSelect: function(rowsSelected) {
+        //console.log(rowsSelected);
         var optionsSelected = [];
-        if(rowsSeleted === 'all') {
+        if(rowsSelected === 'all') {
             this.state.options.options.map(function(option) {
                 optionsSelected.push(option.id);
             }, this);
         }
-        else if(rowsSeleted === 'none') {
+        else if(rowsSelected === 'none') {
             //Leave optionsSelected empty
         }
         else {
-            rowsSeleted.map(function(rowIndex) {
+            rowsSelected.map(function(rowIndex) {
                 optionsSelected.push(this.state.options.options[rowIndex].id);
             }, this);
         }
@@ -386,18 +387,18 @@ var OptionContainer = React.createClass({
         console.log(optionId + ": " + value);
         
         //Get the optionsSelectedOrdered array from state
-        var optionsSelectedOrdered = this.state.optionsSelectedOrdered.splice(0);
+        var optionsSelectedPreferenceOrder = this.state.optionsSelectedPreferenceOrder.splice(0);
        
         //Remove this option from the ordered options array
-        optionsSelectedOrdered.splice(optionsSelectedOrdered.indexOf(optionId),1);
+        optionsSelectedPreferenceOrder.splice(optionsSelectedPreferenceOrder.indexOf(optionId),1);
         
         //Put this option back in the required position
-        optionsSelectedOrdered.splice(value,0,optionId);
+        optionsSelectedPreferenceOrder.splice(value,0,optionId);
         
-        console.log(optionsSelectedOrdered);
+        console.log(optionsSelectedPreferenceOrder);
         
         this.setState({
-            optionsSelectedOrdered: optionsSelectedOrdered,
+            optionsSelectedPreferenceOrder: optionsSelectedPreferenceOrder,
             rankSelectsDisabled: false,
         });
     },
@@ -457,9 +458,9 @@ var OptionContainer = React.createClass({
             data: data,
             success: function(returnedData) {
                 console.log(returnedData.response);
+                
                 var selectionState = {
                     allowSubmit: returnedData.allowSubmit,
-                    optionsSelected: returnedData.optionsSelected,
                     ruleWarnings: returnedData.ruleWarnings,
                     selection: returnedData.selection,
                 };
@@ -471,6 +472,9 @@ var OptionContainer = React.createClass({
                 }
 
                 this.setState({
+                    optionsSelected: data.optionsSelected,
+                    optionsSelectedTableOrder: data.optionsSelectedIds,
+                    optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
                     selection: selectionState,
                 });
             }.bind(this),
@@ -689,7 +693,7 @@ var OptionContainer = React.createClass({
                                     optionEditing={this.state.optionEditing}
                                     options={this.state.options}
                                     optionSaveButton={this.state.optionSaveButton}
-                                    optionsSelected={this.state.selection.optionsSelected}
+                                    optionsSelected={this.state.optionsSelectedTableOrder}
                                     optionsSort={this.state.optionsSort}
                                 />
                             :""}
@@ -710,7 +714,8 @@ var OptionContainer = React.createClass({
                                     instance={this.state.instance}
                                     optionContainerHandlers={containerHandlers}
                                     options={this.state.options}
-                                    optionsSelectedOrdered={this.state.optionsSelectedOrdered}
+                                    optionsSelected={this.state.optionsSelected}
+                                    optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
                                     rankSelectsDisabled={this.state.rankSelectsDisabled}
                                     rules={this.state.rules}
                                     selection={this.state.selection}
@@ -723,7 +728,8 @@ var OptionContainer = React.createClass({
                                     instance={this.state.instance}
                                     optionContainerHandlers={containerHandlers}
                                     options={this.state.options}
-                                    optionsSelectedOrdered={this.state.optionsSelectedOrdered}
+                                    optionsSelected={this.state.optionsSelected}
+                                    optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
                                     rankSelectsDisabled={this.state.rankSelectsDisabled}
                                     selection={this.state.selection}
                                 />

@@ -30,15 +30,29 @@ var SelectionReview = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
-                    <p>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />:</p>
+                    <div>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.
+                        {(this.props.instance.instance.editable)?
+                                <span> You can change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} /></span>
+                        :""}
+                        {(this.props.instance.instance.editable)?
+                            <div style={{marginTop: '10px'}}>
+                                <RaisedButton
+                                    label="Change"
+                                    onTouchTap={this.props.optionContainerHandlers.backToEdit}
+                                    primary={false}
+                                />
+                            </div>
+                        :""}
+                    </div>
                     
-                    {(this.props.selection.optionsSelected.length > 0)?
+                    {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                         <div style={{width: '100%'}}>
                             <OptionList
                                 action="review"
                                 instance={this.props.instance.instance}
-                                optionIds={this.props.optionsSelectedOrdered}
+                                optionIds={this.props.optionsSelectedPreferenceOrder}
                                 options={this.props.options}
+                                optionsSelected={this.props.optionsSelected}
                                 removeButton={false}
                                 useCode={this.props.choice.use_code}
                             />
@@ -47,23 +61,13 @@ var SelectionReview = React.createClass({
                         <div>No options chosen</div>
                     }
                     
-                    {(this.props.instance.instance.comments_overall && this.props.selection.comments)?
+                    {(this.props.instance.instance.comments_overall && this.props.selection.selection.comments)?
                         <Text 
-                            content={this.props.selection.comments}
+                            value={this.props.selection.selection.comments}
                             label="Comments"
                         />
                     :""}
                     
-                    {(this.props.instance.instance.editable)?
-                        <div style={{marginTop: '15px'}}>
-                            <p>You can change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} /></p>
-                            <RaisedButton
-                                label="Change"
-                                onTouchTap={this.props.optionContainerHandlers.backToEdit}
-                                primary={false}
-                            />
-                        </div>
-                    :""}
                 </CardText>
             </Card>
         );

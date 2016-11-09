@@ -108,22 +108,28 @@ class ChoosingInstancesController extends AppController
                 $action = 'view';
             }
             
-            $selected = [];
-            $selectedOrdered = [];
+            $optionsSelected = [];
+            $optionsSelectedIds = [];
+            $optionsSelectedIdsPreferenceOrder = [];
             if(!empty($selection)) {
                 foreach($selection['options_selections'] as $option) {
-                    $selected[] = $option['choices_option_id'];
-                    $rank = $option['rank'];
+                    //options_selections will be sorted by the default option sort order
+                    //Just add the option IDs to the selected array in the default sorted order/
+                    //Sorting according to the table sort order will be done on the frontend
+                    $optionsSelectedIds[] = $option['choices_option_id'];
                     
-                    $selectedOrdered[$rank] = $option['choices_option_id'];
+                    $rank = $option['rank'];
+                    $optionsSelectedIdsPreferenceOrder[$rank] = $option['choices_option_id'];
+                    unset($option['choices_option']);
+                    $optionsSelected[$option['choices_option_id']] = $option;
                 }
-                ksort($selectedOrdered);    //Sort selectedOrdered by keys
-                //unset($selection['options_selections']);
+                ksort($optionsSelectedIdsPreferenceOrder);    //Sort selectedOrdered by keys
+                unset($selection['options_selections']);
             }
-            list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
+            list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
 
-            $this->set(compact('action', 'selection', 'selected', 'selectedOrdered', 'allowSubmit', 'ruleWarnings'));
-            $serialize = array_merge($serialize, ['action', 'selection', 'selected', 'selectedOrdered', 'allowSubmit', 'ruleWarnings']);
+            $this->set(compact('action', 'selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
+            $serialize = array_merge($serialize, ['action', 'selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
         }
 
         $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));

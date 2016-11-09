@@ -19,7 +19,8 @@ class OptionsTable extends Table
 {
     protected $_optionsTableProperties = ['code', 'title', 'description'];
     protected $_choicesOptionsTableProperties = ['min_places', 'max_places', 'points'];
-
+    //Sort by code then title - further sorting will be done on frontend
+    protected $_sortOrder = ['Options.code' => 'ASC', 'Options.title' => 'ASC'];
     /**
      * Initialize method
      *
@@ -78,6 +79,10 @@ class OptionsTable extends Table
         return $validator;
     }
     
+    public function getSortOrder() {
+        return $this->_sortOrder;
+    }
+    
     public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
         $conditions = [
             'ChoicesOptions.choice_id' => $choiceId,
@@ -93,7 +98,7 @@ class OptionsTable extends Table
         $optionsQuery = $this->ChoicesOptions->find('all', [
             'conditions' => $conditions,
             'contain' => ['Options'],
-            'order' => 'Options.code ASC',  //Always sort by code - sorting will be done on frontend
+            'order' => $this->_sortOrder,
         ]);
                 
         //If $userId is specified and user is not admin, only let them see options they are associated, optionally only those that they can edit

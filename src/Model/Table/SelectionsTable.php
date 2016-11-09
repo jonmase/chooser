@@ -108,7 +108,7 @@ class SelectionsTable extends Table
         return $formattedDate;
     }
     
-    public function findByInstanceAndUser($instanceId = null, $userId = null, $selectionIdsToOmit = []) {
+    public function findByInstanceAndUser($instanceId = null, $userId = null, $containSelectedOptions = true, $selectionIdsToOmit = []) {
         if(!$instanceId || !$userId) {
             return [];
         }
@@ -125,8 +125,22 @@ class SelectionsTable extends Table
         
         $selectionsQuery = $this->find('all')
             ->where($conditions)
-            ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC'])
-            ->contain(['OptionsSelections']);
+            ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC']);
+            
+        if($containSelectedOptions) {
+            //If required contian the selected options, sorted by Option code and title
+            $selectionsQuery->contain([
+                'OptionsSelections' => [
+                    'sort' => $this->OptionsSelections->ChoicesOptions->Options->getSortOrder(),
+                    'ChoicesOptions' => [
+                        'fields' => ['ChoicesOptions.id'],
+                        'Options' => [
+                            'fields' => ['Options.code', 'Options.title']
+                        ]
+                    ]
+                ]
+            ]);
+        }
             
         $selections = $selectionsQuery->toArray();
 
@@ -207,7 +221,7 @@ class SelectionsTable extends Table
             //If new selection is confirmed, it should be the only unarchived selection
             if($selection->confirmed) {
                 //So check for any other unarchived selections for this instance and user, and archive them
-                $otherSelections = $this->findByInstanceAndUser($instanceId, $userId, [$currentSelectionEntity->id]);
+                $otherSelections = $this->findByInstanceAndUser($instanceId, $userId, false, [$currentSelectionEntity->id]);
                 $this->archive($otherSelections);
             }
         }

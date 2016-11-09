@@ -4,14 +4,17 @@ import {List, ListItem} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton';
 import Divider from 'material-ui/Divider';
 
+//import Text from '../elements/display/text-labelled.jsx';
+import Text from '../elements/display/text.jsx';
 import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
 
 var OptionList = React.createClass({
     render: function() {
         var listItemStyle = {};
-        var showCommentsPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
-        if(showCommentsPerOption) {
+        var showCommentsFieldPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
+        var showCommentsTextPerOption = this.props.action === 'review' && this.props.instance.comments_per_option;
+        if(showCommentsFieldPerOption) {
             listItemStyle.marginRight = '270px';
         }
         
@@ -30,6 +33,11 @@ var OptionList = React.createClass({
                     });
                 }
             }
+        }
+        
+        var showPreferenceValues = this.props.action === 'review' && this.props.instance.preference;
+        if(showPreferenceValues) {
+            listItemStyle.marginLeft = '20px';
         }
         
         //If not using code and action is confirm, move the listItem down slightly so they are in the centre of the block
@@ -77,8 +85,17 @@ var OptionList = React.createClass({
                                     :""}
                                 </div>
                             :""}
+                            {(showPreferenceValues)?
+                                <div style={{float: 'left', width: '20px', display: 'table', height: '71px', tableLayout: 'fixed'}}>
+                                    <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
+                                        {(this.props.instance.preference_type === 'rank')?
+                                            (this.props.optionsSelected[optionId].rank + 1)
+                                        :""}
+                                    </div>
+                                </div>
+                            :""}
                         
-                            {(showCommentsPerOption)?
+                            {(showCommentsFieldPerOption)?
                                 <div style={{float: 'right', marginTop: '-8px'}}>
                                     <TextField field={{
                                         label: "Option-specific comments",
@@ -87,6 +104,13 @@ var OptionList = React.createClass({
                                         section: false,
                                         value: null,
                                     }} />
+                                </div>
+                            :""}
+                            {(showCommentsTextPerOption)?
+                                <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: '71px', tableLayout: 'fixed', textAlign: 'right'}}>
+                                    <div style={{display: 'table-cell', verticalAlign: 'middle', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                                        {this.props.optionsSelected[optionId].comments}
+                                    </div>
                                 </div>
                             :""}
                             
