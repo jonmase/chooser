@@ -109,16 +109,21 @@ class ChoosingInstancesController extends AppController
             }
             
             $selected = [];
+            $selectedOrdered = [];
             if(!empty($selection)) {
                 foreach($selection['options_selections'] as $option) {
                     $selected[] = $option['choices_option_id'];
+                    $rank = $option['rank'];
+                    
+                    $selectedOrdered[$rank] = $option['choices_option_id'];
                 }
+                ksort($selectedOrdered);    //Sort selectedOrdered by keys
                 //unset($selection['options_selections']);
             }
             list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($selected, $choosingInstance->id, $choiceId);
 
-            $this->set(compact('action', 'selection', 'selected', 'allowSubmit', 'ruleWarnings'));
-            $serialize = array_merge($serialize, ['action', 'selection', 'selected', 'allowSubmit', 'ruleWarnings']);
+            $this->set(compact('action', 'selection', 'selected', 'selectedOrdered', 'allowSubmit', 'ruleWarnings'));
+            $serialize = array_merge($serialize, ['action', 'selection', 'selected', 'selectedOrdered', 'allowSubmit', 'ruleWarnings']);
         }
 
         $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));

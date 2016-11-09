@@ -40,6 +40,7 @@ var OptionContainer = React.createClass({
                         instance: data.choosingInstance,
                         loaded: true,
                     },
+                    optionsSelectedOrdered: data.selectedOrdered,
                     rules: {
                         rules: data.rules,
                         indexesById: data.ruleIndexesById,
@@ -47,7 +48,6 @@ var OptionContainer = React.createClass({
                     selection: {
                         allowSubmit: data.allowSubmit,
                         optionsSelected: data.selected,
-                        //optionsSelectedOrdered: data.selectedOrdered,
                         ruleWarnings: data.ruleWarnings,
                         selection: data.selection,
                     },
@@ -83,7 +83,6 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
-            confirmDialogOpen: false,
             favourites: [],
             instance: {
                 instance: [],
@@ -99,6 +98,8 @@ var OptionContainer = React.createClass({
                 fieldType: 'text',
                 direction: 'asc',
             },
+            optionsSelectedOrdered: [],
+            rankSelectsDisabled: false,
             rules: {
                 rules: [],
                 indexesById: [],
@@ -106,7 +107,6 @@ var OptionContainer = React.createClass({
             selection: {
                 allowSubmit: false,
                 optionsSelected: [],
-                //optionsSelectedOrdered: [],
                 ruleWarnings: false,
                 selection: [],
             },
@@ -372,6 +372,36 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleSelectionOrderChange: function(event, value, ignore, inputName) {
+        //Prevent further changes to ranking during reordering
+        this.setState({
+            rankSelectsDisabled: true,
+        });
+        
+        //Get the option ID from the input name (options.##.ranks)
+        var splitInputName = inputName.split(".");
+        //var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
+        var optionId = parseInt(splitInputName[1]);
+        
+        console.log(optionId + ": " + value);
+        
+        //Get the optionsSelectedOrdered array from state
+        var optionsSelectedOrdered = this.state.optionsSelectedOrdered.splice(0);
+       
+        //Remove this option from the ordered options array
+        optionsSelectedOrdered.splice(optionsSelectedOrdered.indexOf(optionId),1);
+        
+        //Put this option back in the required position
+        optionsSelectedOrdered.splice(value,0,optionId);
+        
+        console.log(optionsSelectedOrdered);
+        
+        this.setState({
+            optionsSelectedOrdered: optionsSelectedOrdered,
+            rankSelectsDisabled: false,
+        });
+    },
+    
     handleSelectionSubmit() {
         console.log("selection submitted");
         //Don't actually need to do anything at this stage, just change to confirm view
@@ -617,6 +647,7 @@ var OptionContainer = React.createClass({
             //containerHandlers.confirm = this.handleSelectionConfirm;
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
             containerHandlers.finalConfirm = this.handleSelectionFinalConfirm;
+            containerHandlers.orderChange = this.handleSelectionOrderChange;
             //containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
             //containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
             //containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
@@ -679,6 +710,8 @@ var OptionContainer = React.createClass({
                                     instance={this.state.instance}
                                     optionContainerHandlers={containerHandlers}
                                     options={this.state.options}
+                                    optionsSelectedOrdered={this.state.optionsSelectedOrdered}
+                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
                                     rules={this.state.rules}
                                     selection={this.state.selection}
                                 />
@@ -690,6 +723,8 @@ var OptionContainer = React.createClass({
                                     instance={this.state.instance}
                                     optionContainerHandlers={containerHandlers}
                                     options={this.state.options}
+                                    optionsSelectedOrdered={this.state.optionsSelectedOrdered}
+                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
                                     selection={this.state.selection}
                                 />
                             :""}

@@ -23,20 +23,20 @@ var SelectionConfirm = React.createClass({
         var initialState = {
             canConfirm: true,
             confirmDialogOpen: false,
-            optionsSelectedOrdered: [],
-            rankSelectsDisabled: false,
+            //optionsSelectedOrdered: [],
+            //rankSelectsDisabled: false,
         }
         
         return initialState;
     },
     //TODO: Not sure if componentWillMount is the right place to do this, but it works fine given that this component will never be shown when the page first loads
-    componentWillMount: function() {
+    /*componentWillMount: function() {
         //Clone the optionsSelected as optionsSelectedOrdered
         var optionsSelectedOrdered = this.props.selection.optionsSelected.slice(0);
         this.setState({
             optionsSelectedOrdered: optionsSelectedOrdered,
         });
-    },
+    },*/
     
     enableConfirmButton: function () {
         this.setState({
@@ -62,7 +62,7 @@ var SelectionConfirm = React.createClass({
         });
     },
     
-    handleOrderChange: function(event, value, ignore, inputName) {
+    /*handleOrderChange: function(event, value, ignore, inputName) {
         //Prevent further changes to ranking during reordering
         this.setState({
             rankSelectsDisabled: true,
@@ -90,7 +90,7 @@ var SelectionConfirm = React.createClass({
             optionsSelectedOrdered: optionsSelectedOrdered,
             rankSelectsDisabled: false,
         });
-    },
+    },*/
     
     handleConfirm: function(event, fromDialog) {
         //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
@@ -127,16 +127,16 @@ var SelectionConfirm = React.createClass({
                         noValidate={true}
                         ref="confirm"
                     >
-                        {(this.state.optionsSelectedOrdered.length > 0)?
+                        {(this.props.optionsSelectedOrdered.length > 0)?
                             <div style={{width: '100%'}}>
                                 {/*<p>You have chosen the following options:</p>*/}
                                 <OptionList
                                     action="confirm"
-                                    handleOrderChange={this.handleOrderChange}
+                                    handleOrderChange={this.props.optionContainerHandlers.orderChange}
                                     instance={this.props.instance.instance}
-                                    optionIds={this.state.optionsSelectedOrdered}
+                                    optionIds={this.props.optionsSelectedOrdered}
                                     options={this.props.options}
-                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                    rankSelectsDisabled={this.props.rankSelectsDisabled}
                                     removeButton={false}
                                     useCode={this.props.choice.use_code}
                                 />
@@ -151,7 +151,7 @@ var SelectionConfirm = React.createClass({
                                 instructions: this.props.instance.instance.comments_overall_instructions,
                                 name: "selection.comments",
                                 section: true,
-                                value: null,
+                                value: this.props.selection.selection.comments,
                             }} />
                         :""}
                         

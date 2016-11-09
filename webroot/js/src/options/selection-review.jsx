@@ -37,7 +37,7 @@ var SelectionReview = React.createClass({
                             <OptionList
                                 action="review"
                                 instance={this.props.instance.instance}
-                                optionIds={this.props.selection.optionsSelected}
+                                optionIds={this.props.optionsSelectedOrdered}
                                 options={this.props.options}
                                 removeButton={false}
                                 useCode={this.props.choice.use_code}
