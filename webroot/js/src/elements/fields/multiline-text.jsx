@@ -22,6 +22,7 @@ var MultilineTextField = React.createClass({
                     //maxRows={maxRows}
                     multiLine={true}
                     name={field.name}
+                    onChange={field.onChange}
                     required={required}
                     //rows={rows}
                     value={field.value}

@@ -24,6 +24,7 @@ var TextField = React.createClass({
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
+                    onChange={field.onChange}
                     required={required}
                     style={field.style}
                     value={field.value}

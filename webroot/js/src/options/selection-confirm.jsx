@@ -151,8 +151,9 @@ var SelectionConfirm = React.createClass({
                                 label: "Comments",
                                 instructions: this.props.instance.instance.comments_overall_instructions,
                                 name: "selection.comments",
+                                onChange: this.props.optionContainerHandlers.overallCommentsChange,
                                 section: true,
-                                defaultValue: this.props.selection.selection.comments,
+                                value: this.props.selection.selection.comments,
                             }} />
                         :""}
                         

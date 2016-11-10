@@ -379,6 +379,14 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleSelectionOverallCommentsChange: function(event, value) {
+        var selectionState = this.state.selection;
+        var newSelectionState = update(selectionState, {
+            selection: {comments: {$set: value}},
+        });
+        this.setState({selection: newSelectionState});
+    },
+    
     handleSelectionOrderChange: function(event, value, ignore, inputName) {
         //Prevent further changes to ranking during reordering
         this.setState({
@@ -658,6 +666,7 @@ var OptionContainer = React.createClass({
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
             containerHandlers.finalConfirm = this.handleSelectionFinalConfirm;
             containerHandlers.orderChange = this.handleSelectionOrderChange;
+            containerHandlers.overallCommentsChange = this.handleSelectionOverallCommentsChange;
             //containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
             //containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
             //containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
