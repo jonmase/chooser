@@ -102,6 +102,7 @@ var OptionList = React.createClass({
                                         label: "Option-specific comments",
                                         //instructions: this.props.instance.comments_overall_instructions,
                                         name: "options." + optionId + ".comments",
+                                        onChange: this.props.handleCommentsChange,
                                         section: false,
                                     }} />
                                 </div>

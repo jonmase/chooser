@@ -133,6 +133,7 @@ var SelectionConfirm = React.createClass({
                                 <OptionList
                                     action="confirm"
                                     handleOrderChange={this.props.optionContainerHandlers.orderChange}
+                                    handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
                                     instance={this.props.instance.instance}
                                     optionIds={this.props.optionsSelectedPreferenceOrder}
                                     options={this.props.options}

@@ -379,6 +379,21 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleSelectionOptionCommentsChange: function(event, value) {
+        console.log(event.target.name);
+        
+        //Get the option ID from the input name (options.##.comments)
+        var splitInputName = event.target.name.split(".");
+        var optionId = parseInt(splitInputName[1]);
+        
+        var optionsSelectedState = this.state.optionsSelected;
+        var newOptionsSelectedState = update(optionsSelectedState, {
+            [optionId]: {comments: {$set: value}},
+        });
+        
+        this.setState({optionsSelected: newOptionsSelectedState});
+    },
+    
     handleSelectionOverallCommentsChange: function(event, value) {
         var selectionState = this.state.selection;
         var newSelectionState = update(selectionState, {
@@ -667,6 +682,7 @@ var OptionContainer = React.createClass({
             containerHandlers.finalConfirm = this.handleSelectionFinalConfirm;
             containerHandlers.orderChange = this.handleSelectionOrderChange;
             containerHandlers.overallCommentsChange = this.handleSelectionOverallCommentsChange;
+            containerHandlers.optionCommentsChange = this.handleSelectionOptionCommentsChange;
             //containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
             //containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
             //containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
