@@ -83,13 +83,32 @@ class OptionsController extends AppController
                 throw new ForbiddenException(__('Not an approver for this Choice.'));
             }
         }
+        //Otherwise view action, but need to work out whether it should be initial view or review
         else {
             $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'));
             if(!$isViewer) {
                 throw new ForbiddenException(__('Not a viewer for this Choice.'));
             }
-            //$action = 'confirm';
-            //$action = 'review';
+            
+            $instanceQuery = $this->Options->ChoicesOptions->Choices->ChoosingInstances->find('all', [
+                'conditions' => ['choice_id' => $choiceId, 'active' => true],
+                'contain' => [
+                    'Selections' => function ($q) {
+                        return $q
+                            ->select(['id', 'choosing_instance_id', 'confirmed', 'modified'])
+                            ->where(['Selections.user_id' => $this->Auth->user('id'), 'archived' => false])
+                            ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC']);
+                        }
+                ],
+            ]);
+            $instance = $instanceQuery->first()->toArray();
+            
+            if($instance['selections'][0]['confirmed']) {
+                $action = 'review';
+            }
+            else {
+                $action = 'view';
+            }
         }
         
         //Does the user have additional roles? I.e., should the dashboard menu be shown?

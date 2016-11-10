@@ -241,8 +241,8 @@ class ChoosingInstancesTable extends Table
         return $rules;
     }
     
-    public function findActive($choiceId, $getSelectedAndFavourites = false, $userId = null) {
-        if($result = $this->findByChoiceId($choiceId, true, $getSelectedAndFavourites, $userId)->first()) {
+    public function findActive($choiceId, $getFavourites = false, $userId = null) {
+        if($result = $this->findByChoiceId($choiceId, true, $getFavourites, $userId)->first()) {
             $result = $this->processForView($result);
             return $result;
         }
@@ -253,31 +253,19 @@ class ChoosingInstancesTable extends Table
         return $this->findByChoiceId($choiceId, false)->toArray();
     }
     
-    public function findByChoiceId($choiceId = null, $active = true, $getSelectedAndFavourites = false, $userId = null) {
+    public function findByChoiceId($choiceId = null, $active = true, $getFavourites = false, $userId = null) {
         if(!$choiceId) {
             return [];
         }
         
         $contain = [];
         //$contain = ['Rules', 'RulesRelatedCategories', 'RulesRelatedOptions', 'StudentPreferenceCategories']
-        if($getSelectedAndFavourites && $userId) {
+        if($getFavourites && $userId) {
             $contain['ShortlistedOptions'] = function($q) use ($userId) {
                 return $q
                     ->select(['id', 'user_id', 'choices_option_id', 'choosing_instance_id'])
                     ->where(['ShortlistedOptions.user_id' => $userId]);
             };
-            
-            //This is now done as a separate query in the Selections controller
-            /*
-            $contain['Selections'] = function($q) use ($userId) {
-                return $q
-                    //->select(['id', 'user_id', 'choices_option_id', 'choosing_instance_id'])
-                    ->where([
-                        'Selections.user_id' => $userId,
-                        'archived' => false,
-                    ])
-                    ->contain(['OptionsSelections']);
-            };*/
         }
 
         $choosingInstanceQuery = $this->find('all', [

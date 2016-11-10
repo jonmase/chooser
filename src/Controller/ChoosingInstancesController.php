@@ -100,19 +100,11 @@ class ChoosingInstancesController extends AppController
             //Archive the remaining selections (should only ever be one)
             $this->ChoosingInstances->Selections->archive($selections);
             
-            //Update the action based on the confirmed status of the selection
-            if($selection['confirmed']) {
-                $action = 'review';
-            }
-            else {
-                $action = 'view';
-            }
-            
             list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
             list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
 
-            $this->set(compact('action', 'selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
-            $serialize = array_merge($serialize, ['action', 'selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
+            $this->set(compact('selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
+            $serialize = array_merge($serialize, ['selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
         }
 
         $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));

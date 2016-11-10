@@ -27,40 +27,49 @@ var optionSaveButtonDefaults = {
 
 var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
-                this.setState({
-                    action: data.action,
-                    favourites: data.favourites,
-                    instance: {
-                        instance: data.choosingInstance,
-                        loaded: true,
-                    },
-                    optionsSelected: data.optionsSelected,
-                    optionsSelectedTableOrder: data.optionsSelectedIds,
-                    optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
-                    rules: {
-                        rules: data.rules,
-                        indexesById: data.ruleIndexesById,
-                    },
-                    selection: {
-                        allowSubmit: data.allowSubmit,
-                        ruleWarnings: data.ruleWarnings,
-                        selection: data.selection,
-                    },
-                });
-            }.bind(this),
-                error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-            }.bind(this)
-        });
+        if(this.props.action === 'edit') {
+            this.setState({
+                instance: {
+                    loaded: true,
+                }
+            });
+        }
+        else {
+            var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    this.setState({
+                        //viewAction: data.action,
+                        favourites: data.favourites,
+                        instance: {
+                            instance: data.choosingInstance,
+                            loaded: true,
+                        },
+                        optionsSelected: data.optionsSelected,
+                        optionsSelectedTableOrder: data.optionsSelectedIds,
+                        optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
+                        rules: {
+                            rules: data.rules,
+                            indexesById: data.ruleIndexesById,
+                        },
+                        selection: {
+                            allowSubmit: data.allowSubmit,
+                            ruleWarnings: data.ruleWarnings,
+                            selection: data.selection,
+                        },
+                    });
+                }.bind(this),
+                    error: function(xhr, status, err) {
+                    console.error(url, status, err.toString());
+                }.bind(this)
+            });
+        }
     },
     loadOptionsFromServer: function() {
-        var url = '../get-options/' + this.props.choice.id + '/' + this.state.action;
+        var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
         url += '.json';
         $.ajax({
             url: url,
@@ -138,12 +147,9 @@ var OptionContainer = React.createClass({
         return initialState;
     },
 
-    componentDidMount: function() {
+    componentWillMount: function() {
         this.loadOptionsFromServer();
-        if(this.state.action !== 'edit') {
-            this.loadInstanceFromServer();
-            //this.loadRulesFromServer();
-        }
+        this.loadInstanceFromServer();
     },
     
     handleFavourite: function(choicesOptionId, action) {
@@ -465,18 +471,18 @@ var OptionContainer = React.createClass({
                     selection: returnedData.selection,
                 };
                 
-                if(action === "confirm") {
-                    this.setState({
-                        action: "review",
-                    });
-                }
-
-                this.setState({
+                var newState = {
                     optionsSelected: returnedData.optionsSelected,
                     optionsSelectedTableOrder: returnedData.optionsSelectedIds,
                     optionsSelectedPreferenceOrder: returnedData.optionsSelectedIdsPreferenceOrder,
                     selection: selectionState,
-                });
+                };
+                
+                if(action === "confirm") {
+                    newState.action = "review";
+                }
+
+                this.setState(newState);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
@@ -673,17 +679,17 @@ var OptionContainer = React.createClass({
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    {(!this.state.options.loaded || (this.state.action !== "edit" && !this.state.instance.loaded))?
+                    {(!this.state.options.loaded || !this.state.instance.loaded)?
                         <Loader />
                     :
                         <div>
-                            {(this.state.action === 'view')?
+                            {(this.state.action === 'view') &&
                                 <Instructions
                                     instance={this.state.instance}
                                     rules={this.state.rules.rules}
                                 />
-                            :""}
-                            {(this.state.action === 'view' || this.state.action === 'edit')?
+                            }
+                            {(this.state.action === 'view' || this.state.action === 'edit') &&
                                 <OptionsTable
                                     action={this.state.action}
                                     choice={this.props.choice}
@@ -696,8 +702,8 @@ var OptionContainer = React.createClass({
                                     optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                     optionsSort={this.state.optionsSort}
                                 />
-                            :""}
-                            {(this.state.action === 'view')?
+                            }
+                            {(this.state.action === 'view') &&
                                 <Basket
                                     choice={this.props.choice}
                                     instance={this.state.instance}
@@ -707,9 +713,9 @@ var OptionContainer = React.createClass({
                                     rules={this.state.rules}
                                     selection={this.state.selection}
                                 />
-                            :""}
+                            }
                             
-                            {(this.state.action === 'confirm')?
+                            {(this.state.action === 'confirm') &&
                                 <Confirm
                                     choice={this.props.choice}
                                     instance={this.state.instance}
@@ -721,9 +727,9 @@ var OptionContainer = React.createClass({
                                     rules={this.state.rules}
                                     selection={this.state.selection}
                                 />
-                            :""}
+                            }
                             
-                            {(this.state.action === 'review')?
+                            {(this.state.action === 'review') &&
                                 <Review
                                     choice={this.props.choice}
                                     instance={this.state.instance}
@@ -734,7 +740,7 @@ var OptionContainer = React.createClass({
                                     rankSelectsDisabled={this.state.rankSelectsDisabled}
                                     selection={this.state.selection}
                                 />
-                            :""}
+                            }
                         </div>
                     }
 
