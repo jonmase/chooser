@@ -347,30 +347,53 @@ var OptionContainer = React.createClass({
     handleOptionRemove: function(optionId) {
         console.log("remove option: " + optionId);
         
-        var optionsSelected = this.state.optionsSelectedTableOrder.splice(0);
-        optionsSelected.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
+        //Get the exising IDs
+        var optionsSelectedIds = this.state.optionsSelectedTableOrder.splice(0);
+        //Remove this ID from the selected array
+        optionsSelectedIds.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
+        
+        var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
         
         this.saveSelectedOptions(optionsSelected);
     },
     
     handleOptionSelect: function(rowsSelected) {
         //console.log(rowsSelected);
-        var optionsSelected = [];
+        var optionsSelectedIds = [];
         if(rowsSelected === 'all') {
             this.state.options.options.map(function(option) {
-                optionsSelected.push(option.id);
+                optionsSelectedIds.push(option.id);
             }, this);
         }
         else if(rowsSelected === 'none') {
-            //Leave optionsSelected empty
+            //Leave optionsSelectedIds empty
         }
         else {
             rowsSelected.map(function(rowIndex) {
-                optionsSelected.push(this.state.options.options[rowIndex].id);
+                optionsSelectedIds.push(this.state.options.options[rowIndex].id);
             }, this);
         }
         
+        var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
+        
         this.saveSelectedOptions(optionsSelected);
+    },
+    
+    updateOptionsSelected: function(optionsSelectedIds) {
+        //Loop through the selected option IDs, adding each optionSelected to a new optionsSelected object
+        var optionsSelected = {};
+        optionsSelectedIds.forEach(function(optionId, index) {
+            if(typeof(this.state.optionsSelected[optionId]) === "undefined") {
+                optionsSelected[optionId] = {
+                    choices_option_id: optionId,
+                    table_order: index,
+                };
+            }
+            else {
+                optionsSelected[optionId] = this.state.optionsSelected[optionId];
+            }
+        }, this);
+        return optionsSelected;
     },
     
     handleSelectionBackToEdit() {

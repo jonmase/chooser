@@ -59,7 +59,8 @@ class SelectionsController extends AppController
         }
         
         $selection = $this->Selections->processForSave($this->request->data, $this->Auth->user('id'));
-        
+        //pr($selection);
+        //exit;
         if ($this->Selections->save($selection, ['strategy' => 'replace'])) {
             $this->set('response', 'Selection saved');
             

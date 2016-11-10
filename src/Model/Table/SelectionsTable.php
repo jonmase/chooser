@@ -204,18 +204,25 @@ class SelectionsTable extends Table
         }
         
         //No Existing selection 
-        //Or Existing Confirmed, New Unconfirmed, i.e. Editing an already confirmed selection
-        // -> create new selection for saving edits (leaving confirmed as is if there is one)
-        if(empty($currentSelectionEntity) || ($currentSelectionEntity->confirmed && !$requestData['selection']['confirmed'])) {
+        // -> create new selection for saving edits
+        if(empty($currentSelectionEntity)) {
             $selectionData = $requestData['selection'];
             $selectionData['user_id'] = $userId; //Add user_id to data
             
             $selection = $this->newEntity($selectionData);
         }
+        //Existing Confirmed, New Unconfirmed, i.e. Editing an already confirmed selection
+        //Patch the existing $selection entity with the request data//
+        //Then unset the selection id and set it to new, so it is saved as a new record, but with the existing data, e.g. comments
+        else if($currentSelectionEntity->confirmed && !$requestData['selection']['confirmed']) {
+            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
+            unset($selection->id);
+            $selection->isNew(true);
+        }
+        //Both Unconfirmed, i.e. Saving selected options to existing unconfirmed selection
+        //Or New Confirmed (Existing either confirmed or not), i.e. Confirming selection
+        // -> Just patch requestData onto entity
         else {
-            //Both Unconfirmed, i.e. Saving selected options to existing unconfirmed selection
-            //Or New Confirmed (Existing either confirmed or not), i.e. Confirming selection
-            // -> Just patch requestData onto entity
             $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
 
             //If new selection is confirmed, it should be the only unarchived selection
@@ -229,7 +236,7 @@ class SelectionsTable extends Table
         $optionsSelectionsData = [];
         
         //If just selecting options (not confirming), options will contain an array of option ids
-        if(!$selection->confirmed) {
+        /*if(!$selection->confirmed) {
             foreach($requestData['options'] as $choicesOptionId) {
                 $optionsSelection = [
                     'choices_option_id' => $choicesOptionId,
@@ -244,7 +251,7 @@ class SelectionsTable extends Table
             }
         }
         //If confirming options (not selecting), options will be an array of option details, with the ID as the key
-        else {
+        else {*/
             foreach($requestData['options'] as $choicesOptionId => $optionsSelection) {
                 $optionsSelection['choices_option_id'] = $choicesOptionId;
                 
@@ -255,7 +262,7 @@ class SelectionsTable extends Table
                 
                 $optionsSelectionsData[] = $optionsSelection;
             }
-        }
+        //}
         
         $selection['options_selections'] = $this->OptionsSelections->newEntities($optionsSelectionsData);
 
@@ -270,6 +277,8 @@ class SelectionsTable extends Table
         $optionsSelected = [];
         $optionsSelectedIds = [];
         $optionsSelectedIdsPreferenceOrder = [];
+        $optionsSelectedIdsTableOrdered = [];
+        $optionsSelectedIdsUnordered = [];
         foreach($selection['options_selections'] as $option) {
             //If option is an object (options_selections Entity), convert to array
             if(is_object($option)) {
@@ -281,15 +290,31 @@ class SelectionsTable extends Table
             //Sorting according to the table sort order will be done on the frontend
             $optionsSelectedIds[] = $option['choices_option_id'];
             
-            $rank = $option['rank'];
-            $optionsSelectedIdsPreferenceOrder[$rank] = $option['choices_option_id'];
+            if(isset($option['rank'])) {    //If a rank is set for this option, as to the preference order array
+                $optionsSelectedIdsPreferenceOrder[$option['rank']] = $option['choices_option_id'];
+            }
+            else if(isset($option['table_order'])) {  //If no rank but is tableOrder, add to the TableOrdered array
+                $optionsSelectedIdsTableOrdered[$option['table_order']] = $option['choices_option_id'];
+            }
+            else {  //If no rank or tableOrder, add to the unordered array
+                $optionsSelectedIdsUnordered[] = $option['choices_option_id'];
+            }
             unset($option['choices_option']);
             $optionsSelected[$option['choices_option_id']] = $option;
         }
-        ksort($optionsSelectedIdsPreferenceOrder);    //Sort selectedOrdered by keys
-        unset($selection['options_selections']);
+        //Sort (by keys) and reindex optionsSelectedIdsPreferenceOrder
+        ksort($optionsSelectedIdsPreferenceOrder);
+        $optionsSelectedIdsPreferenceOrder = array_values($optionsSelectedIdsPreferenceOrder);
         
-            
+        //Sort (by keys) and reindex optionsSelectedIdsTableOrdered
+        ksort($optionsSelectedIdsTableOrdered);
+        $optionsSelectedIdsTableOrdered = array_values($optionsSelectedIdsTableOrdered);
+        
+        //Append the tableOrder and unranked options to the end of the array
+        $optionsSelectedIdsPreferenceOrder = array_merge($optionsSelectedIdsPreferenceOrder, $optionsSelectedIdsTableOrdered, $optionsSelectedIdsUnordered);
+        
+        unset($selection['options_selections']);
+
         return [$optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder];
     }
 }
