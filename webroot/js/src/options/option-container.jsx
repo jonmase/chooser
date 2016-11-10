@@ -517,9 +517,12 @@ var OptionContainer = React.createClass({
                     selection: returnedData.selection,
                 };
                 
+                var optionsSelectedIds = returnedData.optionsSelectedIds;
+                var optionsSelectedTableOrder = this.sortIdsByTableOrder(optionsSelectedIds);
+                
                 var newState = {
                     optionsSelected: returnedData.optionsSelected,
-                    optionsSelectedTableOrder: returnedData.optionsSelectedIds,
+                    optionsSelectedTableOrder: optionsSelectedTableOrder,
                     optionsSelectedPreferenceOrder: returnedData.optionsSelectedIdsPreferenceOrder,
                     selection: selectionState,
                 };
@@ -572,18 +575,34 @@ var OptionContainer = React.createClass({
         
         var optionsState = this.sortOptions(this.deepCopy(this.state.options.options), field, fieldType, direction);
         
+        var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.splice(0), optionsState);
+        
         this.setState({
             options: {
                 options: optionsState,
                 indexesById: this.updateOptionIndexesById(optionsState),
                 loaded: true,
             },
+            optionsSelectedTableOrder: optionsSelectedTableOrder,
             optionsSort: {
                 direction: direction,
                 field: field,
                 fieldType: fieldType,
             },
         });
+    },
+    
+    sortIdsByTableOrder: function(optionIds, options) {
+        var idsSortedByTableOrder = [];
+        if(typeof(options) === "undefined") {
+            options = this.state.options.options;
+        }
+        options.forEach(function(option) {
+            if(optionIds.indexOf(option.id) > -1) {
+                idsSortedByTableOrder.push(option.id);
+            }
+        });
+        return idsSortedByTableOrder;
     },
     
     sortOptions: function(options, field, fieldType, direction) {

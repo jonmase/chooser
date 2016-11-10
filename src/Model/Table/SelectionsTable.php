@@ -285,8 +285,7 @@ class SelectionsTable extends Table
                 $option = $option->toArray();
             }
             
-            //options_selections will be sorted by the default option sort order
-            //Just add the option IDs to the selected array in the default sorted order/
+            //Just add the option IDs to the selected array in the order they come
             //Sorting according to the table sort order will be done on the frontend
             $optionsSelectedIds[] = $option['choices_option_id'];
             
