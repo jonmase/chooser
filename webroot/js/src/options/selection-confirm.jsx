@@ -152,7 +152,7 @@ var SelectionConfirm = React.createClass({
                                 instructions: this.props.instance.instance.comments_overall_instructions,
                                 name: "selection.comments",
                                 section: true,
-                                value: this.props.selection.selection.comments,
+                                defaultValue: this.props.selection.selection.comments,
                             }} />
                         :""}
                         

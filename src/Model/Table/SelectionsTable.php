@@ -261,4 +261,35 @@ class SelectionsTable extends Table
 
         return $selection;
     }
+    
+    public function processSelectedOptions($selection = null) {
+        if(empty($selection)) {
+            return [[], [], []];
+        }
+        
+        $optionsSelected = [];
+        $optionsSelectedIds = [];
+        $optionsSelectedIdsPreferenceOrder = [];
+        foreach($selection['options_selections'] as $option) {
+            //If option is an object (options_selections Entity), convert to array
+            if(is_object($option)) {
+                $option = $option->toArray();
+            }
+            
+            //options_selections will be sorted by the default option sort order
+            //Just add the option IDs to the selected array in the default sorted order/
+            //Sorting according to the table sort order will be done on the frontend
+            $optionsSelectedIds[] = $option['choices_option_id'];
+            
+            $rank = $option['rank'];
+            $optionsSelectedIdsPreferenceOrder[$rank] = $option['choices_option_id'];
+            unset($option['choices_option']);
+            $optionsSelected[$option['choices_option_id']] = $option;
+        }
+        ksort($optionsSelectedIdsPreferenceOrder);    //Sort selectedOrdered by keys
+        unset($selection['options_selections']);
+        
+            
+        return [$optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder];
+    }
 }

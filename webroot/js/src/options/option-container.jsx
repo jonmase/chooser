@@ -472,9 +472,9 @@ var OptionContainer = React.createClass({
                 }
 
                 this.setState({
-                    optionsSelected: data.optionsSelected,
-                    optionsSelectedTableOrder: data.optionsSelectedIds,
-                    optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
+                    optionsSelected: returnedData.optionsSelected,
+                    optionsSelectedTableOrder: returnedData.optionsSelectedIds,
+                    optionsSelectedPreferenceOrder: returnedData.optionsSelectedIdsPreferenceOrder,
                     selection: selectionState,
                 });
             }.bind(this),
@@ -693,7 +693,7 @@ var OptionContainer = React.createClass({
                                     optionEditing={this.state.optionEditing}
                                     options={this.state.options}
                                     optionSaveButton={this.state.optionSaveButton}
-                                    optionsSelected={this.state.optionsSelectedTableOrder}
+                                    optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                     optionsSort={this.state.optionsSort}
                                 />
                             :""}
@@ -703,6 +703,7 @@ var OptionContainer = React.createClass({
                                     instance={this.state.instance}
                                     optionContainerHandlers={containerHandlers}
                                     options={this.state.options}
+                                    optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                     rules={this.state.rules}
                                     selection={this.state.selection}
                                 />

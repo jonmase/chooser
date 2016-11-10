@@ -98,11 +98,11 @@ var OptionList = React.createClass({
                             {(showCommentsFieldPerOption)?
                                 <div style={{float: 'right', marginTop: '-8px'}}>
                                     <TextField field={{
+                                        defaultValue: this.props.optionsSelected[optionId].comments,
                                         label: "Option-specific comments",
                                         //instructions: this.props.instance.comments_overall_instructions,
                                         name: "options." + optionId + ".comments",
                                         section: false,
-                                        value: null,
                                     }} />
                                 </div>
                             :""}

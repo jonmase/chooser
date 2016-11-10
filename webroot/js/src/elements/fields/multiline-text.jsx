@@ -14,6 +14,7 @@ var MultilineTextField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
+                    defaultValue={field.defaultValue}
                     //floatingLabelFixed={true}
                     floatingLabelText={field.label}
                     fullWidth={true}

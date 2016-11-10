@@ -28,11 +28,11 @@ var SelectionBasket = React.createClass({
                     expandable={true}
                     style={styles.cardText}
                 >
-                    {(this.props.selection.optionsSelected.length > 0)?
+                    {(this.props.optionsSelectedTableOrder.length > 0)?
                         <OptionList
                             action="view"
                             instance={this.props.instance.instance}
-                            optionIds={this.props.selection.optionsSelected}
+                            optionIds={this.props.optionsSelectedTableOrder}
                             options={this.props.options}
                             removeButton={true}
                             removeHandler={this.props.optionContainerHandlers.removeOption}

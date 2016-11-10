@@ -122,7 +122,6 @@ class RulesTable extends Table
             'contain' => ['ExtraFields', 'ExtraFields.ExtraFieldOptions', 'ExtraFieldOptions'],
         ]);
         $rules = $rulesQuery->toArray();
-        //pr($rules);
 
         //Get the selected options, including extra fields
         if($choicesOptionIds) {
@@ -142,8 +141,6 @@ class RulesTable extends Table
             $option = $this->ChoosingInstances->Choices->ChoicesOptions->Options->processForView($option, $extraTypes);
         }
         unset($option); //Clear option (object by reference) so can safely reuse later
-        //pr($choicesOptionIds);
-        //pr($selectedOptions);
         
         $ruleWarnings = [];
         $allowSubmit = true;
@@ -265,9 +262,6 @@ class RulesTable extends Table
                 }
             }
         }
-        //pr($ruleWarnings);
-        //pr('Allow submit? ' . $allowSubmit);
-        //exit;
         
         //Change $ruleWarnings to false if it is empty
         if(empty($ruleWarnings)) {

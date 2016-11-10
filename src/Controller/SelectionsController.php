@@ -59,23 +59,17 @@ class SelectionsController extends AppController
         }
         
         $selection = $this->Selections->processForSave($this->request->data, $this->Auth->user('id'));
-        //pr($selection);
-        //exit;
         
         if ($this->Selections->save($selection, ['strategy' => 'replace'])) {
             $this->set('response', 'Selection saved');
             
-            $optionsSelected = [];
-            foreach($selection['options_selections'] as $optionSelected) {
-                $optionsSelected[] = $optionSelected['choices_option_id'];
-            }
-            unset($selection['options_selections']);
+            list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->Selections->processSelectedOptions($selection);
             
             $selection['modified'] = $this->Selections->formatDate($selection['modified']);
             
-            list($allowSubmit, $ruleWarnings) = $this->Selections->ChoosingInstances->Rules->checkSelection($optionsSelected, $instance['id'], $instance['choice_id']);
+            list($allowSubmit, $ruleWarnings) = $this->Selections->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $instance['id'], $instance['choice_id']);
             
-            $this->set(compact('selection', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
+            $this->set(compact('selection', 'optionsSelected', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'allowSubmit', 'ruleWarnings'));
         } 
         else {
             throw new InternalErrorException(__('Problem with saving selection'));

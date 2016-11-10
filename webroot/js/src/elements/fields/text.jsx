@@ -20,6 +20,7 @@ var TextField = React.createClass({
             <div className={divClass}>
                 <FormsyText
                     className={inputClass}
+                    defaultValue={field.defaultValue}
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
