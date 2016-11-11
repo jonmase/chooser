@@ -22,6 +22,7 @@ ReactDOM.render(
     <OptionContainer 
         action={data.action} 
         choice={data.choice} 
+        role={data.role} 
     />, 
     document.getElementById('index')
 );

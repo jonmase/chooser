@@ -68,6 +68,25 @@ class OptionsController extends AppController
      */
     public function index($choiceId = null, $action = 'view')
     {
+        //Does the user have additional roles? I.e., should the dashboard menu be shown?
+        $hasAdditionalRoles = $this->Options->ChoicesOptions->Choices->ChoicesUsers->hasAdditionalRoles($choiceId, $this->Auth->user('id'));
+        if($hasAdditionalRoles) {
+            //Get the sections to display in the Dashboard menu
+            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
+            $this->set(compact('sections'));
+            
+            $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+            if($isAdmin) {
+                $role = 'admin';
+            }
+            else {
+                $role = 'extra';    //User has some sort of extra permissions
+            }
+        }
+        else {
+            $role = 'view';
+        }
+        
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
             $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'));
@@ -101,28 +120,30 @@ class OptionsController extends AppController
                         }
                 ],
             ]);
-            $instance = $instanceQuery->first()->toArray();
             
-            if(!empty($instance['selections']) && $instance['selections'][0]['confirmed']) {
-                $action = 'review';
+            //If there is no instance set up, and user does not have any additional roles, they should not be allowed to view the options
+            if($instanceQuery->isEmpty()) {
+                //TODO: Should this be for all users with additional roles, or just for Admins? Or some other subset of additional roles?
+                if(!$hasAdditionalRoles) {
+                    $action = 'unavailable';
+                }
             }
             else {
-                $action = 'view';
+                $instance = $instanceQuery->first()->toArray();
+                
+                if(!empty($instance['selections']) && $instance['selections'][0]['confirmed']) {
+                    $action = 'review';
+                }
+                else {
+                    $action = 'view';
+                }
             }
-        }
-        
-        //Does the user have additional roles? I.e., should the dashboard menu be shown?
-        $hasAdditionalRoles = $this->Options->ChoicesOptions->Choices->ChoicesUsers->hasAdditionalRoles($choiceId, $this->Auth->user('id'));
-        if($hasAdditionalRoles) {
-            //Get the sections to display in the Dashboard menu
-            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
-            $this->set(compact('sections'));
         }
         
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);
 
-        $this->set(compact('action', 'choice'));
+        $this->set(compact('action', 'choice', 'role'));
     }
 
     /**

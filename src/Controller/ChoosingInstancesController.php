@@ -72,47 +72,52 @@ class ChoosingInstancesController extends AppController
         
         $choosingInstance = $this->ChoosingInstances->findActive($choiceId, true, $this->Auth->user('id'));
         //pr($choosingInstance);
-        $favourites = [];
-        foreach($choosingInstance->shortlisted_options as $option) {
-            $favourites[] = $option['choices_option_id'];
-        }
-        unset($choosingInstance->shortlisted_options);
+        $this->set(compact('choosingInstance'));
+        $serialize = ['choosingInstance'];
         
-        list($rules, $ruleIndexesById) = $this->ChoosingInstances->Rules->getForInstance($choosingInstance->id);
-        
-        $serialize = ['choosingInstance', 'favourites', 'rules', 'ruleIndexesById'];
-        
-        //If getting the instance for settings, get the ruleCategoryFields
-        if($action === 'settings') {
-            $ruleCategoryFields = $this->ChoosingInstances->Rules->ExtraFields->getRuleCategoryFields($choiceId);
-            $this->set(compact('ruleCategoryFields'));
-            $serialize = array_merge($serialize, ['ruleCategoryFields']);
-        }
-        
-        //If getting the instance for view, get the selection-related info
-        if($action === 'view') {
-            //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
-            $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
+        if(!empty($choosingInstance)) {
+            $favourites = [];
+            foreach($choosingInstance->shortlisted_options as $option) {
+                $favourites[] = $option['choices_option_id'];
+            }
+            unset($choosingInstance->shortlisted_options);
             
-            if(!empty($selections)) {
-                //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
-                $selection = array_shift($selections);
+            list($rules, $ruleIndexesById) = $this->ChoosingInstances->Rules->getForInstance($choosingInstance->id);
+            
+            $this->set(compact('favourites', 'rules', 'ruleIndexesById'));
+            $serialize = array_merge($serialize, ['choosingInstance', 'favourites', 'rules', 'ruleIndexesById']);
+            
+            //If getting the instance for settings, get the ruleCategoryFields
+            if($action === 'settings') {
+                $ruleCategoryFields = $this->ChoosingInstances->Rules->ExtraFields->getRuleCategoryFields($choiceId);
+                $this->set(compact('ruleCategoryFields'));
+                $serialize = array_merge($serialize, ['ruleCategoryFields']);
+            }
+            
+            //If getting the instance for view, get the selection-related info
+            if($action === 'view') {
+                //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
+                $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
                 
-                //Archive the remaining selections (should only ever be one)
-                $this->ChoosingInstances->Selections->archive($selections);
-            }
-            else {
-                $selection = [];
-            }
-            
-            list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
-            list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
+                if(!empty($selections)) {
+                    //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
+                    $selection = array_shift($selections);
+                    
+                    //Archive the remaining selections (should only ever be one)
+                    $this->ChoosingInstances->Selections->archive($selections);
+                }
+                else {
+                    $selection = [];
+                }
+                
+                list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
+                list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
 
-            $this->set(compact('selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
-            $serialize = array_merge($serialize, ['selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
+                $this->set(compact('selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
+                $serialize = array_merge($serialize, ['selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
+            }
         }
 
-        $this->set(compact('choosingInstance', 'favourites', 'rules', 'ruleIndexesById'));
         $this->set('_serialize', $serialize);
     }
 

@@ -267,7 +267,7 @@ var OptionsTable = React.createClass({
                                     return (
                                         <TableRow 
                                             key={option.id} 
-                                            selected={this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
+                                            selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
                                         >
                                             {(this.props.action === 'view' && enableSelection)?
                                                 <UnselectableCell style={styles.favouriteTableRowColumn}>

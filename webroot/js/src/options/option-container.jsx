@@ -3,6 +3,7 @@ import update from 'immutability-helper';
 
 import Snackbar from 'material-ui/Snackbar';
 
+import Unavailable from './choice-unavailable.jsx';
 import Instructions from './choice-instructions.jsx';
 import Basket from './selection-basket.jsx';
 import OptionsTable from './option-table.jsx';
@@ -41,26 +42,30 @@ var OptionContainer = React.createClass({
                 dataType: 'json',
                 cache: false,
                 success: function(data) {
-                    this.setState({
-                        //viewAction: data.action,
-                        favourites: data.favourites,
+                    var stateData = {
                         instance: {
                             instance: data.choosingInstance,
                             loaded: true,
-                        },
-                        optionsSelected: data.optionsSelected,
-                        optionsSelectedTableOrder: data.optionsSelectedIds,
-                        optionsSelectedPreferenceOrder: data.optionsSelectedIdsPreferenceOrder,
-                        rules: {
+                        }
+                    };
+                
+                    if(data.choosingInstance.id) {
+                        stateData.favourites = data.favourites;
+                        stateData.optionsSelected = data.optionsSelected;
+                        stateData.optionsSelectedTableOrder = data.optionsSelectedIds;
+                        stateData.optionsSelectedPreferenceOrder = data.optionsSelectedIdsPreferenceOrder;
+                        stateData.rules = {
                             rules: data.rules,
                             indexesById: data.ruleIndexesById,
-                        },
-                        selection: {
+                        };
+                        stateData.selection = {
                             allowSubmit: data.allowSubmit,
                             ruleWarnings: data.ruleWarnings,
                             selection: data.selection,
-                        },
-                    });
+                        };
+                    }
+                    
+                    this.setState(stateData);
                 }.bind(this),
                     error: function(xhr, status, err) {
                     console.error(url, status, err.toString());
@@ -150,8 +155,10 @@ var OptionContainer = React.createClass({
     },
 
     componentWillMount: function() {
-        this.loadOptionsFromServer();
-        this.loadInstanceFromServer();
+        if(this.props.action !== 'unavailable') {
+            this.loadOptionsFromServer();
+            this.loadInstanceFromServer();
+        }
     },
     
     handleFavourite: function(choicesOptionId, action) {
@@ -729,81 +736,90 @@ var OptionContainer = React.createClass({
             containerHandlers.wysiwygChange = this.handleWysiwygChange;
         }
         
-        
         return (
             <MuiThemeProvider muiTheme={ChooserTheme}>
                 <div>
-                    {(!this.state.options.loaded || !this.state.instance.loaded)?
-                        <Loader />
+                    {(this.state.action === 'unavailable')?
+                        <Unavailable
+                            instance={this.state.instance}
+                            rules={this.state.rules.rules}
+                        />
                     :
-                        <div>
-                            {(this.state.action === 'view') &&
-                                <Instructions
-                                    instance={this.state.instance}
-                                    rules={this.state.rules.rules}
+                        (!this.state.options.loaded || !this.state.instance.loaded)?
+                            <Loader />
+                        :
+                            <div>
+                                {(this.state.action === 'view') &&
+                                    <Instructions
+                                        instance={this.state.instance}
+                                        role={this.props.role}
+                                        rules={this.state.rules.rules}
+                                    />
+                                }
+                                {
+                                //If edit action, or view action and instance open or user is admin or has extra permissions, show options table
+                                (this.state.action === 'edit' || (this.state.action === 'view' && (this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed))) &&
+                                    <OptionsTable
+                                        action={this.state.action}
+                                        choice={this.props.choice}
+                                        favourites={this.state.favourites}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        optionEditing={this.state.optionEditing}
+                                        options={this.state.options}
+                                        optionSaveButton={this.state.optionSaveButton}
+                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                        optionsSort={this.state.optionsSort}
+                                    />
+                                }
+                                {
+                                //If view action and instance created and open or user is administrator, show choices basket
+                                (this.state.action === 'view' && this.state.instance.instance.id && (this.state.instance.instance.opens.passed || this.props.role === 'admin')) &&
+                                    <Basket
+                                        choice={this.props.choice}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        options={this.state.options}
+                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                        rules={this.state.rules}
+                                        selection={this.state.selection}
+                                    />
+                                }
+                                
+                                {(this.state.action === 'confirm') &&
+                                    <Confirm
+                                        choice={this.props.choice}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        options={this.state.options}
+                                        optionsSelected={this.state.optionsSelected}
+                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                        rules={this.state.rules}
+                                        selection={this.state.selection}
+                                    />
+                                }
+                                
+                                {(this.state.action === 'review') &&
+                                    <Review
+                                        choice={this.props.choice}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        options={this.state.options}
+                                        optionsSelected={this.state.optionsSelected}
+                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                        selection={this.state.selection}
+                                    />
+                                }
+                                <Snackbar
+                                    autoHideDuration={3000}
+                                    message={this.state.snackbar.message}
+                                    onRequestClose={this.handleSnackbarClose}
+                                    open={this.state.snackbar.open}
                                 />
-                            }
-                            {(this.state.action === 'view' || this.state.action === 'edit') &&
-                                <OptionsTable
-                                    action={this.state.action}
-                                    choice={this.props.choice}
-                                    favourites={this.state.favourites}
-                                    instance={this.state.instance}
-                                    optionContainerHandlers={containerHandlers}
-                                    optionEditing={this.state.optionEditing}
-                                    options={this.state.options}
-                                    optionSaveButton={this.state.optionSaveButton}
-                                    optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                    optionsSort={this.state.optionsSort}
-                                />
-                            }
-                            {(this.state.action === 'view') &&
-                                <Basket
-                                    choice={this.props.choice}
-                                    instance={this.state.instance}
-                                    optionContainerHandlers={containerHandlers}
-                                    options={this.state.options}
-                                    optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                    rules={this.state.rules}
-                                    selection={this.state.selection}
-                                />
-                            }
-                            
-                            {(this.state.action === 'confirm') &&
-                                <Confirm
-                                    choice={this.props.choice}
-                                    instance={this.state.instance}
-                                    optionContainerHandlers={containerHandlers}
-                                    options={this.state.options}
-                                    optionsSelected={this.state.optionsSelected}
-                                    optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                    rules={this.state.rules}
-                                    selection={this.state.selection}
-                                />
-                            }
-                            
-                            {(this.state.action === 'review') &&
-                                <Review
-                                    choice={this.props.choice}
-                                    instance={this.state.instance}
-                                    optionContainerHandlers={containerHandlers}
-                                    options={this.state.options}
-                                    optionsSelected={this.state.optionsSelected}
-                                    optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                    rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                    selection={this.state.selection}
-                                />
-                            }
-                        </div>
+                            </div>
                     }
-
-                    <Snackbar
-                        autoHideDuration={3000}
-                        message={this.state.snackbar.message}
-                        onRequestClose={this.handleSnackbarClose}
-                        open={this.state.snackbar.open}
-                    />
                 </div>
             </MuiThemeProvider>
         );

@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\I18n\Time;
 
 /**
  * ChoosingInstances Model
@@ -341,13 +342,32 @@ class ChoosingInstancesTable extends Table
     }
     
     public function processForView($instance) {
+        $time = Time::now();
         foreach($this->_datetimeFields as $field) {
             $datetimeField = [];
             if(!empty($instance[$field])) {
-                //pr($instance[$field]);
-        //exit;
-                $instance[$field] = $this->formatDatetimeObjectForView($instance[$field]);
-                //pr($instance[$field]);
+                $date = $instance[$field];
+                
+                $instance[$field] = $this->formatDatetimeObjectForView($date);
+                
+                //Check whether date has passed
+                if($date <= $time) {
+                    $instance[$field]['passed'] = true;
+                }
+                else {
+                    $instance[$field]['passed'] = false;
+                }
+            }
+            //If field is empty...
+            else {
+                //If it is the opens field, set passed to true, so it will be open
+                if($field === 'opens') {
+                    $instance[$field] = ['passed' => true];
+                }
+                //Otherwise (deadline or extension), set to false, so it won't have closed
+                else {
+                    $instance[$field] = ['passed' => false];
+                }
             }
         }
         
