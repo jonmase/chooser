@@ -103,7 +103,7 @@ class OptionsController extends AppController
             ]);
             $instance = $instanceQuery->first()->toArray();
             
-            if($instance['selections'][0]['confirmed']) {
+            if(!empty($instance['selections']) && $instance['selections'][0]['confirmed']) {
                 $action = 'review';
             }
             else {

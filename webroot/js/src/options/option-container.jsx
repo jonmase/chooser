@@ -77,6 +77,7 @@ var OptionContainer = React.createClass({
             cache: false,
             success: function(data) {
                 this.setState({
+                    initialOptionIndexesById: data.optionIndexesById,
                     options: {
                         options: data.options,
                         indexesById: data.optionIndexesById,
@@ -94,6 +95,7 @@ var OptionContainer = React.createClass({
         var initialState = {
             action: this.props.action,
             favourites: [],
+            initialOptionIndexesById: [],
             instance: {
                 instance: [],
                 loaded: false,
@@ -157,8 +159,6 @@ var OptionContainer = React.createClass({
             return false;
         }
     
-        console.log('add fav ' + choicesOptionId + '; ins: ' + this.state.instance.instance.id);
-        
         //Optimistically update the favourites array
         var favourites = this.state.favourites;
         if(action === 'add') {
@@ -208,8 +208,6 @@ var OptionContainer = React.createClass({
     handleOptionDialogOpen: function(optionId) {
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
-            console.log("Editing option: ", optionId);
-            
             var optionEditingState = {
                 dialogOpen: true,
                 dialogTitle: 'Edit Option',
@@ -240,7 +238,6 @@ var OptionContainer = React.createClass({
             this.setState({optionValues: newOptionValuesState});
         }
         else {
-            console.log("Adding option");
             var optionEditingState = {
                 dialogOpen: true,
                 dialogTitle: 'Add Option',
@@ -286,8 +283,6 @@ var OptionContainer = React.createClass({
         if(this.state.optionEditing.optionBeingEdited) {
             option.choices_option_id = this.state.optionEditing.optionBeingEdited;
         }
-        
-        console.log("Saving option: ", option);
         
         //Save the settings
         var url = '../save/' + this.props.choice.id;
@@ -345,8 +340,6 @@ var OptionContainer = React.createClass({
     },
     
     handleOptionRemove: function(optionId) {
-        console.log("remove option: " + optionId);
-        
         //Get the exising IDs
         var optionsSelectedIds = this.state.optionsSelectedTableOrder.splice(0);
         //Remove this ID from the selected array
@@ -358,7 +351,6 @@ var OptionContainer = React.createClass({
     },
     
     handleOptionSelect: function(rowsSelected) {
-        //console.log(rowsSelected);
         var optionsSelectedIds = [];
         if(rowsSelected === 'all') {
             this.state.options.options.map(function(option) {
@@ -382,15 +374,23 @@ var OptionContainer = React.createClass({
     updateOptionsSelected: function(optionsSelectedIds) {
         //Loop through the selected option IDs, adding each optionSelected to a new optionsSelected object
         var optionsSelected = {};
-        optionsSelectedIds.forEach(function(optionId, index) {
+        optionsSelectedIds.forEach(function(optionId) {
             if(typeof(this.state.optionsSelected[optionId]) === "undefined") {
+                //option not previously selected, so just pass id and table order
                 optionsSelected[optionId] = {
                     choices_option_id: optionId,
-                    table_order: index,
+                    table_order: this.state.initialOptionIndexesById[optionId],
                 };
             }
             else {
-                optionsSelected[optionId] = this.state.optionsSelected[optionId];
+                //option was previously selected, so pass id, rank/points/comments and table order (used if rank is null)
+                optionsSelected[optionId] = {
+                    choices_option_id: optionId,
+                    comments: this.state.optionsSelected[optionId].comments,
+                    points: this.state.optionsSelected[optionId].points,
+                    rank: this.state.optionsSelected[optionId].rank,
+                    table_order: this.state.initialOptionIndexesById[optionId],
+                };
             }
         }, this);
         return optionsSelected;
@@ -403,8 +403,6 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionOptionCommentsChange: function(event, value) {
-        console.log(event.target.name);
-        
         //Get the option ID from the input name (options.##.comments)
         var splitInputName = event.target.name.split(".");
         var optionId = parseInt(splitInputName[1]);
@@ -436,8 +434,6 @@ var OptionContainer = React.createClass({
         //var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
         var optionId = parseInt(splitInputName[1]);
         
-        console.log(optionId + ": " + value);
-        
         //Get the optionsSelectedOrdered array from state
         var optionsSelectedPreferenceOrder = this.state.optionsSelectedPreferenceOrder.splice(0);
        
@@ -447,8 +443,6 @@ var OptionContainer = React.createClass({
         //Put this option back in the required position
         optionsSelectedPreferenceOrder.splice(value,0,optionId);
         
-        console.log(optionsSelectedPreferenceOrder);
-        
         this.setState({
             optionsSelectedPreferenceOrder: optionsSelectedPreferenceOrder,
             rankSelectsDisabled: false,
@@ -456,7 +450,6 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionSubmit() {
-        console.log("selection submitted");
         //Don't actually need to do anything at this stage, just change to confirm view
         this.setState({
             action: 'confirm'
@@ -464,12 +457,10 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionFinalConfirm(data) {
-        console.log("selection finally submitted");
-     
-        //TODO: In DB, change selection status to confirmed and save preferences and comments
-        //Save the selection
+        //Set confirmed to true
         data.selection.confirmed = true;
         
+        //Save the selection
         this.saveSelection(data, 'confirm');
     },
     
@@ -481,8 +472,6 @@ var OptionContainer = React.createClass({
             selection: newSelectionState,
         });
 
-        console.log(optionsSelected);
-        
         //Save the settings
         var data = {
             selection: {
@@ -500,7 +489,7 @@ var OptionContainer = React.createClass({
         }
     
         data.selection.choosing_instance_id = this.state.instance.instance.id;
-        data.selection.id = this.state.selection.selection.id;
+        data.selection.id = this.state.selection.selection.id || null;
        
         var url = '../../selections/save.json';
         $.ajax({
@@ -571,8 +560,6 @@ var OptionContainer = React.createClass({
             }
         }
     
-        console.log("sort " + direction + " by " + field);
-        
         var optionsState = this.sortOptions(this.deepCopy(this.state.options.options), field, fieldType, direction);
         
         var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.splice(0), optionsState);

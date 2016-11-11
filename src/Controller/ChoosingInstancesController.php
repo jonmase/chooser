@@ -93,11 +93,17 @@ class ChoosingInstancesController extends AppController
         if($action === 'view') {
             //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
             $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
-            //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
-            $selection = array_shift($selections);
             
-            //Archive the remaining selections (should only ever be one)
-            $this->ChoosingInstances->Selections->archive($selections);
+            if(!empty($selections)) {
+                //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
+                $selection = array_shift($selections);
+                
+                //Archive the remaining selections (should only ever be one)
+                $this->ChoosingInstances->Selections->archive($selections);
+            }
+            else {
+                $selection = [];
+            }
             
             list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
             list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);

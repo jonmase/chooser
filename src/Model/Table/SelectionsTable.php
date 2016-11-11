@@ -289,13 +289,16 @@ class SelectionsTable extends Table
             //Sorting according to the table sort order will be done on the frontend
             $optionsSelectedIds[] = $option['choices_option_id'];
             
-            if(isset($option['rank'])) {    //If a rank is set for this option, as to the preference order array
+            //If a rank is set for this option, add the option to the preference order array
+            if(isset($option['rank']) && $option['rank'] !== null) {    
                 $optionsSelectedIdsPreferenceOrder[$option['rank']] = $option['choices_option_id'];
             }
-            else if(isset($option['table_order'])) {  //If no rank but is tableOrder, add to the TableOrdered array
+            //If no rank but tableOrder is set, add to the TableOrdered array
+            else if(isset($option['table_order'])) {  
                 $optionsSelectedIdsTableOrdered[$option['table_order']] = $option['choices_option_id'];
             }
-            else {  //If no rank or tableOrder, add to the unordered array
+            //If no rank or tableOrder, add to the unordered array
+            else {  
                 $optionsSelectedIdsUnordered[] = $option['choices_option_id'];
             }
             unset($option['choices_option']);
