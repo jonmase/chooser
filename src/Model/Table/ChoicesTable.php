@@ -294,8 +294,8 @@ class ChoicesTable extends Table
                 'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
                 'actions' => [
                     [
-                        'label' => 'Preview',
-                        'menuLabel' => 'Preview Options',
+                        'label' => 'View All',
+                        'menuLabel' => 'View All Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'view', $choiceId]),
                     ],
                     [
