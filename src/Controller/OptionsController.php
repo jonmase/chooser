@@ -129,9 +129,12 @@ class OptionsController extends AppController
                 }
             }
             else {
-                $instance = $instanceQuery->first()->toArray();
-                
-                if(!empty($instance['selections']) && $instance['selections'][0]['confirmed']) {
+                //$instance = $instanceQuery->first()->toArray();
+                $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->processForView($instanceQuery->first());
+
+                //If the user has confirmed a selection, show the review page
+                //Or if the deadline and extension have both passed, show the review page
+                if((!empty($instance['selections']) && $instance['selections'][0]['confirmed']) || ($instance['deadline']['passed'] && $instance['extension']['passed'])) {
                     $action = 'review';
                 }
                 else {

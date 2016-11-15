@@ -30,43 +30,63 @@ var SelectionReview = React.createClass({
                     //expandable={true}
                     style={styles.cardText}
                 >
-                    <div>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.
-                        {(this.props.instance.instance.editable)?
-                                <span> You can change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} /></span>
-                        :""}
-                        {(this.props.instance.instance.editable)?
-                            <div style={{marginTop: '10px'}}>
-                                <RaisedButton
-                                    label="Change"
-                                    onTouchTap={this.props.optionContainerHandlers.backToEdit}
-                                    primary={false}
-                                />
-                            </div>
-                        :""}
-                    </div>
-                    
-                    {(this.props.optionsSelectedPreferenceOrder.length > 0)?
-                        <div style={{width: '100%'}}>
-                            <OptionList
-                                action="review"
-                                instance={this.props.instance.instance}
-                                optionIds={this.props.optionsSelectedPreferenceOrder}
-                                options={this.props.options}
-                                optionsSelected={this.props.optionsSelected}
-                                removeButton={false}
-                                useCode={this.props.choice.use_code}
-                            />
+                    <div>
+                        <div>
+                            {(!this.props.selection.selection.confirmed)? 
+                                (this.props.instance.instance.deadline.passed || this.props.instance.instance.extension.passed)?
+                                    <p>You did not submit your choices and the deadline has now passed.</p>
+                                :
+                                    <p>You have not submitted any choices.</p>
+                        :
+                            <p>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.</p>
+                        }
                         </div>
-                    :
-                        <div>No options chosen</div>
-                    }
-                    
-                    {(this.props.instance.instance.comments_overall && this.props.selection.selection.comments)?
-                        <Text 
-                            value={this.props.selection.selection.comments}
-                            label="Comments"
-                        />
-                    :""}
+                        
+                        <div>
+                            {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
+                                <div>
+                                    <span> You can change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} />.</span>
+                                    <div style={{marginTop: '10px'}}>
+                                        <RaisedButton
+                                            label="Change"
+                                            onTouchTap={this.props.optionContainerHandlers.backToEdit}
+                                            primary={false}
+                                        />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        {(this.props.selection.selection.confirmed) &&
+                            <div>
+                                <div>
+                                    {(this.props.optionsSelectedPreferenceOrder.length > 0)?
+                                        <div style={{width: '100%'}}>
+                                            <OptionList
+                                                action="review"
+                                                instance={this.props.instance.instance}
+                                                optionIds={this.props.optionsSelectedPreferenceOrder}
+                                                options={this.props.options}
+                                                optionsSelected={this.props.optionsSelected}
+                                                removeButton={false}
+                                                useCode={this.props.choice.use_code}
+                                            />
+                                        </div>
+                                    :
+                                        <div>No options chosen</div>
+                                    }
+                                </div>
+                                <div>
+                                    {(this.props.instance.instance.comments_overall && this.props.selection.selection.comments)?
+                                        <Text 
+                                            value={this.props.selection.selection.comments}
+                                            label="Comments"
+                                        />
+                                    :""}
+                                </div>
+                            </div>
+                        }
+                    </div>
                     
                 </CardText>
             </Card>

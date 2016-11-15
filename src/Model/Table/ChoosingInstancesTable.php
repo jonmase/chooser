@@ -361,10 +361,11 @@ class ChoosingInstancesTable extends Table
             //If field is empty...
             else {
                 //If it is the opens field, set passed to true, so it will be open
-                if($field === 'opens') {
+                //If it is the extension field, set passed to true, as this means there is no extension
+                if($field === 'opens' || $field === 'extension') {
                     $instance[$field] = ['passed' => true];
                 }
-                //Otherwise (deadline or extension), set to false, so it won't have closed
+                //Otherwise (deadline), set to false, so it won't have closed
                 else {
                     $instance[$field] = ['passed' => false];
                 }

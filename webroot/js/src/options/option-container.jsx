@@ -774,7 +774,7 @@ var OptionContainer = React.createClass({
                                 }
                                 {
                                 //If view action and instance created and open or user is administrator, show choices basket
-                                (this.state.action === 'view' && this.state.instance.instance.id && (this.state.instance.instance.opens.passed || this.props.role === 'admin')) &&
+                                (this.state.action === 'view' && this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin')) &&
                                     <Basket
                                         choice={this.props.choice}
                                         instance={this.state.instance}
