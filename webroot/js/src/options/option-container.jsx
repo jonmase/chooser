@@ -3,6 +3,8 @@ import update from 'immutability-helper';
 
 import Snackbar from 'material-ui/Snackbar';
 
+import TopBar from '../elements/topbar.jsx';
+
 import Unavailable from './choice-unavailable.jsx';
 import Instructions from './choice-instructions.jsx';
 import Basket from './selection-basket.jsx';
@@ -487,6 +489,10 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleSelectionBasketClick: function() {
+        console.log('show basket');
+    },
+    
     handleSelectionOptionCommentsChange: function(event, value) {
         //Get the option ID from the input name (options.##.comments)
         var splitInputName = event.target.name.split(".");
@@ -792,10 +798,8 @@ var OptionContainer = React.createClass({
     
         if(this.state.action === 'view') {
             containerHandlers.favourite = this.handleFavourite;
-            containerHandlers.removeOption = this.handleOptionRemove;
             containerHandlers.selectOption = this.handleOptionSelect;
             containerHandlers.sort = this.handleSort;
-            containerHandlers.submit = this.handleSelectionSubmit;
         }
         else if(this.state.action === 'confirm') {
             //containerHandlers.confirm = this.handleSelectionConfirm;
@@ -821,94 +825,119 @@ var OptionContainer = React.createClass({
             containerHandlers.wysiwygChange = this.handleWysiwygChange;
         }
         
+        //If view action and instance created and open or user is administrator, show choices basket
+        var showBasket = (this.state.options.loaded && this.state.instance.loaded) && (this.state.action === 'view' && this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'));
+        
+        var basketProps = {};
+        
+        if(showBasket) {
+            basketProps = {
+                instance: this.state.instance.instance,
+                handlers: {
+                    remove: this.handleOptionRemove,
+                    submit: this.handleSelectionSubmit,
+                },
+                options: this.state.options,
+                optionsSelectedTableOrder: this.state.optionsSelectedTableOrder,
+                rules: this.state.rules,
+                selection: this.state.selection,
+            }
+        }
+        
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
-                <div>
-                    {(this.state.action === 'unavailable')?
-                        <Unavailable
-                            instance={this.state.instance}
-                            rules={this.state.rules.rules}
-                        />
-                    :
-                        (!this.state.options.loaded || !this.state.instance.loaded)?
-                            <Loader />
-                        :
-                            <div>
-                                {(this.state.action === 'view') &&
-                                    <Instructions
-                                        abandonHandler={this.handleSelectionAbandonChanges}
-                                        confirmedSelection={this.state.confirmedSelection}
-                                        instance={this.state.instance}
-                                        role={this.props.role}
-                                        rules={this.state.rules.rules}
-                                    />
-                                }
-                                {
-                                //If edit action, or view action and instance open or user is admin or has extra permissions, show options table
-                                (this.state.action === 'edit' || (this.state.action === 'view' && (this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed))) &&
-                                    <OptionsTable
-                                        action={this.state.action}
-                                        choice={this.props.choice}
-                                        favourites={this.state.favourites}
-                                        instance={this.state.instance}
-                                        optionContainerHandlers={containerHandlers}
-                                        optionEditing={this.state.optionEditing}
-                                        options={this.state.options}
-                                        optionSaveButton={this.state.optionSaveButton}
-                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                        optionsSort={this.state.optionsSort}
-                                    />
-                                }
-                                {
-                                //If view action and instance created and open or user is administrator, show choices basket
-                                (this.state.action === 'view' && this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin')) &&
-                                    <Basket
-                                        choice={this.props.choice}
-                                        instance={this.state.instance}
-                                        optionContainerHandlers={containerHandlers}
-                                        options={this.state.options}
-                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                        rules={this.state.rules}
-                                        selection={this.state.selection}
-                                    />
-                                }
-                                
-                                {(this.state.action === 'confirm') &&
-                                    <Confirm
-                                        choice={this.props.choice}
-                                        instance={this.state.instance}
-                                        optionContainerHandlers={containerHandlers}
-                                        options={this.state.options}
-                                        optionsSelected={this.state.optionsSelected}
-                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                        rules={this.state.rules}
-                                        selection={this.state.selection}
-                                    />
-                                }
-                                
-                                {(this.state.action === 'review') &&
-                                    <Review
-                                        choice={this.props.choice}
-                                        instance={this.state.instance}
-                                        optionContainerHandlers={containerHandlers}
-                                        options={this.state.options}
-                                        optionsSelected={this.state.optionsSelected}
-                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                        selection={this.state.selection}
-                                    />
-                                }
-                                <Snackbar
-                                    autoHideDuration={3000}
-                                    message={this.state.snackbar.message}
-                                    onRequestClose={this.handleSnackbarClose}
-                                    open={this.state.snackbar.open}
-                                />
-                            </div>
-                    }
+            <div>
+                <div style={{margin: '0 -2rem'}}>
+                    <TopBar 
+                        basket={basketProps}
+                        choice={this.props.choice} 
+                        dashboardUrl={this.props.dashboardUrl} 
+                        handleBasketClick={this.handleSelectionBasketClick}
+                        menu={this.props.sections?true:false}
+                        sections={this.props.sections} 
+                        showBasket={showBasket}
+                    />
                 </div>
-            </MuiThemeProvider>
+                <div style={{paddingTop: '64px'}}>
+                    <h1 className="page-title">
+                        {this.props.title}
+                    </h1>
+
+                    <MuiThemeProvider muiTheme={ChooserTheme}>
+                        <div>
+                            {(this.state.action === 'unavailable')?
+                                <Unavailable
+                                    instance={this.state.instance}
+                                    rules={this.state.rules.rules}
+                                />
+                            :
+                                (!this.state.options.loaded || !this.state.instance.loaded)?
+                                    <Loader />
+                                :
+                                    <div>
+                                        {(this.state.action === 'view') &&
+                                            <Instructions
+                                                abandonHandler={this.handleSelectionAbandonChanges}
+                                                confirmedSelection={this.state.confirmedSelection}
+                                                instance={this.state.instance}
+                                                role={this.props.role}
+                                                rules={this.state.rules.rules}
+                                            />
+                                        }
+                                        {
+                                        //If edit action, or view action and instance open or user is admin or has extra permissions, show options table
+                                        (this.state.action === 'edit' || (this.state.action === 'view' && (this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed))) &&
+                                            <OptionsTable
+                                                action={this.state.action}
+                                                choice={this.props.choice}
+                                                favourites={this.state.favourites}
+                                                instance={this.state.instance}
+                                                optionContainerHandlers={containerHandlers}
+                                                optionEditing={this.state.optionEditing}
+                                                options={this.state.options}
+                                                optionSaveButton={this.state.optionSaveButton}
+                                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                                optionsSort={this.state.optionsSort}
+                                            />
+                                        }
+                                        
+                                        {(this.state.action === 'confirm') &&
+                                            <Confirm
+                                                choice={this.props.choice}
+                                                instance={this.state.instance}
+                                                optionContainerHandlers={containerHandlers}
+                                                options={this.state.options}
+                                                optionsSelected={this.state.optionsSelected}
+                                                optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                                rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                                rules={this.state.rules}
+                                                selection={this.state.selection}
+                                            />
+                                        }
+                                        
+                                        {(this.state.action === 'review') &&
+                                            <Review
+                                                choice={this.props.choice}
+                                                instance={this.state.instance}
+                                                optionContainerHandlers={containerHandlers}
+                                                options={this.state.options}
+                                                optionsSelected={this.state.optionsSelected}
+                                                optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                                rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                                selection={this.state.selection}
+                                            />
+                                        }
+                                        <Snackbar
+                                            autoHideDuration={3000}
+                                            message={this.state.snackbar.message}
+                                            onRequestClose={this.handleSnackbarClose}
+                                            open={this.state.snackbar.open}
+                                        />
+                                    </div>
+                            }
+                        </div>
+                    </MuiThemeProvider>
+                </div>
+            </div>
         );
     }
 });

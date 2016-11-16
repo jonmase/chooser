@@ -1,42 +1,72 @@
 import React from 'react';
+import Dimensions from 'react-dimensions'
 
-import {Card, CardHeader, CardText} from 'material-ui/Card';
+import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
+import Drawer from 'material-ui/Drawer';
+import IconButton from 'material-ui/IconButton';
 
 import OptionList from './option-list.jsx';
 import Warnings from './selection-warnings.jsx';
 
-var styles = {
-    cardText: {
-        paddingTop: '0px',
-    }
-};
-    
 var SelectionBasket = React.createClass({
+    closeDrawer: function() {
+        this.props.handlers.requestChange(false);
+    },
     render: function() {
-        return (
-            <Card 
-                className="page-card"
-                initiallyExpanded={true}
-            >
-                <CardHeader
-                    title="Chosen Options"
-                    actAsExpander={true}
-                    showExpandableButton={true}
-                />
-                <CardText 
-                    expandable={true}
-                    style={styles.cardText}
+        var width = 500;
+        var iconElementLeft = null;
+        var iconElementRight = null
+        
+        //if(this.props.containerWidth <= width) {
+            width = this.props.containerWidth;
+            iconElementLeft = <IconButton
+                    iconClassName="material-icons"
                 >
+                    arrow_back
+                </IconButton>;
+            iconElementRight = <IconButton
+                    iconClassName="material-icons"
+                >
+                    check
+                </IconButton>;
+        /*}
+        if(this.props.containerWidth > (width*2)) {
+            width = this.props.containerWidth/2;
+            iconElementRight = <IconButton
+                    iconClassName="material-icons"
+                >
+                    close
+                </IconButton>;
+        }*/
+    
+    
+        return (
+            <Drawer
+                docked={false}
+                width={width}
+                onRequestChange={this.props.handlers.requestChange}
+                open={this.props.open}
+                openSecondary={true}
+            > 
+                <AppBar
+                    title="Chosen Options"
+                    showMenuIconButton={iconElementLeft?true:false}
+                    onLeftIconButtonTouchTap={this.closeDrawer}
+                    onRightIconButtonTouchTap={this.props.handlers.submit}
+                    iconElementLeft={iconElementLeft}
+                    iconElementRight={iconElementRight}
+                />
+                <div style={{padding: '0 15px 15px'}}>
                     {(this.props.optionsSelectedTableOrder.length > 0)?
                         <OptionList
                             action="view"
-                            instance={this.props.instance.instance}
+                            instance={this.props.instance}
                             optionIds={this.props.optionsSelectedTableOrder}
                             options={this.props.options}
                             removeButton={true}
-                            removeHandler={this.props.optionContainerHandlers.removeOption}
-                            useCode={this.props.choice.use_code}
+                            removeHandler={this.props.handlers.remove}
+                            useCode={this.props.useCode}
                         />
                     :
                         <div>No options chosen</div>
@@ -51,14 +81,14 @@ var SelectionBasket = React.createClass({
                         <RaisedButton
                             disabled={!this.props.selection.allowSubmit}
                             label="Submit"
-                            onTouchTap={this.props.optionContainerHandlers.submit}
+                            onTouchTap={this.props.handlers.submit}
                             primary={true}
                         />
                     </div>
-                </CardText>
-            </Card>
+                </div>
+            </Drawer>
         );
     }
 });
 
-module.exports = SelectionBasket;
+module.exports = Dimensions()(SelectionBasket);

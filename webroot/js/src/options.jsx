@@ -8,7 +8,7 @@ import OptionContainer from './options/option-container.jsx';
 
 injectTapEventPlugin();
 
-ReactDOM.render(
+/*ReactDOM.render(
     <TopBar 
         choice={data.choice} 
         dashboardUrl={data.dashboard?data.dashboard:null} 
@@ -16,13 +16,16 @@ ReactDOM.render(
         sections={data.sections?data.sections:null} 
     />, 
     document.getElementById('topbar')
-);
+);*/
 
 ReactDOM.render(
     <OptionContainer 
         action={data.action} 
         choice={data.choice} 
+        dashboardUrl={data.dashboard?data.dashboard:null} 
         role={data.role} 
+        sections={data.sections?data.sections:null} 
+        title={data.title}
     />, 
     document.getElementById('index')
 );

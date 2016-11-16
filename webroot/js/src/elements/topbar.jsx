@@ -7,8 +7,10 @@ import IconButton from 'material-ui/IconButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
+import Basket from '../options/selection-basket.jsx';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import ChooserTheme from '../elements/theme.jsx';
+import ChooserTheme from './theme.jsx';
 
 var styles = {
   subtitle: {
@@ -20,16 +22,21 @@ var styles = {
 var TopBar = React.createClass({
     getInitialState: function () {
         return {
-            open: false,
+            basketDrawerOpen: false,
+            menuDrawerOpen: false,
         };
     },
     
-    handleToggle: function() {
-        this.setState({open: !this.state.open});
+    handleMenuDrawerToggle: function() {
+        this.setState({menuDrawerOpen: !this.state.menuDrawerOpen});
     },
     
-    handleClose: function() {
-        this.setState({open: false});
+    handleBasketDrawerToggle: function() {
+        this.setState({basketDrawerOpen: !this.state.basketDrawerOpen});
+    },
+    
+    handleBasketDrawerRequestChange: function(basketDrawerOpen) {
+        this.setState({basketDrawerOpen: basketDrawerOpen});
     },
     
     handleDashboardSelect: function(e) {
@@ -48,13 +55,13 @@ var TopBar = React.createClass({
     },
     
     render: function() {
-        var drawer = '';
+        var menuDrawer = '';
         if(this.props.sections) {
-            drawer = <Drawer
+            menuDrawer = <Drawer
                 docked={false}
                 width={250}
-                open={this.state.open}
-                onRequestChange={(open) => this.setState({open})}
+                open={this.state.menuDrawerOpen}
+                onRequestChange={(menuDrawerOpen) => this.setState({menuDrawerOpen})}
             >
                 <MenuItem onTouchTap={this.handleDashboardSelect} key="dashboard" id="dashboard"><h3 style={{margin: '10px 0 0'}}>Dashboard</h3></MenuItem>
                 {this.props.sections.map(function(section, sectionIndex) {
@@ -78,13 +85,35 @@ var TopBar = React.createClass({
                             <MenuItem onTouchTap={this.handleSelect} key={id} id={id} data-section-index={sectionIndex} data-action-index={actionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{icon}</FontIcon>{label}</MenuItem>
                         );
                     }, this);
-                    /*else {
-                        return (
-                            <MenuItem onTouchTap={this.handleSelect} key={section.title} id={sectionIndex}><FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{section.icon}</FontIcon>{label}</MenuItem>
-                        );
-                    }*/
                 }, this)}
             </Drawer>;
+        }
+        
+        var iconElementRight=<span />;
+        var basketDrawer='';
+        if(this.props.showBasket) {
+            iconElementRight=
+                <IconButton
+                    iconClassName="material-icons"
+                >
+                    shopping_basket
+                </IconButton>;
+                
+            basketDrawer = 
+                <Basket
+                    instance={this.props.basket.instance}
+                    handlers={{
+                        remove: this.props.basket.handlers.remove,
+                        submit: this.props.basket.handlers.submit,
+                        requestChange: this.handleBasketDrawerRequestChange,
+                    }}
+                    open={this.state.basketDrawerOpen}
+                    options={this.props.basket.options}
+                    optionsSelectedTableOrder={this.props.basket.optionsSelectedTableOrder}
+                    rules={this.props.basket.rules}
+                    selection={this.props.basket.selection}
+                    useCode={this.props.choice.use_code}
+                />
         }
     
         return (
@@ -93,22 +122,14 @@ var TopBar = React.createClass({
                     <AppBar
                         title={<span>Chooser<span style={styles.subtitle}>{this.props.choice.name}</span></span>}
                         showMenuIconButton={this.props.menu?true:false}
-                        onLeftIconButtonTouchTap={this.handleToggle}
+                        onLeftIconButtonTouchTap={this.handleMenuDrawerToggle}
+                        onRightIconButtonTouchTap={this.handleBasketDrawerToggle}
                         //iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
-                        iconElementRight={<span></span>}
-                        /*iconElementRight={
-                            <IconMenu
-                                iconButtonElement={ <IconButton><FontIcon className="material-icons">more_vert</FontIcon></IconButton> }
-                                targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                                anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                            >
-                                <MenuItem primaryText="Refresh" />
-                                <MenuItem primaryText="Help" />
-                                <MenuItem primaryText="Sign out" />
-                            </IconMenu>
-                        }*/
+                        iconElementRight={iconElementRight}
+                        style={{position: 'fixed'}}
                     />
-                    {drawer}
+                    {menuDrawer}
+                    {basketDrawer}
                 </div>
             </MuiThemeProvider>
         );
