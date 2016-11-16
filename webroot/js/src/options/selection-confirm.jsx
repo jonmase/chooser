@@ -97,6 +97,14 @@ var SelectionConfirm = React.createClass({
                         noValidate={true}
                         ref="confirm"
                     >
+                        {(this.props.instance.instance.preference_instructions)&&
+                            <p>{this.props.instance.instance.preference_instructions}</p>
+                        }
+                            
+                        {(this.props.instance.instance.comments_per_option_instructions)&&
+                            <p>{this.props.instance.instance.comments_per_option_instructions}</p>
+                        }
+                    
                         {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                             <div style={{width: '100%'}}>
                                 {/*<p>You have chosen the following options:</p>*/}
