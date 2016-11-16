@@ -63,6 +63,11 @@ var OptionContainer = React.createClass({
                             ruleWarnings: data.ruleWarnings,
                             selection: data.selection,
                         };
+                        
+                        //If selection is confirmed, add it to the confirmedSelection state data
+                        if(data.selection.confirmed) {
+                            stateData.confirmedSelection = data.selection;
+                        }
                     }
                     
                     this.setState(stateData);
@@ -99,6 +104,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
+            confirmedSelection: [],
             favourites: [],
             initialOptionIndexesById: [],
             instance: {
@@ -403,7 +409,79 @@ var OptionContainer = React.createClass({
         return optionsSelected;
     },
     
-    handleSelectionBackToEdit() {
+    handleSelectionAbandonChanges: function() {
+        console.log('abandon changed');
+        
+        //Check that there is a confirmed selected
+        if(!this.state.confirmedSelection.id) {
+            console.log('Error: no confirmed selection to abandon for');
+        }
+        
+        //If the confirmed selection is the same as the selection, just go back to the confirm page
+        if(this.state.confirmedSelection.id === this.state.selection.selection.id) {
+            this.setState({
+                action: 'review'
+            });
+        }
+        //Otherwise, a new selection has been created for the edits
+        else {
+            //Archive the selection that is being edited, and return to review page
+            var url = '../../selections/archive.json';
+            var data = {
+                selection_id: this.state.selection.selection.id,
+                instance_id: this.state.instance.instance.id,
+            }
+            
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                type: 'POST',
+                data: data,
+                success: function(returnedData) {
+                    console.log(returnedData.response);
+                    
+                    var selectionState = {
+                        allowSubmit: returnedData.allowSubmit,
+                        ruleWarnings: returnedData.ruleWarnings,
+                        selection: returnedData.selection,
+                    };
+                    
+                    var optionsSelectedIds = returnedData.optionsSelectedIds;
+                    var optionsSelectedTableOrder = this.sortIdsByTableOrder(optionsSelectedIds);
+                    
+                    var newState = {
+                        action: "review",
+                        optionsSelected: returnedData.optionsSelected,
+                        optionsSelectedTableOrder: optionsSelectedTableOrder,
+                        optionsSelectedPreferenceOrder: returnedData.optionsSelectedIdsPreferenceOrder,
+                        selection: selectionState,
+                    };
+                    
+                    //If the returned selection is confirmed, put it in the confirmedSelection state
+                    if(returnedData.selection.confirm) {
+                        newState.confirmedSelection = returnedData.selection;
+                    }
+                    
+                    this.setState(newState);
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(url, status, err.toString());
+                    
+                    this.setState({
+                        //Show error in snackbar
+                        snackbar: {
+                            open: true,
+                            message: 'Error archiving selection (' + err.toString() + ')',
+                        }
+                    });
+                }.bind(this)
+            });
+        }
+        
+    
+    },
+
+    handleSelectionBackToEdit: function() {
         this.setState({
             action: 'view'
         });
@@ -523,6 +601,12 @@ var OptionContainer = React.createClass({
                     selection: selectionState,
                 };
                 
+                //If the returned selection is confirmed, put it in the confirmedSelection state
+                if(returnedData.selection.confirm) {
+                    newState.confirmedSelection = returnedData.selection;
+                }
+                
+                //If this was confirmation, move to the review page
                 if(action === "confirm") {
                     newState.action = "review";
                 }
@@ -751,6 +835,8 @@ var OptionContainer = React.createClass({
                             <div>
                                 {(this.state.action === 'view') &&
                                     <Instructions
+                                        abandonHandler={this.handleSelectionAbandonChanges}
+                                        confirmedSelection={this.state.confirmedSelection}
                                         instance={this.state.instance}
                                         role={this.props.role}
                                         rules={this.state.rules.rules}

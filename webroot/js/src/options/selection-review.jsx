@@ -45,7 +45,13 @@ var SelectionReview = React.createClass({
                         <div>
                             {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
                                 <div>
-                                    <span> You can change your choices until the deadline: <DateTime value={this.props.instance.instance.deadline} />.</span>
+                                    <span>You can change your choices until the deadline at&nbsp;<strong>
+                                        {(!this.props.instance.instance.deadline.passed)?
+                                            <DateTime value={this.props.instance.instance.deadline} />
+                                        :
+                                            <DateTime value={this.props.instance.instance.extension} />
+                                        }
+                                    </strong>.</span>
                                     <div style={{marginTop: '10px'}}>
                                         <RaisedButton
                                             label="Change"

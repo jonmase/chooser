@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import Wysiwyg from '../elements/display/wysiwyg.jsx';
 import DateTimeLabelled from '../elements/display/datetime-labelled.jsx';
@@ -33,55 +34,69 @@ var ChoiceInstructions = React.createClass({
                 >
                     {(instance.id)?
                         <div>
-                            <div>
-                                {(!instance.opens.passed)&&
-                                    <div>
-                                        This Choice will open at <strong><DateTime value={instance.opens} /></strong>.&nbsp; 
-                                        {(this.props.role === 'admin')?
-                                            <span>
-                                                As an Administrator, you can view the available options and test the choosing process, but students are not able to see them yet. 
-                                            </span>
-                                        :
-                                            (this.props.role === 'extra')&&
-                                                <span>
-                                                    You can view the available options below, but students are not able to see them yet. 
-                                                </span>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                            <div>
-                                {(instance.opens.passed && instance.deadline.passed)&&
-                                    (instance.extension.passed)?
-                                        <div>
-                                            The deadline has now passed, and you can no longer make or change your choices. 
-                                        </div>
+                            {(!instance.opens.passed)?
+                                <div>
+                                    This Choice will open at <strong><DateTime value={instance.opens} /></strong>.&nbsp; 
+                                    {(this.props.role === 'admin')?
+                                        <span>
+                                            As an Administrator, you can view the available options and test the choosing process, but students are not able to see them yet. 
+                                        </span>
                                     :
+                                        (this.props.role === 'extra') &&
+                                            <span>
+                                                You can view the available options below, but students are not able to see them yet. 
+                                            </span>
+                                    }
+                                </div>
+                            :
+                                <div>
+                                    {(this.props.confirmedSelection.id)&&
                                         <div>
-                                            The deadline has passed, but you can still make choices until <strong><DateTime value={instance.extension} /></strong>
+                                            <div style={{float: 'right'}}>
+                                                <RaisedButton
+                                                    label="Abandon Changes"
+                                                    onTouchTap={this.props.abandonHandler}
+                                                    primary={false}
+                                                    style={{marginRight: '15px'}}
+                                                />
+                                            </div>
+                                            <p style={{marginRight: '200px'}}>
+                                                You are changing the choices that you submitted on <DateTime value={this.props.confirmedSelection.modified} />. Any changes you make will not be saved unless you confirm them in the next step. If you decide you don't want to make any changes, just use the Abandon Changes button.
+                                            </p>
                                         </div>
-                                }
-                            </div>
-                            <div>
-                                {(instance.opens.passed || this.props.role === 'admin' || this.props.role === 'extra')&&
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <Wysiwyg value={instance.choosing_instructions} />
-                                                {(instance.deadline)&&
-                                                    <div>
-                                                        <DateTimeLabelled label="Deadline" value={instance.deadline} />
-                                                        {(instance.extension)&&
-                                                            <DateTimeLabelled label="Extension" value={instance.extension} />
-                                                        }
-                                                    </div>
-                                                }
-                                        </div>
-                                        <div className="col-md-6">
-                                            <Rules rules={this.props.rules} />
-                                        </div>
+                                    }
+                                    {(instance.deadline.passed)&&
+                                        (instance.extension.passed)?
+                                            <p>
+                                                The deadline has now passed, and you can no longer {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices. 
+                                            </p>
+                                        :
+                                            <p>
+                                                The deadline has passed, but you can still {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices until <strong><DateTime value={instance.extension} /></strong>.
+                                            </p>
+                                    }
+                                </div>
+                            }
+                            
+                            {/*Show the instructions, deadline and rules*/}
+                            {(instance.opens.passed || this.props.role === 'admin' || this.props.role === 'extra')&&
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <Wysiwyg value={instance.choosing_instructions} />
+                                            {(instance.deadline)&&
+                                                <div>
+                                                    <DateTimeLabelled label="Deadline" value={instance.deadline} />
+                                                    {/*(instance.extension)&&
+                                                        <DateTimeLabelled label="Extension" value={instance.extension} />
+                                                    */}
+                                                </div>
+                                            }
                                     </div>
-                                }
-                            </div>
+                                    <div className="col-md-6">
+                                        <Rules rules={this.props.rules} />
+                                    </div>
+                                </div>
+                            }
                         </div>
                     :
                         <div>
