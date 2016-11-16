@@ -65,7 +65,7 @@ var ChoiceInstructions = React.createClass({
                                             </p>
                                         </div>
                                     }
-                                    {(instance.deadline.passed)&&
+                                    {(instance.deadline.passed)?
                                         (instance.extension.passed)?
                                             <p>
                                                 The deadline has now passed, and you can no longer {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices. 
@@ -74,7 +74,7 @@ var ChoiceInstructions = React.createClass({
                                             <p>
                                                 The deadline has passed, but you can still {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices until <strong><DateTime value={instance.extension} /></strong>.
                                             </p>
-                                    }
+                                    :""}
                                 </div>
                             }
                             

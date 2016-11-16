@@ -354,9 +354,9 @@ var OptionContainer = React.createClass({
     
     handleOptionRemove: function(optionId) {
         //Get the exising IDs
-        var optionsSelectedIds = this.state.optionsSelectedTableOrder.splice(0);
+        var optionsSelectedIds = this.state.optionsSelectedTableOrder.slice();
         //Remove this ID from the selected array
-        optionsSelectedIds.splice(optionsSelected.findIndex(function(element) { return element === optionId }), 1);
+        optionsSelectedIds.splice(optionsSelectedIds.findIndex(function(element) { return element === optionId }), 1);
         
         var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
         
@@ -410,7 +410,7 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionAbandonChanges: function() {
-        console.log('abandon changed');
+        console.log('abandon changes');
         
         //Check that there is a confirmed selected
         if(!this.state.confirmedSelection.id) {
@@ -520,7 +520,7 @@ var OptionContainer = React.createClass({
         var optionId = parseInt(splitInputName[1]);
         
         //Get the optionsSelectedOrdered array from state
-        var optionsSelectedPreferenceOrder = this.state.optionsSelectedPreferenceOrder.splice(0);
+        var optionsSelectedPreferenceOrder = this.state.optionsSelectedPreferenceOrder.slice(0);
        
         //Remove this option from the ordered options array
         optionsSelectedPreferenceOrder.splice(optionsSelectedPreferenceOrder.indexOf(optionId),1);
@@ -606,9 +606,10 @@ var OptionContainer = React.createClass({
                     newState.confirmedSelection = returnedData.selection;
                 }
                 
-                //If this was confirmation, move to the review page
+                //If this was confirmation, move to the review page and put the selection in confirmedSelection state
                 if(action === "confirm") {
                     newState.action = "review";
+                    newState.confirmedSelection = returnedData.selection;
                 }
 
                 this.setState(newState);
@@ -653,7 +654,7 @@ var OptionContainer = React.createClass({
     
         var optionsState = this.sortOptions(this.deepCopy(this.state.options.options), field, fieldType, direction);
         
-        var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.splice(0), optionsState);
+        var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.slice(), optionsState);
         
         this.setState({
             options: {

@@ -62,36 +62,6 @@ var SelectionConfirm = React.createClass({
         });
     },
     
-    /*handleOrderChange: function(event, value, ignore, inputName) {
-        //Prevent further changes to ranking during reordering
-        this.setState({
-            rankSelectsDisabled: true,
-        });
-        
-        //Get the option ID from the input name (options.##.ranks)
-        var splitInputName = inputName.split(".");
-        //var optionId = parseInt(inputName.substr(6),10);    //Names are ranks.##
-        var optionId = parseInt(splitInputName[1]);
-        
-        console.log(optionId + ": " + value);
-        
-        //Get the optionsSelectedOrdered array from state
-        var optionsSelectedOrdered = this.state.optionsSelectedOrdered;
-       
-        //Remove this option from the ordered options array
-        optionsSelectedOrdered.splice(optionsSelectedOrdered.indexOf(optionId),1);
-        
-        //Put this option back in the required position
-        optionsSelectedOrdered.splice(value,0,optionId);
-        
-        console.log(optionsSelectedOrdered);
-        
-        this.setState({
-            optionsSelectedOrdered: optionsSelectedOrdered,
-            rankSelectsDisabled: false,
-        });
-    },*/
-    
     handleConfirm: function(event, fromDialog) {
         //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
         if(!fromDialog && (!this.props.instance.instance.editable || this.props.selection.ruleWarnings)) {
