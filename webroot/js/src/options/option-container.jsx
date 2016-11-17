@@ -1,15 +1,21 @@
 import React from 'react';
 import update from 'immutability-helper';
 
+import Formsy from 'formsy-react';
+
 import Snackbar from 'material-ui/Snackbar';
+import Badge from 'material-ui/Badge';
+import IconButton from 'material-ui/IconButton';
 
 import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
 
 import Unavailable from './choice-unavailable.jsx';
 import Instructions from './choice-instructions.jsx';
 import Basket from './selection-basket.jsx';
 import OptionsTable from './option-table.jsx';
 import Confirm from './selection-confirm.jsx';
+import ConfirmDialog from './selection-confirm-dialog.jsx';
 import Review from './selection-review.jsx';
 
 import Loader from '../elements/loader.jsx';
@@ -112,6 +118,8 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
+            canConfirm: true,
+            confirmDialogOpen: false,
             confirmedSelection: [],
             favourites: [],
             initialOptionIndexesById: [],
@@ -497,6 +505,9 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionBasketClick: function() {
+        this.setState({
+            action: 'basket'
+        });
         console.log('show basket');
     },
     
@@ -558,6 +569,41 @@ var OptionContainer = React.createClass({
         this.setState({
             action: 'confirm'
         });
+    },
+    
+    enableSelectionConfirmButton: function () {
+        this.setState({
+            canConfirm: true
+        });
+    },
+
+    disableSelectionConfirmButton: function () {
+        this.setState({
+            canConfirm: false
+        });
+    },
+    
+    handleSelectionConfirmDialogOpen() {
+        this.setState({
+            confirmDialogOpen: true,
+        });
+    },
+    
+    handleSelectionConfirmDialogClose() {
+        this.setState({
+            confirmDialogOpen: false,
+        });
+    },
+    
+    handleSelectionConfirm: function(event, fromDialog) {
+        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
+        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
+            this.handleSelectionConfirmDialogOpen();
+        }
+        //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
+        else {
+            this.refs.confirm.submit();
+        }
     },
     
     handleSelectionFinalConfirm(data) {
@@ -814,16 +860,14 @@ var OptionContainer = React.createClass({
             containerHandlers.selectOption = this.handleOptionSelect;
             containerHandlers.sort = this.handleSort;
         }
+        else if(this.state.action === 'basket') {
+            containerHandlers.remove = this.handleOptionRemove;
+            containerHandlers.submit = this.handleSelectionSubmit;
+        }
         else if(this.state.action === 'confirm') {
-            //containerHandlers.confirm = this.handleSelectionConfirm;
-            containerHandlers.backToEdit = this.handleSelectionBackToEdit;
-            containerHandlers.finalConfirm = this.handleSelectionFinalConfirm;
             containerHandlers.orderChange = this.handleSelectionOrderChange;
             containerHandlers.overallCommentsChange = this.handleSelectionOverallCommentsChange;
             containerHandlers.optionCommentsChange = this.handleSelectionOptionCommentsChange;
-            //containerHandlers.submit = this.handleSelectionConfirmDialogSubmit;
-            //containerHandlers.confirmDialogOpen = this.handleSelectionConfirmDialogOpen;
-            //containerHandlers.confirmDialogClose = this.handleSelectionConfirmDialogClose;
         }
         else if(this.state.action === 'review') {
             containerHandlers.backToEdit = this.handleSelectionBackToEdit;
@@ -838,45 +882,92 @@ var OptionContainer = React.createClass({
             containerHandlers.wysiwygChange = this.handleWysiwygChange;
         }
         
-        //If view action and instance created and open or user is administrator, show choices basket
-        var showBasket = (this.state.options.loaded && this.state.instance.loaded) && (this.state.action === 'view' && this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'));
+        var topbarIconLeft=null;
+        var topbarIconRight=null;
+
+        var iconStyle = {color: 'white'};
+        if(this.state.action === 'view' || this.state.action === 'review') {
+            //Show menu icon if sections is defined and not empty
+            if(this.props.sections) {
+                topbarIconLeft='menu';
+            }
         
-        var basketProps = {};
-        
-        if(showBasket) {
-            basketProps = {
-                instance: this.state.instance.instance,
-                handlers: {
-                    remove: this.handleOptionRemove,
-                    submit: this.handleSelectionSubmit,
-                },
-                options: this.state.options,
-                optionsSelectedTableOrder: this.state.optionsSelectedTableOrder,
-                rules: this.state.rules,
-                selection: this.state.selection,
+            //If instance created and open or user is administrator, show selection basket or change selection buttons
+            if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'))) {
+                if(this.state.action === 'view') {
+                    topbarIconRight=
+                        <div style={{paddingRight: '10px'}}>
+                            <Badge
+                                badgeContent={this.state.optionsSelectedTableOrder.length || ""}
+                                primary={true}
+                                badgeStyle={{top: 0, right: -5, backgroundColor: 'none', fontSize: 16}}
+                                style={{padding: 0}}
+                            >
+                                <IconButton
+                                    iconClassName="material-icons"
+                                    onTouchTap={this.handleSelectionBasketClick}
+                                    iconStyle={iconStyle}
+                                >
+                                    shopping_basket
+                                </IconButton>
+                            </Badge>
+                        </div>;
+                }
+                else if(this.state.action === 'review') {
+                    topbarIconRight=
+                        <IconButton
+                            iconClassName="material-icons"
+                            onTouchTap={this.handleSelectionBackToEdit}
+                            iconStyle={iconStyle}
+                        >
+                            edit
+                        </IconButton>;
+                }
             }
         }
-        
+        else if(this.state.action === 'basket' || this.state.action === 'confirm') {
+            //If selection can be submitted, show tick icon
+            if(this.state.selection.allowSubmit) {
+                topbarIconRight=
+                    <IconButton
+                        iconClassName="material-icons"
+                        onTouchTap={(this.state.action === 'basket')?this.handleSelectionSubmit:this.handleSelectionConfirm}
+                        iconStyle={iconStyle}
+                    >
+                        check
+                    </IconButton>;
+            }
+            else {
+                //TODO: What to show if not allowed to submit
+            }
+            
+            //Left icon is always back arrow
+            topbarIconLeft=
+                <IconButton
+                    iconClassName="material-icons"
+                    onTouchTap={this.handleSelectionBackToEdit}
+                    iconStyle={iconStyle}
+                >
+                    arrow_back
+                </IconButton>;
+        }
+       
         return (
-            <div>
-                <div style={{margin: '0 -2rem'}}>
-                    <TopBar 
-                        basket={basketProps}
-                        choice={this.props.choice} 
-                        dashboardUrl={this.props.dashboardUrl} 
-                        handleBasketClick={this.handleSelectionBasketClick}
-                        handleInfoToggle={this.handleSelectionInfoToggle}
-                        menu={this.props.sections?true:false}
-                        sections={this.props.sections} 
-                        showBasket={showBasket}
-                    />
-                </div>
-                <div style={{paddingTop: '64px'}}>
-                    <h1 className="page-title">
-                        {this.props.title}
-                    </h1>
-
-                    <MuiThemeProvider muiTheme={ChooserTheme}>
+            <MuiThemeProvider muiTheme={ChooserTheme}>
+                <div>
+                    <div style={{margin: '0 -2rem'}}>
+                        <TopBar 
+                            dashboardUrl={this.props.dashboardUrl} 
+                            iconLeft={topbarIconLeft}
+                            iconRight={topbarIconRight}
+                            sections={this.props.sections} 
+                            title={(this.state.action === 'basket')?'Your Choices':(this.state.action === 'confirm')?'Confirm  Choices':<AppTitle subtitle={this.props.choice.name} />}
+                        />
+                    </div>
+                    <div style={{paddingTop: '64px'}}>
+                        <h1 className="page-title">
+                            {this.props.title}
+                        </h1>
                         <div>
                             {(this.state.action === 'unavailable')?
                                 <Unavailable
@@ -915,18 +1006,53 @@ var OptionContainer = React.createClass({
                                             />
                                         }
                                         
-                                        {(this.state.action === 'confirm') &&
-                                            <Confirm
-                                                choice={this.props.choice}
+                                        {(this.state.action === 'basket') &&
+                                            <Basket
                                                 instance={this.state.instance}
                                                 optionContainerHandlers={containerHandlers}
                                                 options={this.state.options}
-                                                optionsSelected={this.state.optionsSelected}
-                                                optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                                rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                                 rules={this.state.rules}
                                                 selection={this.state.selection}
+                                                useCode={this.props.choice.use_code}
                                             />
+
+                                        }
+                                        
+                                        {(this.state.action === 'confirm') &&
+                                            <div>
+                                                <Formsy.Form
+                                                    id="selection_confirm"
+                                                    method="POST"
+                                                    onValid={this.enableSelectionConfirmButton}
+                                                    onInvalid={this.disableSelectionConfirmButton}
+                                                    onValidSubmit={this.handleSelectionFinalConfirm}
+                                                    noValidate={true}
+                                                    ref="confirm"
+                                                >
+                                                    <Confirm
+                                                        choice={this.props.choice}
+                                                        instance={this.state.instance}
+                                                        optionContainerHandlers={containerHandlers}
+                                                        options={this.state.options}
+                                                        optionsSelected={this.state.optionsSelected}
+                                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                                        rules={this.state.rules}
+                                                        selection={this.state.selection}
+                                                    />
+                                                </Formsy.Form>
+                                                <ConfirmDialog 
+                                                    open={this.state.confirmDialogOpen}
+                                                    handlers={{
+                                                        close: this.handleSelectionConfirmDialogClose,
+                                                        submit: this.handleSelectionConfirm,
+                                                    }}
+                                                    instance={this.state.instance}
+                                                    rules={this.state.rules}
+                                                    selection={this.state.selection}
+                                                />
+                                            </div>
                                         }
                                         
                                         {(this.state.action === 'review') &&
@@ -950,9 +1076,9 @@ var OptionContainer = React.createClass({
                                     </div>
                             }
                         </div>
-                    </MuiThemeProvider>
+                    </div>
                 </div>
-            </div>
+            </MuiThemeProvider>
         );
     }
 });
