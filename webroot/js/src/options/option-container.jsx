@@ -66,6 +66,12 @@ var OptionContainer = React.createClass({
                             selection: data.selection,
                         };
                         
+                        
+                        //If the user has selected some options, do not sow the instructions
+                        if(data.selection.id && !data.choosingInstance.deadline.passed) {
+                            stateData.showInfo = false;
+                        }
+                        
                         //If selection is confirmed, add it to the confirmedSelection state data
                         if(data.selection.confirmed) {
                             stateData.confirmedSelection = data.selection;
@@ -136,6 +142,7 @@ var OptionContainer = React.createClass({
                 ruleWarnings: false,
                 selection: [],
             },
+            showInfo: true,
             snackbar: {
                 open: false,
                 message: '',
@@ -491,6 +498,12 @@ var OptionContainer = React.createClass({
     
     handleSelectionBasketClick: function() {
         console.log('show basket');
+    },
+    
+    handleSelectionInfoToggle: function() {
+        this.setState({
+            showInfo: !this.state.showInfo
+        });
     },
     
     handleSelectionOptionCommentsChange: function(event, value) {
@@ -852,6 +865,7 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice} 
                         dashboardUrl={this.props.dashboardUrl} 
                         handleBasketClick={this.handleSelectionBasketClick}
+                        handleInfoToggle={this.handleSelectionInfoToggle}
                         menu={this.props.sections?true:false}
                         sections={this.props.sections} 
                         showBasket={showBasket}
@@ -878,6 +892,7 @@ var OptionContainer = React.createClass({
                                             <Instructions
                                                 abandonHandler={this.handleSelectionAbandonChanges}
                                                 confirmedSelection={this.state.confirmedSelection}
+                                                expanded={this.state.showInfo}
                                                 instance={this.state.instance}
                                                 role={this.props.role}
                                                 rules={this.state.rules.rules}

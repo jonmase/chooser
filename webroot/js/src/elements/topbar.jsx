@@ -4,6 +4,7 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import FlatButton from 'material-ui/FlatButton';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -92,12 +93,24 @@ var TopBar = React.createClass({
         var iconElementRight=<span />;
         var basketDrawer='';
         if(this.props.showBasket) {
+            var iconStyle={color: 'white'};
             iconElementRight=
-                <IconButton
-                    iconClassName="material-icons"
-                >
-                    shopping_basket
-                </IconButton>;
+                <div>
+                    {/*<IconButton
+                        iconClassName="material-icons"
+                        onTouchTap={this.props.handleInfoToggle}
+                        iconStyle={iconStyle}
+                    >
+                        info_outline
+                    </IconButton>*/}
+                    <IconButton
+                        iconClassName="material-icons"
+                        onTouchTap={this.handleBasketDrawerToggle}
+                        iconStyle={iconStyle}
+                    >
+                        shopping_basket
+                    </IconButton>
+                </div>;
                 
             basketDrawer = 
                 <Basket
@@ -123,7 +136,7 @@ var TopBar = React.createClass({
                         title={<span>Chooser<span style={styles.subtitle}>{this.props.choice.name}</span></span>}
                         showMenuIconButton={this.props.menu?true:false}
                         onLeftIconButtonTouchTap={this.handleMenuDrawerToggle}
-                        onRightIconButtonTouchTap={this.handleBasketDrawerToggle}
+                        //onRightIconButtonTouchTap={this.handleBasketDrawerToggle}
                         //iconElementLeft={<IconButton><FontIcon className="material-icons">menu</FontIcon></IconButton>}
                         iconElementRight={iconElementRight}
                         style={{position: 'fixed'}}

@@ -21,7 +21,7 @@ var ChoiceInstructions = React.createClass({
         return (
             <Card 
                 className="page-card"
-                initiallyExpanded={true}
+                initiallyExpanded={this.props.expanded}
             >
                 <CardHeader
                     title="Instructions & Rules"
@@ -107,26 +107,7 @@ var ChoiceInstructions = React.createClass({
                         </div>
                     }
                 </CardText>
-                                    {/*
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <Wysiwyg value={instance.choosing_instructions} />
-                                        {(instance.opens.passed && instance.deadline)&&
-                                            <div>
-                                                <DateTimeLabelled label="Deadline" value={instance.deadline} />
-                                                {(instance.extension)&&
-                                                    <DateTimeLabelled label="Extension" value={instance.extension} />
-                                                }
-                                            </div>
-                                        }
-                                </div>
-                                <div className="col-md-6">
-                                    <Rules rules={this.props.rules} />
-                                </div>
-                            </div>
-                        */}
             </Card>
-
         );
     }
 });
