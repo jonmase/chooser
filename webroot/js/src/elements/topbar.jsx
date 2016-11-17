@@ -5,6 +5,7 @@ import Drawer from 'material-ui/Drawer';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
+import Badge from 'material-ui/Badge';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -95,7 +96,7 @@ var TopBar = React.createClass({
         if(this.props.showBasket) {
             var iconStyle={color: 'white'};
             iconElementRight=
-                <div>
+                <div style={{paddingRight: '10px'}}>
                     {/*<IconButton
                         iconClassName="material-icons"
                         onTouchTap={this.props.handleInfoToggle}
@@ -103,13 +104,20 @@ var TopBar = React.createClass({
                     >
                         info_outline
                     </IconButton>*/}
-                    <IconButton
-                        iconClassName="material-icons"
-                        onTouchTap={this.handleBasketDrawerToggle}
-                        iconStyle={iconStyle}
+                    <Badge
+                        badgeContent={this.props.basket.optionsSelectedTableOrder.length || ""}
+                        primary={true}
+                        badgeStyle={{top: 0, right: -5, backgroundColor: 'none', fontSize: 16}}
+                        style={{padding: 0}}
                     >
-                        shopping_basket
-                    </IconButton>
+                        <IconButton
+                            iconClassName="material-icons"
+                            onTouchTap={this.handleBasketDrawerToggle}
+                            iconStyle={iconStyle}
+                        >
+                            shopping_basket
+                        </IconButton>
+                    </Badge>
                 </div>;
                 
             basketDrawer = 
