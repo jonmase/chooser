@@ -14,6 +14,7 @@ var SelectionBasket = React.createClass({
         return (
             <div>
                 <Warnings
+                    allowSubmit={this.props.selection.allowSubmit}
                     rules={this.props.rules}
                     ruleWarnings={this.props.selection.ruleWarnings}
                 />

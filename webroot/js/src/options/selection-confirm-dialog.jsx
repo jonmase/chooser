@@ -39,6 +39,7 @@ var SelectionConfirmDialog = React.createClass({
                 title="Confirm Submission"
             >
                 <Warnings
+                    allowSubmit={this.props.selection.allowSubmit}
                     rules={this.props.rules}
                     ruleWarnings={this.props.selection.ruleWarnings}
                 />

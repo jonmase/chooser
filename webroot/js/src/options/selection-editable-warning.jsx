@@ -8,7 +8,13 @@ var SelectionEditableWarning = React.createClass({
             <p>
                 <strong>Please Note: </strong>
                 {(this.props.instance.editable)?
-                    <span>You will be able to return and change your choices until the deadline at <DateTime value={this.props.instance.deadline} /></span>
+                    <span>You will be able to return and change your choices until the deadline at 
+                        {!this.props.instance.deadline.passed?
+                            <DateTime value={this.props.instance.deadline} />
+                        :
+                            <DateTime value={this.props.instance.extension} />
+                        }
+                    </span>
                 :
                     <span>Once you Confirm, you will not be able to change your choices.</span>
                 }

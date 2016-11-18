@@ -37,6 +37,11 @@ var SelectionWarnings = React.createClass({
                         }
 
                     }, this)}
+                    {(this.props.allowSubmit)?
+                        <p>You can still submit your choices despite these warnings.</p>
+                    :
+                        <p>You cannot submit your choices at the moment. Please correct the above warnings.</p>
+                    }
                 </div>
             );
         }

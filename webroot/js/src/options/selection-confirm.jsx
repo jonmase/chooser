@@ -12,6 +12,7 @@ var SelectionConfirm = React.createClass({
             <div>
                 <div className="warnings">
                     <Warnings
+                        allowSubmit={this.props.selection.allowSubmit}
                         rules={this.props.rules}
                         ruleWarnings={this.props.selection.ruleWarnings}
                     />
