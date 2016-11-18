@@ -133,7 +133,7 @@ var OptionContainer = React.createClass({
             optionsSelectedTableOrder: [],
             optionsSelectedPreferenceOrder: [],
             optionsSort: {
-                field: 'code',
+                field: (this.props.choice.use_code)?'code':'title',
                 fieldType: 'text',
                 direction: 'asc',
             },
