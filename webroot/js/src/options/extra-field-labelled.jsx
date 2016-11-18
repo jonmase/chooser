@@ -14,18 +14,14 @@ import DateTime from '../elements/display/datetime-labelled.jsx';
 
 var ExtraField = React.createClass({
     render: function() {
-        //var field = this.props.field;
-        
-        //For some reason, setting field.value in option-view-dialog.jsx did not work for the edit page, so passing as separate prop and adding to field here
-        //if(this.props.value) {
-        //    field.value = this.props.value;
-        //}
-        
-        //var props = {
-        //    field: field,
-        //};
-        
-        var time = false;
+        var displayProps = {
+            label: this.props.label,
+            time: false,
+        };
+    
+        if(this.props.value) {
+            displayProps.value = this.props.value;
+        }
         
         var ComponentClass = null;
         switch(this.props.type) {
@@ -48,12 +44,25 @@ var ExtraField = React.createClass({
                 switch(this.props.extra.list_type) {
                     case 'radio': 
                         ComponentClass = Radio;
+                        for(var i in this.props.options) {
+                            if(displayProps.value === this.props.options[i].value) {
+                                displayProps.value = this.props.options[i].label;
+                                break;
+                            }
+                        }
                         break;
                     case 'checkbox': 
                         ComponentClass = Checkbox;
+                        displayProps.options = this.props.options;
                         break;
                     case 'dropdown': 
                         ComponentClass = Dropdown;
+                        for(var i in this.props.options) {
+                            if(displayProps.value === this.props.options[i].value) {
+                                displayProps.value = this.props.options[i].label;
+                                break;
+                            }
+                        }
                         break;
                     default:
                         ComponentClass = null;
@@ -61,7 +70,7 @@ var ExtraField = React.createClass({
                 }
                 break;
             case 'datetime': 
-                time = true;
+                displayProps.time = true;
             case 'date': 
                 ComponentClass = DateTime;
                 break;
@@ -79,7 +88,7 @@ var ExtraField = React.createClass({
         return (
             <div>
                 {(ComponentClass)?
-                    <ComponentClass {...this.props} time={time} />
+                    <ComponentClass {...displayProps} />
                 :
                     (this.props.type === 'list')?
                         <div>Could not display list field ({this.props.extra.list_type}: {this.props.label})</div>

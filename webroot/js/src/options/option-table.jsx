@@ -101,7 +101,8 @@ var OptionsTable = React.createClass({
                 break;
             case 'view':
                 var title = 'Choose Options';
-                var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the basket in the top right. ';
+                //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the basket in the top right. ';
+                var subtitle = 'Choose options using the tick boxes';
                 enableSelection = this.props.instance.instance.id?true:false;
                 break;
             default:
