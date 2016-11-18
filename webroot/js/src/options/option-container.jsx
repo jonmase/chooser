@@ -950,7 +950,7 @@ var OptionContainer = React.createClass({
                 </IconButton>;
         }
         
-        var topBar = <TopBar 
+        var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={topbarIconLeft}
             iconRight={topbarIconRight}
@@ -960,7 +960,7 @@ var OptionContainer = React.createClass({
 
        
         return (
-            <Container topbar={topBar}>
+            <Container topbar={topbar}>
                 <h1 className="page-title">
                     {this.props.title}
                 </h1>

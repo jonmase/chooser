@@ -6,6 +6,10 @@ import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import FlatButton  from 'material-ui/FlatButton';
 
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
+
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ChooserTheme from '../elements/theme.jsx';
 
@@ -42,8 +46,15 @@ var styles = {
 
 var SectionsCards = React.createClass({
     render: function() {
+        var topbar = <TopBar 
+            iconLeft={null}
+            iconRight={null}
+            title={<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+            <Container topbar={topbar}>
+                <h1 class="page-title">Dashboard</h1>
                 <div style={styles.root} className="row">
                     {this.props.sections.map(function(card) {
                         return (
@@ -86,7 +97,7 @@ var SectionsCards = React.createClass({
                         );
                     })}
                 </div>
-            </MuiThemeProvider>
+            </Container>
         );
     }
 });

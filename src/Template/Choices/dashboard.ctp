@@ -1,5 +1,4 @@
-<h1 class="page-title">Dashboard</h1>
-<div id="grid">
+<div id="dashboard">
 </div>
 <?= $this->Html->scriptStart(['block' => true]); ?>
     var data = {};

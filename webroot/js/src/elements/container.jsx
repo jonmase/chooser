@@ -7,9 +7,9 @@ function Container(props) {
     return (
         <MuiThemeProvider muiTheme={ChooserTheme}>
             <div>
-                <div style={{margin: '0 -2rem'}}>
+                <nav id="topbar" style={{margin: '0 -2rem'}}>
                     {props.topbar}
-                </div>
+                </nav>
                 <div style={{paddingTop: '64px'}}>
                     {props.children}
                 </div>
