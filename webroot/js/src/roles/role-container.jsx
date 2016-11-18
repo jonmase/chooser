@@ -5,8 +5,9 @@ import Snackbar from 'material-ui/Snackbar';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
 
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
 
 var blankFindUserMessage = '\u00A0';
 
@@ -75,7 +76,7 @@ var RolesContainer = React.createClass({
 
     //Submit the add user form
     handleAddUserSubmit: function (user) {
-        console.log("Saving User for Choice " + this.props.choiceId + ": ", user);
+        console.log("Saving User for Choice " + this.props.choice.id + ": ", user);
         
         //If user was found, add the ID to the user data
         if(typeof(this.state.foundUser.id) !== "undefined") {
@@ -87,7 +88,7 @@ var RolesContainer = React.createClass({
         }
         
         //Save the settings
-        var url = '../../users/add/' + this.props.choiceId;
+        var url = '../../users/add/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -162,7 +163,7 @@ var RolesContainer = React.createClass({
 
     //Submit the edit user form
     handleEditUserSubmit: function (data) {
-        console.log("Editing User(s) for Choice " + this.props.choiceId + ": ", data);
+        console.log("Editing User(s) for Choice " + this.props.choice.id + ": ", data);
         
         //Get the state
         var currentUsers = this.state.users;
@@ -181,7 +182,7 @@ var RolesContainer = React.createClass({
         });
         
         //Save the users' roles
-        var url = '../../users/edit/' + this.props.choiceId;
+        var url = '../../users/edit/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -268,7 +269,7 @@ var RolesContainer = React.createClass({
         console.log("Attempting to find User: ", searchValue);
         
         //Look the user up
-        var url = '../../users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
+        var url = '../../users/find_user/' + this.props.choice.id + '/' + searchValue + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -388,10 +389,10 @@ var RolesContainer = React.createClass({
             },
         });
 
-        console.log("Saving settings for Choice " + this.props.choiceId + ": ", settings);
+        console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
         
         //Save the settings
-        var url = '../role_settings/' + this.props.choiceId;
+        var url = '../role_settings/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -492,8 +493,17 @@ var RolesContainer = React.createClass({
             change: this.handleSortUsersChange,
         };
     
+        var topbar = <TopBar 
+            dashboardUrl={this.props.dashboardUrl} 
+            iconLeft="menu"
+            iconRight={null}
+            sections={this.props.sections} 
+            title={<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+			<Container topbar={topbar}>
+                <h2 className="page-title">Dashboard - User Roles</h2>
                 <div>
                     <RolesSettingsForm 
                         state={this.state} 
@@ -501,7 +511,7 @@ var RolesContainer = React.createClass({
                         handlers={settingsHandlers}
                     />
                     <UsersTable 
-                        choiceId={this.props.choiceId} 
+                        choiceId={this.props.choice.id} 
                         state={this.state} 
                         roleOptions={this.props.roleOptions} 
                         addUserHandlers={addUserHandlers}
@@ -517,7 +527,7 @@ var RolesContainer = React.createClass({
                         onRequestClose={this.handleSnackbarClose}
                     />
                 </div>
-            </MuiThemeProvider>
+			</Container>
         );
     }
 });

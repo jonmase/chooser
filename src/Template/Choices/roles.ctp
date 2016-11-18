@@ -1,7 +1,3 @@
-<h1 class="page-title">Dashboard - User Roles</h1>
-<!--p>
-    Define the default role(s) for 'Instructors' (i.e. maintainers and contributors in WebLearn), and give additional roles to specific users. 
-</p-->
 <div id="roles"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

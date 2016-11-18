@@ -20,7 +20,6 @@ import Confirm from './selection-confirm.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import Review from './selection-review.jsx';
 
-
 var optionEditingDefaults = {
     optionBeingEdited: null,
     dialogOpen: false,
@@ -957,13 +956,12 @@ var OptionContainer = React.createClass({
             sections={this.props.sections} 
             title={(this.state.action === 'basket')?'Your Choices':(this.state.action === 'confirm')?'Confirm  Choices':<AppTitle subtitle={this.props.choice.name} />}
         />;
-
        
         return (
             <Container topbar={topbar}>
-                <h1 className="page-title">
+                <h2 className="page-title">
                     {this.props.title}
-                </h1>
+                </h2>
                 <div>
                     {(this.state.action === 'unavailable')?
                         <Unavailable
