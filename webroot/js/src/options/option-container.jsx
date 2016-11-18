@@ -7,8 +7,10 @@ import Snackbar from 'material-ui/Snackbar';
 import Badge from 'material-ui/Badge';
 import IconButton from 'material-ui/IconButton';
 
+import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
+import Loader from '../elements/loader.jsx';
 
 import Unavailable from './choice-unavailable.jsx';
 import Instructions from './choice-instructions.jsx';
@@ -18,10 +20,6 @@ import Confirm from './selection-confirm.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import Review from './selection-review.jsx';
 
-import Loader from '../elements/loader.jsx';
-
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var optionEditingDefaults = {
     optionBeingEdited: null,
@@ -951,112 +949,84 @@ var OptionContainer = React.createClass({
                     arrow_back
                 </IconButton>;
         }
+        
+        var topBar = <TopBar 
+            dashboardUrl={this.props.dashboardUrl} 
+            iconLeft={topbarIconLeft}
+            iconRight={topbarIconRight}
+            sections={this.props.sections} 
+            title={(this.state.action === 'basket')?'Your Choices':(this.state.action === 'confirm')?'Confirm  Choices':<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
        
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+            <Container topbar={topBar}>
+                <h1 className="page-title">
+                    {this.props.title}
+                </h1>
                 <div>
-                    <div style={{margin: '0 -2rem'}}>
-                        <TopBar 
-                            dashboardUrl={this.props.dashboardUrl} 
-                            iconLeft={topbarIconLeft}
-                            iconRight={topbarIconRight}
-                            sections={this.props.sections} 
-                            title={(this.state.action === 'basket')?'Your Choices':(this.state.action === 'confirm')?'Confirm  Choices':<AppTitle subtitle={this.props.choice.name} />}
+                    {(this.state.action === 'unavailable')?
+                        <Unavailable
+                            instance={this.state.instance}
+                            rules={this.state.rules.rules}
                         />
-                    </div>
-                    <div style={{paddingTop: '64px'}}>
-                        <h1 className="page-title">
-                            {this.props.title}
-                        </h1>
-                        <div>
-                            {(this.state.action === 'unavailable')?
-                                <Unavailable
-                                    instance={this.state.instance}
-                                    rules={this.state.rules.rules}
-                                />
-                            :
-                                (!this.state.options.loaded || !this.state.instance.loaded)?
-                                    <Loader />
-                                :
-                                    <div>
-                                        {(this.state.action === 'view') &&
-                                            <Instructions
-                                                abandonHandler={this.handleSelectionAbandonChanges}
-                                                confirmedSelection={this.state.confirmedSelection}
-                                                expanded={this.state.showInfo}
-                                                instance={this.state.instance}
-                                                role={this.props.role}
-                                                rules={this.state.rules.rules}
-                                            />
-                                        }
-                                        {
-                                        //If edit action, or view action and instance open or user is admin or has extra permissions, show options table
-                                        (this.state.action === 'edit' || (this.state.action === 'view' && (this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed))) &&
-                                            <OptionsTable
-                                                action={this.state.action}
-                                                choice={this.props.choice}
-                                                favourites={this.state.favourites}
-                                                instance={this.state.instance}
-                                                optionContainerHandlers={containerHandlers}
-                                                optionEditing={this.state.optionEditing}
-                                                options={this.state.options}
-                                                optionSaveButton={this.state.optionSaveButton}
-                                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                                optionsSort={this.state.optionsSort}
-                                            />
-                                        }
-                                        
-                                        {(this.state.action === 'basket') &&
-                                            <Basket
-                                                instance={this.state.instance}
-                                                optionContainerHandlers={containerHandlers}
-                                                options={this.state.options}
-                                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                                rules={this.state.rules}
-                                                selection={this.state.selection}
-                                                useCode={this.props.choice.use_code}
-                                            />
+                    :
+                        (!this.state.options.loaded || !this.state.instance.loaded)?
+                            <Loader />
+                        :
+                            <div>
+                                {(this.state.action === 'view') &&
+                                    <Instructions
+                                        abandonHandler={this.handleSelectionAbandonChanges}
+                                        confirmedSelection={this.state.confirmedSelection}
+                                        expanded={this.state.showInfo}
+                                        instance={this.state.instance}
+                                        role={this.props.role}
+                                        rules={this.state.rules.rules}
+                                    />
+                                }
+                                {
+                                //If edit action, or view action and instance open or user is admin or has extra permissions, show options table
+                                (this.state.action === 'edit' || (this.state.action === 'view' && (this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed))) &&
+                                    <OptionsTable
+                                        action={this.state.action}
+                                        choice={this.props.choice}
+                                        favourites={this.state.favourites}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        optionEditing={this.state.optionEditing}
+                                        options={this.state.options}
+                                        optionSaveButton={this.state.optionSaveButton}
+                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                        optionsSort={this.state.optionsSort}
+                                    />
+                                }
+                                
+                                {(this.state.action === 'basket') &&
+                                    <Basket
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        options={this.state.options}
+                                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                        rules={this.state.rules}
+                                        selection={this.state.selection}
+                                        useCode={this.props.choice.use_code}
+                                    />
 
-                                        }
-                                        
-                                        {(this.state.action === 'confirm') &&
-                                            <div>
-                                                <Formsy.Form
-                                                    id="selection_confirm"
-                                                    method="POST"
-                                                    onValid={this.enableSelectionConfirmButton}
-                                                    onInvalid={this.disableSelectionConfirmButton}
-                                                    onValidSubmit={this.handleSelectionFinalConfirm}
-                                                    noValidate={true}
-                                                    ref="confirm"
-                                                >
-                                                    <Confirm
-                                                        choice={this.props.choice}
-                                                        instance={this.state.instance}
-                                                        optionContainerHandlers={containerHandlers}
-                                                        options={this.state.options}
-                                                        optionsSelected={this.state.optionsSelected}
-                                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                                        rules={this.state.rules}
-                                                        selection={this.state.selection}
-                                                    />
-                                                </Formsy.Form>
-                                                <ConfirmDialog 
-                                                    open={this.state.confirmDialogOpen}
-                                                    handlers={{
-                                                        close: this.handleSelectionConfirmDialogClose,
-                                                        submit: this.handleSelectionConfirm,
-                                                    }}
-                                                    instance={this.state.instance}
-                                                    rules={this.state.rules}
-                                                    selection={this.state.selection}
-                                                />
-                                            </div>
-                                        }
-                                        
-                                        {(this.state.action === 'review') &&
-                                            <Review
+                                }
+                                
+                                {(this.state.action === 'confirm') &&
+                                    <div>
+                                        <Formsy.Form
+                                            id="selection_confirm"
+                                            method="POST"
+                                            onValid={this.enableSelectionConfirmButton}
+                                            onInvalid={this.disableSelectionConfirmButton}
+                                            onValidSubmit={this.handleSelectionFinalConfirm}
+                                            noValidate={true}
+                                            ref="confirm"
+                                        >
+                                            <Confirm
                                                 choice={this.props.choice}
                                                 instance={this.state.instance}
                                                 optionContainerHandlers={containerHandlers}
@@ -1064,21 +1034,45 @@ var OptionContainer = React.createClass({
                                                 optionsSelected={this.state.optionsSelected}
                                                 optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
                                                 rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                                rules={this.state.rules}
                                                 selection={this.state.selection}
                                             />
-                                        }
-                                        <Snackbar
-                                            autoHideDuration={3000}
-                                            message={this.state.snackbar.message}
-                                            onRequestClose={this.handleSnackbarClose}
-                                            open={this.state.snackbar.open}
+                                        </Formsy.Form>
+                                        <ConfirmDialog 
+                                            open={this.state.confirmDialogOpen}
+                                            handlers={{
+                                                close: this.handleSelectionConfirmDialogClose,
+                                                submit: this.handleSelectionConfirm,
+                                            }}
+                                            instance={this.state.instance}
+                                            rules={this.state.rules}
+                                            selection={this.state.selection}
                                         />
                                     </div>
-                            }
-                        </div>
-                    </div>
+                                }
+                                
+                                {(this.state.action === 'review') &&
+                                    <Review
+                                        choice={this.props.choice}
+                                        instance={this.state.instance}
+                                        optionContainerHandlers={containerHandlers}
+                                        options={this.state.options}
+                                        optionsSelected={this.state.optionsSelected}
+                                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                        rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                        selection={this.state.selection}
+                                    />
+                                }
+                                <Snackbar
+                                    autoHideDuration={3000}
+                                    message={this.state.snackbar.message}
+                                    onRequestClose={this.handleSnackbarClose}
+                                    open={this.state.snackbar.open}
+                                />
+                            </div>
+                    }
                 </div>
-            </MuiThemeProvider>
+            </Container>
         );
     }
 });
