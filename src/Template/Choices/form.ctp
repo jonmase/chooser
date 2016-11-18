@@ -1,4 +1,3 @@
-<h1 class="page-title">Dashboard - Options Form</h1>
 <div id="form"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

@@ -2,11 +2,13 @@ import React from 'react';
 import update from 'react-addons-update';
 
 import Snackbar from 'material-ui/Snackbar';
+
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
+
 import DefaultFieldToggles from './default-field-toggles.jsx';
 import ExtraFields from './extra-fields.jsx';
-
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var FormContainer = React.createClass({
     getInitialState: function () {
@@ -330,8 +332,17 @@ var FormContainer = React.createClass({
             editSubmit: this.handleEditExtraSubmit,
         };
         
+        var topbar = <TopBar 
+            dashboardUrl={this.props.dashboardUrl} 
+            iconLeft="menu"
+            iconRight={null}
+            sections={this.props.sections} 
+            title={<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+			<Container topbar={topbar}>
+                <h2 className="page-title">Dashboard - Options Form</h2>
                 <div>
                     <p>Define the fields that you want to appear on the form for creating/editing options. </p>
                     <DefaultFieldToggles 
@@ -350,7 +361,7 @@ var FormContainer = React.createClass({
                         onRequestClose={this.handleSnackbarClose}
                     />
                 </div>
-            </MuiThemeProvider>
+			</Container>
         );
     }
 });

@@ -9,17 +9,10 @@ import FormContainer from './form/form-container.jsx';
 injectTapEventPlugin();
 
 ReactDOM.render(
-    <TopBar 
-        choice={data.choice} 
-        dashboardUrl={data.dashboard} 
-        menu={true}
-        sections={data.sections} 
-    />, 
-    document.getElementById('topbar')
-);
-ReactDOM.render(
     <FormContainer 
         choice={data.choice} 
+        dashboardUrl={data.dashboard} 
+        sections={data.sections} 
     />, 
     document.getElementById('form')
 );
