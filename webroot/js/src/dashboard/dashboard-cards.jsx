@@ -20,6 +20,7 @@ var styles = {
     },
     card: {
         display: 'inline-block',
+        width: '100%',
     },
     cardTitle: {
         lineHeight: '30px !important',
@@ -40,7 +41,6 @@ var styles = {
         //Replace bottom padding with margin, so overflow is hidden
         paddingBottom: '0px',
         marginBottom: '15px',
-        
     },
 };
 
@@ -75,10 +75,7 @@ var SectionsCards = React.createClass({
                                         style={styles.cardTitle}
                                     />
                                     <CardText style={styles.cardText}>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-                                        Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-                                        Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
+                                        <p> </p>
                                     </CardText>
                                     <CardActions>
                                         {card.actions.map(function(action) {
