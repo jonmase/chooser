@@ -2,12 +2,13 @@ import React from 'react';
 
 import Snackbar from 'material-ui/Snackbar';
 
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
+
 import Settings from './settings.jsx';
 import Rules from './rules.jsx';
 import SettingsDialog from './settings-dialog.jsx';
-
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var update = require('react-addons-update');
 
@@ -429,8 +430,17 @@ var FormContainer = React.createClass({
             wysiwygChange: this.handleRuleWysiwygChange,
         };
 
+        var topbar = <TopBar 
+            dashboardUrl={this.props.dashboardUrl} 
+            iconLeft="menu"
+            iconRight={null}
+            sections={this.props.sections} 
+            title={<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+			<Container topbar={topbar}>
+                <h2 className="page-title">Dashboard - Choice Settings</h2>
                 <div>
                     <p>Provide instructions, deadlines, rules, etc for students to make their choices.</p>
                     <Settings
@@ -455,7 +465,7 @@ var FormContainer = React.createClass({
                         onRequestClose={this.handleSnackbarClose}
                     />
                 </div>
-            </MuiThemeProvider>
+			</Container>
         );
     }
 });

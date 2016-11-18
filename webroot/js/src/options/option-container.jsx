@@ -948,7 +948,11 @@ var OptionContainer = React.createClass({
                     arrow_back
                 </IconButton>;
         }
-        
+        //Show menu for edit action
+        else if(this.state.action === 'edit' && this.props.sections) {
+            topbarIconLeft='menu';
+        }
+       
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={topbarIconLeft}

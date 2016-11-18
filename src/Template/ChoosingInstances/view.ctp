@@ -1,4 +1,3 @@
-<h1 class="page-title">Dashboard - Choice Settings</h1>
 <div id="view"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

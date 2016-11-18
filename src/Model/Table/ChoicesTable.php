@@ -203,8 +203,8 @@ class ChoicesTable extends Table
             $activeInstanceQuery = $this->ChoosingInstances->findActive($choiceId);
             $activeChoosingInstance = !empty($activeInstanceQuery);
             
-            $archivedInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
-            $archivedChoosingInstance = !empty($archivedInstancesQuery);
+            //$archivedInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
+            //$archivedChoosingInstance = !empty($archivedInstancesQuery);
             
             
             if($activeChoosingInstance) {
@@ -222,14 +222,14 @@ class ChoicesTable extends Table
                 ];
             }
             
-            if($archivedChoosingInstance) {
+            /*if($archivedChoosingInstance) {
                 $choosingSetupActions[] = [
                     'icon' => 'history',
                     'label' => 'View Archive',
                     'menuLabel' => 'View Archived Settings',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive', $choiceId]),
                 ];
-            }
+            }*/
         }
         
         $sections = [
