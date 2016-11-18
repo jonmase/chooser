@@ -1,4 +1,3 @@
-<h1 class="page-title">Dashboard - Profile</h1>
 <div id="profile"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

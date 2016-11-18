@@ -6,15 +6,16 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import Formsy from 'formsy-react';
 
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
+
 import TextField from '../elements/fields/text.jsx';
 import MultilineTextField from '../elements/fields/multiline-text.jsx';
 import EmailField from '../elements/fields/email.jsx';
 import UrlField from '../elements/fields/url.jsx';
 import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 import FileField from '../elements/fields/file.jsx';
-
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var ProfileContainer = React.createClass({
     getInitialState: function () {
@@ -26,8 +27,8 @@ var ProfileContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            biographyValue: profile.biography,
-            labValue: profile.lab,
+            biographyValue: this.props.profile.biography,
+            labValue: this.props.profile.lab,
         };
     },
     
@@ -121,10 +122,19 @@ var ProfileContainer = React.createClass({
     },
     
     render: function() {
-        var profile = data.profile;
+        var profile = this.props.profile;
         
+        var topbar = <TopBar 
+            dashboardUrl={this.props.dashboardUrl} 
+            iconLeft="menu"
+            iconRight={null}
+            sections={this.props.sections} 
+            title={<AppTitle subtitle={this.props.choice.name} />}
+        />;
+
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
+			<Container topbar={topbar}>
+                <h2 className="page-title">Dashboard - Profile</h2>
                 <div>
                     <p>Create and edit your profile using the form below. The information you provide here will be shown to students with the options that you offer. Your profile will be the same for all Choices where you offer options, so only enter information you are happy to be seen by students for all of those Choices.</p>
                     <Formsy.Form
@@ -299,7 +309,7 @@ var ProfileContainer = React.createClass({
                         onRequestClose={this.handleSnackbarClose}
                     />
                 </div>
-            </MuiThemeProvider>
+			</Container>
         );
     }
 });
