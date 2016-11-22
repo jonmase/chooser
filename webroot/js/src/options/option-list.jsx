@@ -11,7 +11,9 @@ import DropdownField from '../elements/fields/dropdown.jsx';
 
 var OptionList = React.createClass({
     render: function() {
-        var listItemStyle = {};
+        var listItemStyle = {
+            //height: '72px'
+        };
         var showCommentsFieldPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
         var showCommentsTextPerOption = this.props.action === 'review' && this.props.instance.comments_per_option;
         if(showCommentsFieldPerOption) {
@@ -108,7 +110,7 @@ var OptionList = React.createClass({
                                 </div>
                             :""}
                             {(showCommentsTextPerOption)?
-                                <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: '71px', tableLayout: 'fixed', textAlign: 'right'}}>
+                                <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: ((showPreferenceInputs || showPreferenceValues)?'71px':'47px'), tableLayout: 'fixed', textAlign: 'right'}}>
                                     <div style={{display: 'table-cell', verticalAlign: 'middle', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                                         {this.props.optionsSelected[optionId].comments}
                                     </div>

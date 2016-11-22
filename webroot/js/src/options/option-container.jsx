@@ -604,6 +604,9 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionFinalConfirm(data) {
+        if(!data.hasOwnProperty('selection')) {
+            data.selection = {};
+        }
         //Set confirmed to true
         data.selection.confirmed = true;
         

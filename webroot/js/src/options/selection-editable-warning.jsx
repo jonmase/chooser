@@ -5,10 +5,10 @@ import DateTime from '../elements/display/datetime.jsx';
 var SelectionEditableWarning = React.createClass({
     render: function() {
         return (
-            <p>
+            <p style={{marginTop: 0}}>
                 <strong>Please Note: </strong>
                 {(this.props.instance.editable)?
-                    <span>You will be able to return and change your choices until the deadline at 
+                    <span>You will be able to return and change your choices until the deadline at&nbsp;
                         {!this.props.instance.deadline.passed?
                             <DateTime value={this.props.instance.deadline} />
                         :
