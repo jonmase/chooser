@@ -196,12 +196,12 @@ var OptionsTable = React.createClass({
                             displaySelectAll={enableSelection}
                         >
                             <TableRow>
-                                {(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                {/*(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                     <FavouriteOption
                                         handlers={this.props.optionContainerHandlers} 
                                         option="all"
                                     />
-                                </TableHeaderColumn>:""}
+                                </TableHeaderColumn>:""*/}
                                 {defaultFields.map(function(field) {
                                     return (
                                         <SortableTableHeaderColumn
@@ -254,7 +254,7 @@ var OptionsTable = React.createClass({
                                         key={option.id} 
                                         selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
                                     >
-                                        {(this.props.action === 'view' && enableSelection)?
+                                        {/*(this.props.action === 'view' && enableSelection)?
                                             <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                 <FavouriteOption
                                                     handler={this.props.optionContainerHandlers.favourite} 
@@ -262,7 +262,7 @@ var OptionsTable = React.createClass({
                                                     favourited={this.props.favourites.indexOf(option.id) > -1}
                                                 />
                                             </UnselectableCell>
-                                        :""}
+                                        :""*/}
                                         
                                         {defaultFields.map(function(field) {
                                             return (
