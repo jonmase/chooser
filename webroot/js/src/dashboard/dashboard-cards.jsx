@@ -75,7 +75,7 @@ var SectionsCards = React.createClass({
                                         style={styles.cardTitle}
                                     />
                                     <CardText style={styles.cardText}>
-                                        <p> </p>
+                                        {card.description}
                                     </CardText>
                                     <CardActions>
                                         {card.actions.map(function(action) {

@@ -211,6 +211,7 @@ class ChoicesTable extends Table
                 $choosingSetupActions[] = [
                     'label' => 'View/Edit',
                     'menuLabel' => 'Edit Settings',
+                    'description' => '',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
@@ -218,6 +219,7 @@ class ChoicesTable extends Table
                 $choosingSetupActions[] = [
                     'label' => 'Set Up',
                     'menuLabel' => 'Set Up Choice',
+                    'description' => '',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
                 ];
             }
@@ -227,6 +229,7 @@ class ChoicesTable extends Table
                     'icon' => 'history',
                     'label' => 'View Archive',
                     'menuLabel' => 'View Archived Settings',
+                    'description' => '',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive', $choiceId]),
                 ];
             }*/
@@ -234,7 +237,8 @@ class ChoicesTable extends Table
         
         $sections = [
             [
-                'title' => 'User Roles',
+                'title' => 'User Permissions',
+                'description' => 'Change the permission settings and give users additional permissions.',
                 'icon' => 'lock_open',  //icon => 'verified_user',//icon => 'block',
                 'actions' => [
                     [
@@ -246,6 +250,7 @@ class ChoicesTable extends Table
             ],
             [
                 'title' => 'Options Form',
+                'description' => 'Define the fields that will appear on the form for creating/editing options.',
                 'icon' => 'playlist_add',   //'icon' => 'input',//'icon' => 'format_list_bulleted',//icon' => 'reorder',
                 'actions' => [
                     [
@@ -257,6 +262,7 @@ class ChoicesTable extends Table
             ],
             /*[
                 'title' => 'Editing Setup',
+                'description' => '',
                 'icon' => 'mode_edit',
                 'actions' => [
                     [
@@ -270,6 +276,7 @@ class ChoicesTable extends Table
             ],*/
             /*[
                 'title' => 'Notifications',
+                'description' => '',
                 'icon' => 'mail_outline',   //'icon' => 'announcement',//'icon' => 'priority_high',
                 'actions' => [
                     [
@@ -280,6 +287,7 @@ class ChoicesTable extends Table
             ],*/
             [
                 'title' => 'Profile',
+                'description' => 'Edit your profile, which is the information that will be shown to students. This will be the same across all Choices where you offer options.',
                 'icon' => 'perm_identity',  //'icon' => 'account_circle',
                 'actions' => [
                     [
@@ -291,6 +299,7 @@ class ChoicesTable extends Table
             ],
             [
                 'title' => 'Options',
+                'description' => 'View and/or edit the options that will be made available to students.',
                 'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
                 'actions' => [
                     [
@@ -317,12 +326,14 @@ class ChoicesTable extends Table
             ],
             [
                 'title' => 'Choice Settings',
+                'description' => 'Schedule the choice for students, set up rules and define other settings.',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
             ],
             /*[
                 'title' => 'Results',
+                'description' => '',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
                 'actions' => [
                     [
@@ -336,6 +347,7 @@ class ChoicesTable extends Table
             ],*/
             /*[
                 'title' => 'Allocations',
+                'description' => '',
                 'icon' => 'compare_arrows',
                 'actions' => [
                     [
