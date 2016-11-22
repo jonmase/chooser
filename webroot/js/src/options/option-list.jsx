@@ -48,7 +48,7 @@ var OptionList = React.createClass({
         }
                     
         return (
-            <List>
+            <List style={this.props.style}>
                 {this.props.optionIds.map(function(optionId, optionIndex) {
                     var option = this.props.options.options[this.props.options.indexesById[optionId]];
                     
