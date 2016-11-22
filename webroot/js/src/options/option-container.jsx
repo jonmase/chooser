@@ -115,6 +115,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
+            basketDisabled: false,
             canConfirm: true,
             confirmDialogOpen: false,
             confirmedSelection: [],
@@ -393,6 +394,13 @@ var OptionContainer = React.createClass({
             }, this);
         }
         
+        //Optimistically update the selected options
+        //Disable basket until options have been properly saved
+        this.setState({
+            optionsSelectedTableOrder: this.sortIdsByTableOrder(optionsSelectedIds),
+            basketDisabled: true,
+        });
+        
         var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
         
         this.saveSelectedOptions(optionsSelected);
@@ -502,10 +510,25 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionBasketClick: function() {
+        //If there are any warnings, show the basket
+        if(this.state.selection.ruleWarnings) {
+            this.setState({
+                action: 'basket'
+            });
+        }
+        //Otherwise, go straight to the confirm page
+        else {
+            this.setState({
+                action: 'confirm'
+            });
+        }
+    },
+    
+    handleSelectionSubmit() {
+        //Don't actually need to do anything at this stage, just change to confirm view
         this.setState({
-            action: 'basket'
+            action: 'confirm'
         });
-        console.log('show basket');
     },
     
     handleSelectionInfoToggle: function() {
@@ -558,13 +581,6 @@ var OptionContainer = React.createClass({
         this.setState({
             optionsSelectedPreferenceOrder: optionsSelectedPreferenceOrder,
             rankSelectsDisabled: false,
-        });
-    },
-    
-    handleSelectionSubmit() {
-        //Don't actually need to do anything at this stage, just change to confirm view
-        this.setState({
-            action: 'confirm'
         });
     },
     
@@ -660,6 +676,7 @@ var OptionContainer = React.createClass({
                 var optionsSelectedTableOrder = this.sortIdsByTableOrder(optionsSelectedIds);
                 
                 var newState = {
+                    basketDisabled: false,    //Re-enable basket (in case it was disabled for optimistic updates to be confirmed)
                     optionsSelected: returnedData.optionsSelected,
                     optionsSelectedTableOrder: optionsSelectedTableOrder,
                     optionsSelectedPreferenceOrder: returnedData.optionsSelectedIdsPreferenceOrder,
@@ -689,7 +706,19 @@ var OptionContainer = React.createClass({
                     var errorMessage = 'Error confirming selection';
                 }
                 
+                //Roll back optionsSelectedTableOrder to existing optionsSelected
+                //Loop through state.optionsSelected and add each ID to optionsSelectedIds
+                var optionsSelectedIds = [];
+                for (var optionId in this.state.optionsSelected) {
+                    if (this.state.optionsSelected.hasOwnProperty(optionId)) {
+                        optionsSelectedIds.push(parseInt(optionId, 10));
+                    }
+                }
+                    
                 this.setState({
+                    //Update state with optionsSelectedIds sorted by table order
+                    basketDisabled: false,    //Re-enable basket (in case it was disabled for optimistic updates to be confirmed)
+                    optionsSelectedTableOrder: this.sortIdsByTableOrder(optionsSelectedIds),
                     //Show error in snackbar
                     snackbar: {
                         open: true,
@@ -904,6 +933,7 @@ var OptionContainer = React.createClass({
                                 style={{padding: 0}}
                             >
                                 <IconButton
+                                    disabled={this.state.basketDisabled}
                                     iconClassName="material-icons"
                                     onTouchTap={this.handleSelectionBasketClick}
                                     iconStyle={iconStyle}
