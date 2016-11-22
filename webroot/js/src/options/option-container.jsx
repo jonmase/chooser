@@ -510,16 +510,16 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionBasketClick: function() {
-        //If there are any warnings, show the basket
-        if(this.state.selection.ruleWarnings) {
-            this.setState({
-                action: 'basket'
-            });
-        }
-        //Otherwise, go straight to the confirm page
-        else {
+        //If the choice can be submitted, show the confirm page
+        if(this.state.selection.allowSubmit) {
             this.setState({
                 action: 'confirm'
+            });
+        }
+        //Otherwise, go to the basket page
+        else {
+            this.setState({
+                action: 'basket'
             });
         }
     },
