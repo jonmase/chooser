@@ -252,6 +252,9 @@ class SelectionsTable extends Table
         }
         //If confirming options (not selecting), options will be an array of option details, with the ID as the key
         else {*/
+        
+        
+        if(!empty($requestData['options'])) {
             foreach($requestData['options'] as $choicesOptionId => $optionsSelection) {
                 $optionsSelection['choices_option_id'] = $choicesOptionId;
                 
@@ -262,7 +265,7 @@ class SelectionsTable extends Table
                 
                 $optionsSelectionsData[] = $optionsSelection;
             }
-        //}
+        }
         
         $selection['options_selections'] = $this->OptionsSelections->newEntities($optionsSelectionsData);
 
