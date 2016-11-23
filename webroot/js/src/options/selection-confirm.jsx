@@ -63,13 +63,13 @@ var SelectionConfirm = React.createClass({
                     ruleWarnings={this.props.selection.ruleWarnings}
                 />
                 
-                {(this.props.selection.ruleWarnings)?
+                {/*(this.props.selection.ruleWarnings)?*/}
                     <Paper rounded={false} zDepth={2} style={{padding: '16px', margin: '15px 0'}}>
                         {content}
                     </Paper>
-                :
+                {/*:
                     content
-                }
+                */}
             </div>
         );
     }
