@@ -991,7 +991,7 @@ var OptionContainer = React.createClass({
             iconLeft={topbarIconLeft}
             iconRight={topbarIconRight}
             sections={this.props.sections} 
-            title={(this.state.action === 'basket')?'Your Choices':(this.state.action === 'confirm')?'Confirm  Choices':<AppTitle subtitle={this.props.choice.name} />}
+            title={(this.state.action === 'basket')?'Review Your Choices':(this.state.action === 'confirm')?'Confirm Your Choices':<AppTitle subtitle={this.props.choice.name} />}
         />;
        
         return (

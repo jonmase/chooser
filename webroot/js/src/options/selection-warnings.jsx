@@ -8,7 +8,7 @@ var SelectionWarnings = React.createClass({
     render: function() {
         if(this.props.ruleWarnings) {
             return (
-                <Paper rounded={false} zDepth={2} style={{padding: '16px', margin: '15px 0'}}>
+                <div>
                     <h5 style={{marginTop: 0}}>Warnings</h5>
                     {(this.props.allowSubmit)?
                         <p>You can still submit your choices despite these warnings.</p>
@@ -44,7 +44,7 @@ var SelectionWarnings = React.createClass({
                         }
 
                     }, this)}
-                </Paper>
+                </div>
             );
         }
         else {

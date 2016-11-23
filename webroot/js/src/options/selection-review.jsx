@@ -16,47 +16,57 @@ var styles = {
     
 var SelectionReview = React.createClass({
     render: function() {
+        var submissionMessage = '';
+        var headerTitle = '';
+        if(!this.props.selection.selection.confirmed) {
+            headerTitle = 'Choices Not Submitted';
+            if(this.props.instance.instance.deadline.passed || this.props.instance.instance.extension.passed) {
+                submissionMessage = 'You did not submit your choices and the deadline has now passed.';
+            }
+            else {
+                submissionMessage = 'You have not submitted any choices.';
+            }
+        }
+        else {
+            headerTitle = 'Choices Submitted';
+            submissionMessage = <span>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.</span>;
+        }
+    
         return (
             <div>
-                <Paper rounded={false} zDepth={1} style={{padding: '16px', margin: '15px 0'}}>
-                    <p style={{marginTop: 0}}>
-                        {(!this.props.selection.selection.confirmed)? 
-                            (this.props.instance.instance.deadline.passed || this.props.instance.instance.extension.passed)?
-                                <span>You did not submit your choices and the deadline has now passed.</span>
-                            :
-                                <span>You have not submitted any choices.</span>
-                    :
-                        <span>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.</span>
-                    }
-                    </p>
-                    
-                    <div>
-                        {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
-                            <div>
-                                <span>You can change your choices until the deadline at&nbsp;<strong>
-                                    {(!this.props.instance.instance.deadline.passed)?
-                                        <DateTime value={this.props.instance.instance.deadline} />
-                                    :
-                                        <DateTime value={this.props.instance.instance.extension} />
-                                    }
-                                </strong>.</span>
-                                {this.props.instance.instance.deadline.passed}
-                                {/*
-                                <div style={{marginTop: '10px'}}>
-                                    <RaisedButton
-                                        label="Change"
-                                        onTouchTap={this.props.optionContainerHandlers.backToEdit}
-                                        primary={false}
-                                    />
+                <Card className="page-card">
+                    <CardHeader title={headerTitle} />
+                    <CardText style={{paddingTop: 0}}>
+                        <p style={{marginTop: 0}}>
+                            {submissionMessage}
+                        </p>
+                        <div>
+                            {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
+                                <div>
+                                    <span>You can change your choices until the deadline at&nbsp;<strong>
+                                        {(!this.props.instance.instance.deadline.passed)?
+                                            <DateTime value={this.props.instance.instance.deadline} />
+                                        :
+                                            <DateTime value={this.props.instance.instance.extension} />
+                                        }
+                                    </strong>.</span>
+                                    {/*
+                                    <div style={{marginTop: '10px'}}>
+                                        <RaisedButton
+                                            label="Change"
+                                            onTouchTap={this.props.optionContainerHandlers.backToEdit}
+                                            primary={false}
+                                        />
+                                    </div>
+                                    */}
                                 </div>
-                                */}
-                            </div>
-                        }
-                    </div>
-                </Paper>
+                            }
+                        </div>
+                    </CardText>
+                </Card>
                 
                 {(this.props.selection.selection.confirmed) &&
-                    <Card>
+                    <Card className="page-card">
                         <CardHeader title="Your Choices" />
                         <CardText style={{paddingTop: 0}}>
                             <div>

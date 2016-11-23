@@ -12,15 +12,23 @@ import Warnings from './selection-warnings.jsx';
 
 var SelectionBasket = React.createClass({
     render: function() {
+        var paperDepth = 1;
+        var paperRounded = false;
+        var paperStyle = {padding: '16px', margin: '15px 0'};
+        
         return (
             <div>
-                <Warnings
-                    allowSubmit={this.props.selection.allowSubmit}
-                    rules={this.props.rules}
-                    ruleWarnings={this.props.selection.ruleWarnings}
-                />
-            
-                <Paper rounded={false} zDepth={2} style={{padding: '16px', margin: '15px 0'}}>
+                {(this.props.selection.ruleWarnings)&&
+                    <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
+                        <Warnings
+                            allowSubmit={this.props.selection.allowSubmit}
+                            rules={this.props.rules}
+                            ruleWarnings={this.props.selection.ruleWarnings}
+                        />
+                    </Paper>
+                }
+                
+                <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
                     <p style={{margin: 0}}>You have chosen the following options:</p>
                     {(this.props.optionsSelectedTableOrder.length > 0)?
                         <OptionList

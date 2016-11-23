@@ -10,19 +10,25 @@ import MultilineField from '../elements/fields/multiline-text.jsx';
 
 var SelectionConfirm = React.createClass({
     render: function() {
+        var paperDepth = 1;
+        var paperRounded = false;
+        var paperStyle = {padding: '16px', margin: '15px 0'};
+    
         var content = <div>
-            <EditableWarning
-                instance={this.props.instance.instance}
-            />
-            
+            <p style={{marginTop: 0}}>
             {(this.props.instance.instance.preference_instructions)&&
-                <p>{this.props.instance.instance.preference_instructions}</p>
+                <span>{this.props.instance.instance.preference_instructions}</span>
             }
                 
             {(this.props.instance.instance.comments_per_option_instructions)&&
-                <p>{this.props.instance.instance.comments_per_option_instructions}</p>
+                <span>{this.props.instance.instance.comments_per_option_instructions}</span>
             }
-        
+            </p>
+            
+            <EditableWarning
+                instance={this.props.instance.instance}
+            />
+
             {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                 <div style={{width: '100%'}}>
                     {/*<p>You have chosen the following options:</p>*/}
@@ -57,14 +63,18 @@ var SelectionConfirm = React.createClass({
     
         return (
             <div>
-                <Warnings
-                    allowSubmit={this.props.selection.allowSubmit}
-                    rules={this.props.rules}
-                    ruleWarnings={this.props.selection.ruleWarnings}
-                />
+                {(this.props.selection.ruleWarnings)&&
+                    <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
+                        <Warnings
+                            allowSubmit={this.props.selection.allowSubmit}
+                            rules={this.props.rules}
+                            ruleWarnings={this.props.selection.ruleWarnings}
+                        />
+                    </Paper>
+                }
                 
                 {/*(this.props.selection.ruleWarnings)?*/}
-                    <Paper rounded={false} zDepth={2} style={{padding: '16px', margin: '15px 0'}}>
+                    <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
                         {content}
                     </Paper>
                 {/*:

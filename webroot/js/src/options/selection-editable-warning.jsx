@@ -4,8 +4,14 @@ import DateTime from '../elements/display/datetime.jsx';
 
 var SelectionEditableWarning = React.createClass({
     render: function() {
+        var style={};
+        
+        if(this.props.noTopMargin) {
+            style.marginTop = 0;
+        }
+    
         return (
-            <p style={{marginTop: 0}}>
+            <p style={style}>
                 <strong>Please Note: </strong>
                 {(this.props.instance.editable)?
                     <span>You will be able to return and change your choices until the deadline at&nbsp;

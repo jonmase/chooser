@@ -82,7 +82,8 @@ var ChoiceInstructions = React.createClass({
                             {(instance.opens.passed || this.props.role === 'admin' || this.props.role === 'extra')&&
                                 <div className="row">
                                     <div className="col-md-6">
-                                        <Wysiwyg value={instance.choosing_instructions} />
+                                        <div style={{marginRight: '20px'}}>
+                                            <Wysiwyg value={instance.choosing_instructions} />
                                             {(instance.deadline)&&
                                                 <div>
                                                     <DateTimeLabelled label="Deadline" value={instance.deadline} />
@@ -91,6 +92,7 @@ var ChoiceInstructions = React.createClass({
                                                     */}
                                                 </div>
                                             }
+                                        </div>
                                     </div>
                                     <div className="col-md-6">
                                         <Rules rules={this.props.rules} />
