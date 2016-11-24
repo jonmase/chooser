@@ -52,7 +52,7 @@ var ChoiceInstructions = React.createClass({
                                 <div>
                                     {(this.props.confirmedSelection.id)&&
                                         <div>
-                                            <div style={{float: 'right'}}>
+                                            {/*<div style={{float: 'right'}}>
                                                 <RaisedButton
                                                     label="Abandon Changes"
                                                     onTouchTap={this.props.abandonHandler}
@@ -60,8 +60,9 @@ var ChoiceInstructions = React.createClass({
                                                     style={{marginRight: '15px'}}
                                                 />
                                             </div>
-                                            <p style={{marginRight: '200px'}}>
-                                                You are changing the choices that you submitted on <DateTime value={this.props.confirmedSelection.modified} />. Any changes you make will not be saved unless you confirm them in the next step. If you decide you don't want to make any changes, just use the Abandon Changes button.
+                                            <p style={{marginRight: '200px'}}>*/}
+                                            <p>
+                                                You are changing the choices that you submitted on <DateTime value={this.props.confirmedSelection.modified} />. Any changes you make will not be saved unless you submit them in the next step. If you decide you don't want to make any changes, just use the Cancel Changes button.
                                             </p>
                                         </div>
                                     }

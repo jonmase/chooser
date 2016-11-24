@@ -1056,6 +1056,15 @@ var OptionContainer = React.createClass({
                                     shopping_basket
                                 </IconButton>
                             </Badge>*/}
+                            {(this.state.confirmedSelection.id)&&
+                                <RaisedButton
+                                    label="Cancel Changes"
+                                    onTouchTap={this.handleSelectionAbandonChanges}
+                                    //primary={true}
+                                    secondary={true}
+                                    style={{marginRight: '1em'}}
+                                />
+                            }
                             <RaisedButton 
                                 disabled={this.state.basketDisabled}
                                 label="Review & Submit" 
