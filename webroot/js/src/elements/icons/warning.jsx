@@ -9,10 +9,10 @@ var WarningIcon = React.createClass({
         var style = {};
         
         
-        if(this.props.red) {
+        if(this.props.colour === "red") {
             style.color = red500;
         }
-        else if(this.props.orange) {
+        else if(this.props.colour === "orange") {
             style.color = orange500;
         }
         

@@ -5,7 +5,7 @@ import WarningIcon from '../elements/icons/warning.jsx';
 
 var SelectionWarnings = React.createClass({
     render: function() {
-        var warningIcon = <span style={{marginRight: '5px'}}>{<WarningIcon red={true} top={4} />}</span>;
+        var warningIcon = <span style={{marginRight: '5px'}}>{<WarningIcon colour="red" top={4} />}</span>;
     
         if(this.props.ruleWarnings) {
             return (

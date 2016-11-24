@@ -69,7 +69,7 @@ var SelectionReview = React.createClass({
                 {(this.props.selection.ruleWarnings)&&
                     <Card className="page-card">
                         <CardHeader 
-                            avatar={<Avatar icon={<WarningIcon orange={true} large={true} />} backgroundColor='#fff' />}
+                            avatar={<Avatar icon={<WarningIcon colour="orange" large={true} />} backgroundColor='#fff' />}
                             title={<WarningsTitle 
                                 allowSubmit={this.props.selection.allowSubmit}
                                 ruleWarnings={this.props.selection.ruleWarnings}

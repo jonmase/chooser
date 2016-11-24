@@ -5,13 +5,13 @@ var SelectionWarningsExplanation = React.createClass({
     render: function() {
         if(this.props.ruleWarnings) {
             return (
-                <div>
+                <span>
                     {(this.props.allowSubmit)?
                         <span>You can still submit your choices despite these warnings</span>
                     :
-                        <span>You cannot submit your choices at the moment. Please correct the warnings marked with <WarningIcon red={true} top={4} /></span>
+                        <span>You cannot submit your choices at the moment. Please correct the warnings marked with <WarningIcon colour="red" top={4} /></span>
                     }
-                </div>
+                </span>
             );
         }
         else {

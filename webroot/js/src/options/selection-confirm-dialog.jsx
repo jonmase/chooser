@@ -44,7 +44,7 @@ var SelectionConfirmDialog = React.createClass({
                 {(this.props.selection.ruleWarnings) && 
                     <div>
                         <h5>
-                            <span style={{margintRight: '5px'}}><WarningIcon red={true} large={true} top={10} /></span>
+                            <span style={{marginRight: '5px'}}><WarningIcon colour={this.props.selection.allowSubmit?"orange":"red"} large={true} top={10} /></span>
                             <WarningsTitle 
                                 allowSubmit={this.props.selection.allowSubmit}
                                 ruleWarnings={this.props.selection.ruleWarnings}
