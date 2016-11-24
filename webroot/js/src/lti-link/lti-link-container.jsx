@@ -29,7 +29,7 @@ var SectionsCards = React.createClass({
                             <LinkChoiceForm choices={this.props.choices} />
                         </div>
                     }
-                    <div className={'col-xs-12' + (showList&&' col-md-6')}>
+                    <div className={'col-xs-12' + (showList?' col-md-6':'')}>
                         <NewChoiceForm />
                     </div>
                 </div>
