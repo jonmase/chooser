@@ -35,7 +35,7 @@ class ChoicesController extends AppController
             }
             //Redirect users with view role to Choice view page
             else {
-                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'options', 'action' => 'view', $choiceContext->choice_id]);
             }
         }
         
@@ -95,7 +95,7 @@ class ChoicesController extends AppController
         $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
         if(empty($sections)) {
             //User doesn't have permission to view any dashboard sections, so redirect to Choice view
-            $this->redirect(['controller' => 'choices', 'action' => 'view', $id]);
+            $this->redirect(['controller' => 'options', 'action' => 'view', $id]);
         }
         
         $choice = $this->Choices->get($id);
@@ -183,7 +183,7 @@ class ChoicesController extends AppController
             }
             //Redirect users with view role to Choice view page
             else {
-                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'options', 'action' => 'view', $choiceContext->choice_id]);
             }
         }
         
@@ -205,7 +205,7 @@ class ChoicesController extends AppController
 
             if($this->Choices->ChoicesLtiContext->save($choiceContext)) {
                 //Redirect to the Choice
-                $this->redirect(['controller' => 'choices', 'action' => 'view', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }
             $this->Flash->error('The Choice could not be linked. Please try again', ['key' => 'link-choice-error']);
         }
