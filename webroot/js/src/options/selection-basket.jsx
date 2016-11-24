@@ -57,8 +57,8 @@ var SelectionBasket = React.createClass({
                                 instance={this.props.instance}
                                 optionIds={this.props.optionsSelectedTableOrder}
                                 options={this.props.options}
-                                removeButton={true}
-                                removeHandler={this.props.optionContainerHandlers.remove}
+                                removeButton={false}
+                                //removeHandler={this.props.optionContainerHandlers.remove}
                                 useCode={this.props.useCode}
                             />
                         :

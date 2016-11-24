@@ -379,8 +379,9 @@ var OptionContainer = React.createClass({
     handleOptionRemove: function(optionId) {
         //Get the exising IDs
         var optionsSelectedIds = this.state.optionsSelectedTableOrder.slice();
+        
         //Remove this ID from the selected array
-        optionsSelectedIds.splice(optionsSelectedIds.findIndex(function(element) { return element === optionId }), 1);
+        optionsSelectedIds.splice(optionsSelectedIds.indexOf(optionId), 1);
         
         var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
         
