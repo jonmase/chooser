@@ -132,10 +132,10 @@ class OptionsController extends AppController
                 //$instance = $instanceQuery->first()->toArray();
                 $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->processForView($instanceQuery->first());
 
-                //If the user has confirmed a selection, show the review page
-                //Or if the deadline and extension have both passed, show the review page
+                //If the user has confirmed a selection, show the confirmed page
+                //Or if the deadline and extension have both passed, show the confirmed page
                 if((!empty($instance['selections']) && $instance['selections'][0]['confirmed']) || ($instance['deadline']['passed'] && $instance['extension']['passed'])) {
-                    $action = 'review';
+                    $action = 'confirmed';
                 }
                 else {
                     $action = 'view';

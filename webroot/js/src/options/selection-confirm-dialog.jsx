@@ -22,7 +22,7 @@ var SelectionConfirmDialog = React.createClass({
             />,
             <FlatButton
                 key="submit"
-                label="Confirm"
+                label="Submit"
                 onTouchTap={this.handleConfirm}
                 primary={true}
                 type="submit"
@@ -38,15 +38,23 @@ var SelectionConfirmDialog = React.createClass({
                 open={this.props.open}
                 title="Confirm Submission"
             >
-                <Warnings
-                    allowSubmit={this.props.selection.allowSubmit}
-                    rules={this.props.rules}
-                    ruleWarnings={this.props.selection.ruleWarnings}
-                />
+                {(this.props.selection.ruleWarnings) && 
+                    <div>
+                        <h5>Warnings</h5>
+                        <p>You can still submit your choices despite these warnings:</p>
+                        <Warnings
+                            allowSubmit={this.props.selection.allowSubmit}
+                            rules={this.props.rules}
+                            ruleWarnings={this.props.selection.ruleWarnings}
+                        />
+                    </div>
+                }
 
-                <EditableWarning
-                    instance={this.props.instance.instance}
-                />
+                <div style={{marginTop: '2em'}}>
+                    <EditableWarning
+                        instance={this.props.instance.instance}
+                    />
+                </div>
             </Dialog>
         );
     }

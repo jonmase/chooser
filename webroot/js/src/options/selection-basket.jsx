@@ -1,52 +1,63 @@
 import React from 'react';
-import Dimensions from 'react-dimensions'
 
-import AppBar from 'material-ui/AppBar';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import Drawer from 'material-ui/Drawer';
-import IconButton from 'material-ui/IconButton';
-import Paper from 'material-ui/Paper';
 
 import OptionList from './option-list.jsx';
 import Warnings from './selection-warnings.jsx';
 
 var SelectionBasket = React.createClass({
     render: function() {
-        var paperDepth = 1;
-        var paperRounded = false;
-        var paperStyle = {padding: '16px', margin: '15px 0'};
-        
         return (
             <div>
                 {(this.props.selection.ruleWarnings)&&
-                    <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
-                        <Warnings
-                            allowSubmit={this.props.selection.allowSubmit}
-                            rules={this.props.rules}
-                            ruleWarnings={this.props.selection.ruleWarnings}
+                    <Card className="page-card">
+                        <CardHeader 
+                            title="Warnings" 
+                            subtitle="You cannot submit your choices at the moment. Please correct the warnings marked with a *"
                         />
-                    </Paper>
+                        <CardText style={{paddingTop: 0}}>
+                            <Warnings
+                                allowSubmit={this.props.selection.allowSubmit}
+                                rules={this.props.rules}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />
+                        </CardText>
+                        {(!this.props.selection.allowSubmit) && 
+                            <CardActions>
+                                <RaisedButton 
+                                    label="Amend Choices" 
+                                    onTouchTap={this.props.optionContainerHandlers.amend} 
+                                    primary={true} 
+                                />
+                            </CardActions>
+                        }
+                    </Card>
                 }
                 
-                <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>
-                    <p style={{margin: 0}}>You have chosen the following options:</p>
-                    {(this.props.optionsSelectedTableOrder.length > 0)?
-                        <OptionList
-                            action="view"
-                            instance={this.props.instance}
-                            optionIds={this.props.optionsSelectedTableOrder}
-                            options={this.props.options}
-                            removeButton={true}
-                            removeHandler={this.props.optionContainerHandlers.remove}
-                            useCode={this.props.useCode}
-                        />
-                    :
-                        <p>No options chosen</p>
-                    }
-                </Paper>
+                <Card className="page-card">
+                    <CardHeader title="Your Choices" />
+                    <CardText style={{paddingTop: 0}}>
+                        {/*<p style={{margin: 0}}>You have chosen the following options:</p>*/}
+                        {(this.props.optionsSelectedTableOrder.length > 0)?
+                            <OptionList
+                                action="view"
+                                instance={this.props.instance}
+                                optionIds={this.props.optionsSelectedTableOrder}
+                                options={this.props.options}
+                                removeButton={true}
+                                removeHandler={this.props.optionContainerHandlers.remove}
+                                useCode={this.props.useCode}
+                            />
+                        :
+                            <p>No options chosen</p>
+                        }
+                    </CardText>
+                </Card>
             </div>
         );
     }
 });
 
-module.exports = Dimensions()(SelectionBasket);
+module.exports = SelectionBasket;

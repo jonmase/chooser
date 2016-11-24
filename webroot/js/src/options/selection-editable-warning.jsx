@@ -4,7 +4,9 @@ import DateTime from '../elements/display/datetime.jsx';
 
 var SelectionEditableWarning = React.createClass({
     render: function() {
-        var style={};
+        var style={
+            marginBottom: 0,
+        };
         
         if(this.props.noTopMargin) {
             style.marginTop = 0;
@@ -14,7 +16,7 @@ var SelectionEditableWarning = React.createClass({
             <p style={style}>
                 <strong>Please Note: </strong>
                 {(this.props.instance.editable)?
-                    <span>You will be able to return and change your choices until the deadline at&nbsp;
+                    <span>You will be able to return and amend your choices until the deadline at&nbsp;
                         {!this.props.instance.deadline.passed?
                             <DateTime value={this.props.instance.deadline} />
                         :
@@ -22,7 +24,7 @@ var SelectionEditableWarning = React.createClass({
                         }
                     </span>
                 :
-                    <span>Once you Confirm, you will not be able to change your choices.</span>
+                    <span>Once you Confirm, you will not be able to amend your choices.</span>
                 }
             </p>
         );

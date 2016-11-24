@@ -9,12 +9,12 @@ var SelectionWarnings = React.createClass({
         if(this.props.ruleWarnings) {
             return (
                 <div>
-                    <h5 style={{marginTop: 0}}>Warnings</h5>
-                    {(this.props.allowSubmit)?
+                    {/*<h5 style={{marginTop: 0}}>Warnings</h5>*/}
+                    {/*(this.props.allowSubmit)?
                         <p>You can still submit your choices despite these warnings.</p>
                     :
                         <p>You cannot submit your choices at the moment. Please correct the warnings marked with a *.</p>
-                    }
+                    */}
                     {this.props.ruleWarnings.map(function(warning) {
                         var rule = this.props.rules.rules[this.props.rules.indexesById[warning.ruleId]];
                         

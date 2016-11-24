@@ -1,103 +1,105 @@
 import React from 'react';
 
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-import Paper from 'material-ui/Paper';
+import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import OptionList from './option-list.jsx';
+import Warnings from './selection-warnings.jsx';
+import EditableWarning from './selection-editable-warning.jsx';
 
-import Text from '../elements/display/text-labelled.jsx';
-import DateTime from '../elements/display/datetime.jsx';
+import MultilineField from '../elements/fields/multiline-text.jsx';
 
-var styles = {
-    cardText: {
-        paddingTop: '0px',
-    }
-};
-    
 var SelectionReview = React.createClass({
     render: function() {
-        var submissionMessage = '';
-        var headerTitle = '';
-        if(!this.props.selection.selection.confirmed) {
-            headerTitle = 'Choices Not Submitted';
-            if(this.props.instance.instance.deadline.passed || this.props.instance.instance.extension.passed) {
-                submissionMessage = 'You did not submit your choices and the deadline has now passed.';
+        var content = <div>
+            <p style={{marginTop: 0}}>
+            {(this.props.instance.instance.preference_instructions)&&
+                <span>{this.props.instance.instance.preference_instructions}</span>
             }
-            else {
-                submissionMessage = 'You have not submitted any choices.';
+                
+            {(this.props.instance.instance.comments_per_option_instructions)&&
+                <span>{this.props.instance.instance.comments_per_option_instructions}</span>
             }
-        }
-        else {
-            headerTitle = 'Choices Submitted';
-            submissionMessage = <span>You submitted your choices at <DateTime value={this.props.selection.selection.modified} />.</span>;
-        }
+            </p>
+            
+            {(this.props.optionsSelectedPreferenceOrder.length > 0)?
+                <div style={{width: '100%'}}>
+                    {/*<p>You have chosen the following options:</p>*/}
+                    <OptionList
+                        action="confirm"
+                        handleOrderChange={this.props.optionContainerHandlers.orderChange}
+                        handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
+                        instance={this.props.instance.instance}
+                        optionIds={this.props.optionsSelectedPreferenceOrder}
+                        options={this.props.options}
+                        optionsSelected={this.props.optionsSelected}
+                        rankSelectsDisabled={this.props.rankSelectsDisabled}
+                        removeButton={false}
+                        useCode={this.props.choice.use_code}
+                    />
+                </div>
+            :
+                <div>No options chosen</div>
+            }
+            
+            {(this.props.instance.instance.comments_overall)?
+                <MultilineField field={{
+                    label: "Comments",
+                    instructions: this.props.instance.instance.comments_overall_instructions,
+                    name: "selection.comments",
+                    onChange: this.props.optionContainerHandlers.overallCommentsChange,
+                    section: true,
+                    value: this.props.selection.selection.comments,
+                }} />
+            :""}
+            
+            <EditableWarning
+                instance={this.props.instance.instance}
+            />
+        </div>;
     
         return (
             <div>
-                <Card className="page-card">
-                    <CardHeader title={headerTitle} />
-                    <CardText style={{paddingTop: 0}}>
-                        <p style={{marginTop: 0}}>
-                            {submissionMessage}
-                        </p>
-                        <div>
-                            {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
-                                <div>
-                                    <span>You can change your choices until the deadline at&nbsp;<strong>
-                                        {(!this.props.instance.instance.deadline.passed)?
-                                            <DateTime value={this.props.instance.instance.deadline} />
-                                        :
-                                            <DateTime value={this.props.instance.instance.extension} />
-                                        }
-                                    </strong>.</span>
-                                    {/*
-                                    <div style={{marginTop: '10px'}}>
-                                        <RaisedButton
-                                            label="Change"
-                                            onTouchTap={this.props.optionContainerHandlers.backToEdit}
-                                            primary={false}
-                                        />
-                                    </div>
-                                    */}
-                                </div>
-                            }
-                        </div>
-                    </CardText>
-                </Card>
-                
-                {(this.props.selection.selection.confirmed) &&
+                {(this.props.selection.ruleWarnings)&&
                     <Card className="page-card">
-                        <CardHeader title="Your Choices" />
+                        <CardHeader 
+                            title="Warnings" 
+                            subtitle="You can still submit your choices despite these warnings"
+                        />
                         <CardText style={{paddingTop: 0}}>
-                            <div>
-                                {(this.props.optionsSelectedPreferenceOrder.length > 0)?
-                                    <div style={{width: '100%'}}>
-                                        <OptionList
-                                            action="review"
-                                            instance={this.props.instance.instance}
-                                            optionIds={this.props.optionsSelectedPreferenceOrder}
-                                            options={this.props.options}
-                                            optionsSelected={this.props.optionsSelected}
-                                            removeButton={false}
-                                            style={{paddingTop: 0}}
-                                            useCode={this.props.choice.use_code}
-                                        />
-                                    </div>
-                                :
-                                    <div>No options chosen</div>
-                                }
-                            </div>
-                            <div>
-                                {(this.props.instance.instance.comments_overall && this.props.selection.selection.comments)?
-                                    <Text 
-                                        value={this.props.selection.selection.comments}
-                                        label="Comments"
-                                    />
-                                :""}
-                            </div>
+                            <Warnings
+                                allowSubmit={this.props.selection.allowSubmit}
+                                rules={this.props.rules}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />
                         </CardText>
                     </Card>
                 }
+                
+                {/*(this.props.selection.ruleWarnings)?
+                    <Paper rounded={paperRounded} zDepth={paperDepth} style={paperStyle}>*/}
+                <Card className="page-card">
+                    <CardHeader title="Your Choices" />
+                    <CardText style={{paddingTop: 0}}>
+                        {content}
+                    </CardText>
+                    <CardActions>
+                        <RaisedButton 
+                            label="Submit" 
+                            onTouchTap={this.props.optionContainerHandlers.confirm} 
+                            primary={true} 
+                        />
+                        <FlatButton 
+                            label="Amend Choices" 
+                            onTouchTap={this.props.optionContainerHandlers.amend} 
+                        />
+                    </CardActions>
+                </Card>
+                    {/*</Paper>
+                :
+                    content
+                */}
             </div>
         );
     }
