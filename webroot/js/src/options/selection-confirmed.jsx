@@ -55,13 +55,15 @@ var SelectionConfirmed = React.createClass({
                             }
                         </div>
                     </CardText>
-                    <CardActions>
-                        <RaisedButton 
-                            label="Change Choices" 
-                            onTouchTap={this.props.optionContainerHandlers.backToEdit} 
-                            primary={true} 
-                        />
-                    </CardActions>
+                    {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
+                        <CardActions>
+                            <RaisedButton 
+                                label="Change Choices" 
+                                onTouchTap={this.props.optionContainerHandlers.backToEdit} 
+                                primary={true} 
+                            />
+                        </CardActions>
+                    } 
                 </Card>
                 
                 {(this.props.selection.selection.confirmed) &&
