@@ -4,9 +4,6 @@ import FormsyRadioGroup from 'formsy-material-ui/lib/FormsyRadioGroup';
 import FormsyRadio from 'formsy-material-ui/lib/FormsyRadio';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import ChooserTheme from '../elements/theme.jsx';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-
 var style = {
     marginBottom: 30,
 };
@@ -37,7 +34,7 @@ var LinkChoiceForm = React.createClass({
     },
 
     render: function() {
-        var radioNodes = this.props.data.map(function(choice) {
+        var radioNodes = this.props.choices.map(function(choice) {
             return (
                 <FormsyRadio
                     key={choice.Choices.id}
@@ -48,31 +45,30 @@ var LinkChoiceForm = React.createClass({
         });
 
         return (
-            <MuiThemeProvider muiTheme={ChooserTheme}>
-                <Formsy.Form
-                    id="link_choice_form"
-                    method="POST"
-                    action="link"
-                    onValid={this.enableButton}
-                    onInvalid={this.disableButton}
-                    onValidSubmit={this.submitForm}
-                >
-                    <div className="section">
-                        <FormsyRadioGroup 
-                            name="choice"
-                            required
-                        >
-                            {radioNodes}
-                        </FormsyRadioGroup>
-                    </div>
-                    <RaisedButton 
-                        label="Select" 
-                        primary={true} 
-                        type="submit"
-                        disabled={!this.state.canSubmit}
-                    />
-                </Formsy.Form>
-            </MuiThemeProvider>
+            <Formsy.Form
+                id="link_choice_form"
+                method="POST"
+                action="link"
+                onValid={this.enableButton}
+                onInvalid={this.disableButton}
+                onValidSubmit={this.submitForm}
+            >
+                <h3 className="no-top-margin">Select existing Choice</h3>
+                <div className="section">
+                    <FormsyRadioGroup 
+                        name="choice"
+                        required
+                    >
+                        {radioNodes}
+                    </FormsyRadioGroup>
+                </div>
+                <RaisedButton 
+                    label="Select" 
+                    primary={true} 
+                    type="submit"
+                    disabled={!this.state.canSubmit}
+                />
+            </Formsy.Form>
         );
     }
 });
