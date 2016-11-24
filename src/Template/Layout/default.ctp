@@ -45,15 +45,11 @@
     <?= $this->fetch('css') ?>
 </head>
 <body>
-    <nav id="topbar">
-    </nav>
-    <?= $this->Flash->render() ?>
     <main class="container-fluid clearfix">
         <?= $this->fetch('content') ?>
     </main>
     <footer>
     </footer>
-    <?php //echo $this->Html->script('node_modules/jquery/dist/jquery.min', ['block' => 'script']); ?>
     <?= $this->fetch('script') ?>
 </body>
 </html>
