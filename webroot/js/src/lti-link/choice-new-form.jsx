@@ -51,14 +51,14 @@ var NewChoiceForm = React.createClass({
                         required
                     />
                 </div>
-                <div className="section">
+                {/*<div className="section">
                     <FormsyToggle
                         label="Allow indirect access to this Choice (need to expand on what this means)"
                         defaultToggled={true}
                         labelPosition="right"
                         name="indirect_access"
                     />
-                </div>
+                </div>*/}
                 <RaisedButton 
                     label="Create" 
                     primary={true} 
