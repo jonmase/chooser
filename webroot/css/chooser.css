@@ -20,6 +20,11 @@ body {
     width: 100% !important;
 }
 
+/* FIXES */
+/*Prevent IE from showing it's clear button in text fields, which shows up as an ugly, big black X*/
+input[type=text]::-ms-clear { display: none; width : 0; height: 0; }
+input[type=text]::-ms-reveal { display: none; width : 0; height: 0; }
+
 /* GRID STYLES */
 @media (min-width: 64em) {
     .col-md-lg-hidden {
