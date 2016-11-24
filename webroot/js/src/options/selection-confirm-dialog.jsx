@@ -4,6 +4,9 @@ import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
 import Warnings from './selection-warnings.jsx';
+import WarningsTitle from './selection-warnings-title.jsx';
+import WarningsExplanation from './selection-warnings-explanation.jsx';
+import WarningIcon from '../elements/icons/warning.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
 
 var SelectionConfirmDialog = React.createClass({
@@ -40,8 +43,19 @@ var SelectionConfirmDialog = React.createClass({
             >
                 {(this.props.selection.ruleWarnings) && 
                     <div>
-                        <h5>Warnings</h5>
-                        <p>You can still submit your choices despite these warnings:</p>
+                        <h5>
+                            <span style={{margintRight: '5px'}}><WarningIcon red={true} large={true} top={10} /></span>
+                            <WarningsTitle 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />
+                        </h5>
+                        <p>
+                            <WarningsExplanation 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />
+                        </p>
                         <Warnings
                             allowSubmit={this.props.selection.allowSubmit}
                             rules={this.props.rules}

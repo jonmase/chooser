@@ -3,9 +3,14 @@ import React from 'react';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import FontIcon from 'material-ui/FontIcon';
+import Avatar from 'material-ui/Avatar';
 
 import OptionList from './option-list.jsx';
 import Warnings from './selection-warnings.jsx';
+import WarningsTitle from './selection-warnings-title.jsx';
+import WarningsExplanation from './selection-warnings-explanation.jsx';
+import WarningIcon from '../elements/icons/warning.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
 
 import MultilineField from '../elements/fields/multiline-text.jsx';
@@ -64,8 +69,15 @@ var SelectionReview = React.createClass({
                 {(this.props.selection.ruleWarnings)&&
                     <Card className="page-card">
                         <CardHeader 
-                            title="Warnings" 
-                            subtitle="You can still submit your choices despite these warnings"
+                            avatar={<Avatar icon={<WarningIcon orange={true} large={true} />} backgroundColor='#fff' />}
+                            title={<WarningsTitle 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />}
+                            subtitle={<WarningsExplanation 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />}
                         />
                         <CardText style={{paddingTop: 0}}>
                             <Warnings

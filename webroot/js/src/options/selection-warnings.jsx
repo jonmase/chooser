@@ -1,20 +1,15 @@
 import React from 'react';
 
-import Paper from 'material-ui/Paper';
-
 import TextLabelled from '../elements/display/text-labelled.jsx';
+import WarningIcon from '../elements/icons/warning.jsx';
 
 var SelectionWarnings = React.createClass({
     render: function() {
+        var warningIcon = <span style={{marginRight: '5px'}}>{<WarningIcon red={true} top={4} />}</span>;
+    
         if(this.props.ruleWarnings) {
             return (
                 <div>
-                    {/*<h5 style={{marginTop: 0}}>Warnings</h5>*/}
-                    {/*(this.props.allowSubmit)?
-                        <p>You can still submit your choices despite these warnings.</p>
-                    :
-                        <p>You cannot submit your choices at the moment. Please correct the warnings marked with a *.</p>
-                    */}
                     {this.props.ruleWarnings.map(function(warning) {
                         var rule = this.props.rules.rules[this.props.rules.indexesById[warning.ruleId]];
                         
@@ -26,7 +21,7 @@ var SelectionWarnings = React.createClass({
                                 return (
                                     <TextLabelled
                                         key={ruleKey}                                                 
-                                        label={(rule.hard?"*":"") + ruleName}                                                 
+                                        label={<span>{(rule.hard)&&warningIcon}{ruleName}</span>}                                                 
                                         value={category.ruleWarning}
                                     />
                                 );
@@ -37,7 +32,7 @@ var SelectionWarnings = React.createClass({
                             return (
                                 <TextLabelled
                                     key={rule.name}                                                 
-                                    label={(rule.hard?"*":"") + rule.name}                                                 
+                                    label={<span>{(rule.hard)&&warningIcon}{rule.name}</span>}                                                 
                                     value={warning.ruleWarning}
                                 />
                             );

@@ -3,9 +3,13 @@ import React from 'react';
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import Avatar from 'material-ui/Avatar';
 
 import OptionList from './option-list.jsx';
 import Warnings from './selection-warnings.jsx';
+import WarningsTitle from './selection-warnings-title.jsx';
+import WarningsExplanation from './selection-warnings-explanation.jsx';
+import WarningIcon from '../elements/icons/warning.jsx';
 
 var SelectionBasket = React.createClass({
     render: function() {
@@ -14,8 +18,15 @@ var SelectionBasket = React.createClass({
                 {(this.props.selection.ruleWarnings)&&
                     <Card className="page-card">
                         <CardHeader 
-                            title="Warnings" 
-                            subtitle="You cannot submit your choices at the moment. Please correct the warnings marked with a *"
+                            avatar={<Avatar icon={<WarningIcon red={true} large={true} />} backgroundColor='#fff' />}
+                            title={<WarningsTitle 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />}
+                            subtitle={<WarningsExplanation 
+                                allowSubmit={this.props.selection.allowSubmit}
+                                ruleWarnings={this.props.selection.ruleWarnings}
+                            />}
                         />
                         <CardText style={{paddingTop: 0}}>
                             <Warnings
