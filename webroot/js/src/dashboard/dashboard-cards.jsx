@@ -54,7 +54,7 @@ var SectionsCards = React.createClass({
 
         return (
             <Container topbar={topbar}>
-                <h1 class="page-title">Dashboard</h1>
+                <h1 className="page-title">Dashboard</h1>
                 <div style={styles.root} className="row">
                     {this.props.sections.map(function(card) {
                         return (
@@ -83,7 +83,6 @@ var SectionsCards = React.createClass({
                                                 <FlatButton 
                                                     label={action.label} 
                                                     key={action.label} 
-                                                    linkButton={true}
                                                     href={action.url} 
                                                 />
                                             );
