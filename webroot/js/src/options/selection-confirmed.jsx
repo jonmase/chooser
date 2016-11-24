@@ -44,7 +44,7 @@ var SelectionConfirmed = React.createClass({
                         <div>
                             {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
                                 <div>
-                                    <span>You can amend your choices until the deadline at&nbsp;<strong>
+                                    <span>You can change your choices until the deadline at&nbsp;<strong>
                                         {(!this.props.instance.instance.deadline.passed)?
                                             <DateTime value={this.props.instance.instance.deadline} />
                                         :
@@ -57,7 +57,7 @@ var SelectionConfirmed = React.createClass({
                     </CardText>
                     <CardActions>
                         <RaisedButton 
-                            label="Amend Choices" 
+                            label="Change Choices" 
                             onTouchTap={this.props.optionContainerHandlers.backToEdit} 
                             primary={true} 
                         />

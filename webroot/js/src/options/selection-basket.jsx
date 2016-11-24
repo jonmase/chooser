@@ -27,8 +27,8 @@ var SelectionBasket = React.createClass({
                         {(!this.props.selection.allowSubmit) && 
                             <CardActions>
                                 <RaisedButton 
-                                    label="Amend Choices" 
-                                    onTouchTap={this.props.optionContainerHandlers.amend} 
+                                    label="Change Choices" 
+                                    onTouchTap={this.props.optionContainerHandlers.change} 
                                     primary={true} 
                                 />
                             </CardActions>

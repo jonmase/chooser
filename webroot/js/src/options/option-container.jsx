@@ -947,7 +947,7 @@ var OptionContainer = React.createClass({
                     <Basket
                         instance={this.state.instance}
                         optionContainerHandlers={{
-                            amend: this.handleSelectionBackToEdit,
+                            change: this.handleSelectionBackToEdit,
                             remove: this.handleOptionRemove,
                             submit: this.handleSelectionBasketSubmit,
                         }}
@@ -974,7 +974,7 @@ var OptionContainer = React.createClass({
                                 choice={this.props.choice}
                                 instance={this.state.instance}
                                 optionContainerHandlers={{
-                                    amend: this.handleSelectionBackToEdit,
+                                    change: this.handleSelectionBackToEdit,
                                     confirm: this.handleSelectionConfirm,
                                     orderChange: this.handleSelectionOrderChange,
                                     overallCommentsChange: this.handleSelectionOverallCommentsChange,

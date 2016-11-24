@@ -91,8 +91,8 @@ var SelectionReview = React.createClass({
                             primary={true} 
                         />
                         <FlatButton 
-                            label="Amend Choices" 
-                            onTouchTap={this.props.optionContainerHandlers.amend} 
+                            label="Change Choices" 
+                            onTouchTap={this.props.optionContainerHandlers.change} 
                         />
                     </CardActions>
                 </Card>
