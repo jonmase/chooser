@@ -82,20 +82,23 @@ var ChoiceInstructions = React.createClass({
                             {/*Show the instructions, deadline and rules*/}
                             {(instance.opens.passed || this.props.role === 'admin' || this.props.role === 'extra')&&
                                 <div className="row">
-                                    <div className="col-md-6">
+                                    <div className="col-xs-12 col-md-6">
                                         <div style={{marginRight: '20px'}}>
-                                            <Wysiwyg value={instance.choosing_instructions} />
+                                            <h5>Deadline</h5>
                                             {(instance.deadline)&&
                                                 <div>
-                                                    <DateTimeLabelled label="Deadline" value={instance.deadline} />
+                                                    <DateTime value={instance.deadline} />
+                                                    {/*<DateTimeLabelled label="Deadline" value={instance.deadline} />*/}
                                                     {/*(instance.extension)&&
                                                         <DateTimeLabelled label="Extension" value={instance.extension} />
                                                     */}
                                                 </div>
                                             }
+                                            <h5>Instructions</h5>
+                                            <Wysiwyg value={instance.choosing_instructions} />
                                         </div>
                                     </div>
-                                    <div className="col-md-6">
+                                    <div className="col-xs-12 col-md-6">
                                         <Rules rules={this.props.rules} />
                                     </div>
                                 </div>
