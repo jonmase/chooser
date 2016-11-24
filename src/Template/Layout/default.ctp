@@ -29,14 +29,14 @@
     <?= $this->Html->css('https://fonts.googleapis.com/css?family=Roboto:400,300,500,700'); //Roboto font ?>
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
     <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('/js/node_modules/flexboxgrid/dist/flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('/js/node_modules/alloyeditor/dist/alloy-editor/assets/alloy-editor-ocean-min.css'); //Alloy Editor ?>
+    <?= $this->Html->css('flexboxgrid.min.css'); //Flexboxgrid ?>
+    <?= $this->Html->css('alloy-editor-ocean-min.css'); //Alloy Editor ?>
     <?= $this->Html->css('chooser'); ?>
 
     <!--[if lt IE 9]>
         <script src="js/node_modules/html5shiv/dist/html5shiv.min.js"></script>
     <![endif]-->
-    <?php echo $this->Html->script('node_modules/jquery/dist/jquery.min'); ?>
+    <?php echo $this->Html->script('dist/jquery.min'); ?>
     <script>
       window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
       window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
@@ -45,15 +45,11 @@
     <?= $this->fetch('css') ?>
 </head>
 <body>
-    <nav id="topbar">
-    </nav>
-    <?= $this->Flash->render() ?>
     <main class="container-fluid clearfix">
         <?= $this->fetch('content') ?>
     </main>
     <footer>
     </footer>
-    <?php //echo $this->Html->script('node_modules/jquery/dist/jquery.min', ['block' => 'script']); ?>
     <?= $this->fetch('script') ?>
 </body>
 </html>
