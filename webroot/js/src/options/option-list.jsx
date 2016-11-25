@@ -55,6 +55,7 @@ var OptionList = React.createClass({
                     if(this.props.useCode) {
                         var primaryText = option.code;
                         var secondaryText = option.title;
+                        var itemHeight = '71px'
                     }
                     else {
                         var primaryText = option.title;
@@ -65,6 +66,8 @@ var OptionList = React.createClass({
                         if(this.props.action === 'confirm') {
                             secondaryText = " ";
                         }
+                        
+                        var itemHeight = '47px'
                     }
                     
                     return (
@@ -88,7 +91,7 @@ var OptionList = React.createClass({
                                 </div>
                             :""}
                             {(showPreferenceValues)?
-                                <div style={{float: 'left', width: '20px', display: 'table', height: '71px', tableLayout: 'fixed'}}>
+                                <div style={{float: 'left', width: '20px', display: 'table', height: itemHeight, tableLayout: 'fixed'}}>
                                     <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
                                         {(this.props.instance.preference_type === 'rank')?
                                             (this.props.optionsSelected[optionId].rank + 1)
@@ -110,7 +113,7 @@ var OptionList = React.createClass({
                                 </div>
                             :""}
                             {(showCommentsTextPerOption)?
-                                <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: ((showPreferenceInputs || showPreferenceValues)?'71px':'47px'), tableLayout: 'fixed', textAlign: 'right'}}>
+                                <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: itemHeight, tableLayout: 'fixed', textAlign: 'right'}}>
                                     <div style={{display: 'table-cell', verticalAlign: 'middle', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
                                         {this.props.optionsSelected[optionId].comments}
                                     </div>
