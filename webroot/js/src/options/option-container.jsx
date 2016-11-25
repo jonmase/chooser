@@ -72,9 +72,9 @@ var OptionContainer = React.createClass({
                         };
                         
                         
-                        //If the user has selected some options, do not sow the instructions
+                        //If the user has selected some options, do not show the instructions
                         if(data.selection.id && !data.choosingInstance.deadline.passed) {
-                            stateData.showInfo = false;
+                            stateData.showInstructions = false;
                         }
                         
                         //If selection is confirmed, add it to the confirmedSelection state data
@@ -151,7 +151,7 @@ var OptionContainer = React.createClass({
                 ruleWarnings: false,
                 selection: [],
             },
-            showInfo: true,
+            showInstructions: true,
             snackbar: {
                 open: false,
                 message: '',
@@ -441,6 +441,13 @@ var OptionContainer = React.createClass({
         return optionsSelected;
     },
     
+    handleInstructionsExpandChange(newExpandedState) {
+        //console.log("Expand change: " + newExpandedState);
+        this.setState({
+            showInstructions: newExpandedState,
+        })
+    },
+    
     handleSelectionAbandonChanges: function() {
         console.log('abandon changes');
         
@@ -541,7 +548,7 @@ var OptionContainer = React.createClass({
     
     handleSelectionInfoToggle: function() {
         this.setState({
-            showInfo: !this.state.showInfo
+            showInstructions: !this.state.showInstructions
         });
     },
     
@@ -890,140 +897,6 @@ var OptionContainer = React.createClass({
         return optionIndexesById;
     },
     
-    getContent: function(action) {
-        switch(action) {
-            case 'edit': //Edit
-                return (
-                    <OptionsTable
-                        action={this.state.action}
-                        choice={this.props.choice}
-                        instance={this.state.instance}
-                        optionContainerHandlers={{
-                            change: this.handleOptionChange,
-                            submit: this.handleOptionSubmit,
-                            dialogOpen: this.handleOptionDialogOpen,
-                            dialogClose: this.handleOptionDialogClose,
-                            selectOption: this.handleOptionEditSelect,
-                            sort: this.handleSort,
-                            wysiwygChange: this.handleWysiwygChange,
-                        }}
-                        optionEditing={this.state.optionEditing}
-                        options={this.state.options}
-                        optionSaveButton={this.state.optionSaveButton}
-                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                        optionsSort={this.state.optionsSort}
-                    />
-                );
-            case 'view': //View
-                return (
-                    <div>
-                        <Instructions
-                            abandonHandler={this.handleSelectionAbandonChanges}
-                            confirmedSelection={this.state.confirmedSelection}
-                            expanded={this.state.showInfo}
-                            instance={this.state.instance}
-                            role={this.props.role}
-                            rules={this.state.rules.rules}
-                        />
-                        {(this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed) &&
-                            <OptionsTable
-                                action={this.state.action}
-                                choice={this.props.choice}
-                                favourites={this.state.favourites}
-                                instance={this.state.instance}
-                                optionContainerHandlers={{
-                                    favourite: this.handleFavourite,
-                                    selectOption: this.handleOptionSelect,
-                                    sort: this.handleSort,
-                                }}
-                                options={this.state.options}
-                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                                optionsSort={this.state.optionsSort}
-                            />
-                        }
-                    </div>
-                );
-            case 'basket': //Basket
-                return (
-                    <Basket
-                        instance={this.state.instance}
-                        optionContainerHandlers={{
-                            change: this.handleSelectionBackToEdit,
-                            remove: this.handleOptionRemove,
-                            submit: this.handleSelectionBasketSubmit,
-                        }}
-                        options={this.state.options}
-                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                        rules={this.state.rules}
-                        selection={this.state.selection}
-                        useCode={this.props.choice.use_code}
-                    />
-                );    
-            case 'review': //Review
-                return (
-                    <div>
-                        <Formsy.Form
-                            id="selection_confirm"
-                            method="POST"
-                            onValid={this.enableSelectionConfirmButton}
-                            onInvalid={this.disableSelectionConfirmButton}
-                            onValidSubmit={this.handleSelectionFinalConfirm}
-                            noValidate={true}
-                            ref="confirm"
-                        >
-                            <Review
-                                choice={this.props.choice}
-                                instance={this.state.instance}
-                                optionContainerHandlers={{
-                                    change: this.handleSelectionBackToEdit,
-                                    confirm: this.handleSelectionConfirm,
-                                    orderChange: this.handleSelectionOrderChange,
-                                    overallCommentsChange: this.handleSelectionOverallCommentsChange,
-                                    optionCommentsChange: this.handleSelectionOptionCommentsChange,
-                                }}
-                                options={this.state.options}
-                                optionsSelected={this.state.optionsSelected}
-                                optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                                rankSelectsDisabled={this.state.rankSelectsDisabled}
-                                rules={this.state.rules}
-                                selection={this.state.selection}
-                            />
-                        </Formsy.Form>
-                        <ConfirmDialog 
-                            open={this.state.confirmDialogOpen}
-                            handlers={{
-                                close: this.handleSelectionConfirmDialogClose,
-                                submit: this.handleSelectionConfirm,
-                            }}
-                            instance={this.state.instance}
-                            rules={this.state.rules}
-                            selection={this.state.selection}
-                        />
-                    </div>
-                );
-
-            case 'confirmed': //Confirmed
-                return (
-                    <Confirmed
-                        choice={this.props.choice}
-                        instance={this.state.instance}
-                        optionContainerHandlers={{
-                            backToEdit: this.handleSelectionBackToEdit,
-                        }}
-                        options={this.state.options}
-                        optionsSelected={this.state.optionsSelected}
-                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                        selection={this.state.selection}
-                    />
-                );
-            default:
-                return null;
-        }
-
-
-    },
-    
     getTopbar: function(action) {
         var title = <AppTitle subtitle={this.props.choice.name} />;
         var topbarIconLeft=null;
@@ -1138,6 +1011,141 @@ var OptionContainer = React.createClass({
         );
     },
 
+    getContent: function(action) {
+        switch(action) {
+            case 'edit': //Edit
+                return (
+                    <OptionsTable
+                        action={this.state.action}
+                        choice={this.props.choice}
+                        instance={this.state.instance}
+                        optionContainerHandlers={{
+                            change: this.handleOptionChange,
+                            submit: this.handleOptionSubmit,
+                            dialogOpen: this.handleOptionDialogOpen,
+                            dialogClose: this.handleOptionDialogClose,
+                            selectOption: this.handleOptionEditSelect,
+                            sort: this.handleSort,
+                            wysiwygChange: this.handleWysiwygChange,
+                        }}
+                        optionEditing={this.state.optionEditing}
+                        options={this.state.options}
+                        optionSaveButton={this.state.optionSaveButton}
+                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                        optionsSort={this.state.optionsSort}
+                    />
+                );
+            case 'view': //View
+                return (
+                    <div>
+                        <Instructions
+                            abandonHandler={this.handleSelectionAbandonChanges}
+                            confirmedSelection={this.state.confirmedSelection}
+                            expanded={this.state.showInstructions}
+                            expandChangeHandler={this.handleInstructionsExpandChange}
+                            instance={this.state.instance}
+                            role={this.props.role}
+                            rules={this.state.rules.rules}
+                        />
+                        {(this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed) &&
+                            <OptionsTable
+                                action={this.state.action}
+                                choice={this.props.choice}
+                                favourites={this.state.favourites}
+                                instance={this.state.instance}
+                                optionContainerHandlers={{
+                                    favourite: this.handleFavourite,
+                                    selectOption: this.handleOptionSelect,
+                                    sort: this.handleSort,
+                                }}
+                                options={this.state.options}
+                                optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                                optionsSort={this.state.optionsSort}
+                            />
+                        }
+                    </div>
+                );
+            case 'basket': //Basket
+                return (
+                    <Basket
+                        instance={this.state.instance}
+                        optionContainerHandlers={{
+                            change: this.handleSelectionBackToEdit,
+                            remove: this.handleOptionRemove,
+                            submit: this.handleSelectionBasketSubmit,
+                        }}
+                        options={this.state.options}
+                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                        rules={this.state.rules}
+                        selection={this.state.selection}
+                        useCode={this.props.choice.use_code}
+                    />
+                );    
+            case 'review': //Review
+                return (
+                    <div>
+                        <Formsy.Form
+                            id="selection_confirm"
+                            method="POST"
+                            onValid={this.enableSelectionConfirmButton}
+                            onInvalid={this.disableSelectionConfirmButton}
+                            onValidSubmit={this.handleSelectionFinalConfirm}
+                            noValidate={true}
+                            ref="confirm"
+                        >
+                            <Review
+                                choice={this.props.choice}
+                                instance={this.state.instance}
+                                optionContainerHandlers={{
+                                    change: this.handleSelectionBackToEdit,
+                                    confirm: this.handleSelectionConfirm,
+                                    orderChange: this.handleSelectionOrderChange,
+                                    overallCommentsChange: this.handleSelectionOverallCommentsChange,
+                                    optionCommentsChange: this.handleSelectionOptionCommentsChange,
+                                }}
+                                options={this.state.options}
+                                optionsSelected={this.state.optionsSelected}
+                                optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                                rankSelectsDisabled={this.state.rankSelectsDisabled}
+                                rules={this.state.rules}
+                                selection={this.state.selection}
+                            />
+                        </Formsy.Form>
+                        <ConfirmDialog 
+                            open={this.state.confirmDialogOpen}
+                            handlers={{
+                                close: this.handleSelectionConfirmDialogClose,
+                                submit: this.handleSelectionConfirm,
+                            }}
+                            instance={this.state.instance}
+                            rules={this.state.rules}
+                            selection={this.state.selection}
+                        />
+                    </div>
+                );
+
+            case 'confirmed': //Confirmed
+                return (
+                    <Confirmed
+                        choice={this.props.choice}
+                        instance={this.state.instance}
+                        optionContainerHandlers={{
+                            backToEdit: this.handleSelectionBackToEdit,
+                        }}
+                        options={this.state.options}
+                        optionsSelected={this.state.optionsSelected}
+                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                        rankSelectsDisabled={this.state.rankSelectsDisabled}
+                        selection={this.state.selection}
+                    />
+                );
+            default:
+                return null;
+        }
+
+
+    },
+    
     render: function() {
         return (
             <Container topbar={this.getTopbar(this.state.action)}>

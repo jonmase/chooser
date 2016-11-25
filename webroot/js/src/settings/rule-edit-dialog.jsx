@@ -111,7 +111,7 @@ var RuleDialog = React.createClass({
                     name: "warning",
                     //onChange: this.props.handlers.wysiwygChange,
                     section: true,
-                    value: rule.instructions,
+                    value: rule.warning,
                 }} />
                 <p>
                     <strong>Please Note:</strong> If you do not provide instructions or a warning message, these will be generated using the rule details provided below.

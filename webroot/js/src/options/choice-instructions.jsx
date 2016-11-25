@@ -22,6 +22,7 @@ var ChoiceInstructions = React.createClass({
             <Card 
                 className="page-card"
                 initiallyExpanded={this.props.expanded}
+                onExpandChange={this.props.expandChangeHandler}
             >
                 <CardHeader
                     title="Instructions & Rules"

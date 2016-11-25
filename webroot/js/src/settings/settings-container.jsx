@@ -84,8 +84,8 @@ var FormContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            ruleWysiwyg_instructions: '',
-            ruleWysiwyg_warning: '',
+            //ruleWysiwyg_instructions: '',
+            //ruleWysiwyg_warning: '',
         };
     },
     componentDidMount: function() {
@@ -256,8 +256,8 @@ var FormContainer = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        rule.instructions = this.state.ruleWysiwyg_instructions;
-        rule.warning = this.state.ruleWysiwyg_warning;
+        //rule.instructions = this.state.ruleWysiwyg_instructions;
+        //rule.warning = this.state.ruleWysiwyg_warning;
         
         //Get the IDs of the category field and option
         if(rule.scope === 'category') {
