@@ -39,7 +39,8 @@ class LtiConsumerController extends AppController
             if(!isset($_POST['lis_result_sourcedid']) && isset($_POST['lis_person_sourcedid'])) {
                 $_POST['lis_result_sourcedid'] = $_POST['lis_person_sourcedid'];
             }
-			require_once(ROOT . DS . 'vendor' . DS  . 'adurolms' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
+			//require_once(ROOT . DS . 'vendor' . DS  . 'adurolms' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
+			require_once(ROOT . DS . 'vendor' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
             
             //Connect to the database using the LTI data connector (not the Cake way!)
             //TODO: Could we do this in a more Cakey way?
@@ -99,7 +100,10 @@ class LtiConsumerController extends AppController
 
                             if(!empty($instructorDefaultRoles)) {
                                 foreach($instructorDefaultRoles as $role) {
-                                    $user->_joinData->$role = true;
+                                    //If role is not empty string, add it to the joinData
+                                    if($role !== '') {
+                                        $user->_joinData->$role = true;
+                                    }
                                 }
                             }
                         }
@@ -124,7 +128,7 @@ class LtiConsumerController extends AppController
                     else {
                         throw new ForbiddenException(__('There is no Choice associated with this link.'));
                     }
-               }
+                }
                 else {
                     throw new InternalErrorException(__('User details could not be saved.'));
                 }
