@@ -14,7 +14,7 @@ var styles = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-        width: '30%',
+        minWidth: '30%',
     },
 };
 
