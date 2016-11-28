@@ -60,9 +60,11 @@ var RuleDialog = React.createClass({
         
         if(this.props.containerState.ruleBeingEdited) {
             var rule = this.props.containerState.rules[this.props.containerState.ruleIndexesById[this.props.containerState.ruleBeingEdited]];
+            var title = 'Edit Rule'
         }
         else {
             var rule = {};
+            var title = 'Add Rule'
         }
         
         var allOptionsArray = [
@@ -75,7 +77,7 @@ var RuleDialog = React.createClass({
                 contentStyle={customDialogStyle}
                 dialogOnRequestClose={this.props.handlers.editDialogClose}
                 dialogOpen={this.props.containerState.ruleEditDialogOpen}
-                dialogTitle="Edit Rule"
+                dialogTitle={title}
                 formId="rule_form"
                 formOnValid={this.enableSubmitButton}
                 formOnInvalid={this.disableSubmitButton}

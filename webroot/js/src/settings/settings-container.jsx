@@ -12,6 +12,15 @@ import SettingsDialog from './settings-dialog.jsx';
 
 var update = require('react-addons-update');
 
+var ruleDefaults = {
+    type: 'number',
+    valueType: 'range',
+    combinedType: 'number_range',
+    scope: 'choice',
+    categoryFieldIndex: null,
+    categoryFieldOptionValue: null,
+};
+
 var FormContainer = React.createClass({
     loadInstanceFromServer: function() {
         var url = '../get-active/' + this.props.choice.id + '/settings.json';
@@ -60,12 +69,12 @@ var FormContainer = React.createClass({
             ruleBeingEdited: null,
             ruleSaveButtonEnabled: true,
             ruleSaveButtonLabel: 'Save',
-            ruleType: 'number',
-            ruleValueType: 'range',
-            ruleCombinedType: 'number_range',
-            ruleScope: 'choice',
-            ruleCategoryFieldIndex: null,
-            ruleCategoryFieldOptionValue: null,
+            ruleType: ruleDefaults.type,
+            ruleValueType: ruleDefaults.valueType,
+            ruleCombinedType: ruleDefaults.combinedType,
+            ruleScope: ruleDefaults.scope,
+            ruleCategoryFieldIndex: ruleDefaults.categoryFieldIndex,
+            ruleCategoryFieldOptionValue: ruleDefaults.categoryFieldOptionValue,
             ruleDeleteDialogOpen: false,
             ruleBeingDeleted: null,
             ruleDeleteButtonEnabled: true,
@@ -164,6 +173,7 @@ var FormContainer = React.createClass({
         }
         
         if(typeof(ruleIndex) !== "undefined") {
+            //Editing a rule, so update the state with the values for this rule
             stateData.ruleBeingEdited = this.state.rules[ruleIndex].id;
             stateData.ruleType = this.state.rules[ruleIndex].type;
             stateData.ruleValueType = this.state.rules[ruleIndex].value_type;
@@ -197,6 +207,16 @@ var FormContainer = React.createClass({
                     }, this);
                 }
             }
+        }
+        else {
+            //Adding a rule, so make sure the rule fields are set to the defaults
+            stateData.ruleBeingEdited = null;
+            stateData.ruleType = ruleDefaults.type;
+            stateData.ruleValueType = ruleDefaults.valueType;
+            stateData.ruleCombinedType = ruleDefaults.combinedType;
+            stateData.ruleScope = ruleDefaults.scope;
+            stateData.ruleCategoryFieldIndex = ruleDefaults.categoryFieldIndex;
+            stateData.ruleCategoryFieldOptionValue = ruleDefaults.categoryFieldOptionValue;
         }
     
         this.setState(stateData);
