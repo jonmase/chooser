@@ -98,7 +98,7 @@ function makeWatcher(src, dst) {
 
 gulp.task('js', function() {
     //var files = ['choices-add.jsx', 'choices-dashboard.jsx', 'choices-roles.jsx', 'choices-form.jsx', 'choices-view.jsx', 'profile.jsx'];
-    var files = ['lti-link.jsx', 'dashboard.jsx', 'form.jsx', 'roles.jsx', 'settings.jsx', 'options.jsx', 'profile.jsx'];
+    var files = ['lti-link.jsx', 'dashboard.jsx', 'form.jsx', 'results.jsx', 'roles.jsx', 'settings.jsx', 'options.jsx', 'profile.jsx'];
     
     files.forEach(function (entry, i, entries) {
         // Get the destination for this bundle.

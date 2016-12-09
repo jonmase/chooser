@@ -115,7 +115,7 @@ class ChoicesController extends AppController
     public function form($id = null) {
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
-        if(empty($isAdmin)) {
+        if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
@@ -144,7 +144,7 @@ class ChoicesController extends AppController
         
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
-        if(empty($isAdmin)) {
+        if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
@@ -227,7 +227,7 @@ class ChoicesController extends AppController
     {
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
-        if(empty($isAdmin)) {
+        if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
@@ -285,7 +285,7 @@ class ChoicesController extends AppController
         
         //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
-        if(empty($isAdmin)) {
+        if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 

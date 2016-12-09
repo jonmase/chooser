@@ -138,4 +138,22 @@ class SelectionsController extends AppController
             throw new InternalErrorException(__('Problem with saving selection'));
         }
     }
+    
+    public function index($choiceId) {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isReviewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isReviewer($choiceId, $this->Auth->user('id'));
+        $isAllocator = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isAllocator($choiceId, $this->Auth->user('id'));
+        
+        if(!$isAdmin && !$isReviewer && !$isAllocator) {
+            throw new ForbiddenException(__('Not permitted to view Choice results.'));
+        }
+
+        //Get the sections to display in the Dashboard menu
+        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
+
+        $choice = $this->Selections->ChoosingInstances->Choices->getChoiceWithProcessedExtraFields($choiceId);
+
+        $this->set(compact('choice', 'sections'));
+    }
 }

@@ -331,20 +331,21 @@ class ChoicesTable extends Table
                 'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
             ],
-            /*[
+            [
                 'title' => 'Results',
-                'description' => '',
+                'description' => 'View and download the results',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
                 'actions' => [
                     [
                         'label' => 'View',
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'index', $choiceId]),
                     ],
-                    [
+                    /*[
                         'label' => 'Quick Download',
-                    ]
+                    ]*/
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
-            ],*/
+            ],
             /*[
                 'title' => 'Allocations',
                 'description' => '',
