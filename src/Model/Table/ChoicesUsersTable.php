@@ -315,7 +315,7 @@ class ChoicesUsersTable extends Table
      * @return boolean True if the User is an admin, false if not
      */
     public function isAdmin($choiceId = null, $userId = null) {
-        return $this->isRole($choiceId, $userId, 'admin');
+        return $this->isRoles($choiceId, $userId, ['admin']);
     }
 
     /**
@@ -327,7 +327,7 @@ class ChoicesUsersTable extends Table
      * @return boolean True if the User is an Allocator, false if not
      */
     public function isAllocator($choiceId = null, $userId = null) {
-        return $this->isRole($choiceId, $userId, 'allocator');
+        return $this->isRoles($choiceId, $userId, ['allocator']);
     }
     
     /**
@@ -339,7 +339,7 @@ class ChoicesUsersTable extends Table
      * @return boolean True if the User is an Approver, false if not
      */
     public function isApprover($choiceId = null, $userId = null) {
-        return $this->isRole($choiceId, $userId, 'approver');
+        return $this->isRoles($choiceId, $userId, ['approver']);
     }
 
     /**
@@ -351,7 +351,7 @@ class ChoicesUsersTable extends Table
      * @return boolean True if the User is an Editor, false if not
      */
     public function isEditor($choiceId = null, $userId = null) {
-        return $this->isRole($choiceId, $userId, 'editor');
+        return $this->isRoles($choiceId, $userId, ['editor']);
     }
 
     /**
@@ -363,31 +363,42 @@ class ChoicesUsersTable extends Table
      * @return boolean True if the User is an Reviewer, false if not
      */
     public function isReviewer($choiceId = null, $userId = null) {
-        return $this->isRole($choiceId, $userId, 'reviewer');
+        return $this->isRoles($choiceId, $userId, ['reviewer']);
     }
 
     /**
-     * isRole method
-     * Checks whether a User has a specific role for a Choice
+     * isRoles method
+     * Checks whether a User has specific roles for a Choice
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
      * @param $role Role to check
      * @return boolean True if the User has the role, false if not
      */
-    public function isRole($choiceId = null, $userId = null, $role = 'null') {
+    public function isRoles($choiceId = null, $userId = null, $roles = []) {
         //If either choiceId or userId isn't set, return false
-        if(!$choiceId || !$userId || !$role) {
+        if(!$choiceId || !$userId || !$roles) {
             return false;
         }
         
-        //Get the user's roles, omitting view
-        $roles = $this->getRolesAsIDsArray($choiceId, $userId);
-        if(in_array($role, $roles) || in_array('admin', $roles)) {
+        $userRoles = $this->getRolesAsIDsArray($choiceId, $userId);
+
+        //If user is admin then they have that role
+        if(in_array('admin', $userRoles)) {
             return true;
         }
-        else {
-            return false;
+        
+        //Otherwise, loop through the roles we are checking, and make sure the user has one of them
+        foreach($roles as $role) {
+            if(in_array($role, $userRoles) || in_array('admin', $userRoles)) {
+                return true;
+            }
         }
+        
+        return false;
+    }
+    
+    public function canViewResults($choiceId = null, $userId = null) {
+        return $this->isRoles($choiceId, $userId, ['reviewer', 'allocator']);
     }
 }

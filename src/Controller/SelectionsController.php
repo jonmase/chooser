@@ -140,12 +140,9 @@ class SelectionsController extends AppController
     }
     
     public function index($choiceId) {
-        //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
-        $isReviewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isReviewer($choiceId, $this->Auth->user('id'));
-        $isAllocator = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isAllocator($choiceId, $this->Auth->user('id'));
-        
-        if(!$isAdmin && !$isReviewer && !$isAllocator) {
+        //Make sure the user is allowed to view the results for this Choice
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
 
@@ -155,5 +152,15 @@ class SelectionsController extends AppController
         $choice = $this->Selections->ChoosingInstances->Choices->getChoiceWithProcessedExtraFields($choiceId);
 
         $this->set(compact('choice', 'sections'));
+    }
+    
+    public function getSelections($choiceId) {
+        //Make sure the user is allowed to view the results for this Choice
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        if(!canViewResults) {
+            throw new ForbiddenException(__('Not permitted to view Choice results.'));
+        }
+
+        return "hello";
     }
 }
