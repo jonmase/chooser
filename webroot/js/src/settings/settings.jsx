@@ -60,7 +60,7 @@ var Settings = React.createClass({
                             </div>
                         :
                             <div>
-                                <Wysiwyg label="Instructions" value={instance.choosing_instructions} />
+                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions} />
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
                                         <DateTime label="Opens" value={instance.opens} />
@@ -72,6 +72,9 @@ var Settings = React.createClass({
                                             explanation={"Students can" + (instance.editable?" edit choices up until the deadline":"not edit choices after submission")}
                                         />
                                     </div>
+                                </div>
+                                <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || "No instructions given"} />
+                                <div className="row">
                                     <div className="col-xs-12 col-sm-6">
                                         <Toggle 
                                             label="Preferences"
@@ -83,12 +86,23 @@ var Settings = React.createClass({
                                                 {(instance.preference_type === 'points')?
                                                     <Text label="Points Available" value={instance.preference_points} />
                                                 :""}
-                                                <Wysiwyg label="Instructions" value={instance.preference_instructions} />
+                                                {/*<Wysiwyg label="Instructions" value={instance.preference_instructions} />*/}
                                             </div>
                                         :""}
+                                        <Toggle
+                                            label="Comments Per Option"
+                                            value={instance.comments_per_option}
+                                            explanation={"Students can" + (instance.comments_per_option?"":"not") + " make separate comments about each option they have chosen"}
+                                        />
+                                        {/*instance.comments_per_option?
+                                            <div>
+                                                {instance.comments_per_option_limit?
+                                                    <Text label="Character Limit" value={instance.comments_per_option_limit} />
+                                                :""}
+                                                <Wysiwyg label="Instructions" value={instance.comments_per_option_instructions} />
+                                            </div>
+                                        :""*/}
                                     </div>
-                                </div>
-                                <div className="row">
                                     <div className="col-xs-12 col-sm-6">
                                         <Toggle 
                                             label="Overall Comments" 
@@ -97,25 +111,10 @@ var Settings = React.createClass({
                                         />
                                         {instance.comments_overall?
                                             <div>
-                                                {instance.comments_overall_limit?
+                                                {/*instance.comments_overall_limit?
                                                     <Text label="Character Limit" value={instance.comments_overall_limit} />
-                                                :""}
-                                                <Wysiwyg label="Instructions" value={instance.comments_overall_instructions} />
-                                            </div>
-                                        :""}
-                                    </div>
-                                    <div className="col-xs-12 col-sm-6">
-                                        <Toggle
-                                            label="Comments Per Option"
-                                            value={instance.comments_per_option}
-                                            explanation={"Students can" + (instance.comments_per_option?"":"not") + " make separate comments about each option they have chosen"}
-                                        />
-                                        {instance.comments_per_option?
-                                            <div>
-                                                {instance.comments_per_option_limit?
-                                                    <Text label="Character Limit" value={instance.comments_per_option_limit} />
-                                                :""}
-                                                <Wysiwyg label="Instructions" value={instance.comments_per_option_instructions} />
+                                                :""*/}
+                                                <Wysiwyg label="Instructions for Overall Comments" value={instance.comments_overall_instructions} />
                                             </div>
                                         :""}
                                     </div>

@@ -103,9 +103,9 @@ var SettingsDialog = React.createClass({
                     :
                     <p>You have not set this Choice up yet for students to choose their options. Complete the fields below to set up the Choice.</p>
                 }
-                <div id="instructions">
+                <div id="instructions" style={{paddingTop: '24px'}}>
                     <Wysiwyg field={{
-                        label: "Instructions",
+                        label: "Instructions for Choosing",
                         instructions: "Provide instructions for the students on making their choices. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.",
                         name: "choosing_instructions",
                         onChange: this.props.handlers.handleWysiwygChange,
@@ -150,6 +150,16 @@ var SettingsDialog = React.createClass({
                         name="editable"
                     />
                 </div>
+                <div id="review_instructions">
+                    <Multiline field={{
+                        label: "Instructions for Reviewing",
+                        instructions: "Provide instructions that the students will see when reviewing their options.",
+                        name: "review_instructions",
+                        //onChange: this.props.handlers.handleWysiwygChange,
+                        section: true,
+                        value: instance.review_instructions || null, //this.props.containerState.settingsWysiwyg_preference_instructions,
+                    }} />
+                </div>
                 <div id="preferences">
                     <div className={this.props.containerState.settingsToggle_preference?"":"section"}>
                         <FormsyToggle
@@ -190,44 +200,14 @@ var SettingsDialog = React.createClass({
                                 value: instance.preference_points || null,
                             }} />
                         </div>
-                        <Multiline field={{
+                        {/*<Multiline field={{
                             label: "Preference Instructions",
                             instructions: "Provide instructions for the students on expressing their preferences.",
                             name: "preference_instructions",
                             //onChange: this.props.handlers.handleWysiwygChange,
                             section: true,
                             value: instance.preference_instructions || null, //this.props.containerState.settingsWysiwyg_preference_instructions,
-                        }} />
-                    </div>
-                </div>
-                <div id="comments_overall">
-                    <div className="section">
-                        <FormsyToggle
-                            defaultToggled={this.props.containerState.settingsToggle_comments_overall}
-                            label="Allow students to make comments about their choice as a whole"
-                            labelPosition="right"
-                            name="comments_overall"
-                            onChange={this.props.handlers.handleToggleChange}
-                        />
-                    </div>
-                    <div className={this.props.containerState.settingsToggle_comments_overall?"":"hidden"}>
-                        <Multiline field={{
-                            label: "Choice Comments Instructions",
-                            instructions: "Instructions for adding comments about their choice as a whole",
-                            name: "comments_overall_instructions",
-                            onChange: this.props.handlers.handleWysiwygChange,
-                            section: false,
-                            value: instance.comments_overall_instructions || null, //this.props.containerState.settingsWysiwyg_comments_overall_instructions,
-                        }} />
-                        <div>
-                            <Text field={{
-                                label: "Character Limit",
-                                instructions: "Limit",
-                                name: "comments_overall_limit",
-                                section: true,
-                                value: instance.comments_overall_limit || null,
-                            }} />
-                        </div>
+                        }} />*/}
                     </div>
                 </div>
                 <div id="comments_options">
@@ -240,7 +220,7 @@ var SettingsDialog = React.createClass({
                             onChange={this.props.handlers.handleToggleChange}
                         />
                     </div>
-                    <div className={this.props.containerState.settingsToggle_comments_per_option?"":"hidden"}>
+                    {/*<div className={this.props.containerState.settingsToggle_comments_per_option?"":"hidden"}>
                         <Multiline field={{
                             label: "Option Comments Instructions",
                             instructions: "Instructions for adding comments about each option",
@@ -258,6 +238,36 @@ var SettingsDialog = React.createClass({
                                 value: instance.comments_per_option_limit || null,
                             }} />
                         </div>
+                    </div>*/}
+                </div>
+                <div id="comments_overall">
+                    <div className="section">
+                        <FormsyToggle
+                            defaultToggled={this.props.containerState.settingsToggle_comments_overall}
+                            label="Allow students to make comments about their choice as a whole"
+                            labelPosition="right"
+                            name="comments_overall"
+                            onChange={this.props.handlers.handleToggleChange}
+                        />
+                    </div>
+                    <div className={this.props.containerState.settingsToggle_comments_overall?"":"hidden"}>
+                        <Multiline field={{
+                            label: "Overall Comments Instructions",
+                            instructions: "Instructions for adding comments about their choice as a whole",
+                            name: "comments_overall_instructions",
+                            onChange: this.props.handlers.handleWysiwygChange,
+                            section: false,
+                            value: instance.comments_overall_instructions || null, //this.props.containerState.settingsWysiwyg_comments_overall_instructions,
+                        }} />
+                        {/*<div>
+                            <Text field={{
+                                label: "Character Limit",
+                                instructions: "Limit",
+                                name: "comments_overall_limit",
+                                section: true,
+                                value: instance.comments_overall_limit || null,
+                            }} />
+                        </div>*/}
                     </div>
                 </div>
             </FormsyDialog>

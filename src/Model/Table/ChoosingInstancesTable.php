@@ -102,6 +102,9 @@ class ChoosingInstancesTable extends Table
             ->allowEmpty('extension');
 
         $validator
+            ->allowEmpty('review_instructions');
+
+        $validator
             ->allowEmpty('preference_type');
 
         $validator

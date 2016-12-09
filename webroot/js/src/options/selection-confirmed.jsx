@@ -74,7 +74,7 @@ var SelectionConfirmed = React.createClass({
                                 {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                                     <div style={{width: '100%'}}>
                                         <OptionList
-                                            action="review"
+                                            action="confirmed"
                                             instance={this.props.instance.instance}
                                             optionIds={this.props.optionsSelectedPreferenceOrder}
                                             options={this.props.options}

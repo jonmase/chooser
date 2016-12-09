@@ -14,13 +14,10 @@ var OptionList = React.createClass({
         var listItemStyle = {
             //height: '72px'
         };
-        var showCommentsFieldPerOption = this.props.action === 'confirm' && this.props.instance.comments_per_option;
-        var showCommentsTextPerOption = this.props.action === 'review' && this.props.instance.comments_per_option;
-        if(showCommentsFieldPerOption) {
-            listItemStyle.marginRight = '270px';
-        }
         
-        var showPreferenceInputs = this.props.action === 'confirm' && this.props.instance.preference;
+        var showPreferenceInputs = this.props.action === 'review' && this.props.instance.preference;
+        var showPreferenceValues = this.props.action === 'confirmed' && this.props.instance.preference;
+
         if(showPreferenceInputs) {
             listItemStyle.marginLeft = '50px';
             
@@ -37,13 +34,19 @@ var OptionList = React.createClass({
             }
         }
         
-        var showPreferenceValues = this.props.action === 'review' && this.props.instance.preference;
         if(showPreferenceValues) {
             listItemStyle.marginLeft = '20px';
         }
         
-        //If not using code and action is confirm, move the listItem down slightly so they are in the centre of the block
-        if(!this.props.useCode && this.props.action === 'confirm') {
+        var showCommentsFieldPerOption = this.props.action === 'review' && this.props.instance.comments_per_option;
+        var showCommentsTextPerOption = this.props.action === 'confirmed' && this.props.instance.comments_per_option;
+        
+        if(showCommentsFieldPerOption) {
+            listItemStyle.marginRight = '270px';
+        }
+        
+        //If not using code, action is review and either preference or comments field is showing, move the listItem down slightly so the title appears in the centre of the block
+        if(!this.props.useCode && this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
             listItemStyle.top = '8px';
         }
                     
@@ -62,8 +65,8 @@ var OptionList = React.createClass({
                         
                         //Make secondary text blank...
                         var secondaryText = "";
-                        //...unless action is confirm, in which case make it a space, so that it is still there to pad out the list item block
-                        if(this.props.action === 'confirm') {
+                        //...unless action is review and either preference or comments field is showing, in which case make it a space, so that it is still there to pad out the list item block
+                        if(this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
                             secondaryText = " ";
                         }
                         

@@ -13,40 +13,50 @@ import WarningsExplanation from './selection-warnings-explanation.jsx';
 import WarningIcon from '../elements/icons/warning.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
 
-import MultilineField from '../elements/fields/multiline-text.jsx';
+import MultilineField from '../elements/fields/multiline-text-instructions.jsx';
 
 var SelectionReview = React.createClass({
     render: function() {
         var content = <div>
             <p style={{marginTop: 0}}>
-            {(this.props.instance.instance.preference_instructions)&&
-                <span>{this.props.instance.instance.preference_instructions}</span>
-            }
-                
-            {(this.props.instance.instance.comments_per_option_instructions)&&
-                <span>{this.props.instance.instance.comments_per_option_instructions}</span>
-            }
+                {(this.props.instance.instance.review_instructions)&&
+                    <span>{this.props.instance.instance.review_instructions}</span>
+                }
             </p>
+                    
+            {/*<p style={{marginTop: 0}}>
+                {(this.props.instance.instance.preference_instructions)&&
+                    <span>{this.props.instance.instance.preference_instructions}</span>
+                }
+            </p>
+                    
+            <p style={{marginTop: 0}}>
+                {(this.props.instance.instance.comments_per_option && this.props.instance.instance.comments_per_option_instructions)&&
+                    <span>{this.props.instance.instance.comments_per_option_instructions}</span>
+                }
+            </p>*/}
             
-            {(this.props.optionsSelectedPreferenceOrder.length > 0)?
-                <div style={{width: '100%'}}>
-                    {/*<p>You have chosen the following options:</p>*/}
-                    <OptionList
-                        action="confirm"
-                        handleOrderChange={this.props.optionContainerHandlers.orderChange}
-                        handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
-                        instance={this.props.instance.instance}
-                        optionIds={this.props.optionsSelectedPreferenceOrder}
-                        options={this.props.options}
-                        optionsSelected={this.props.optionsSelected}
-                        rankSelectsDisabled={this.props.rankSelectsDisabled}
-                        removeButton={false}
-                        useCode={this.props.choice.use_code}
-                    />
-                </div>
-            :
-                <div>No options chosen</div>
-            }
+            <div style={{width: '100%', marginBottom: '20px'}}>
+                {(this.props.optionsSelectedPreferenceOrder.length > 0)?
+                    <div>
+                        <p style={{marginBottom: 0}}>You have chosen the following options:</p>
+                        <OptionList
+                            action="review"
+                            handleOrderChange={this.props.optionContainerHandlers.orderChange}
+                            handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
+                            instance={this.props.instance.instance}
+                            optionIds={this.props.optionsSelectedPreferenceOrder}
+                            options={this.props.options}
+                            optionsSelected={this.props.optionsSelected}
+                            rankSelectsDisabled={this.props.rankSelectsDisabled}
+                            removeButton={false}
+                            useCode={this.props.choice.use_code}
+                        />
+                    </div>
+                :
+                    <span>No options chosen</span>
+                }
+            </div>
             
             {(this.props.instance.instance.comments_overall)?
                 <MultilineField field={{
