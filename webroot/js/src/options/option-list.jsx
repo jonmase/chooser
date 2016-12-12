@@ -8,6 +8,7 @@ import Divider from 'material-ui/Divider';
 import Text from '../elements/display/text.jsx';
 import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
+import HiddenField from '../elements/fields/hidden.jsx';
 
 var OptionList = React.createClass({
     render: function() {
@@ -122,6 +123,10 @@ var OptionList = React.createClass({
                                     </div>
                                 </div>
                             :""}
+                            
+                            {this.props.action === 'review' &&
+                                <HiddenField value={optionId} name={"options." + optionId + ".choices_option_id"} />
+                            }
                             
                             <ListItem
                                 disabled={typeof(this.props.disabled) !== "undefined"?this.props.disabled:true}

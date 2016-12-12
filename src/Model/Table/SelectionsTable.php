@@ -255,9 +255,7 @@ class SelectionsTable extends Table
         
         
         if(!empty($requestData['options'])) {
-            foreach($requestData['options'] as $choicesOptionId => $optionsSelection) {
-                $optionsSelection['choices_option_id'] = $choicesOptionId;
-                
+            foreach($requestData['options'] as $optionsSelection) {
                 //If we have a selection ID, add this to the optionsSelection data
                 if(!empty($selection->id)) {
                     $optionsSelection['selection_id'] = $selection->id;
