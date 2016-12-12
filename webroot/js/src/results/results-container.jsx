@@ -1,12 +1,8 @@
 import React from 'react';
-import update from 'immutability-helper';
-
-import Formsy from 'formsy-react';
 
 import Snackbar from 'material-ui/Snackbar';
-import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+
+import ResultsTable from './results-table.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -15,17 +11,16 @@ import Loader from '../elements/loader.jsx';
 
 var ResultsContainer = React.createClass({
     loadSelectionsFromServer: function() {
-        var url = '../get-seletions/' + this.props.choice.id + '.json';
+        var url = '../get-selections/' + this.props.choice.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
             cache: false,
             success: function(data) {
                 this.setState({
-                    selections: {
-                        selections: data.selections,
-                        loaded: true,
-                    },
+                    instance: data.choosingInstance,
+                    selections: data.selections,
+                    loaded: true,
                 });
             }.bind(this),
                 error: function(xhr, status, err) {
@@ -36,9 +31,13 @@ var ResultsContainer = React.createClass({
     
     getInitialState: function () {
         var initialState = {
-            selections: {
-                selections: [],
-                loaded: false,
+            instance: [],
+            loaded: false,
+            selections: [],
+            sort: {
+                field: 'user.username',
+                fieldType: 'text',
+                direction: 'asc',
             },
             snackbar: {
                 open: false,
@@ -62,6 +61,10 @@ var ResultsContainer = React.createClass({
         });
     },
     
+    handleSort: function(field, fieldType) {
+        console.log("Sort results by: " + field + "(" + fieldType + "); direction: " + this.state.sort.direction);
+    },
+
     render: function() {
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
@@ -77,7 +80,17 @@ var ResultsContainer = React.createClass({
                     {this.props.title}
                 </h2>
                 <div>
-                    Results go here
+                    {(!this.state.loaded)?
+                        <Loader />
+                    :
+                        <ResultsTable 
+                            resultsContainerHandlers={{
+                                sort: this.handleSort,
+                            }}
+                            selections={this.state.selections}
+                            sort={this.state.sort}
+                        />
+                    }
                 </div>
                 <Snackbar
                     open={this.state.snackbar.open}

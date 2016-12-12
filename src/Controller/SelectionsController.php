@@ -157,10 +157,29 @@ class SelectionsController extends AppController
     public function getSelections($choiceId) {
         //Make sure the user is allowed to view the results for this Choice
         $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
-        if(!canViewResults) {
+        if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
+        
+        //Get the choosing instance
+        $choosingInstance = $this->Selections->ChoosingInstances->findActive($choiceId, false, $this->Auth->user('id'));
+        
+        $selections = $this->Selections->find('all', [
+            'conditions' => [
+                'choosing_instance_id' => $choosingInstance->id,
+                'archived' => 0,
+            ],
+            'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
+        ]);
+        
+        foreach($selections->toArray() as &$selection) {
+            $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
+        }
+        
 
-        return "hello";
+        
+        //pr($selections->toArray()); exit;
+        $this->set(compact('choosingInstance', 'selections'));
+        $this->set('_serialize', ['choosingInstance', 'selections']);
     }
 }
