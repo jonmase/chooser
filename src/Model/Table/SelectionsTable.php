@@ -123,6 +123,8 @@ class SelectionsTable extends Table
             $conditions['Selections.id NOT IN'] = $selectionIdsToOmit;
         }
         
+        $instance = $this->ChoosingInstances->get($instanceId, ['fields' => ['choice_id']]);
+        
         $selectionsQuery = $this->find('all')
             ->where($conditions)
             ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC']);
@@ -131,7 +133,7 @@ class SelectionsTable extends Table
             //If required contian the selected options, sorted by Option code and title
             $selectionsQuery->contain([
                 'OptionsSelections' => [
-                    'sort' => $this->OptionsSelections->ChoicesOptions->Options->getSortOrder(),
+                    'sort' => $this->OptionsSelections->ChoicesOptions->Options->getSortOrder($instance->choice_id),
                     'ChoicesOptions' => [
                         'fields' => ['ChoicesOptions.id'],
                         'Options' => [
