@@ -180,21 +180,26 @@ class OptionsController extends AppController
                     'Options',
                 ]
             ]);
-            $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
-                return $q->where([
-                    'ChoicesOptionsUsers.user_id' => $userId,
-                    'ChoicesOptionsUsers.editor' => true,
-                ]);
-            });
-            
             unset($this->request->data['choices_option_id']);
+            
+            //If user is not an admin, they must be an editor on the choicesOption
+            $isChoiceAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $userId);
+            if(!$isChoiceAdmin) {
+                $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
+                    return $q->where([
+                        'ChoicesOptionsUsers.user_id' => $userId,
+                        'ChoicesOptionsUsers.editor' => true,
+                    ]);
+                });
+                
+                unset($originalChoicesOption->_matchingData);
+                //pr($originalChoicesOption);
+            }
             
             $originalChoicesOption = $choicesOptionsQuery->first();
             if(empty($originalChoicesOption)) {
                 throw new ForbiddenException(__('Not permitted to edit this option.'));
             }
-            unset($originalChoicesOption->_matchingData);
-            //pr($originalChoicesOption);
         }
         $updatedChoicesOption = $this->Options->processForSave($choiceId, $userId, $this->request->data, $originalChoicesOption);
         $choicesOptions = [$updatedChoicesOption];
