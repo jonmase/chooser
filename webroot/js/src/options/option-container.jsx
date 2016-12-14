@@ -1026,7 +1026,7 @@ var OptionContainer = React.createClass({
                             dialogClose: this.handleOptionDialogClose,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
-                            wysiwygChange: this.handleWysiwygChange,
+                            wysiwygChange: this.handleOptionWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
                         options={this.state.options}
