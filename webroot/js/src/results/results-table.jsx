@@ -57,12 +57,23 @@ var OptionsTable = React.createClass({
                                     label="Name"
                                     sortHandler={this.props.resultsContainerHandlers.sort}
                                 />
+                                <TableHeaderColumn style={styles.tableRowColumn}>
+                                    Status
+                                </TableHeaderColumn>
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
                                     field="modified"
                                     fieldType="date"
-                                    label="Saved/Submitted"
+                                    label="Saved/Submitted Date"
+                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                />
+                                <SortableTableHeaderColumn
+                                    sortField={this.props.sort.field}
+                                    sortDirection={this.props.sort.direction}
+                                    field="option_count"
+                                    fieldType="number"
+                                    label="Options Selected"
                                     sortHandler={this.props.resultsContainerHandlers.sort}
                                 />
                             </TableRow>
@@ -78,7 +89,9 @@ var OptionsTable = React.createClass({
                                     >
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.user.username}</TableRowColumn>
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.user.fullname}</TableRowColumn>
+                                        <TableRowColumn style={styles.tableRowColumn}>{selection.confirmed?"Submitted":"Auto-saved"}</TableRowColumn>
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.modified.formatted}</TableRowColumn>
+                                        <TableRowColumn style={styles.tableRowColumn}>{selection.option_count}</TableRowColumn>
                                     </TableRow>
                                 );
                             }, this)}

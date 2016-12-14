@@ -174,6 +174,7 @@ class SelectionsController extends AppController
         
         foreach($selections->toArray() as &$selection) {
             $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
+            $selection['option_count'] = count($selection['options_selections']);
         }
         
 
