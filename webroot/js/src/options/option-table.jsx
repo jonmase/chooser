@@ -241,7 +241,7 @@ var OptionsTable = React.createClass({
                                 {this.props.action === 'edit'? 
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 :""}
-                                {/*<TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>*/}
+                                <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
                         <TableBody 
@@ -298,14 +298,14 @@ var OptionsTable = React.createClass({
                                                 />
                                             </UnselectableCell>
                                         :""}
-                                        {/*<UnselectableCell style={styles.actionsTableRowColumn}>
+                                        <UnselectableCell style={styles.actionsTableRowColumn}>
                                             <ExpandButton
+                                                //handleMore={this.props.optionContainerHandlers.viewMore} 
                                                 handleMore={optionTableHandlers.dialogOpen} 
                                                 id={option.id}
                                                 tooltip=""
                                             />
                                         </UnselectableCell>
-                                        */}
                                     </TableRow>
                                 );
                             }, this)}
