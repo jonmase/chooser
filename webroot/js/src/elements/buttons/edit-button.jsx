@@ -16,6 +16,7 @@ var EditButton = React.createClass({
                 iconClassName="material-icons"
                 onTouchTap={this.handleEdit}
                 tooltip={tooltip}
+                {...this.props}
             >
                 edit
             </IconButton>         

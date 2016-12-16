@@ -8,11 +8,13 @@ import Badge from 'material-ui/Badge';
 import IconButton from 'material-ui/IconButton';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import Checkbox from 'material-ui/Checkbox';
 //import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import Loader from '../elements/loader.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
 
 import Unavailable from './choice-unavailable.jsx';
 import Instructions from './choice-instructions.jsx';
@@ -21,6 +23,9 @@ import Review from './selection-review.jsx';
 import Confirmed from './selection-confirmed.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import OptionsTable from './option-table.jsx';
+import DefaultFields from './default-fields.jsx';
+import ExtraFieldLabelled from './extra-field-labelled.jsx';
+
 
 var optionEditingDefaults = {
     optionBeingEdited: null,
@@ -117,7 +122,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
-            stepIndex: 0,
+            //stepIndex: 0,
             basketDisabled: false,
             canConfirm: true,
             confirmDialogOpen: false,
@@ -159,11 +164,12 @@ var OptionContainer = React.createClass({
         };
         
         if(this.props.action === 'view') {
-            initialState.stepIndex = 0;
+            //initialState.stepIndex = 0;
+            initialState.optionBeingViewed = null;
         }
-        else if(this.props.action === 'confirmed') {
-            initialState.stepIndex = 2;
-        }
+        //else if(this.props.action === 'confirmed') {
+            //initialState.stepIndex = 2;
+        //}
         else if(this.props.action === 'edit') {
             initialState.optionEditing = optionEditingDefaults;
             initialState.optionSaveButton = optionSaveButtonDefaults;
@@ -366,6 +372,20 @@ var OptionContainer = React.createClass({
         });
     },
 
+    handleOptionViewMoreFromEdit: function(optionId) {
+        this.setState({
+            action: 'more_edit',
+            optionBeingViewed: optionId,
+        });
+    },
+
+    handleOptionViewMoreFromView: function(optionId) {
+        this.setState({
+            action: 'more_view',
+            optionBeingViewed: optionId,
+        });
+    },
+
     handleOptionWysiwygChange: function(element, value) {
         var optionValuesState = this.state.optionValues;
         var newOptionValuesState = update(optionValuesState, {
@@ -383,12 +403,23 @@ var OptionContainer = React.createClass({
         //Remove this ID from the selected array
         optionsSelectedIds.splice(optionsSelectedIds.indexOf(optionId), 1);
         
-        var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
-        
-        this.saveSelectedOptions(optionsSelected);
+        this.saveSelectedOptions(optionsSelectedIds);
     },
     
-    handleOptionSelect: function(rowsSelected) {
+    handleOptionSelectFromDetails(event, checked) {
+        var optionId = this.state.optionBeingViewed;
+        
+        if(checked) {
+            var optionsSelectedIds = this.state.optionsSelectedTableOrder.slice();
+            optionsSelectedIds.push(optionId);
+            this.saveSelectedOptions(optionsSelectedIds);
+        }
+        else {
+            this.handleOptionRemove(optionId);
+        }
+    },
+    
+    handleOptionSelectFromTable: function(rowsSelected) {
         var optionsSelectedIds = [];
         if(rowsSelected === 'all') {
             this.state.options.options.map(function(option) {
@@ -404,18 +435,9 @@ var OptionContainer = React.createClass({
             }, this);
         }
         
-        //Optimistically update the selected options
-        //Disable basket until options have been properly saved
-        this.setState({
-            optionsSelectedTableOrder: this.sortIdsByTableOrder(optionsSelectedIds),
-            basketDisabled: true,
-        });
-        
-        var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
-        
-        this.saveSelectedOptions(optionsSelected);
+        this.saveSelectedOptions(optionsSelectedIds);
     },
-    
+        
     updateOptionsSelected: function(optionsSelectedIds) {
         //Loop through the selected option IDs, adding each optionSelected to a new optionsSelected object
         var optionsSelected = {};
@@ -518,7 +540,13 @@ var OptionContainer = React.createClass({
         }
     },
 
-    handleSelectionBackToEdit: function() {
+    handleBackToEdit: function() {
+        this.setState({
+            action: 'edit'
+        });
+    },
+    
+    handleBackToView: function() {
         this.setState({
             action: 'view'
         });
@@ -646,7 +674,16 @@ var OptionContainer = React.createClass({
         this.saveSelection(data, 'confirm');
     },
     
-    saveSelectedOptions: function(optionsSelected) {
+    saveSelectedOptions: function(optionsSelectedIds) {
+        //Optimistically update the selected options
+        //Disable basket until options have been properly saved
+        this.setState({
+            optionsSelectedTableOrder: this.sortIdsByTableOrder(optionsSelectedIds),
+            basketDisabled: true,
+        });
+        
+        var optionsSelected = this.updateOptionsSelected(optionsSelectedIds);
+
         //Prevent submitting while request is sent
         var selectionState = this.state.selection;
         var newSelectionState = update(selectionState, {allowSubmit: {$set: false}});
@@ -960,8 +997,40 @@ var OptionContainer = React.createClass({
                 }
             }
         }
-        else if(action === 'basket' || action === 'review') {
-            title = 'Review Your Choices';
+        else if(action === 'basket' || action === 'review' || action === 'more_view' || action === 'more_edit') {
+            if(action === 'basket' || action === 'review') {
+                title = 'Review Your Choices';
+            }
+            else if(action === 'more_view' || action === 'more_edit') {
+                title = 'Option Details';
+                
+            }
+            
+            if(action === 'basket' || action === 'review' || action === 'more_view') {
+                var backAction = this.handleBackToView;
+            }
+            else if(action === 'more_edit') {
+                var backAction = this.handleBackToEdit;
+            }
+            
+            if(action === 'more_view') {
+                topbarIconRight=<Checkbox 
+                    disableTouchRipple={true}
+                    iconStyle={{color: 'white', fill: 'white', height: '48px', width: '48px'}}
+                    label={false} 
+                    onCheck={this.handleOptionSelectFromDetails}
+                    //checked={typeof(this.state.optionsSelected[this.state.optionBeingViewed]) !== "undefined"}
+                    checked={this.state.optionsSelectedTableOrder.indexOf(this.state.optionBeingViewed) > -1}
+                />;
+            }
+            else if(action === 'more_edit') {
+                topbarIconRight = <EditButton
+                    handleEdit={this.handleOptionDialogOpen} 
+                    iconStyle={{color: 'white'}}
+                    id={this.state.optionBeingViewed}
+                    tooltip=""
+                />
+            }
         
             //If selection can be submitted, show tick icon
             /*if(this.state.selection.allowSubmit) {
@@ -982,7 +1051,7 @@ var OptionContainer = React.createClass({
             topbarIconLeft=
                 <IconButton
                     iconClassName="material-icons"
-                    onTouchTap={this.handleSelectionBackToEdit}
+                    onTouchTap={backAction}
                     iconStyle={iconStyle}
                 >
                     arrow_back
@@ -1026,6 +1095,7 @@ var OptionContainer = React.createClass({
                             dialogClose: this.handleOptionDialogClose,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
+                            viewMore: this.handleOptionViewMoreFromEdit,
                             wysiwygChange: this.handleOptionWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
@@ -1055,14 +1125,63 @@ var OptionContainer = React.createClass({
                                 instance={this.state.instance}
                                 optionContainerHandlers={{
                                     favourite: this.handleFavourite,
-                                    selectOption: this.handleOptionSelect,
+                                    selectOption: this.handleOptionSelectFromTable,
                                     sort: this.handleSort,
+                                    viewMore: this.handleOptionViewMoreFromView,
                                 }}
                                 options={this.state.options}
                                 optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                 optionsSort={this.state.optionsSort}
                             />
                         }
+                    </div>
+                );
+            case 'more_view': //More
+            case 'more_edit': //More
+                var defaults = {
+                    //code: this.props.choice.use_code,
+                    //title: this.props.choice.use_title,
+                    code: false,    //Don't use code or title, as these are shown at the top of the page
+                    title: false,
+                    description: this.props.choice.use_description,
+                    min_places: this.props.choice.use_min_places,
+                    max_places: this.props.choice.use_max_places,
+                    points: this.props.choice.use_points,
+                };
+                
+                var option = this.state.options.options[this.state.options.indexesById[this.state.optionBeingViewed]];
+        
+                return (
+                    <div>
+                        <h3>
+                            {this.props.choice.use_code && (option.code + ": ")}
+                            {option.title}
+                        </h3>
+                    
+                        <DefaultFields
+                            defaults={defaults}
+                            option={option}
+                        />
+                        
+                        {this.props.choice.extra_fields.map(function(field) {
+                            var value = null;
+                            if(option && typeof(option[field.name]) !== "undefined") {
+                                value = option[field.name];
+                            }
+                        
+                            return (
+                                <ExtraFieldLabelled
+                                    explanation={field.explanation}
+                                    extra={field.extra}
+                                    //field={field}
+                                    key={field.id}
+                                    label={field.label}
+                                    options={field.options}
+                                    type={field.type}
+                                    value={value}
+                                />
+                            );
+                        }, this)}
                     </div>
                 );
             case 'basket': //Basket
@@ -1149,9 +1268,14 @@ var OptionContainer = React.createClass({
     render: function() {
         return (
             <Container topbar={this.getTopbar(this.state.action)}>
-                <h2 className="page-title">
-                    {this.props.title}
-                </h2>
+                    <h2 className="page-title">
+                        {(this.state.action === 'edit') &&
+                            <span>Dashboard - Edit Options</span>
+                        }
+                        {(this.state.action === 'approve') &&
+                            <span>Dashboard - Approve Options</span>
+                        }
+                    </h2>
                 <div>
                     {(this.state.action === 'unavailable')?
                         <Unavailable
@@ -1164,19 +1288,6 @@ var OptionContainer = React.createClass({
                         :
                             <div>
                                 {this.getContent(this.state.action)}
-                            
-                                {/*<Stepper activeStep={this.state.stepIndex}>
-                                    <Step>
-                                        <StepLabel>Choose</StepLabel>
-                                    </Step>
-                                    <Step>
-                                        <StepLabel>Review</StepLabel>
-                                    </Step>
-                                    <Step>
-                                        <StepLabel>Confirmed</StepLabel>
-                                    </Step>
-                                </Stepper>*/}
-                           
                             </div>
                     }
                     <Snackbar

@@ -25,7 +25,6 @@ ReactDOM.render(
         dashboardUrl={data.dashboard?data.dashboard:null} 
         role={data.role} 
         sections={data.sections?data.sections:null} 
-        title={data.title}
     />, 
     document.getElementById('index')
 );

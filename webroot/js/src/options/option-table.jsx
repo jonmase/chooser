@@ -60,9 +60,11 @@ var OptionsTable = React.createClass({
         
         return initialState;
     },
+    
     _onRowSelection: function(selectedRows){
         this.props.optionContainerHandlers.selectOption(selectedRows);
     },
+    
     handleDialogOpen: function(optionId) {
         this.setState({
             optionBeingViewed: optionId,
@@ -300,8 +302,8 @@ var OptionsTable = React.createClass({
                                         :""}
                                         <UnselectableCell style={styles.actionsTableRowColumn}>
                                             <ExpandButton
-                                                //handleMore={this.props.optionContainerHandlers.viewMore} 
-                                                handleMore={optionTableHandlers.dialogOpen} 
+                                                handleMore={this.props.optionContainerHandlers.viewMore} 
+                                                //handleMore={optionTableHandlers.dialogOpen} 
                                                 id={option.id}
                                                 tooltip=""
                                             />
