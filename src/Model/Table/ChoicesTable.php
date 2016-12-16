@@ -285,7 +285,7 @@ class ChoicesTable extends Table
                 ],
                 'roles' => ['admin'],
             ],*/
-            [
+            /*[
                 'title' => 'Profile',
                 'description' => 'Edit your profile, which is the information that will be shown to students. This will be the same across all Choices where you offer options.',
                 'icon' => 'perm_identity',  //'icon' => 'account_circle',
@@ -296,7 +296,7 @@ class ChoicesTable extends Table
                     ]
                 ],
                 'roles' => ['admin', 'editor'],
-            ],
+            ],*/
             [
                 'title' => 'Options',
                 'description' => 'View and/or edit the options that will be made available to students.',
@@ -331,7 +331,7 @@ class ChoicesTable extends Table
                 'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
             ],
-            [
+            /*[
                 'title' => 'Results',
                 'description' => 'View and download the results',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
@@ -340,12 +340,12 @@ class ChoicesTable extends Table
                         'label' => 'View',
                         'url' => Router::url(['controller' => 'selections', 'action' => 'index', $choiceId]),
                     ],
-                    /*[
-                        'label' => 'Quick Download',
-                    ]*/
+                    //[
+                    //    'label' => 'Quick Download',
+                    //]
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
-            ],
+            ],*/
             /*[
                 'title' => 'Allocations',
                 'description' => '',
