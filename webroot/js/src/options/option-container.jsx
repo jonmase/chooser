@@ -268,8 +268,8 @@ var OptionContainer = React.createClass({
                 var field = this.props.choice.extra_fields[extra];
                 if(field.type === 'wysiwyg') {
                     var value = this.state.options.options[this.state.options.indexesById[optionId]][field.name];
-                    //stateData['optionValue_' + field.name] = value;
-                    var newOptionValuesState = update(newOptionValuesState, {['optionValue_' + field.name]: {$set: value}});
+                    //stateData['value_' + field.name] = value;
+                    var newOptionValuesState = update(newOptionValuesState, {['value_' + field.name]: {$set: value}});
                 }
             }
             this.setState({optionValues: newOptionValuesState});
