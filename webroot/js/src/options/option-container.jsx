@@ -999,7 +999,7 @@ var OptionContainer = React.createClass({
                         /*topbarIconRight=
                             <IconButton
                                 iconClassName="material-icons"
-                                onTouchTap={this.handleSelectionBackToEdit}
+                                onTouchTap={this.handleBackToView}
                                 iconStyle={iconStyle}
                             >
                                 edit
@@ -1204,7 +1204,7 @@ var OptionContainer = React.createClass({
                     <Basket
                         instance={this.state.instance}
                         optionContainerHandlers={{
-                            change: this.handleSelectionBackToEdit,
+                            change: this.handleBackToView,
                             remove: this.handleOptionRemove,
                             submit: this.handleSelectionBasketSubmit,
                         }}
@@ -1231,7 +1231,7 @@ var OptionContainer = React.createClass({
                                 choice={this.props.choice}
                                 instance={this.state.instance}
                                 optionContainerHandlers={{
-                                    change: this.handleSelectionBackToEdit,
+                                    change: this.handleBackToView,
                                     confirm: this.handleSelectionConfirm,
                                     orderChange: this.handleSelectionOrderChange,
                                     overallCommentsChange: this.handleSelectionOverallCommentsChange,
@@ -1264,7 +1264,7 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         instance={this.state.instance}
                         optionContainerHandlers={{
-                            backToEdit: this.handleSelectionBackToEdit,
+                            change: this.handleBackToView,
                         }}
                         options={this.state.options}
                         optionsSelected={this.state.optionsSelected}

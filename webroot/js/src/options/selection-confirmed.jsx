@@ -59,7 +59,7 @@ var SelectionConfirmed = React.createClass({
                         <CardActions>
                             <RaisedButton 
                                 label="Change Choices" 
-                                onTouchTap={this.props.optionContainerHandlers.backToEdit} 
+                                onTouchTap={this.props.optionContainerHandlers.change} 
                                 primary={true} 
                             />
                         </CardActions>
