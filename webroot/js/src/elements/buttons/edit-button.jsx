@@ -11,12 +11,14 @@ var EditButton = React.createClass({
         if(typeof(tooltip) === "undefined") {
             tooltip = "Edit";
         }
+        
         return (
             <IconButton
                 iconClassName="material-icons"
+                iconStyle={this.props.iconStyle}
                 onTouchTap={this.handleEdit}
+                style={this.props.style}
                 tooltip={tooltip}
-                {...this.props}
             >
                 edit
             </IconButton>         

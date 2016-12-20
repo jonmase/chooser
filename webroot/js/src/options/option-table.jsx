@@ -294,7 +294,7 @@ var OptionsTable = React.createClass({
                                         {this.props.action === 'edit'? 
                                             <UnselectableCell style={styles.actionsTableRowColumn}>
                                                 <EditButton
-                                                    handleEdit={this.props.optionContainerHandlers.dialogOpen} 
+                                                    handleEdit={this.props.optionContainerHandlers.edit} 
                                                     id={option.id}
                                                     tooltip=""
                                                 />
@@ -356,14 +356,14 @@ var OptionsTable = React.createClass({
                 {/*:
                 //    <div>{content}</div>
                 /*/}
-                <OptionViewDialog
+                {/*<OptionViewDialog
                     choice={this.props.choice}
                     dialogOpen={this.state.optionDialogOpen}
                     handlers={optionTableHandlers}
                     optionBeingViewed={this.state.optionBeingViewed}
                     options={this.props.options}
-                />
-                {(this.props.action === 'edit')?
+                />*/}
+                {/*(this.props.action === 'edit')?
                     <OptionEditDialog
                         choice={this.props.choice}
                         handlers={this.props.optionContainerHandlers}
@@ -371,7 +371,7 @@ var OptionsTable = React.createClass({
                         options={this.props.options}
                         optionSaveButton={this.props.optionSaveButton}
                     />
-                :""}
+                :""*/}
             </div>
         );
     }

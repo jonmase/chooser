@@ -23,6 +23,7 @@ import Review from './selection-review.jsx';
 import Confirmed from './selection-confirmed.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import OptionsTable from './option-table.jsx';
+import OptionEditPage from './option-edit-page.jsx';
 import DefaultFields from './default-fields.jsx';
 import ExtraFieldLabelled from './extra-field-labelled.jsx';
 
@@ -171,6 +172,7 @@ var OptionContainer = React.createClass({
             //initialState.stepIndex = 2;
         //}
         else if(this.props.action === 'edit') {
+            initialState.canSaveOptionEdit = false;
             initialState.optionEditing = optionEditingDefaults;
             initialState.optionSaveButton = optionSaveButtonDefaults;
         
@@ -248,6 +250,13 @@ var OptionContainer = React.createClass({
     
     },
     
+    handleOptionEdit: function(optionId) {
+        this.setState({
+            action: 'edit_option',
+            optionBeingEdited: optionId,
+        });
+    },
+
     handleOptionDialogOpen: function(optionId) {
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
@@ -274,8 +283,8 @@ var OptionContainer = React.createClass({
                 var field = this.props.choice.extra_fields[extra];
                 if(field.type === 'wysiwyg') {
                     var value = this.state.options.options[this.state.options.indexesById[optionId]][field.name];
-                    //stateData['optionValue_' + field.name] = value;
-                    var newOptionValuesState = update(newOptionValuesState, {['optionValue_' + field.name]: {$set: value}});
+                    //stateData['value_' + field.name] = value;
+                    var newOptionValuesState = update(newOptionValuesState, {['value_' + field.name]: {$set: value}});
                 }
             }
             this.setState({optionValues: newOptionValuesState});
@@ -941,75 +950,79 @@ var OptionContainer = React.createClass({
         //var showStepTabs=true;
 
         var iconStyle = {color: 'white'};
-        if(action === 'view' || action === 'confirmed') {
+        if(action === 'view' || action === 'confirmed' || action === 'edit') {
             //Show menu icon if sections is defined and not empty
             if(this.props.sections) {
                 topbarIconLeft='menu';
             }
         
-            //If instance created and open or user is administrator, show selection basket or change selection buttons
-            if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'))) {
-                if(action === 'view') {
-                    topbarIconRight=
-                        <div style={{paddingRight: '10px'}}>
-                            {/*<Badge
-                                badgeContent={this.state.optionsSelectedTableOrder.length || ""}
-                                primary={true}
-                                badgeStyle={{top: 0, right: -5, backgroundColor: 'none', fontSize: 16}}
-                                style={{padding: 0}}
-                            >
-                                <IconButton
-                                    disabled={this.state.basketDisabled}
-                                    iconClassName="material-icons"
-                                    onTouchTap={this.handleSelectionBasketClick}
-                                    iconStyle={iconStyle}
+            if(action === 'view' || action === 'confirmed'){
+                //If instance created and open or user is administrator, show selection basket or change selection buttons
+                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'))) {
+                    if(action === 'view') {
+                        topbarIconRight=
+                            <div style={{paddingRight: '10px'}}>
+                                {/*<Badge
+                                    badgeContent={this.state.optionsSelectedTableOrder.length || ""}
+                                    primary={true}
+                                    badgeStyle={{top: 0, right: -5, backgroundColor: 'none', fontSize: 16}}
+                                    style={{padding: 0}}
                                 >
-                                    shopping_basket
-                                </IconButton>
-                            </Badge>*/}
-                            {(this.state.confirmedSelection.id)&&
-                                <RaisedButton
-                                    label="Cancel Changes"
-                                    onTouchTap={this.handleSelectionAbandonChanges}
+                                    <IconButton
+                                        disabled={this.state.basketDisabled}
+                                        iconClassName="material-icons"
+                                        onTouchTap={this.handleSelectionBasketClick}
+                                        iconStyle={iconStyle}
+                                    >
+                                        shopping_basket
+                                    </IconButton>
+                                </Badge>*/}
+                                {(this.state.confirmedSelection.id)&&
+                                    <RaisedButton
+                                        label="Cancel Changes"
+                                        onTouchTap={this.handleSelectionAbandonChanges}
+                                        //primary={true}
+                                        secondary={true}
+                                        style={{marginRight: '1em'}}
+                                    />
+                                }
+                                <RaisedButton 
+                                    disabled={this.state.basketDisabled}
+                                    label="Review & Submit" 
+                                    onTouchTap={this.handleSelectionBasketClick}
                                     //primary={true}
-                                    secondary={true}
-                                    style={{marginRight: '1em'}}
+                                    style={{marginTop: '6px'}}
                                 />
-                            }
-                            <RaisedButton 
-                                disabled={this.state.basketDisabled}
-                                label="Review & Submit" 
-                                onTouchTap={this.handleSelectionBasketClick}
-                                //primary={true}
-                                style={{marginTop: '6px'}}
-                            />
-                        </div>;
-                }
-                else if(action === 'confirmed') {
-                    /*topbarIconRight=
-                        <IconButton
-                            iconClassName="material-icons"
-                            onTouchTap={this.handleSelectionBackToEdit}
-                            iconStyle={iconStyle}
-                        >
-                            edit
-                        </IconButton>;*/
+                            </div>;
+                    }
+                    else if(action === 'confirmed') {
+                        /*topbarIconRight=
+                            <IconButton
+                                iconClassName="material-icons"
+                                onTouchTap={this.handleSelectionBackToEdit}
+                                iconStyle={iconStyle}
+                            >
+                                edit
+                            </IconButton>;*/
+                    }
                 }
             }
         }
-        else if(action === 'basket' || action === 'review' || action === 'more_view' || action === 'more_edit') {
+        else {
             if(action === 'basket' || action === 'review') {
                 title = 'Review Your Choices';
             }
             else if(action === 'more_view' || action === 'more_edit') {
                 title = 'Option Details';
-                
+            }
+            else if(action === 'edit_option') {
+                title = 'Edit Option';
             }
             
             if(action === 'basket' || action === 'review' || action === 'more_view') {
                 var backAction = this.handleBackToView;
             }
-            else if(action === 'more_edit') {
+            else if(action === 'more_edit' || action === 'edit_option') {
                 var backAction = this.handleBackToEdit;
             }
             
@@ -1025,28 +1038,24 @@ var OptionContainer = React.createClass({
             }
             else if(action === 'more_edit') {
                 topbarIconRight = <EditButton
-                    handleEdit={this.handleOptionDialogOpen} 
+                    handleEdit={this.handleOptionEdit} 
                     iconStyle={{color: 'white'}}
                     id={this.state.optionBeingViewed}
                     tooltip=""
-                />
+                />;
+            }
+            else if(action === 'edit_option') {
+                topbarIconRight = <RaisedButton 
+                    canSaveOptionEdit={this.state.canSaveOptionEdit}
+                    disabled={!this.props.canSaveOptionEdit || !this.props.optionSaveButton.enabled}
+                    label="Save" 
+                    onTouchTap={this.handleSelectionBasketClick}
+                    //primary={true}
+                    style={{marginTop: '6px'}}
+                    type="submit"
+                />;
             }
         
-            //If selection can be submitted, show tick icon
-            /*if(this.state.selection.allowSubmit) {
-                topbarIconRight=
-                    <IconButton
-                        iconClassName="material-icons"
-                        onTouchTap={(this.state.action === 'basket')?this.handleSelectionBasketSubmit:this.handleSelectionConfirm}
-                        iconStyle={iconStyle}
-                    >
-                        check
-                    </IconButton>;
-            }
-            else {
-                //TODO: What to show if not allowed to submit
-            }*/
-            
             //Left icon is always back arrow
             topbarIconLeft=
                 <IconButton
@@ -1056,13 +1065,6 @@ var OptionContainer = React.createClass({
                 >
                     arrow_back
                 </IconButton>;
-        }
-        //Show menu for edit action
-        else if(action === 'edit') {
-            if(this.props.sections) {
-                topbarIconLeft='menu';
-            }
-            //showStepTabs=false;
         }
        
         return (
@@ -1082,7 +1084,7 @@ var OptionContainer = React.createClass({
 
     getContent: function(action) {
         switch(action) {
-            case 'edit': //Edit
+            case 'edit': //Edit Index
                 return (
                     <OptionsTable
                         action={this.state.action}
@@ -1090,9 +1092,8 @@ var OptionContainer = React.createClass({
                         instance={this.state.instance}
                         optionContainerHandlers={{
                             change: this.handleOptionChange,
+                            edit: this.handleOptionEdit,
                             submit: this.handleOptionSubmit,
-                            dialogOpen: this.handleOptionDialogOpen,
-                            dialogClose: this.handleOptionDialogClose,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
                             viewMore: this.handleOptionViewMoreFromEdit,
@@ -1103,6 +1104,20 @@ var OptionContainer = React.createClass({
                         optionSaveButton={this.state.optionSaveButton}
                         optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                         optionsSort={this.state.optionsSort}
+                    />
+                );
+            case 'edit_option': //Edit option page
+                return (
+                    <OptionEditPage
+                        choice={this.props.choice}
+                        optionContainerHandlers={{
+                            change: this.handleOptionChange,
+                            submit: this.handleOptionSubmit,
+                            wysiwygChange: this.handleOptionWysiwygChange,
+                        }}
+                        optionEditing={this.state.optionEditing}
+                        options={this.state.options}
+                        optionSaveButton={this.state.optionSaveButton}
                     />
                 );
             case 'view': //View
