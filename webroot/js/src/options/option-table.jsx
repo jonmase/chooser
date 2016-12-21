@@ -113,6 +113,11 @@ var OptionsTable = React.createClass({
                 break;
         }
         
+        var showExpandButton = false;
+        if(this.props.choice.use_description) {
+            showExpandButton = true;
+        }
+        
         var defaultFields = [];
         if(this.props.choice.use_code) {
             defaultFields.push({
@@ -166,212 +171,190 @@ var OptionsTable = React.createClass({
         var filterableExtraFields = [];
         
         this.props.choice.extra_fields.forEach(function(field, index) {
+            //If field is sortable, add it to the array of sortable fields
             if(field.sortable) {
                 sortableExtraFields.push(index);
+            }
+            //Otherwise, field will not be shown, so need to show expand button, if not already doing so
+            else if(!showExpandButton) {
+                showExpandButton = true;
             }
             if(field.filterable) {
                 filterableExtraFields.push(index);
             }
         });
         
-        var content = 
-            <div>
-                {(this.props.options.options.length == 0)?
-                    (this.props.action === 'edit')?
-                        <div>
-                            <p>You have not created any options yet.</p>
-                            <AddButtonRaised 
-                                handleAdd={this.props.optionContainerHandlers.dialogOpen} 
-                                label="Add Option"
-                            />
-                        </div>
-                    :
-                        <p>There are no options to show.</p>
-                :
-                    <Table 
-                        selectable={enableSelection}
-                        multiSelectable={true}
-                        onRowSelection={this._onRowSelection}
-                    >
-                        <TableHeader 
-                            adjustForCheckbox={enableSelection} 
-                            displaySelectAll={enableSelection}
-                        >
-                            <TableRow>
-                                {/*(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
-                                    <FavouriteOption
-                                        handlers={this.props.optionContainerHandlers} 
-                                        option="all"
-                                    />
-                                </TableHeaderColumn>:""*/}
-                                {defaultFields.map(function(field) {
-                                    return (
-                                        <SortableTableHeaderColumn
-                                            sortField={this.props.optionsSort.field}
-                                            sortDirection={this.props.optionsSort.direction}
-                                            field={field.name}
-                                            fieldType={field.type}
-                                            key={field.name}
-                                            label={field.label}
-                                            sortHandler={this.props.optionContainerHandlers.sort}
-                                        />
-                                    );
-                                }, this)}
-
-                                {sortableExtraFields.map(function(fieldIndex) {
-                                    var fieldType = this.props.choice.extra_fields[fieldIndex].type;
-                                    if(fieldType === 'list') {
-                                        fieldType = this.props.choice.extra_fields[fieldIndex].extra['list_type'];
-                                    }
-                                
-                                    return (
-                                        <SortableTableHeaderColumn
-                                            sortField={this.props.optionsSort.field}
-                                            sortDirection={this.props.optionsSort.direction}
-                                            field={this.props.choice.extra_fields[fieldIndex].name}
-                                            fieldType={fieldType}
-                                            key={this.props.choice.extra_fields[fieldIndex].name}
-                                            label={this.props.choice.extra_fields[fieldIndex].label}
-                                            sortHandler={this.props.optionContainerHandlers.sort}
-                                        />
-                                    );
-                                }, this)}
-                                {(this.props.action === 'edit')?
-                                    <TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>
-                                :""}
-                                {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
-                                {this.props.action === 'edit'? 
-                                    <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
-                                :""}
-                                <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody 
-                            displayRowCheckbox={enableSelection}
-                            deselectOnClickaway={false}
-                        >
-                            {this.props.options.options.map(function(option) {
-                                return (
-                                    <TableRow 
-                                        key={option.id} 
-                                        selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
-                                    >
-                                        {/*(this.props.action === 'view' && enableSelection)?
-                                            <UnselectableCell style={styles.favouriteTableRowColumn}>
-                                                <FavouriteOption
-                                                    handler={this.props.optionContainerHandlers.favourite} 
-                                                    optionId={option.id}
-                                                    favourited={this.props.favourites.indexOf(option.id) > -1}
-                                                />
-                                            </UnselectableCell>
-                                        :""*/}
-                                        
-                                        {defaultFields.map(function(field) {
-                                            return (
-                                                <TableRowColumn style={field.rowStyle} key={field.name}>{option[field.name]}</TableRowColumn>
-                                            );
-                                        })}
-                                        
-                                        {sortableExtraFields.map(function(fieldIndex) {
-                                            return (
-                                                <TableRowColumn style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
-                                                    <ExtraField 
-                                                        extra={this.props.choice.extra_fields[fieldIndex].extra}
-                                                        label={this.props.choice.extra_fields[fieldIndex].label}
-                                                        options={this.props.choice.extra_fields[fieldIndex].options}
-                                                        //field={this.props.choice.extra_fields[fieldIndex]}
-                                                        type={this.props.choice.extra_fields[fieldIndex].type}
-                                                        value={option[this.props.choice.extra_fields[fieldIndex].name]}
-                                                    />
-                                                </TableRowColumn>
-                                            );
-                                        }, this)}
-                                        
-                                        {(this.props.action === 'edit')?
-                                            <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
-                                        :""}
-                                        
-                                        {this.props.action === 'edit'? 
-                                            <UnselectableCell style={styles.actionsTableRowColumn}>
-                                                <EditButton
-                                                    handleEdit={this.props.optionContainerHandlers.edit} 
-                                                    id={option.id}
-                                                    tooltip=""
-                                                />
-                                            </UnselectableCell>
-                                        :""}
-                                        <UnselectableCell style={styles.actionsTableRowColumn}>
-                                            <ExpandButton
-                                                handleMore={this.props.optionContainerHandlers.viewMore} 
-                                                //handleMore={optionTableHandlers.dialogOpen} 
-                                                id={option.id}
-                                                tooltip=""
-                                            />
-                                        </UnselectableCell>
-                                    </TableRow>
-                                );
-                            }, this)}
-                        </TableBody>
-                    </Table>
-                }
-            </div>;
-        
         return (
             <div>
-                {/*this.props.action === 'edit'? */}
-                    <Card 
-                        className="page-card"
-                        //initiallyExpanded={true}
+                <Card 
+                    className="page-card"
+                    //initiallyExpanded={true}
+                >
+                    <CardHeader
+                        title={title}
+                        subtitle={subtitle}
+                        textStyle={{float: 'left'}}
+                        style={{height: '72px'}}
+                        //actAsExpander={true}
+                        //showExpandableButton={true}
                     >
-                        <CardHeader
-                            title={title}
-                            subtitle={subtitle}
-                            textStyle={{float: 'left'}}
-                            style={{height: '72px'}}
-                            //actAsExpander={true}
-                            //showExpandableButton={true}
-                        >
-                            <div style={{float: 'right', marginTop: '-4px'}}>
-                                {/*
-                                <FilterUsers
-                                    //roleOptions={this.props.roleOptions} 
-                                    //handlers={this.props.filterUsersHandlers} 
-                                    //titleStyle={styles.sortFilterTitles}
-                                />&nbsp;*/}
-                                {(this.props.action === 'edit')&&
-                                    <AddButton 
-                                        handleAdd={this.props.optionContainerHandlers.dialogOpen} 
-                                        tooltip="Add Option"
+                        <div style={{float: 'right', marginTop: '-4px'}}>
+                            {(this.props.action === 'edit')&&
+                                <AddButton 
+                                    handleAdd={this.props.optionContainerHandlers.edit} 
+                                    tooltip="Add Option"
+                                />
+                            }
+                        </div>
+                    </CardHeader>
+                    <CardText 
+                        //expandable={true}
+                        style={styles.cardText}
+                    >
+                        {(this.props.options.options.length == 0)?
+                            (this.props.action === 'edit')?
+                                <div>
+                                    <p>You have not created any options yet.</p>
+                                    <AddButtonRaised 
+                                        handleAdd={this.props.optionContainerHandlers.edit} 
+                                        label="Add Option"
                                     />
-                                }
-                            </div>
-                        </CardHeader>
-                        <CardText 
-                            //expandable={true}
-                            style={styles.cardText}
-                        >
-                            {content}
-                        </CardText>
-                    </Card>
-                {/*:
-                //    <div>{content}</div>
-                /*/}
-                {/*<OptionViewDialog
-                    choice={this.props.choice}
-                    dialogOpen={this.state.optionDialogOpen}
-                    handlers={optionTableHandlers}
-                    optionBeingViewed={this.state.optionBeingViewed}
-                    options={this.props.options}
-                />*/}
-                {/*(this.props.action === 'edit')?
-                    <OptionEditDialog
-                        choice={this.props.choice}
-                        handlers={this.props.optionContainerHandlers}
-                        optionEditing={this.props.optionEditing} 
-                        options={this.props.options}
-                        optionSaveButton={this.props.optionSaveButton}
-                    />
-                :""*/}
+                                </div>
+                            :
+                                <p>There are no options to show.</p>
+                        :
+                            <Table 
+                                selectable={enableSelection}
+                                multiSelectable={true}
+                                onRowSelection={this._onRowSelection}
+                            >
+                                <TableHeader 
+                                    adjustForCheckbox={enableSelection} 
+                                    displaySelectAll={enableSelection}
+                                >
+                                    <TableRow>
+                                        {/*(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                            <FavouriteOption
+                                                handlers={this.props.optionContainerHandlers} 
+                                                option="all"
+                                            />
+                                        </TableHeaderColumn>:""*/}
+                                        {defaultFields.map(function(field) {
+                                            return (
+                                                <SortableTableHeaderColumn
+                                                    sortField={this.props.optionsSort.field}
+                                                    sortDirection={this.props.optionsSort.direction}
+                                                    field={field.name}
+                                                    fieldType={field.type}
+                                                    key={field.name}
+                                                    label={field.label}
+                                                    sortHandler={this.props.optionContainerHandlers.sort}
+                                                />
+                                            );
+                                        }, this)}
+
+                                        {sortableExtraFields.map(function(fieldIndex) {
+                                            var fieldType = this.props.choice.extra_fields[fieldIndex].type;
+                                            if(fieldType === 'list') {
+                                                fieldType = this.props.choice.extra_fields[fieldIndex].extra['list_type'];
+                                            }
+                                        
+                                            return (
+                                                <SortableTableHeaderColumn
+                                                    sortField={this.props.optionsSort.field}
+                                                    sortDirection={this.props.optionsSort.direction}
+                                                    field={this.props.choice.extra_fields[fieldIndex].name}
+                                                    fieldType={fieldType}
+                                                    key={this.props.choice.extra_fields[fieldIndex].name}
+                                                    label={this.props.choice.extra_fields[fieldIndex].label}
+                                                    sortHandler={this.props.optionContainerHandlers.sort}
+                                                />
+                                            );
+                                        }, this)}
+                                        {(this.props.action === 'edit')?
+                                            <TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>
+                                        :""}
+                                        {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
+                                        {this.props.action === 'edit'? 
+                                            <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                        :""}
+                                        {showExpandButton && 
+                                            <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                        }
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody 
+                                    displayRowCheckbox={enableSelection}
+                                    deselectOnClickaway={false}
+                                >
+                                    {this.props.options.options.map(function(option) {
+                                        return (
+                                            <TableRow 
+                                                key={option.id} 
+                                                selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
+                                            >
+                                                {/*(this.props.action === 'view' && enableSelection)?
+                                                    <UnselectableCell style={styles.favouriteTableRowColumn}>
+                                                        <FavouriteOption
+                                                            handler={this.props.optionContainerHandlers.favourite} 
+                                                            optionId={option.id}
+                                                            favourited={this.props.favourites.indexOf(option.id) > -1}
+                                                        />
+                                                    </UnselectableCell>
+                                                :""*/}
+                                                
+                                                {defaultFields.map(function(field) {
+                                                    return (
+                                                        <TableRowColumn style={field.rowStyle} key={field.name}>{option[field.name]}</TableRowColumn>
+                                                    );
+                                                })}
+                                                
+                                                {sortableExtraFields.map(function(fieldIndex) {
+                                                    return (
+                                                        <TableRowColumn style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
+                                                            <ExtraField 
+                                                                extra={this.props.choice.extra_fields[fieldIndex].extra}
+                                                                label={this.props.choice.extra_fields[fieldIndex].label}
+                                                                options={this.props.choice.extra_fields[fieldIndex].options}
+                                                                //field={this.props.choice.extra_fields[fieldIndex]}
+                                                                type={this.props.choice.extra_fields[fieldIndex].type}
+                                                                value={option[this.props.choice.extra_fields[fieldIndex].name]}
+                                                            />
+                                                        </TableRowColumn>
+                                                    );
+                                                }, this)}
+                                                
+                                                {(this.props.action === 'edit')?
+                                                    <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
+                                                :""}
+                                                
+                                                {this.props.action === 'edit'? 
+                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                        <EditButton
+                                                            handleEdit={this.props.optionContainerHandlers.edit} 
+                                                            id={option.id}
+                                                            tooltip=""
+                                                        />
+                                                    </UnselectableCell>
+                                                :""}
+                                                {showExpandButton && 
+                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                        <ExpandButton
+                                                            handleMore={this.props.optionContainerHandlers.viewMore} 
+                                                            //handleMore={optionTableHandlers.dialogOpen} 
+                                                            id={option.id}
+                                                            tooltip=""
+                                                        />
+                                                    </UnselectableCell>
+                                                }
+                                            </TableRow>
+                                        );
+                                    }, this)}
+                                </TableBody>
+                            </Table>
+                        }
+                    </CardText>
+                </Card>
             </div>
         );
     }

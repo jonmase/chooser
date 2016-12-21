@@ -30,8 +30,8 @@ import ExtraFieldLabelled from './extra-field-labelled.jsx';
 
 var optionEditingDefaults = {
     optionBeingEdited: null,
-    dialogOpen: false,
-    dialogTitle: 'Add Option',
+    //dialogOpen: false,
+    title: 'Add Option',
 };
 var optionSaveButtonDefaults = {
     enabled: true,
@@ -172,7 +172,7 @@ var OptionContainer = React.createClass({
             //initialState.stepIndex = 2;
         //}
         else if(this.props.action === 'edit') {
-            initialState.canSaveOptionEdit = false;
+            initialState.canSaveOption = false;
             initialState.optionEditing = optionEditingDefaults;
             initialState.optionSaveButton = optionSaveButtonDefaults;
         
@@ -246,17 +246,80 @@ var OptionContainer = React.createClass({
         
     },
     
-    handleOptionChange: function() {
-    
-    },
-    
-    handleOptionEdit: function(optionId) {
+    /* OPTION EDITING METHODS */
+    handleOptionAddOrEdit: function(optionId) {
+        //If no option is specified, a new option is being added so set optionBeingEdited to null
+        if(optionId) {
+            var optionEditingState = {
+                optionBeingEdited: optionId,
+                title: 'Edit Option',
+            };
+            
+            //Update the WYSIWYG field values
+            if(optionId && this.props.choice.use_description) {
+                var description = this.state.options.options[this.state.options.indexesById[optionId]].description;
+            }
+            else {
+                var description = '';
+            }
+            
+            var optionValuesState = this.state.optionValues;
+            var newOptionValuesState = update(optionValuesState, {
+                value_description: {$set: description},
+            });
+
+            for(var extra in this.props.choice.extra_fields) {
+                var field = this.props.choice.extra_fields[extra];
+                if(field.type === 'wysiwyg') {
+                    var value = this.state.options.options[this.state.options.indexesById[optionId]][field.name];
+                    var newOptionValuesState = update(newOptionValuesState, {['value_' + field.name]: {$set: value}});
+                }
+            }
+            this.setState({optionValues: newOptionValuesState});
+        }
+        else {
+            var optionEditingState = {
+                optionBeingEdited: null,
+                title: 'Add Option',
+            };
+        }
+        
         this.setState({
             action: 'edit_option',
-            optionBeingEdited: optionId,
+            optionEditing: optionEditingState,
         });
     },
-
+    
+    disableOptionSaveButton: function() {
+        this.setState({
+            canSaveOption: false,
+        });
+    },
+    enableOptionSaveButton: function() {
+        this.setState({
+            canSaveOption: true,
+        });
+    },
+    
+    handleOptionSaveButtonClick: function() {
+        console.log('save button clicked');
+    },
+    
+    handleptionEditCancel: function() {
+        //TODO: open dialog to chekc they definitely want to cancel changes
+    
+        /*handleSelectionConfirm: function(event, fromDialog) {
+        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
+        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
+            this.handleSelectionConfirmDialogOpen();
+        }
+        //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
+        else {
+            this.handleSelectionConfirmDialogClose();
+            this.refs.confirm.submit();
+        }*/
+    },
+    
     handleOptionDialogOpen: function(optionId) {
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
@@ -1008,6 +1071,7 @@ var OptionContainer = React.createClass({
                 }
             }
         }
+        //
         else {
             if(action === 'basket' || action === 'review') {
                 title = 'Review Your Choices';
@@ -1016,16 +1080,17 @@ var OptionContainer = React.createClass({
                 title = 'Option Details';
             }
             else if(action === 'edit_option') {
-                title = 'Edit Option';
+                title = this.state.optionEditing.title;
             }
             
-            if(action === 'basket' || action === 'review' || action === 'more_view') {
-                var backAction = this.handleBackToView;
-            }
-            else if(action === 'more_edit' || action === 'edit_option') {
+            var backAction = this.handleBackToView;
+            if(action === 'more_edit') {
                 var backAction = this.handleBackToEdit;
             }
-            
+            else if(action === 'edit_option') {
+                var backAction = this.handleCancelEdit;
+            }
+           
             if(action === 'more_view') {
                 topbarIconRight=<Checkbox 
                     disableTouchRipple={true}
@@ -1038,7 +1103,7 @@ var OptionContainer = React.createClass({
             }
             else if(action === 'more_edit') {
                 topbarIconRight = <EditButton
-                    handleEdit={this.handleOptionEdit} 
+                    handleEdit={this.handleOptionAddOrEdit} 
                     iconStyle={{color: 'white'}}
                     id={this.state.optionBeingViewed}
                     tooltip=""
@@ -1046,10 +1111,10 @@ var OptionContainer = React.createClass({
             }
             else if(action === 'edit_option') {
                 topbarIconRight = <RaisedButton 
-                    canSaveOptionEdit={this.state.canSaveOptionEdit}
-                    disabled={!this.props.canSaveOptionEdit || !this.props.optionSaveButton.enabled}
+                    disabled={!this.state.canSaveOption || !this.state.optionSaveButton.enabled}
+                    //disabled={!this.state.optionSaveButton.enabled}
                     label="Save" 
-                    onTouchTap={this.handleSelectionBasketClick}
+                    onTouchTap={this.handleOptionSaveButtonClick}
                     //primary={true}
                     style={{marginTop: '6px'}}
                     type="submit"
@@ -1092,7 +1157,7 @@ var OptionContainer = React.createClass({
                         instance={this.state.instance}
                         optionContainerHandlers={{
                             change: this.handleOptionChange,
-                            edit: this.handleOptionEdit,
+                            edit: this.handleOptionAddOrEdit,
                             submit: this.handleOptionSubmit,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
@@ -1112,12 +1177,13 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         optionContainerHandlers={{
                             change: this.handleOptionChange,
+                            disableSaveButton: this.disableOptionSaveButton,
+                            enableSaveButton: this.enableOptionSaveButton,
                             submit: this.handleOptionSubmit,
                             wysiwygChange: this.handleOptionWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
                         options={this.state.options}
-                        optionSaveButton={this.state.optionSaveButton}
                     />
                 );
             case 'view': //View
