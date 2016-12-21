@@ -11,6 +11,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\Choice $choice
  * @property bool $active
  * @property string $choosing_instructions
+ * @property string $review_instructions
  * @property bool $editable
  * @property \Cake\I18n\Time $opens
  * @property \Cake\I18n\Time $deadline
