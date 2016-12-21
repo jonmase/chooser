@@ -157,7 +157,7 @@ var SettingsDialog = React.createClass({
                         name: "review_instructions",
                         //onChange: this.props.handlers.handleWysiwygChange,
                         section: true,
-                        value: instance.review_instructions || null, //this.props.containerState.settingsWysiwyg_preference_instructions,
+                        value: instance.review_instructions || null,
                     }} />
                 </div>
                 <div id="preferences">
