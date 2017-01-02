@@ -75,10 +75,7 @@ var ResultsContainer = React.createClass({
         />;
 
         return (
-            <Container topbar={topbar}>
-                <h2 className="page-title">
-                    {this.props.title}
-                </h2>
+            <Container topbar={topbar} title={this.props.title}>
                 <div>
                     {(!this.state.loaded)?
                         <Loader />

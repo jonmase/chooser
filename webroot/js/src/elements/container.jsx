@@ -10,7 +10,9 @@ function Container(props) {
                 <nav id="topbar" style={{margin: '0 -2rem'}}>
                     {props.topbar}
                 </nav>
+
                 <div style={{paddingTop: '64px'}}>
+                    <h2 className="page-title">{props.title}</h2>
                     {props.children}
                 </div>
             </div>

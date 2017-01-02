@@ -53,8 +53,7 @@ var SectionsCards = React.createClass({
         />;
 
         return (
-            <Container topbar={topbar}>
-                <h1 className="page-title">Dashboard</h1>
+            <Container topbar={topbar} title="Dashboard">
                 <div style={styles.root} className="row">
                     {this.props.sections.map(function(card) {
                         return (

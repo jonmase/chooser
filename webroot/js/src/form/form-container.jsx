@@ -341,8 +341,7 @@ var FormContainer = React.createClass({
         />;
 
         return (
-			<Container topbar={topbar}>
-                <h2 className="page-title">Dashboard - Options Form</h2>
+			<Container topbar={topbar} title="Dashboard - Options Form">
                 <div>
                     <p>Define the fields that you want to appear on the form for creating/editing options. </p>
                     <DefaultFieldToggles 

@@ -502,8 +502,7 @@ var RolesContainer = React.createClass({
         />;
 
         return (
-			<Container topbar={topbar}>
-                <h2 className="page-title">Dashboard - User Permissions</h2>
+			<Container topbar={topbar} title="Dashboard - User Permissions">
                 <div>
                     <RolesSettingsForm 
                         state={this.state} 

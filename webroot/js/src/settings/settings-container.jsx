@@ -464,8 +464,7 @@ var FormContainer = React.createClass({
         />;
 
         return (
-			<Container topbar={topbar}>
-                <h2 className="page-title">Dashboard - Choice Settings</h2>
+			<Container topbar={topbar} title="Dashboard - Choice Settings">
                 <div>
                     <p>Provide instructions, deadlines, rules, etc for students to make their choices.</p>
                     <Settings

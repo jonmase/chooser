@@ -21,8 +21,7 @@ var SectionsCards = React.createClass({
         var showList = this.props.choices.length > 0;
         
         return (
-            <Container topbar={topbar}>
-                <h2 className="page-title">Choice Setup</h2>
+            <Container topbar={topbar} title="Choice Setup">
                 <div className="row">
                     {(showList) &&
                         <div className="col-xs-12 col-md-6">

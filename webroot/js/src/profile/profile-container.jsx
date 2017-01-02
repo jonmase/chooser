@@ -133,8 +133,7 @@ var ProfileContainer = React.createClass({
         />;
 
         return (
-			<Container topbar={topbar}>
-                <h2 className="page-title">Dashboard - Profile</h2>
+			<Container topbar={topbar} title="Dashboard - Profile">
                 <div>
                     <p>Create and edit your profile using the form below. The information you provide here will be shown to students with the options that you offer. Your profile will be the same for all Choices where you offer options, so only enter information you are happy to be seen by students for all of those Choices.</p>
                     <Formsy.Form
