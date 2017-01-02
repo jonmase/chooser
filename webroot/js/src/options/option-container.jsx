@@ -30,7 +30,6 @@ import ExtraFieldLabelled from './extra-field-labelled.jsx';
 
 var optionEditingDefaults = {
     optionBeingEdited: null,
-    //dialogOpen: false,
     title: 'Add Option',
 };
 var optionSaveButtonDefaults = {
@@ -174,6 +173,7 @@ var OptionContainer = React.createClass({
         else if(this.props.action === 'edit') {
             initialState.canSaveOption = false;
             initialState.optionEditing = optionEditingDefaults;
+            initialState.optionEditingCancelDialogOpen = false;
             initialState.optionSaveButton = optionSaveButtonDefaults;
         
             var optionValuesState = {};
@@ -200,8 +200,10 @@ var OptionContainer = React.createClass({
     },
     
     handleBackToEdit: function() {
+        //Return to edit action, and ensure cancel dialog is closed
         this.setState({
-            action: 'edit'
+            action: 'edit',
+            optionEditingCancelDialogOpen: false,
         });
     },
     
@@ -309,6 +311,23 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleOptionEditCancelButtonClick: function() {
+        //TODO: open dialog to chekc they definitely want to cancel changes
+        console.log('open cancel edit dialog');
+        
+        this.setState({
+            optionEditingCancelDialogOpen: true,
+        });
+    },
+    
+    handleOptionEditCancelDialogClose: function() {
+        console.log('close cancel edit dialog');
+        
+        this.setState({
+            optionEditingCancelDialogOpen: false,
+        });
+    },
+    
     handleOptionEditSaveButtonClick: function() {
         console.log('save button clicked');
     },
@@ -324,22 +343,7 @@ var OptionContainer = React.createClass({
             canSaveOption: true,
         });
     },
-    
-    handleOptionEditCancelButtonClick: function() {
-        //TODO: open dialog to chekc they definitely want to cancel changes
-    
-        /*handleSelectionConfirm: function(event, fromDialog) {
-        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
-        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
-            this.handleSelectionConfirmDialogOpen();
-        }
-        //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
-        else {
-            this.handleSelectionConfirmDialogClose();
-            this.refs.confirm.submit();
-        }*/
-    },
-    
+        
     handleOptionEditSelect: function(rowsSeleted) {
     },
     
@@ -1123,8 +1127,11 @@ var OptionContainer = React.createClass({
             case 'edit_option': //Edit option page
                 return (
                     <OptionEditPage
+                        cancelDialogOpen={this.state.optionEditingCancelDialogOpen}
                         choice={this.props.choice}
                         optionContainerHandlers={{
+                            backToEdit: this.handleBackToEdit,
+                            cancelDialogClose: this.handleOptionEditCancelDialogClose,
                             change: this.handleOptionChange,
                             disableSaveButton: this.handleOptionEditSaveButtonDisable,
                             enableSaveButton: this.handleOptionEditSaveButtonEnable,
