@@ -1088,16 +1088,19 @@ var OptionContainer = React.createClass({
                     type="submit"
                 />;
             }
-        
-            //Left icon is always back arrow
-            topbarIconLeft=
-                <IconButton
-                    iconClassName="material-icons"
-                    onTouchTap={backAction}
-                    iconStyle={iconStyle}
-                >
-                    arrow_back
-                </IconButton>;
+            
+            //Unless action is unavailable...
+            if(action !== 'unavailable') {
+                //...left icon is always back arrow
+                topbarIconLeft=
+                    <IconButton
+                        iconClassName="material-icons"
+                        onTouchTap={backAction}
+                        iconStyle={iconStyle}
+                    >
+                        arrow_back
+                    </IconButton>;
+            }
         }
        
         return (
@@ -1316,7 +1319,38 @@ var OptionContainer = React.createClass({
     },
     
     render: function() {
-        return (
+        var defaultAppTitle = <AppTitle subtitle={this.props.choice.name} />;
+    
+        if(this.state.action === 'unavailable') {
+            return (
+                <Unavailable
+                    title={defaultAppTitle}
+                />
+            );
+        }
+        else {
+            return (
+                <Container topbar={this.getTopbar(this.state.action)} title={(this.state.action === 'edit')?"Dashboard - Edit Options":((this.state.action === 'approve')?"Dashboard - Approve Options":"")}>
+                    <div>
+                        {(!this.state.options.loaded || !this.state.instance.loaded)?
+                            <Loader />
+                        :
+                            <div>
+                                {this.getContent(this.state.action)}
+                            </div>
+                        }
+                        <Snackbar
+                            autoHideDuration={3000}
+                            message={this.state.snackbar.message}
+                            onRequestClose={this.handleSnackbarClose}
+                            open={this.state.snackbar.open}
+                        />
+                    </div>
+                </Container>
+            );
+        }
+        
+        /*return (
             <Container topbar={this.getTopbar(this.state.action)} title={(this.state.action === 'edit')?"Dashboard - Edit Options":((this.state.action === 'approve')?"Dashboard - Approve Options":"")}>
                 <div>
                     {(this.state.action === 'unavailable')?
@@ -1340,7 +1374,7 @@ var OptionContainer = React.createClass({
                     />
                 </div>
             </Container>
-        );
+        );*/
     }
 });
 
