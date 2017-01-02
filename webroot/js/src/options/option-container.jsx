@@ -1317,15 +1317,7 @@ var OptionContainer = React.createClass({
     
     render: function() {
         return (
-            <Container topbar={this.getTopbar(this.state.action)}>
-                    <h2 className="page-title">
-                        {(this.state.action === 'edit') &&
-                            <span>Dashboard - Edit Options</span>
-                        }
-                        {(this.state.action === 'approve') &&
-                            <span>Dashboard - Approve Options</span>
-                        }
-                    </h2>
+            <Container topbar={this.getTopbar(this.state.action)} title={(this.state.action === 'edit')?"Dashboard - Edit Options":((this.state.action === 'approve')?"Dashboard - Approve Options":"")}>
                 <div>
                     {(this.state.action === 'unavailable')?
                         <Unavailable
