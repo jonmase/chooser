@@ -10,7 +10,7 @@ var CheckboxField = React.createClass({
 
         var checkboxes = field.options.map(function(option) {
             var defaultChecked = false;
-            if(typeof(field.value) !== "undefined" && typeof(field.value[option.value]) !== "undefined") {
+            if(field.value && typeof(field.value[option.value]) !== "undefined") {
                 defaultChecked = !!field.value[option.value];
             }
             
@@ -19,7 +19,7 @@ var CheckboxField = React.createClass({
                     name={field.name + '.' + option.value}
                     key={option.value} 
                     label={option.label} 
-                    onChange={this.props.onChange}
+                    onChange={field.onChange}
                     defaultChecked={defaultChecked}
                 />
             );

@@ -132,6 +132,7 @@ var RuleDialog = React.createClass({
                             field={{
                                 label: "Rule Type",
                                 name: "combined_type",
+                                onChange: this.props.handlers.typeChange,
                                 options: [
                                     {
                                         label: "Number - Min and/or Max",
@@ -157,7 +158,6 @@ var RuleDialog = React.createClass({
                                 section: false, 
                                 value:  this.props.containerState.ruleCombinedType,
                             }} 
-                            onChange={this.props.handlers.typeChange}
                         />
                         {(this.props.containerState.ruleValueType === "range")?
                             <div>
@@ -201,6 +201,7 @@ var RuleDialog = React.createClass({
                             field={{
                                 label: "Rule Applies To",
                                 name: "scope",
+                                onChange: this.props.handlers.scopeChange,
                                 options: [
                                     {
                                         label: "Entire Choice",
@@ -214,7 +215,6 @@ var RuleDialog = React.createClass({
                                 section: false, 
                                 value:  this.props.containerState.ruleScope,
                             }} 
-                            onChange={this.props.handlers.scopeChange}
                         />
                         {(this.props.containerState.ruleScope === "category")?
                             <div>
@@ -222,11 +222,11 @@ var RuleDialog = React.createClass({
                                     field={{
                                         label: "Category Field",
                                         name: "category_field",
+                                        onChange:this.props.handlers.categoryFieldChange,
                                         options: this.props.containerState.ruleCategoryFields,
                                         section: true, 
                                         value:  this.props.containerState.ruleCategoryFieldIndex,
                                     }} 
-                                    onChange={this.props.handlers.categoryFieldChange}
                                 />
                                 {(this.props.containerState.ruleCategoryFieldIndex !== null)?
                                     /*

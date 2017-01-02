@@ -10,6 +10,7 @@ var TitleField = React.createClass({
                     instructions: "Enter text",
                     label: "Title*",
                     name: "title",
+                    onChange: this.props.onChange,
                     required: true,
                     section: false,
                     value: this.props.value,

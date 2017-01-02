@@ -9,6 +9,7 @@ var CodeField = React.createClass({
                     instructions: "Enter text",
                     label: "Code*",
                     name: "code",
+                    onChange: this.props.onChange,
                     required: true,
                     section: false,
                     value: this.props.value,

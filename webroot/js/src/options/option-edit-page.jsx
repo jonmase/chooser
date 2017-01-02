@@ -38,6 +38,7 @@ var OptionEditPage = React.createClass({
                             defaults={defaults}
                             option={option}
                             removeOrHide="remove"
+                            onChange={this.props.optionContainerHandlers.change}
                             onWysiwygChange={this.props.optionContainerHandlers.wysiwygChange}
                         />
                     </div>
@@ -45,6 +46,9 @@ var OptionEditPage = React.createClass({
                         {this.props.choice.extra_fields.map(function(field) {
                             if(field.type === 'wysiwyg') {
                                 field.onChange = this.props.optionContainerHandlers.wysiwygChange;
+                            }
+                            else {
+                                field.onChange = this.props.optionContainerHandlers.change;
                             }
                             if(option && typeof(option[field.name]) !== "undefined") {
                                 field.value = option[field.name];

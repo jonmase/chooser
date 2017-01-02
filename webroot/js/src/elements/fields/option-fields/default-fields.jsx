@@ -29,7 +29,7 @@ var DefaultFields = React.createClass({
         if(!remove || defaults.title) {
             defaultsFields.push(
                 <div className={defaults.title?(defaults.description?'section':''):'hidden'} key="title">
-                    <TitleField value={option?option.title:""} />
+                    <TitleField value={option?option.title:""} onChange={this.props.onChange} />
                 </div>
             );
         }
@@ -43,21 +43,21 @@ var DefaultFields = React.createClass({
         if(!remove || defaults.min_places) {
             defaultsFields.push(
                 <div className={defaults.min_places?'':'hidden'} key="min_places">
-                    <MinPlacesField value={option?option.min_places:""} />
+                    <MinPlacesField value={option?option.min_places:""} onChange={this.props.onChange} />
                 </div>
             );
         }
         if(!remove || defaults.max_places) {
             defaultsFields.push(
                 <div className={defaults.max_places?'':'hidden'} key="max_places">
-                    <MaxPlacesField value={option?option.max_places:""} />
+                    <MaxPlacesField value={option?option.max_places:""} onChange={this.props.onChange} />
                 </div>
             );
         }
         if(!remove || defaults.points) {
             defaultsFields.push(
                 <div className={defaults.points?'':'hidden'} key="points">
-                    <PointsField value={option?option.points:""} />
+                    <PointsField value={option?option.points:""} onChange={this.props.onChange} />
                 </div>
             );
         }

@@ -18,6 +18,7 @@ var EmailField = React.createClass({
                     floatingLabelText={field.label}
                     hintText={instructions}
                     name={field.name}
+                    onChange={field.onChange}
                     required={required}
                     validations="isEmail"
                     validationError="Please enter a valid email address"

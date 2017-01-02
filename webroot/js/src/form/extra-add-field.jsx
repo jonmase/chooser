@@ -69,10 +69,10 @@ var AddField = React.createClass({
                         field={{
                             label: "Field type",
                             name: "type",
+                            onChange: this.props.handlers.typeChange,
                             options: this.props.fieldTypes,
                             required: true,
                         }}
-                        onChange={this.props.handlers.typeChange}
                     />
                     <CommonFields
                         type={this.props.state.addType}

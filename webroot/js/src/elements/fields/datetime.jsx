@@ -36,6 +36,7 @@ var DateTimeField = React.createClass({
                         format='ampm'
                         hintText="Time"
                         name={field.name + '_time'}
+                        onChange={field.onChange}
                         pedantic={true}
                         required={required}
                     />
@@ -61,6 +62,7 @@ var DateTimeField = React.createClass({
                             defaultDate={defaultDate}
                             hintText="Date"
                             name={field.name + '_date'}
+                            onChange={field.onChange}
                             required={required}
                             formatDate={function(date) {
                                 var dateString = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();

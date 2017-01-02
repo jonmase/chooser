@@ -13,6 +13,7 @@ var UrlField = React.createClass({
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
+                    onChange={field.onChange}
                     required={required}
                     validations="isUrl"
                     validationError="Please enter a valid URL (web address)"

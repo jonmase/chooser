@@ -84,12 +84,12 @@ var OptionList = React.createClass({
                                                 disabled: this.props.rankSelectsDisabled,
                                                 label: false,
                                                 name: "options." + optionId + ".rank",
+                                                onChange: this.props.handleOrderChange,
                                                 options: rankDropdownOptions,
                                                 required: true,
                                                 style: {width: '40px', marginTop: '12px'},
                                                 value: optionIndex,
                                             }}
-                                            onChange={this.props.handleOrderChange}
                                         />
                                     :""}
                                 </div>

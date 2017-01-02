@@ -27,7 +27,7 @@ var RadioField = React.createClass({
                     defaultSelected={field.value}
                     floatingLabelText={field.label}
                     name={field.name}
-                    onChange={this.props.onChange}
+                    onChange={field.onChange}
                     required={required}
                 >
                     {radios}

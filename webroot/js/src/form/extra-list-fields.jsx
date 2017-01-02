@@ -36,7 +36,6 @@ var ListFields = React.createClass({
                         required: true,
                         value: values.list_type,
                     }}
-                    //onChange={this.typeSelectChange}
                 />
                 <MultilineTextField
                     field={{

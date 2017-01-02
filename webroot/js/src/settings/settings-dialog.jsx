@@ -176,6 +176,7 @@ var SettingsDialog = React.createClass({
                         <Dropdown field={{
                                 label: "Preference Type",
                                 name: "preference_type",
+                                onChange: this.handlePreferenceTypeChange,
                                 options: [
                                     {
                                         label: "Ranking",
@@ -189,7 +190,6 @@ var SettingsDialog = React.createClass({
                                 section: (this.state.preferenceType === "points")?false:true, 
                                 value:  this.state.preferenceType,
                             }} 
-                            onChange={this.handlePreferenceTypeChange}
                         />
                         <div className={(this.state.preferenceType === "points")?"":"hidden"}>
                             <Text field={{

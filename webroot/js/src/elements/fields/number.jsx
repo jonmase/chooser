@@ -57,6 +57,7 @@ var NumberField = React.createClass({
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
+                    onChange={field.onChange}
                     required={required}
                     validations={validations}
                     validationErrors={validationErrors}
