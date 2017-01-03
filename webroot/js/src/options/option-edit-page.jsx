@@ -15,10 +15,20 @@ import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 var OptionEditPage = React.createClass({
     getInitialState: function () {
         var initialState = {
+            cancelDialogOpen: false,
             canSaveOption: false,
+            dirty: false,
         };
         
         return initialState;
+    },
+    
+    cancel: function() {
+        this.setState({
+            cancelDialogOpen: false,
+            dirty: false,
+        });
+        this.props.optionContainerHandlers.backToEdit();
     },
     
     disableSaveButton: function() {
@@ -33,6 +43,41 @@ var OptionEditPage = React.createClass({
         });
     },
 
+    handleBackButtonClick: function() {
+        //If the form is dirty...
+        if(this.state.dirty) {
+            //...check that user definitely wants to cancel and lose changes
+            this.setState({
+                cancelDialogOpen: true,
+            });
+        }
+        //Otherwise, just go back to editing index page
+        else {
+            this.props.optionContainerHandlers.backToEdit();
+        }
+    },
+    
+    handleCancelDialogClose: function() {
+        //Close the cancel confirm dialog
+        this.setState({
+            cancelDialogOpen: false,
+        });
+    },
+    
+    handleChange: function() {
+        //If option is not yet dirty, set it to be
+        if(!this.state.dirty) {
+            this.setState({
+                dirty: true,
+            });
+        }
+    },
+    
+    handleWysiwygChange: function(element, value) {
+        this.handleChange();
+        this.props.optionContainerHandlers.wysiwygChange(element, value);
+    },
+    
     render: function() {
         var defaults = {
             code: this.props.choice.use_code,
@@ -49,12 +94,12 @@ var OptionEditPage = React.createClass({
         }
 
         var topbar = <TopBar 
-            iconLeft={<TopBarBackButton onTouchTap={this.props.optionContainerHandlers.cancel} />}
+            iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
             iconRight={<RaisedButton 
                 disabled={!this.state.canSaveOption || !this.props.optionSaveButton.enabled}
                 //disabled={!this.props.optionSaveButton.enabled}
                 label={this.props.optionSaveButton.label}
-                onTouchTap={this.handleOptionEditSaveButtonClick}
+                onTouchTap={this.props.optionContainerHandlers.save}
                 //primary={true}
                 style={{marginTop: '6px'}}
                 type="submit"
@@ -77,17 +122,17 @@ var OptionEditPage = React.createClass({
                             defaults={defaults}
                             option={option}
                             removeOrHide="remove"
-                            onChange={this.props.optionContainerHandlers.change}
-                            onWysiwygChange={this.props.optionContainerHandlers.wysiwygChange}
+                            onChange={this.handleChange}
+                            onWysiwygChange={this.handleWysiwygChange}
                         />
                     </div>
                     <div className="section">
                         {this.props.choice.extra_fields.map(function(field) {
                             if(field.type === 'wysiwyg') {
-                                field.onChange = this.props.optionContainerHandlers.wysiwygChange;
+                                field.onChange = this.handleWysiwygChange;
                             }
                             else {
-                                field.onChange = this.props.optionContainerHandlers.change;
+                                field.onChange = this.handleChange;
                             }
                             if(option && typeof(option[field.name]) !== "undefined") {
                                 field.value = option[field.name];
@@ -108,10 +153,10 @@ var OptionEditPage = React.createClass({
                 </Formsy.Form>
                 <CancelDialog 
                     handlers={{
-                        close: this.props.optionContainerHandlers.cancelDialogClose,
-                        submit: this.props.optionContainerHandlers.backToEdit,
+                        close: this.handleCancelDialogClose,
+                        submit: this.cancel,
                     }}
-                    open={this.props.cancelDialogOpen}
+                    open={this.state.cancelDialogOpen}
                 />
             </Container>
         );

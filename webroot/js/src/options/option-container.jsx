@@ -173,8 +173,6 @@ var OptionContainer = React.createClass({
         //}
         else if(this.props.action === 'edit') {
             initialState.optionEditing = optionEditingDefaults;
-            initialState.optionEditingCancelDialogOpen = false;
-            initialState.optionEditingDirty = false;
             initialState.optionSaveButton = optionSaveButtonDefaults;
         
             var optionValuesState = {};
@@ -204,8 +202,6 @@ var OptionContainer = React.createClass({
         //Return to edit action, and ensure cancel dialog is closed
         this.setState({
             action: 'edit',
-            optionEditingCancelDialogOpen: false,
-            optionEditingDirty: false,
         });
     },
     
@@ -313,36 +309,6 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleOptionEditCancelButtonClick: function() {
-        //If the form is dirty...
-        if(this.state.optionEditingDirty) {
-            //...check that user definitely wants to cancel and lose changes
-            this.setState({
-                optionEditingCancelDialogOpen: true,
-            });
-        }
-        //Otherwise, just go back to editing index page
-        else {
-            this.handleBackToEdit();
-        }
-    },
-    
-    handleOptionEditCancelDialogClose: function() {
-        //Close the cancel confirm dialog
-        this.setState({
-            optionEditingCancelDialogOpen: false,
-        });
-    },
-    
-    handleOptionEditChange: function() {
-        //If option is not yet dirty, set it to be
-        if(!this.state.optionEditingDirty) {
-            this.setState({
-                optionEditingDirty: true,
-            });
-        }
-    },
-    
     handleOptionEditSaveButtonClick: function() {
         console.log('save button clicked');
     },
@@ -425,8 +391,6 @@ var OptionContainer = React.createClass({
             ['value_' + element]: {$set: value},
         });
         this.setState({optionValues: newOptionValuesState});
-        
-        this.handleOptionEditChange();
     },
     
     handleOptionViewMoreFromEdit: function(optionId) {
@@ -1133,15 +1097,10 @@ var OptionContainer = React.createClass({
             case 'edit_option': //Edit option page
                 return (
                     <OptionEditPage
-                        cancelDialogOpen={this.state.optionEditingCancelDialogOpen}
                         choice={this.props.choice}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
-                            cancel: this.handleOptionEditCancelButtonClick,
-                            cancelDialogClose: this.handleOptionEditCancelDialogClose,
-                            change: this.handleOptionEditChange,
-                            disableSaveButton: this.handleOptionEditSaveButtonDisable,
-                            enableSaveButton: this.handleOptionEditSaveButtonEnable,
+                            save: this.handleOptionEditSaveButtonClick,
                             submit: this.handleOptionEditSubmit,
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
