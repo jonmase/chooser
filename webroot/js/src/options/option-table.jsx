@@ -100,6 +100,7 @@ var OptionsTable = React.createClass({
             case 'edit':
                 var title = 'Options';
                 var subtitle = 'Create, edit and manage options';
+                enableSelection = false;
                 break;
             case 'view':
                 var title = 'Choose Options';
