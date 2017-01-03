@@ -38,6 +38,7 @@ var optionSaveButtonDefaults = {
 };
 
 
+
 var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
         if(this.props.action === 'edit') {
@@ -171,7 +172,6 @@ var OptionContainer = React.createClass({
             //initialState.stepIndex = 2;
         //}
         else if(this.props.action === 'edit') {
-            initialState.canSaveOption = false;
             initialState.optionEditing = optionEditingDefaults;
             initialState.optionEditingCancelDialogOpen = false;
             initialState.optionEditingDirty = false;
@@ -347,18 +347,6 @@ var OptionContainer = React.createClass({
         console.log('save button clicked');
     },
     
-    handleOptionEditSaveButtonDisable: function() {
-        this.setState({
-            canSaveOption: false,
-        });
-    },
-    
-    handleOptionEditSaveButtonEnable: function() {
-        this.setState({
-            canSaveOption: true,
-        });
-    },
-        
     handleOptionEditSelect: function(rowsSeleted) {
     },
     
@@ -1149,6 +1137,7 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
+                            cancel: this.handleOptionEditCancelButtonClick,
                             cancelDialogClose: this.handleOptionEditCancelDialogClose,
                             change: this.handleOptionEditChange,
                             disableSaveButton: this.handleOptionEditSaveButtonDisable,
@@ -1157,6 +1146,7 @@ var OptionContainer = React.createClass({
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
+                        optionSaveButton={this.state.optionSaveButton}
                         options={this.state.options}
                     />
                 );
@@ -1327,6 +1317,9 @@ var OptionContainer = React.createClass({
                     title={defaultAppTitle}
                 />
             );
+        }
+        else if(this.state.action === 'edit_option') {
+            return this.getContent(this.state.action);
         }
         else {
             return (

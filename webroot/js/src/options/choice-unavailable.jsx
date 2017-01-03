@@ -6,7 +6,7 @@ import TopBar from '../elements/topbar.jsx';
 var ChoiceUnavailable = React.createClass({
     render: function() {
         var topbar = <TopBar 
-            iconLeft={null} //Left icon is shown by deafult
+            iconLeft={null} //Left icon is shown by deafult, so set to null to hide it
             title={this.props.title}
         />;
         

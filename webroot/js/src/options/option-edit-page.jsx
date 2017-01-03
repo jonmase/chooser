@@ -1,13 +1,38 @@
 import React from 'react';
 
 import Formsy from 'formsy-react';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import CancelDialog from './option-edit-cancel-dialog.jsx';
+
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
 
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
 var OptionEditPage = React.createClass({
+    getInitialState: function () {
+        var initialState = {
+            canSaveOption: false,
+        };
+        
+        return initialState;
+    },
+    
+    disableSaveButton: function() {
+        this.setState({
+            canSaveOption: false,
+        });
+    },
+    
+    enableSaveButton: function() {
+        this.setState({
+            canSaveOption: true,
+        });
+    },
+
     render: function() {
         var defaults = {
             code: this.props.choice.use_code,
@@ -23,14 +48,28 @@ var OptionEditPage = React.createClass({
             option = this.props.options.options[this.props.options.indexesById[this.props.optionEditing.optionBeingEdited]];
         }
 
+        var topbar = <TopBar 
+            iconLeft={<TopBarBackButton onTouchTap={this.props.optionContainerHandlers.cancel} />}
+            iconRight={<RaisedButton 
+                disabled={!this.state.canSaveOption || !this.props.optionSaveButton.enabled}
+                //disabled={!this.props.optionSaveButton.enabled}
+                label={this.props.optionSaveButton.label}
+                onTouchTap={this.handleOptionEditSaveButtonClick}
+                //primary={true}
+                style={{marginTop: '6px'}}
+                type="submit"
+            />}
+            title="Edit Option"
+        />;
+        
         return (
-            <div>
+            <Container topbar={topbar} title={null}>
                 <Formsy.Form 
                     id="option_form"
                     method="POST"
                     noValidate={true}
-                    onValid={this.props.optionContainerHandlers.enableSaveButton}
-                    onInvalid={this.props.optionContainerHandlers.disableSaveButton}
+                    onValid={this.enableSaveButton}
+                    onInvalid={this.disableSaveButton}
                     onValidSubmit={this.props.optionContainerHandlers.submit}
                 >
                     <div className="section">
@@ -74,7 +113,7 @@ var OptionEditPage = React.createClass({
                     }}
                     open={this.props.cancelDialogOpen}
                 />
-            </div>
+            </Container>
         );
     }
 });
