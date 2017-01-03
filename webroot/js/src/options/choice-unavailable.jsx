@@ -1,15 +1,7 @@
 import React from 'react';
 
-import {Card, CardHeader, CardText} from 'material-ui/Card';
-
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
-
-var styles = {
-    cardText: {
-        paddingTop: '0px',
-    }
-};
 
 var ChoiceUnavailable = React.createClass({
     render: function() {
