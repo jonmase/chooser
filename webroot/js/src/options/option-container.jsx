@@ -322,6 +322,7 @@ var OptionContainer = React.createClass({
         var sortedOptions = this.sortOptions(returnedData.options, this.state.optionsSort.field, this.state.optionsSort.fieldType, this.state.optionsSort.direction);
         
         this.setState({
+            action: 'edit',
             optionEditing: optionEditingDefaults,
             options: {
                 options: sortedOptions,
@@ -791,54 +792,52 @@ var OptionContainer = React.createClass({
             function(a, b) {
                 var textTypes = ['text', 'wysiwyg', 'list', 'email', 'url'];
             
+                var valueA = null;
+                var valueB = null;
+            
                 //TODO: Deal with list types better 
                 if(fieldType === 'date') {
                     if(a[field]) {
                         var dateA = a[field].date;
-                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day));
+                        valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day));
                     }
-                    else {
-                        valueA = null;
-                    }
+
                     if(b[field]) {
                         var dateB = b[field].date;
-                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day));
-                    }
-                    else {
-                        valueB = null;
+                        valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day));
                     }
                 }
                 else if(fieldType === 'datetime') {
                     if(a[field]) {
                         var dateA = a[field].date;
                         var timeA = a[field].time;
-                        var valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day), parseInt(timeA.hour), parseInt(timeA.minute), 0);
+                        valueA = new Date(parseInt(dateA.year), parseInt(dateA.month) - 1, parseInt(dateA.day), parseInt(timeA.hour), parseInt(timeA.minute), 0);
                     }
-                    else {
-                        valueA = null;
-                    }
+
                     if(b[field]) {
                         var dateB = b[field].date;
                         var timeB = b[field].time;
-                        var valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day), parseInt(timeB.hour), parseInt(timeB.minute), 0);
-                    }
-                    else {
-                        valueB = null;
+                        valueB = new Date(parseInt(dateB.year), parseInt(dateB.month) - 1, parseInt(dateB.day), parseInt(timeB.hour), parseInt(timeB.minute), 0);
                     }
                 }
                 else if(fieldType === 'number') {
-                    var valueA = a[field];
-                    var valueB = b[field];
+                    if(a[field]) {
+                        valueA = a[field];
+                    }
+                    if(b[field]) {
+                        valueB = b[field];
+                    }
                 }
                 else if(fieldType === 'checkbox') {
                     //Checkbox options should be in alphabetical order, so can concatenate the selected values for each option then compare
-                    var valueA = '';
+                    valueA = '';
                     for(var value in a[field]) {
                         if(a[field][value]) {
                             valueA += value.toUpperCase();
                         }
                     }
-                    var valueB = '';
+                    
+                    valueB = '';
                     for(var value in b[field]) {
                         if(b[field][value]) {
                             valueB += value.toUpperCase();
@@ -847,8 +846,12 @@ var OptionContainer = React.createClass({
                 }
                 //if(textTypes.indexOf(fieldType) > -1) {
                 else {  //Otherwise, assume text search
-                    var valueA = a[field].toUpperCase(); // ignore upper and lowercase
-                    var valueB = b[field].toUpperCase(); // ignore upper and lowercase
+                    if(a[field]) {
+                        valueA = a[field].toUpperCase(); // ignore upper and lowercase
+                    }
+                    if(b[field]) {
+                        valueB = b[field].toUpperCase(); // ignore upper and lowercase
+                    }
                 }
                 
                 

@@ -6,7 +6,6 @@ var TitleField = React.createClass({
         return (
             <TextField
                 field={{
-                    defaultValue: this.props.value,
                     fullWidth: true,
                     instructions: "Enter text",
                     label: "Title*",
@@ -14,6 +13,7 @@ var TitleField = React.createClass({
                     onChange: this.props.onChange,
                     required: true,
                     section: false,
+                    value: this.props.value,
                 }}
             />
         );

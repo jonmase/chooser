@@ -127,6 +127,7 @@ var OptionEditPage = React.createClass({
                 console.log(returnedData.response);
 
                 this.setState({
+                    dirty: false,
                     saveButton: saveButtonDefaults,
                 });
                 

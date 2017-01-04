@@ -6,12 +6,12 @@ var MinPlacesField = React.createClass({
         return (
             <NumberField
                 field={{
-                    defaultValue: this.props.value,
                     instructions: "Enter a number",
                     label: "Minimum places*",
                     name: "min_places",
                     onChange: this.props.onChange,
                     required: true,
+                    value: this.props.value,
                 }}
             />
         );
