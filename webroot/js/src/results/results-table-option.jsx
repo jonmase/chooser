@@ -30,6 +30,48 @@ var ResultsTable = React.createClass({
         this.props.resultsContainerHandlers.sort('option', field, fieldType);
     },
     render: function() {
+        var defaultFields = [];
+        if(this.props.choice.use_code) {
+            defaultFields.push({
+                name: 'code',
+                label: 'Code',
+                type: 'text',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(this.props.choice.use_title) {
+            defaultFields.push({
+                name: 'title',
+                label: 'Title',
+                type: 'text',
+                rowStyle: styles.tableRowColumnTitle,
+            })
+        }
+        if(this.props.choice.use_min_places) {
+            defaultFields.push({
+                name: 'min_places',
+                label: 'Min. Places',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(this.props.choice.use_max_places) {
+            defaultFields.push({
+                name: 'max_places',
+                label: 'Max. Places',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        if(this.props.choice.use_points) {
+            defaultFields.push({
+                name: 'points',
+                label: 'Points',
+                type: 'number',
+                rowStyle: styles.tableRowColumn,
+            })
+        }
+        
         return (
             <div>
                 {(this.props.options.length == 0)?
@@ -44,22 +86,20 @@ var ResultsTable = React.createClass({
                             displaySelectAll={false}
                         >
                             <TableRow>
-                                <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
-                                    field="code"
-                                    fieldType="text"
-                                    label="Code"
-                                    sortHandler={this.handleSort}
-                                />
-                                <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
-                                    field="title"
-                                    fieldType="text"
-                                    label="Title"
-                                    sortHandler={this.handleSort}
-                                />
+                                {defaultFields.map(function(field) {
+                                    return (
+                                        <SortableTableHeaderColumn
+                                            sortField={this.props.sort.field}
+                                            sortDirection={this.props.sort.direction}
+                                            field={field.name}
+                                            fieldType={field.type}
+                                            key={field.name}
+                                            label={field.label}
+                                            sortHandler={this.handleSort}
+                                        />
+                                    );
+                                }, this)}
+
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
@@ -79,8 +119,12 @@ var ResultsTable = React.createClass({
                                     <TableRow 
                                         key={option.id} 
                                     >
-                                        <TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>{option.title}</TableRowColumn>
+                                        {defaultFields.map(function(field) {
+                                            return (
+                                                <TableRowColumn style={field.rowStyle} key={field.name}>{option[field.name]}</TableRowColumn>
+                                            );
+                                        })}
+                                                
                                         <TableRowColumn style={styles.tableRowColumn}>{option.count}</TableRowColumn>
                                     </TableRow>
                                 );

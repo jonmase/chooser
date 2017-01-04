@@ -3,7 +3,6 @@ import React from 'react';
 function SortWrapper(WrappedComponent) {
     return React.createClass({
         sort: function(items, field, fieldType, direction) {
-            console.log('sort from wrapper');
             items.sort(
                 function(a, b) {
                     var textTypes = ['text', 'wysiwyg', 'list', 'email', 'url'];

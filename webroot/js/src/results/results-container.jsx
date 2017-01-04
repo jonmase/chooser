@@ -143,10 +143,12 @@ var ResultsContainer = React.createClass({
                         <Loader />
                     :
                         <ResultsTableByOption
+                            choice={this.props.choice}
+                            instance={this.state.instance}
+                            options={this.state.options}
                             resultsContainerHandlers={{
                                 sort: this.handleSort,
                             }}
-                            options={this.state.options}
                             sort={this.state.optionSort}
                         />,
             },
