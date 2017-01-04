@@ -52,6 +52,7 @@ var ResultsContainer = React.createClass({
                 open: false,
                 message: '',
             },
+            tab: 'student',
         };
         
         return initialState;
@@ -111,6 +112,13 @@ var ResultsContainer = React.createClass({
         }
     },
 
+    handleTabChange: function(value) {
+        console.log("tab: " + value);
+        this.setState({
+            tab: value,
+        })
+    },
+
     render: function() {
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
@@ -121,38 +129,42 @@ var ResultsContainer = React.createClass({
             zDepth={0}
         />;
 
-        var tabs = [
-            {
-                key: "student",
-                label: "Results by Student",
-                content: (!this.state.loaded)?
-                        <Loader />
-                    :
-                        <ResultsTableByStudent 
-                            resultsContainerHandlers={{
-                                sort: this.handleSort,
-                            }}
-                            selections={this.state.selections}
-                            sort={this.state.selectionSort}
-                        />,
-            },
-            {
-                key: "option",
-                label: "Results by Option",
-                content: (!this.state.loaded)?
-                        <Loader />
-                    :
-                        <ResultsTableByOption
-                            choice={this.props.choice}
-                            instance={this.state.instance}
-                            options={this.state.options}
-                            resultsContainerHandlers={{
-                                sort: this.handleSort,
-                            }}
-                            sort={this.state.optionSort}
-                        />,
-            },
-        ];
+        var tabs = {
+            onChange: this.handleTabChange,
+            tabs: [
+                {
+                    content: (!this.state.loaded)?
+                            <Loader />
+                        :
+                            <ResultsTableByStudent 
+                                resultsContainerHandlers={{
+                                    sort: this.handleSort,
+                                }}
+                                selections={this.state.selections}
+                                sort={this.state.selectionSort}
+                            />,
+                    label: "Results by Student",
+                    value: "student",
+                },
+                {
+                    content: (!this.state.loaded)?
+                            <Loader />
+                        :
+                            <ResultsTableByOption
+                                choice={this.props.choice}
+                                instance={this.state.instance}
+                                options={this.state.options}
+                                resultsContainerHandlers={{
+                                    sort: this.handleSort,
+                                }}
+                                sort={this.state.optionSort}
+                            />,
+                    label: "Results by Option",
+                    value: "option",
+                },
+            ],
+            value: this.state.tab,
+        };
         
         return (
             <Container topbar={topbar} title={null} tabs={tabs} >

@@ -12,12 +12,12 @@ function Container(props) {
             <div>
                 <nav id="topbar" style={{margin: '0 -2rem'}}>
                     {props.topbar}
-                    {(props.tabs && props.tabs.length > 0) &&
+                    {(props.tabs && props.tabs.tabs.length > 0) &&
                         <div style={{paddingTop: '64px'}}>
-                            <Tabs>
-                                {props.tabs.map(function(tab, index) {
+                            <Tabs value={props.tabs.value} onChange={props.tabs.onChange} >
+                                {props.tabs.tabs.map(function(tab) {
                                     return (
-                                        <Tab label={tab.label} key={"tab_" + index}>
+                                        <Tab key={tab.value} label={tab.label} value={tab.value}>
                                             {tab.content}
                                         </Tab>
                                     );
