@@ -32,12 +32,6 @@ var optionEditingDefaults = {
     optionBeingEdited: null,
     title: 'Add Option',
 };
-var optionSaveButtonDefaults = {
-    enabled: true,
-    label: 'Save',
-};
-
-
 
 var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
@@ -173,7 +167,6 @@ var OptionContainer = React.createClass({
         //}
         else if(this.props.action === 'edit') {
             initialState.optionEditing = optionEditingDefaults;
-            initialState.optionSaveButton = optionSaveButtonDefaults;
         
             var optionValuesState = {};
             if(this.props.choice.use_description) {
@@ -198,19 +191,22 @@ var OptionContainer = React.createClass({
         }
     },
     
+    //Keep in container
     handleBackToEdit: function() {
-        //Return to edit action, and ensure cancel dialog is closed
+        //Return to edit action
         this.setState({
             action: 'edit',
         });
     },
     
+    //Keep in container
     handleBackToView: function() {
         this.setState({
             action: 'view'
         });
     },
     
+    //Could move to option-view-index (which doesn't exist yet)
     handleFavourite: function(choicesOptionId, action) {
         if(!choicesOptionId || !action) {
             return false;
@@ -258,6 +254,7 @@ var OptionContainer = React.createClass({
         
     },
     
+    //Could move to option-view-index (which doesn't exist yet)
     handleInstructionsExpandChange(newExpandedState) {
         //console.log("Expand change: " + newExpandedState);
         this.setState({
@@ -266,6 +263,8 @@ var OptionContainer = React.createClass({
     },
     
     /* OPTION EDITING METHODS */
+    //Keep in container
+    //But possibly move wysiwyg value state to option-edit-page - would need to set this in one of the lifecycle methods
     handleOptionEditButtonClick: function(optionId) {
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
@@ -309,82 +308,46 @@ var OptionContainer = React.createClass({
         });
     },
     
+    //Could move to option-edit page
     handleOptionEditSaveButtonClick: function() {
         console.log('save button clicked');
     },
     
+    //Could move to option-edit-index (which doesn't exist yet)
     handleOptionEditSelect: function(rowsSeleted) {
+    
     },
     
-    //Submit the edit option form
-    handleOptionEditSubmit: function (option) {
+    handleOptionEditReturnedData: function(returnedData) {
+        var sortedOptions = this.sortOptions(returnedData.options, this.state.optionsSort.field, this.state.optionsSort.fieldType, this.state.optionsSort.direction);
+        
         this.setState({
-            optionSaveButton: {
-                enabled: false,
-                label: 'Saving',
+            optionEditing: optionEditingDefaults,
+            options: {
+                options: sortedOptions,
+                indexesById: this.updateOptionIndexesById(sortedOptions),
+                loaded: true,
+            },
+            snackbar: {
+                open: true,
+                message: returnedData.response,
             },
         });
-
-        //Get the alloy editor data
-        if(this.props.choice.use_description) {
-            option.description = this.state.optionValues.value_description;
-        }
-        for(var extra in this.props.choice.extra_fields) {
-            var field = this.props.choice.extra_fields[extra];
-            if(field.type === 'wysiwyg') {
-                option[field.name] = this.state.optionValues['value_' + field.name];
+    },
+    
+    handleOptionEditError: function(err) {
+        this.setState({
+            snackbar: {
+                open: true,
+                message: 'Save error (' + err.toString() + ')',
             }
-        }
-        
-        if(this.state.optionEditing.optionBeingEdited) {
-            option.choices_option_id = this.state.optionEditing.optionBeingEdited;
-        }
-        
-        //Save the settings
-        var url = '../save/' + this.props.choice.id;
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: option,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-
-                var unsortedOptions = returnedData.options;
-                
-                var sortedOptions = this.sortOptions(unsortedOptions, this.state.optionsSort.field, this.state.optionsSort.fieldType, this.state.optionsSort.direction);
-                
-                this.setState({
-                    optionEditing: optionEditingDefaults,
-                    options: {
-                        options: sortedOptions,
-                        indexesById: this.updateOptionIndexesById(sortedOptions),
-                        loaded: true,
-                    },
-                    optionSaveButton: optionSaveButtonDefaults,
-                    snackbar: {
-                        open: true,
-                        message: returnedData.response,
-                    },
-                });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.setState({
-                    optionSaveButton: {
-                        enabled: true,
-                        label: 'Resave',
-                    },
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-            }.bind(this)
         });
     },
 
+    //Could move to option-edit-page, but would need to sort out where wysiwyg values live
+    //Currently wysiwyg values are set here and in handleOptionEditButtonClick (which needs to stay in container)
+    //Could wysiwyg value setting in handleOptionEditButtonClick be done in option-edit-page, in one of the lifecycle methods?
+    //That way wysiwyg value state could be in the option-edit-page, which seems like the right place
     handleOptionEditWysiwygChange: function(element, value) {
         var optionValuesState = this.state.optionValues;
         var newOptionValuesState = update(optionValuesState, {
@@ -1029,17 +992,6 @@ var OptionContainer = React.createClass({
                     tooltip=""
                 />;
             }
-            else if(action === 'edit_option') {
-                topbarIconRight = <RaisedButton 
-                    disabled={!this.state.canSaveOption || !this.state.optionSaveButton.enabled}
-                    //disabled={!this.state.optionSaveButton.enabled}
-                    label="Save" 
-                    onTouchTap={this.handleOptionEditSaveButtonClick}
-                    //primary={true}
-                    style={{marginTop: '6px'}}
-                    type="submit"
-                />;
-            }
             
             //Unless action is unavailable...
             if(action !== 'unavailable') {
@@ -1079,17 +1031,12 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         instance={this.state.instance}
                         optionContainerHandlers={{
-                            change: this.handleOptionChange,
                             edit: this.handleOptionEditButtonClick,
-                            submit: this.handleOptionEditSubmit,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
                             viewMore: this.handleOptionViewMoreFromEdit,
-                            wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
-                        optionEditing={this.state.optionEditing}
                         options={this.state.options}
-                        optionSaveButton={this.state.optionSaveButton}
                         optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                         optionsSort={this.state.optionsSort}
                     />
@@ -1100,13 +1047,15 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
+                            handleError: this.handleOptionEditError,
+                            handleReturnedData: this.handleOptionEditReturnedData,
                             save: this.handleOptionEditSaveButtonClick,
-                            submit: this.handleOptionEditSubmit,
+                            //submit: this.handleOptionEditSubmit,
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
-                        optionSaveButton={this.state.optionSaveButton}
                         options={this.state.options}
+                        optionValues={this.state.optionValues}
                     />
                 );
             case 'view': //View

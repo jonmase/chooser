@@ -12,12 +12,18 @@ import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
+var saveButtonDefaults = {
+    enabled: true,
+    label: 'Save',
+};
+
 var OptionEditPage = React.createClass({
     getInitialState: function () {
         var initialState = {
             cancelDialogOpen: false,
             canSaveOption: false,
             dirty: false,
+            saveButton: saveButtonDefaults,
         };
         
         return initialState;
@@ -43,6 +49,7 @@ var OptionEditPage = React.createClass({
         });
     },
 
+    //Handle click on the back button - warn if form is dirty
     handleBackButtonClick: function() {
         //If the form is dirty...
         if(this.state.dirty) {
@@ -57,13 +64,14 @@ var OptionEditPage = React.createClass({
         }
     },
     
+    //Close the cancel confirm dialog
     handleCancelDialogClose: function() {
-        //Close the cancel confirm dialog
         this.setState({
             cancelDialogOpen: false,
         });
     },
     
+    //Handle changes to form fields
     handleChange: function() {
         //If option is not yet dirty, set it to be
         if(!this.state.dirty) {
@@ -73,11 +81,72 @@ var OptionEditPage = React.createClass({
         }
     },
     
-    handleWysiwygChange: function(element, value) {
+    //Handle changes to WYSIWYG form fields
+    handleChangeWysiwyg: function(element, value) {
         this.handleChange();
         this.props.optionContainerHandlers.wysiwygChange(element, value);
     },
     
+    //When Save button is clicked, submit the edit form
+    handleSaveButtonClick: function() {
+        this.refs.edit.submit();
+    },
+    
+    //Submit the edit option form
+    handleSubmit: function (option) {
+        this.setState({
+            saveButton: {
+                enabled: false,
+                label: 'Saving',
+            },
+        });
+
+        //Get the alloy editor data
+        if(this.props.choice.use_description) {
+            option.description = this.props.optionValues.value_description;
+        }
+        for(var extra in this.props.choice.extra_fields) {
+            var field = this.props.choice.extra_fields[extra];
+            if(field.type === 'wysiwyg') {
+                option[field.name] = this.props.optionValues['value_' + field.name];
+            }
+        }
+        
+        if(this.props.optionEditing.optionBeingEdited) {
+            option.choices_option_id = this.props.optionEditing.optionBeingEdited;
+        }
+        
+        //Save the settings
+        var url = '../save/' + this.props.choice.id;
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: option,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                this.setState({
+                    saveButton: saveButtonDefaults,
+                });
+                
+                this.props.optionContainerHandlers.handleReturnedData(returnedData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    saveButton: {
+                        enabled: true,
+                        label: 'Resave',
+                    },
+                });
+                
+                this.props.optionContainerHandlers.handleError(err);
+            }.bind(this)
+        });
+    },
+
     render: function() {
         var defaults = {
             code: this.props.choice.use_code,
@@ -96,10 +165,10 @@ var OptionEditPage = React.createClass({
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
             iconRight={<RaisedButton 
-                disabled={!this.state.canSaveOption || !this.props.optionSaveButton.enabled}
-                //disabled={!this.props.optionSaveButton.enabled}
-                label={this.props.optionSaveButton.label}
-                onTouchTap={this.props.optionContainerHandlers.save}
+                disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
+                //disabled={!this.state.saveButton.enabled}
+                label={this.state.saveButton.label}
+                onTouchTap={this.handleSaveButtonClick}
                 //primary={true}
                 style={{marginTop: '6px'}}
                 type="submit"
@@ -115,7 +184,8 @@ var OptionEditPage = React.createClass({
                     noValidate={true}
                     onValid={this.enableSaveButton}
                     onInvalid={this.disableSaveButton}
-                    onValidSubmit={this.props.optionContainerHandlers.submit}
+                    onValidSubmit={this.handleSubmit}
+                    ref="edit"
                 >
                     <div className="section">
                         <DefaultFields
@@ -123,13 +193,13 @@ var OptionEditPage = React.createClass({
                             option={option}
                             removeOrHide="remove"
                             onChange={this.handleChange}
-                            onWysiwygChange={this.handleWysiwygChange}
+                            onWysiwygChange={this.handleChangeWysiwyg}
                         />
                     </div>
                     <div className="section">
                         {this.props.choice.extra_fields.map(function(field) {
                             if(field.type === 'wysiwyg') {
-                                field.onChange = this.handleWysiwygChange;
+                                field.onChange = this.handleChangeWysiwyg;
                             }
                             else {
                                 field.onChange = this.handleChange;

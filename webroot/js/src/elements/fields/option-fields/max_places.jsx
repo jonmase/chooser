@@ -6,11 +6,11 @@ var MaxPlacesField = React.createClass({
         return (
             <NumberField
                 field={{
+                    defaultValue: this.props.value,
                     instructions: "Enter a number",
                     label: "Maximum places*",
                     name: "max_places",
                     onChange: this.props.onChange,
-                    value: this.props.value,
                     required: true,
                 }}
             />
