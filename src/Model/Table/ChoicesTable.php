@@ -331,7 +331,7 @@ class ChoicesTable extends Table
                 'actions' => $choosingSetupActions,
                 'roles' => ['admin'],
             ],
-            /*[
+            [
                 'title' => 'Results',
                 'description' => 'View and download the results',
                 'icon' => 'equalizer',//'icon' => 'show_chart',//'icon' => 'insert_chart',
@@ -345,7 +345,7 @@ class ChoicesTable extends Table
                     //]
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
-            ],*/
+            ],
             /*[
                 'title' => 'Allocations',
                 'description' => '',

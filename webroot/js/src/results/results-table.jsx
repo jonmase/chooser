@@ -33,12 +33,12 @@ var OptionsTable = React.createClass({
                     <p>There are no results to show.</p>
                 :
                     <Table 
-                        selectable={true}
-                        multiSelectable={true}
+                        selectable={false}
+                        //multiSelectable={true}
                     >
                         <TableHeader 
-                            adjustForCheckbox={true} 
-                            displaySelectAll={true}
+                            adjustForCheckbox={false} 
+                            displaySelectAll={false}
                         >
                             <TableRow>
                                 <SortableTableHeaderColumn
@@ -79,7 +79,7 @@ var OptionsTable = React.createClass({
                             </TableRow>
                         </TableHeader>
                         <TableBody 
-                            displayRowCheckbox={true}
+                            displayRowCheckbox={false}
                             deselectOnClickaway={false}
                         >
                             {this.props.selections.map(function(selection) {
