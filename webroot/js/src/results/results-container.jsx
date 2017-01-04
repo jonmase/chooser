@@ -10,6 +10,9 @@ import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import Loader from '../elements/loader.jsx';
 
+import Wrapper from '../elements/wrapper.jsx';
+
+
 var ResultsContainer = React.createClass({
     loadSelectionsFromServer: function() {
         var url = '../get-selections/' + this.props.choice.id + '.json';
@@ -72,9 +75,11 @@ var ResultsContainer = React.createClass({
     handleSort: function(table, field, fieldType) {
         if(table === 'option') {
             var sort = this.state.optionSort;
+            var items = this.state.options;
         }
         else if(table === 'selection') {
             var sort = this.state.selectionSort;
+            var items = this.state.selections;
         }
         
         var direction = 'asc';
@@ -85,6 +90,27 @@ var ResultsContainer = React.createClass({
         }
         
         console.log("Sort " + table + " results by: " + field + "(" + fieldType + "); direction: " + direction);
+        
+        var sortedItems = this.props.sortMethod(items, field, fieldType, direction);
+        
+        var sortState = {
+            field: field,
+            fieldType: fieldType,
+            direction: direction,
+        };
+        
+        if(table === 'option') {
+            this.setState({
+                options: sortedItems,
+                optionSort: sortState,
+            })
+        }
+        else if(table === 'selection') {
+            this.setState({
+                selections: sortedItems,
+                selectionSort: sortState,
+            })
+        }
     },
 
     render: function() {
@@ -141,4 +167,4 @@ var ResultsContainer = React.createClass({
     }
 });
 
-module.exports = ResultsContainer;
+module.exports = Wrapper(ResultsContainer);

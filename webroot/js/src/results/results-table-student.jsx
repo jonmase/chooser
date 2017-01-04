@@ -67,7 +67,7 @@ var ResultsTable = React.createClass({
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
                                     field="modified"
-                                    fieldType="date"
+                                    fieldType="datetime"
                                     label="Saved/Submitted Date"
                                     sortHandler={this.handleSort}
                                 />

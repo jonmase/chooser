@@ -170,7 +170,8 @@ class SelectionsController extends AppController
                 'archived' => 0,
             ],
             //'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
-            'contain' => ['OptionsSelections', 'Users']
+            'contain' => ['OptionsSelections', 'Users'],
+            'order' => ['Selections.modified' => 'DESC']
         ]);
         $selections = $selectionsQuery->toArray();
         
