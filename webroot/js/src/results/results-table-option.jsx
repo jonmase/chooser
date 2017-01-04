@@ -19,17 +19,20 @@ var styles = {
     },
 };
     
-var OptionsTable = React.createClass({
+var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
         };
         
         return initialState;
     },
+    handleSort: function(field, fieldType) {
+        this.props.resultsContainerHandlers.sort('option', field, fieldType);
+    },
     render: function() {
         return (
             <div>
-                {(this.props.selections.length == 0)?
+                {(this.props.options.length == 0)?
                     <p>There are no results to show.</p>
                 :
                     <Table 
@@ -44,26 +47,26 @@ var OptionsTable = React.createClass({
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
-                                    field="user.username"
+                                    field="code"
                                     fieldType="text"
                                     label="Code"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
-                                    field="user.lastname"
+                                    field="title"
                                     fieldType="text"
                                     label="Title"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
                                     sortDirection={this.props.sort.direction}
-                                    field="option_count"
+                                    field="count"
                                     fieldType="number"
                                     label="Times Selected"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                             </TableRow>
                         </TableHeader>
@@ -71,14 +74,14 @@ var OptionsTable = React.createClass({
                             displayRowCheckbox={false}
                             deselectOnClickaway={false}
                         >
-                            {this.props.selections.map(function(selection) {
+                            {this.props.options.map(function(option) {
                                 return (
                                     <TableRow 
-                                        key={selection.id} 
+                                        key={option.id} 
                                     >
-                                        <TableRowColumn style={styles.tableRowColumn}>{selection.user.username}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>{selection.user.fullname}</TableRowColumn>
-                                        <TableRowColumn style={styles.tableRowColumn}>{selection.option_count}</TableRowColumn>
+                                        <TableRowColumn style={styles.tableRowColumn}>{option.code}</TableRowColumn>
+                                        <TableRowColumn style={styles.tableRowColumn}>{option.title}</TableRowColumn>
+                                        <TableRowColumn style={styles.tableRowColumn}>{option.count}</TableRowColumn>
                                     </TableRow>
                                 );
                             }, this)}
@@ -90,4 +93,4 @@ var OptionsTable = React.createClass({
     }
 });
 
-module.exports = OptionsTable;
+module.exports = ResultsTable;

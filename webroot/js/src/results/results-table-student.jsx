@@ -19,12 +19,15 @@ var styles = {
     },
 };
     
-var OptionsTable = React.createClass({
+var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
         };
         
         return initialState;
+    },
+    handleSort: function(field, fieldType) {
+        this.props.resultsContainerHandlers.sort('selection', field, fieldType);
     },
     render: function() {
         return (
@@ -47,7 +50,7 @@ var OptionsTable = React.createClass({
                                     field="user.username"
                                     fieldType="text"
                                     label="Username"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
@@ -55,7 +58,7 @@ var OptionsTable = React.createClass({
                                     field="user.lastname"
                                     fieldType="text"
                                     label="Name"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                                 <TableHeaderColumn style={styles.tableRowColumn}>
                                     Status
@@ -66,7 +69,7 @@ var OptionsTable = React.createClass({
                                     field="modified"
                                     fieldType="date"
                                     label="Saved/Submitted Date"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
                                     sortField={this.props.sort.field}
@@ -74,7 +77,7 @@ var OptionsTable = React.createClass({
                                     field="option_count"
                                     fieldType="number"
                                     label="Options Selected"
-                                    sortHandler={this.props.resultsContainerHandlers.sort}
+                                    sortHandler={this.handleSort}
                                 />
                             </TableRow>
                         </TableHeader>
@@ -103,4 +106,4 @@ var OptionsTable = React.createClass({
     }
 });
 
-module.exports = OptionsTable;
+module.exports = ResultsTable

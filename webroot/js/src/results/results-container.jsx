@@ -36,8 +36,13 @@ var ResultsContainer = React.createClass({
             instance: [],
             loaded: false,
             options: [],
+            optionSort: {
+                field: 'title',
+                fieldType: 'text',
+                direction: 'asc',
+            },
             selections: [],
-            sort: {
+            selectionSort: {
                 field: 'user.username',
                 fieldType: 'text',
                 direction: 'asc',
@@ -64,8 +69,22 @@ var ResultsContainer = React.createClass({
         });
     },
     
-    handleSort: function(field, fieldType) {
-        console.log("Sort results by: " + field + "(" + fieldType + "); direction: " + this.state.sort.direction);
+    handleSort: function(table, field, fieldType) {
+        if(table === 'option') {
+            var sort = this.state.optionSort;
+        }
+        else if(table === 'selection') {
+            var sort = this.state.selectionSort;
+        }
+        
+        var direction = 'asc';
+        if(field === sort.field) {
+            if(sort.direction === 'asc') {
+                direction = 'desc';
+            }
+        }
+        
+        console.log("Sort " + table + " results by: " + field + "(" + fieldType + "); direction: " + direction);
     },
 
     render: function() {
@@ -90,7 +109,7 @@ var ResultsContainer = React.createClass({
                                 sort: this.handleSort,
                             }}
                             selections={this.state.selections}
-                            sort={this.state.sort}
+                            sort={this.state.selectionSort}
                         />,
             },
             {
@@ -103,8 +122,8 @@ var ResultsContainer = React.createClass({
                             resultsContainerHandlers={{
                                 sort: this.handleSort,
                             }}
-                            selections={this.state.selections}
-                            sort={this.state.sort}
+                            options={this.state.options}
+                            sort={this.state.optionSort}
                         />,
             },
         ];
