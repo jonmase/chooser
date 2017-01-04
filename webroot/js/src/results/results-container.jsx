@@ -9,9 +9,7 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import Loader from '../elements/loader.jsx';
-
-import Wrapper from '../elements/wrapper.jsx';
-
+import SortWrapper from '../elements/wrappers/sort.jsx';
 
 var ResultsContainer = React.createClass({
     loadSelectionsFromServer: function() {
@@ -91,7 +89,7 @@ var ResultsContainer = React.createClass({
         
         console.log("Sort " + table + " results by: " + field + "(" + fieldType + "); direction: " + direction);
         
-        var sortedItems = this.props.sortMethod(items, field, fieldType, direction);
+        var sortedItems = this.props.sortHelper(items, field, fieldType, direction);
         
         var sortState = {
             field: field,
@@ -167,4 +165,4 @@ var ResultsContainer = React.createClass({
     }
 });
 
-module.exports = Wrapper(ResultsContainer);
+module.exports = SortWrapper(ResultsContainer);

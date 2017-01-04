@@ -1,9 +1,6 @@
 import React from 'react';
 
-//import ChooserTheme from './theme.jsx';
-//import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-
-function Wrapper(WrappedComponent) {
+function SortWrapper(WrappedComponent) {
     return React.createClass({
         sort: function(items, field, fieldType, direction) {
             console.log('sort from wrapper');
@@ -108,7 +105,7 @@ function Wrapper(WrappedComponent) {
 
         render: function() {
             var newProps = {
-                sortMethod: this.sort,
+                sortHelper: this.sort,
             }
             
             return (
@@ -118,4 +115,4 @@ function Wrapper(WrappedComponent) {
     });
 }
 
-module.exports = Wrapper;
+module.exports = SortWrapper;
