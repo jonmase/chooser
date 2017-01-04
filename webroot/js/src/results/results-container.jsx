@@ -2,7 +2,8 @@ import React from 'react';
 
 import Snackbar from 'material-ui/Snackbar';
 
-import ResultsTable from './results-table.jsx';
+import ResultsTableByStudent from './results-table-student.jsx';
+import ResultsTableByOption from './results-table-option.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -71,24 +72,43 @@ var ResultsContainer = React.createClass({
             iconLeft="menu"
             iconRight={null}
             sections={this.props.sections} 
-            title={<AppTitle subtitle={this.props.choice.name} />}
+            title={<AppTitle subtitle={this.props.choice.name + ": Results"} />}
+            zDepth={0}
         />;
 
-        return (
-            <Container topbar={topbar} title={this.props.title}>
-                <div>
-                    {(!this.state.loaded)?
+        var tabs = [
+            {
+                key: "student",
+                label: "Results by Student",
+                content: (!this.state.loaded)?
                         <Loader />
                     :
-                        <ResultsTable 
+                        <ResultsTableByStudent 
                             resultsContainerHandlers={{
                                 sort: this.handleSort,
                             }}
                             selections={this.state.selections}
                             sort={this.state.sort}
-                        />
-                    }
-                </div>
+                        />,
+            },
+            {
+                key: "option",
+                label: "Results by Option",
+                content: (!this.state.loaded)?
+                        <Loader />
+                    :
+                        <ResultsTableByOption
+                            resultsContainerHandlers={{
+                                sort: this.handleSort,
+                            }}
+                            selections={this.state.selections}
+                            sort={this.state.sort}
+                        />,
+            },
+        ];
+        
+        return (
+            <Container topbar={topbar} title={null} tabs={tabs} >
                 <Snackbar
                     open={this.state.snackbar.open}
                     message={this.state.snackbar.message}

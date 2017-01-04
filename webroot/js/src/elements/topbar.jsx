@@ -42,8 +42,7 @@ var TopBar = React.createClass({
                     iconElementLeft={(showMenu)?null:this.props.iconLeft}
                     iconElementRight={this.props.iconRight}
                     style={{position: 'fixed'}}
-                    //zDepth={this.props.showStepTabs?0:1}
-                    zDepth={2}
+                    zDepth={(typeof(this.props.zDepth) !== "undefined")?this.props.zDepth:2}
                 />
                 {showMenu && 
                     <DashboardMenu

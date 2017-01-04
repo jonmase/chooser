@@ -1,7 +1,7 @@
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 /*
-import {teal300, teal500, teal700, lightBlack, indigoA200, lightBlue300} from 'material-ui/styles/colors';
+import {teal300, teal500, teal700, lightBlack, lightBlue300} from 'material-ui/styles/colors';
 
 //http://www.material-ui.com/#/customization/colors
 module.exports = getMuiTheme({
@@ -15,7 +15,7 @@ module.exports = getMuiTheme({
 });
 */
 
-import {indigoA200, indigo500, indigo700, lightBlack, lightBlue300} from 'material-ui/styles/colors';
+import {indigoA100, indigoA200, indigo500, indigo700, lightBlack, lightBlue300} from 'material-ui/styles/colors';
 
 module.exports = getMuiTheme({
   palette: {
@@ -23,7 +23,7 @@ module.exports = getMuiTheme({
     primary2Color: indigo700,
     primary3Color: lightBlack,
     //accent1Color: indigoA400,
-    accent1Color: indigoA200,
+    accent1Color: indigoA100,
     pickerHeaderColor: indigo500,
   }
 });
