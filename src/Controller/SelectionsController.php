@@ -164,23 +164,53 @@ class SelectionsController extends AppController
         //Get the choosing instance
         $choosingInstance = $this->Selections->ChoosingInstances->findActive($choiceId, false, $this->Auth->user('id'));
         
-        $selections = $this->Selections->find('all', [
+        $selectionsQuery = $this->Selections->find('all', [
             'conditions' => [
                 'choosing_instance_id' => $choosingInstance->id,
                 'archived' => 0,
             ],
-            'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
+            //'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
+            'contain' => ['OptionsSelections', 'Users']
         ]);
+        $selections = $selectionsQuery->toArray();
         
-        foreach($selections->toArray() as &$selection) {
+        $options = $this->Selections->OptionsSelections->ChoicesOptions->Options->getForView($choiceId, true, true);
+        
+        $optionsSelected = [];
+        
+        foreach($selections as &$selection) {
             $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
             $selection['option_count'] = count($selection['options_selections']);
+            
+            //If the selection is confirmed, increment the counts for the chosen options
+            if($selection['confirmed']) {
+                foreach($selection['options_selections'] as $optionSelected) {
+                    //If option ID does not already have a count
+                    if(!isset($optionsSelected[$optionSelected['choices_option_id']])) {
+                        $optionsSelected[$optionSelected['choices_option_id']] = 1;
+                    }
+                    else {
+                        $optionsSelected[$optionSelected['choices_option_id']]++;
+                    }
+                }
+            }
         }
         
-
+        foreach($options as &$option) {
+            //If option ID is set in optionsSelected, use the count from that
+            if(isset($optionsSelected[$option['id']])) {
+                $option['count'] = $optionsSelected[$option['id']];
+            }
+            //Otherwise, option hasn't been chosen, so set count to 0
+            else {
+                $option['count'] = 0;
+            }
+        }
+        //pr($optionsSelected);
+        //pr($selections);
+        //pr($options);
         
-        //pr($selections->toArray()); exit;
-        $this->set(compact('choosingInstance', 'selections'));
-        $this->set('_serialize', ['choosingInstance', 'selections']);
+        $this->set(compact('choosingInstance', 'options', 'selections'));
+        $this->set('_serialize', ['choosingInstance', 'options', 'selections']);
     }
 }

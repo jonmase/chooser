@@ -20,6 +20,7 @@ var ResultsContainer = React.createClass({
             success: function(data) {
                 this.setState({
                     instance: data.choosingInstance,
+                    options: data.options,
                     selections: data.selections,
                     loaded: true,
                 });
@@ -34,6 +35,7 @@ var ResultsContainer = React.createClass({
         var initialState = {
             instance: [],
             loaded: false,
+            options: [],
             selections: [],
             sort: {
                 field: 'user.username',
