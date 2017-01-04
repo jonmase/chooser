@@ -308,11 +308,6 @@ var OptionContainer = React.createClass({
         });
     },
     
-    //Could move to option-edit page
-    handleOptionEditSaveButtonClick: function() {
-        console.log('save button clicked');
-    },
-    
     //Could move to option-edit-index (which doesn't exist yet)
     handleOptionEditSelect: function(rowsSeleted) {
     
@@ -965,16 +960,10 @@ var OptionContainer = React.createClass({
             else if(action === 'more_view' || action === 'more_edit') {
                 title = 'Option Details';
             }
-            else if(action === 'edit_option') {
-                title = this.state.optionEditing.title;
-            }
             
             var backAction = this.handleBackToView;
             if(action === 'more_edit') {
                 var backAction = this.handleBackToEdit;
-            }
-            else if(action === 'edit_option') {
-                var backAction = this.handleOptionEditCancelButtonClick;
             }
            
             if(action === 'more_view') {
@@ -1052,8 +1041,6 @@ var OptionContainer = React.createClass({
                             backToEdit: this.handleBackToEdit,
                             handleError: this.handleOptionEditError,
                             handleReturnedData: this.handleOptionEditReturnedData,
-                            save: this.handleOptionEditSaveButtonClick,
-                            //submit: this.handleOptionEditSubmit,
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
