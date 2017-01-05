@@ -3,6 +3,8 @@ import React from 'react';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
+import UnselectableCell from '../elements/table/unselectable-cell.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
 
 var styles = {
     tableRowColumn: {
@@ -22,12 +24,26 @@ var styles = {
 var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
+            sortField: 'title',
+            sortDirection: 'asc',
         };
         
         return initialState;
     },
     handleSort: function(field, fieldType) {
-        this.props.resultsContainerHandlers.sort('option', field, fieldType);
+        var direction = 'asc';
+        if(field === this.state.sortField) {
+            if(this.state.sortDirection === 'asc') {
+                direction = 'desc';
+            }
+        }
+        
+        this.setState({
+            sortField: field,
+            sortDirection: direction,
+        });
+        
+        this.props.handlers.sort('option', field, fieldType, direction);
     },
     render: function() {
         var defaultFields = [];
@@ -89,8 +105,8 @@ var ResultsTable = React.createClass({
                                 {defaultFields.map(function(field) {
                                     return (
                                         <SortableTableHeaderColumn
-                                            sortField={this.props.sort.field}
-                                            sortDirection={this.props.sort.direction}
+                                            sortField={this.state.sortField}
+                                            sortDirection={this.state.sortDirection}
                                             field={field.name}
                                             fieldType={field.type}
                                             key={field.name}
@@ -101,13 +117,14 @@ var ResultsTable = React.createClass({
                                 }, this)}
 
                                 <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
+                                    sortField={this.state.sortField}
+                                    sortDirection={this.state.sortDirection}
                                     field="count"
                                     fieldType="number"
                                     label="Times Selected"
                                     sortHandler={this.handleSort}
                                 />
+                                <TableHeaderColumn style={styles.actionsTableRowColumn}>{/* ACTIONS */}</TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
                         <TableBody 
@@ -126,6 +143,13 @@ var ResultsTable = React.createClass({
                                         })}
                                                 
                                         <TableRowColumn style={styles.tableRowColumn}>{option.count}</TableRowColumn>
+                                        <UnselectableCell style={styles.actionsTableRowColumn}>
+                                            <ExpandButton
+                                                handleMore={this.props.handlers.view} 
+                                                id={option.id}
+                                                tooltip=""
+                                            />
+                                        </UnselectableCell>
                                     </TableRow>
                                 );
                             }, this)}

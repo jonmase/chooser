@@ -11,7 +11,6 @@ ReactDOM.render(
         choice={data.choice} 
         dashboardUrl={data.dashboard?data.dashboard:null} 
         sections={data.sections?data.sections:null} 
-        title={data.title}
     />,
     document.getElementById('index')
 );

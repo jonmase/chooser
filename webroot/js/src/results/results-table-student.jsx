@@ -3,6 +3,8 @@ import React from 'react';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
+import UnselectableCell from '../elements/table/unselectable-cell.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
 
 var styles = {
     tableRowColumn: {
@@ -22,12 +24,26 @@ var styles = {
 var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
+            sortField: 'user.username',
+            sortDirection: 'asc',
         };
         
         return initialState;
     },
     handleSort: function(field, fieldType) {
-        this.props.resultsContainerHandlers.sort('selection', field, fieldType);
+        var direction = 'asc';
+        if(field === this.state.sortField) {
+            if(this.state.sortDirection === 'asc') {
+                direction = 'desc';
+            }
+        }
+        
+        this.setState({
+            sortField: field,
+            sortDirection: direction,
+        });
+        
+        this.props.handlers.sort('selection', field, fieldType, direction);
     },
     render: function() {
         return (
@@ -45,16 +61,16 @@ var ResultsTable = React.createClass({
                         >
                             <TableRow>
                                 <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
+                                    sortField={this.state.sortField}
+                                    sortDirection={this.state.sortDirection}
                                     field="user.username"
                                     fieldType="text"
                                     label="Username"
                                     sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
+                                    sortField={this.state.sortField}
+                                    sortDirection={this.state.sortDirection}
                                     field="user.lastname"
                                     fieldType="text"
                                     label="Name"
@@ -64,21 +80,22 @@ var ResultsTable = React.createClass({
                                     Status
                                 </TableHeaderColumn>
                                 <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
+                                    sortField={this.state.sortField}
+                                    sortDirection={this.state.sortDirection}
                                     field="modified"
                                     fieldType="datetime"
                                     label="Saved/Submitted Date"
                                     sortHandler={this.handleSort}
                                 />
                                 <SortableTableHeaderColumn
-                                    sortField={this.props.sort.field}
-                                    sortDirection={this.props.sort.direction}
+                                    sortField={this.state.sortField}
+                                    sortDirection={this.state.sortDirection}
                                     field="option_count"
                                     fieldType="number"
                                     label="Options Selected"
                                     sortHandler={this.handleSort}
                                 />
+                                <TableHeaderColumn style={styles.actionsTableRowColumn}>{/* ACTIONS */}</TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
                         <TableBody 
@@ -95,6 +112,13 @@ var ResultsTable = React.createClass({
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.confirmed?"Submitted":"Auto-saved"}</TableRowColumn>
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.modified.formatted}</TableRowColumn>
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.option_count}</TableRowColumn>
+                                        <UnselectableCell style={styles.actionsTableRowColumn}>
+                                            <ExpandButton
+                                                handleMore={this.props.handlers.view} 
+                                                id={selection.id}
+                                                tooltip=""
+                                            />
+                                        </UnselectableCell>
                                     </TableRow>
                                 );
                             }, this)}
