@@ -164,18 +164,29 @@ class SelectionsController extends AppController
         //Get the choosing instance
         $choosingInstance = $this->Selections->ChoosingInstances->findActive($choiceId, false, $this->Auth->user('id'));
         
+        $optionsSelectionsSort = [];
+        if($choosingInstance['preference']) {
+            if($choosingInstance['preference_type'] === 'rank') {
+                $optionsSelectionsSort = ['OptionsSelections.rank' => 'ASC'];
+            }
+            else if($choosingInstance['preference_type'] === 'points') {
+                $optionsSelectionsSort = ['OptionsSelections.points' => 'DESC'];
+            }
+        }
+        
         $selectionsQuery = $this->Selections->find('all', [
             'conditions' => [
                 'choosing_instance_id' => $choosingInstance->id,
                 'archived' => 0,
             ],
             //'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
-            'contain' => ['OptionsSelections', 'Users'],
+            'contain' => ['OptionsSelections' => ['sort' => $optionsSelectionsSort], 'Users'],
             'order' => ['Selections.modified' => 'DESC']
         ]);
         $selections = $selectionsQuery->toArray();
         
         $options = $this->Selections->OptionsSelections->ChoicesOptions->Options->getForView($choiceId, true, true);
+        $optionIndexesById = $this->Selections->OptionsSelections->ChoicesOptions->Options->getOptionIndexesById($options);
         
         $optionsSelected = [];
         
@@ -211,7 +222,7 @@ class SelectionsController extends AppController
         //pr($selections);
         //pr($options);
         
-        $this->set(compact('choosingInstance', 'options', 'selections'));
-        $this->set('_serialize', ['choosingInstance', 'options', 'selections']);
+        $this->set(compact('choosingInstance', 'options', 'optionIndexesById', 'selections'));
+        $this->set('_serialize', ['choosingInstance', 'options', 'optionIndexesById', 'selections']);
     }
 }

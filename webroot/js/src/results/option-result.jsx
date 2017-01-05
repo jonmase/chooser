@@ -18,7 +18,7 @@ var ResultsIndex = React.createClass({
             iconLeft={<TopBarBackButton onTouchTap={this.props.resultsContainerHandlers.goToIndex} />}
             iconRight={null}
             sections={this.props.sections} 
-            title="Option Selection Details"
+            title="Option Result Details"
             zDepth={2}
         />;
 

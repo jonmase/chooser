@@ -17,6 +17,7 @@ var ResultsContainer = React.createClass({
                 this.setState({
                     instance: data.choosingInstance,
                     options: data.options,
+                    optionIndexesById: data.optionIndexesById,
                     selections: data.selections,
                     loaded: true,
                 });
@@ -119,6 +120,8 @@ var ResultsContainer = React.createClass({
                 }
                 {(this.state.action === 'student') &&
                     <StudentResult
+                        options={this.state.options}
+                        optionIndexesById={this.state.optionIndexesById}
                         resultsContainerHandlers={{
                             goToIndex: this.goToIndex,
                         }}
@@ -128,10 +131,10 @@ var ResultsContainer = React.createClass({
                 }
                 {(this.state.action === 'option') &&
                     <OptionResult
+                        option={this.state.options[this.state.optionBeingViewedIndex]}
                         resultsContainerHandlers={{
                             goToIndex: this.goToIndex,
                         }}
-                        option={this.state.options[this.state.optionBeingViewedIndex]}
                         {...this.props}
                     />
                 }
