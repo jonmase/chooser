@@ -102,7 +102,7 @@ var ResultsTable = React.createClass({
                             displayRowCheckbox={false}
                             deselectOnClickaway={false}
                         >
-                            {this.props.selections.map(function(selection) {
+                            {this.props.selections.map(function(selection, index) {
                                 return (
                                     <TableRow 
                                         key={selection.id} 
@@ -115,7 +115,7 @@ var ResultsTable = React.createClass({
                                         <UnselectableCell style={styles.actionsTableRowColumn}>
                                             <ExpandButton
                                                 handleMore={this.props.handlers.view} 
-                                                id={selection.id}
+                                                id={index}
                                                 tooltip=""
                                             />
                                         </UnselectableCell>

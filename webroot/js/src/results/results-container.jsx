@@ -1,6 +1,8 @@
 import React from 'react';
 
 import ResultsIndex from './results-index.jsx';
+import OptionResult from './option-result.jsx';
+import StudentResult from './student-result.jsx';
 
 import SortWrapper from '../elements/wrappers/sort.jsx';
 
@@ -51,17 +53,17 @@ var ResultsContainer = React.createClass({
         });
     },
     
-    goToOptionView: function(id) {
+    goToOptionView: function(optionIndex) {
         this.setState({
             action: 'option',
-            optionBeingViewed: id,
+            optionBeingViewedIndex: optionIndex,
         });
     },
     
-    goToStudentView: function(id) {
+    goToStudentView: function(selectionIndex) {
         this.setState({
             action: 'student',
-            selectionBeingViewed: id,
+            selectionBeingViewedIndex: selectionIndex,
         });
     },
     
@@ -103,6 +105,24 @@ var ResultsContainer = React.createClass({
                             sort: this.handleSort,
                         }}
                         selections={this.state.selections}
+                        {...this.props}
+                    />
+                }
+                {(this.state.action === 'student') &&
+                    <StudentResult
+                        resultsContainerHandlers={{
+                            goToIndex: this.goToIndex,
+                        }}
+                        selection={this.state.selections[this.state.selectionBeingViewedIndex]}
+                        {...this.props}
+                    />
+                }
+                {(this.state.action === 'option') &&
+                    <OptionResult
+                        resultsContainerHandlers={{
+                            goToIndex: this.goToIndex,
+                        }}
+                        option={this.state.options[this.state.optionBeingViewedIndex]}
                         {...this.props}
                     />
                 }
