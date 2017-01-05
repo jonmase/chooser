@@ -36,6 +36,7 @@ var ResultsContainer = React.createClass({
             optionBeingViewed: null,
             selections: [],
             selectionBeingViewed: null,
+            tab: 'student',
         };
         
         return initialState;
@@ -91,6 +92,12 @@ var ResultsContainer = React.createClass({
         }
     },
 
+    handleTabChange: function(value) {
+        this.setState({
+            tab: value,
+        })
+    },
+
     render: function() {
         return (
             <div>
@@ -103,8 +110,10 @@ var ResultsContainer = React.createClass({
                             goToOptionView: this.goToOptionView,
                             goToStudentView: this.goToStudentView,
                             sort: this.handleSort,
+                            tabChange: this.handleTabChange,
                         }}
                         selections={this.state.selections}
+                        tab={this.state.tab}
                         {...this.props}
                     />
                 }

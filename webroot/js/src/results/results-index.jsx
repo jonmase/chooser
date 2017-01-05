@@ -18,7 +18,6 @@ var ResultsIndex = React.createClass({
                 open: false,
                 message: '',
             },
-            tab: 'student',
         };
         
         return initialState;
@@ -33,12 +32,6 @@ var ResultsIndex = React.createClass({
         });
     },
     
-    handleTabChange: function(value) {
-        this.setState({
-            tab: value,
-        })
-    },
-
     render: function() {
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
@@ -50,7 +43,7 @@ var ResultsIndex = React.createClass({
         />;
 
         var tabs = {
-            onChange: this.handleTabChange,
+            onChange: this.props.resultsContainerHandlers.tabChange,
             tabs: [
                 {
                     content: (!this.props.loaded)?
@@ -83,7 +76,7 @@ var ResultsIndex = React.createClass({
                     value: "option",
                 },
             ],
-            value: this.state.tab,
+            value: this.props.tab,
         };
         
         return (
