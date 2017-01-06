@@ -340,9 +340,18 @@ class ChoicesTable extends Table
                         'label' => 'View',
                         'url' => Router::url(['controller' => 'selections', 'action' => 'index', $choiceId]),
                     ],
-                    //[
-                    //    'label' => 'Quick Download',
-                    //]
+                    [
+                        'icon' => 'file_download',
+                        'label' => 'Download by Student',
+                        'menuLabel' => 'Download Student Results',
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', $choiceId, 'student']),
+                    ],
+                    [
+                        'icon' => 'file_download',
+                        'label' => 'Download by Option',
+                        'menuLabel' => 'Download Option Results',
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', $choiceId, 'option']),
+                    ]
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
             ],

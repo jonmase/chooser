@@ -164,90 +164,37 @@ class SelectionsController extends AppController
         //Get the choosing instance
         $choosingInstance = $this->Selections->ChoosingInstances->findActive($choiceId, false, $this->Auth->user('id'));
         
-        $optionsSelectionsSort = [];
-        if($choosingInstance['preference']) {
-            if($choosingInstance['preference_type'] === 'rank') {
-                $optionsSelectionsSort = ['OptionsSelections.rank' => 'ASC'];
-            }
-            else if($choosingInstance['preference_type'] === 'points') {
-                $optionsSelectionsSort = ['OptionsSelections.points' => 'DESC'];
-            }
-        }
+        //Get the selections
+        list($options, $optionIndexesById, $selections, $selectionIndexesById, $statistics) = $this->Selections->getForResults($choosingInstance);
         
-        $selectionsQuery = $this->Selections->find('all', [
-            'conditions' => [
-                'choosing_instance_id' => $choosingInstance->id,
-                'archived' => 0,
-            ],
-            //'contain' => ['OptionsSelections.ChoicesOptions.Options', 'Users']
-            'contain' => ['OptionsSelections' => ['sort' => $optionsSelectionsSort], 'Users'],
-            'order' => ['Selections.modified' => 'DESC']
-        ]);
-        $selections = $selectionsQuery->toArray();
-        
-        $options = $this->Selections->OptionsSelections->ChoicesOptions->Options->getForView($choiceId, true, true);
-        //$optionIndexesById = $this->Selections->OptionsSelections->ChoicesOptions->Options->getOptionIndexesById($options);
-        
-        $optionsSelectedCounts = [];
-        $optionsSelectedBy = [];
-        
-        $selectionIndexesById = [];
-        foreach($selections as $key => &$selection) {
-            $selectionIndexesById[$selection['id']] = $key;
-            
-            $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
-            $selection['option_count'] = count($selection['options_selections']);
-            
-            $optionsSelectedIdsOrdered = [];
-            $optionsSelectedById = [];
-            
-            foreach($selection['options_selections'] as $optionSelected) {
-                //Convert the selected options to the correct format for the option-list component
-                $optionsSelectedIdsOrdered[] = $optionSelected['choices_option_id'];
-                $optionsSelectedById[$optionSelected['choices_option_id']] = $optionSelected;
-                
-                //If the selection is confirmed, increment the counts for the chosen options, and record that the option is selected by this user
-                if($selection['confirmed']) {
-                    //If option ID does not already have a count
-                    if(!isset($optionsSelectedCounts[$optionSelected['choices_option_id']])) {
-                        $optionsSelectedCounts[$optionSelected['choices_option_id']] = 1;
-                    }
-                    else {
-                        $optionsSelectedCounts[$optionSelected['choices_option_id']]++;
-                    }
-                    
-                    if(!isset($optionsSelectedBy[$optionSelected['choices_option_id']])) {
-                        $optionsSelectedBy[$optionSelected['choices_option_id']] = [];
-                    }
-                    $optionsSelectedBy[$optionSelected['choices_option_id']][] = $selection['id'];
-                }
-            }
-            
-            $selection['options_selected_ids_ordered'] = $optionsSelectedIdsOrdered;
-            $selection['options_selected_by_id'] = $optionsSelectedById;
-            unset($selection['options_selections']);
-        }
-        
-        $optionIndexesById = [];
-        foreach($options as $key => &$option) {
-            $optionIndexesById[$option['id']] = $key;
-            
-            //If option ID is set in optionsSelectedCounts, use the count from that, and add selected_by to the array
-            if(isset($optionsSelectedCounts[$option['id']])) {
-                $option['count'] = $optionsSelectedCounts[$option['id']];
-                $option['selected_by'] = $optionsSelectedBy[$option['id']];
-            }
-            //Otherwise, option hasn't been chosen, so set count to 0 and selected_by as empty array
-            else {
-                $option['count'] = 0;
-                $option['selected_by'] = [];
-            }
-        }
         //pr($optionsSelectedCounts);
         //pr($selections);
         //pr($options);
         
         $this->set(compact('choosingInstance', 'options', 'optionIndexesById', 'selections', 'selectionIndexesById'));
         $this->set('_serialize', ['choosingInstance', 'options', 'optionIndexesById', 'selections', 'selectionIndexesById']);
+    }
+    
+    public function download($choiceId, $type = 'student') {
+        //Make sure the user is allowed to view the results for this Choice
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        if(!$canViewResults) {
+            throw new ForbiddenException(__('Not permitted to view Choice results.'));
+        }
+        
+        //Get the choice
+        $choice = $this->Selections->ChoosingInstances->Choices->get($choiceId);
+        
+        //Get the choosing instance
+        $choosingInstance = $this->Selections->ChoosingInstances->findActive($choiceId, false, $this->Auth->user('id'));
+        
+        //Get the selections
+        list($options, $optionIndexesById, $selections, $selectionIndexesById, $statistics) = $this->Selections->getForResults($choosingInstance);
+        //pr($statistics);
+        //pr($selections);
+        
+        
+        
+        $this->set(compact('choice', 'choosingInstance', 'options', 'selections', 'statistics'));
     }
 }
