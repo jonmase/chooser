@@ -19,6 +19,7 @@ var ResultsContainer = React.createClass({
                     options: data.options,
                     optionIndexesById: data.optionIndexesById,
                     selections: data.selections,
+                    selectionIndexesById: data.selectionIndexesById,
                     loaded: true,
                 });
             }.bind(this),
@@ -80,15 +81,18 @@ var ResultsContainer = React.createClass({
         }
         
         var sortedItems = this.props.sortHelper(items, field, fieldType, direction);
+        var itemIndexesById = this.props.updateIndexesByIdHelper(sortedItems);
         
         if(table === 'option') {
             this.setState({
                 options: sortedItems,
+                optionIndexesById: itemIndexesById,
             })
         }
         else if(table === 'selection') {
             this.setState({
                 selections: sortedItems,
+                selectionIndexesById: itemIndexesById,
             })
         }
     },
@@ -175,6 +179,8 @@ var ResultsContainer = React.createClass({
                         resultsContainerHandlers={{
                             goToIndex: this.goToIndex,
                         }}
+                        selections={this.state.selections}
+                        selectionIndexesById={this.state.selectionIndexesById}
                         {...this.props}
                     />
                 }

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {List, ListItem} from 'material-ui/List';
+
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
@@ -27,37 +29,43 @@ var ResultsIndex = React.createClass({
             zDepth={2}
         />;
 
+        var option = this.props.option;
+        
         return (
             <Container topbar={topbar} title={null}>
                 <OptionTitle 
-                    code={this.props.choice.use_code && this.props.option.code}
-                    title={this.props.option.title}
+                    code={this.props.choice.use_code && option.code}
+                    title={option.title}
                 />
 
                 <DefaultFields
                     defaults={this.props.optionDefaultFields}
-                    option={this.props.option}
+                    option={option}
                 />
                 
                 <NumberLabelled 
-                    label="Times Selected"
-                    value={this.props.option.count}
+                    label="Times Chosen"
+                    value={option.count}
                 />
 
-                {/*selection.options_selections.map(function(optionSelection) {
-                    var option = this.props.options[this.props.optionIndexesById[optionSelection.choices_option_id]];
-                    
-                    return (
-                        <div>
-                            <Text 
-                                value={
-                                    ((this.props.choice.use_code)?(option.code + ": "):"")
-                                    + option.title
-                                }
-                            />
-                        </div>
-                    );
-                }, this)*/}
+                <div>
+                    <strong>Chosen by:</strong><br />
+                    <List>
+                        {option.selected_by.map(function(selectionId) {
+                            var selection = this.props.selections[this.props.selectionIndexesById[selectionId]];
+                            
+                            return (
+                                <ListItem
+                                    disabled={true}
+                                    primaryText={selection.user.fullname + " (" + selection.user.username + ")"}
+                                    secondaryText={null}
+                                    secondaryTextLines={1}
+                                />
+
+                            );
+                        }, this)}
+                    </List>
+                </div>
             </Container>
         );
     }

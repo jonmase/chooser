@@ -186,11 +186,15 @@ class SelectionsController extends AppController
         $selections = $selectionsQuery->toArray();
         
         $options = $this->Selections->OptionsSelections->ChoicesOptions->Options->getForView($choiceId, true, true);
-        $optionIndexesById = $this->Selections->OptionsSelections->ChoicesOptions->Options->getOptionIndexesById($options);
+        //$optionIndexesById = $this->Selections->OptionsSelections->ChoicesOptions->Options->getOptionIndexesById($options);
         
         $optionsSelectedCounts = [];
+        $optionsSelectedBy = [];
         
-        foreach($selections as &$selection) {
+        $selectionIndexesById = [];
+        foreach($selections as $key => &$selection) {
+            $selectionIndexesById[$selection['id']] = $key;
+            
             $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
             $selection['option_count'] = count($selection['options_selections']);
             
@@ -198,10 +202,11 @@ class SelectionsController extends AppController
             $optionsSelectedById = [];
             
             foreach($selection['options_selections'] as $optionSelected) {
+                //Convert the selected options to the correct format for the option-list component
                 $optionsSelectedIdsOrdered[] = $optionSelected['choices_option_id'];
                 $optionsSelectedById[$optionSelected['choices_option_id']] = $optionSelected;
                 
-                //If the selection is confirmed, increment the counts for the chosen options
+                //If the selection is confirmed, increment the counts for the chosen options, and record that the option is selected by this user
                 if($selection['confirmed']) {
                     //If option ID does not already have a count
                     if(!isset($optionsSelectedCounts[$optionSelected['choices_option_id']])) {
@@ -210,6 +215,11 @@ class SelectionsController extends AppController
                     else {
                         $optionsSelectedCounts[$optionSelected['choices_option_id']]++;
                     }
+                    
+                    if(!isset($optionsSelectedBy[$optionSelected['choices_option_id']])) {
+                        $optionsSelectedBy[$optionSelected['choices_option_id']] = [];
+                    }
+                    $optionsSelectedBy[$optionSelected['choices_option_id']][] = $selection['id'];
                 }
             }
             
@@ -218,21 +228,26 @@ class SelectionsController extends AppController
             unset($selection['options_selections']);
         }
         
-        foreach($options as &$option) {
-            //If option ID is set in optionsSelectedCounts, use the count from that
+        $optionIndexesById = [];
+        foreach($options as $key => &$option) {
+            $optionIndexesById[$option['id']] = $key;
+            
+            //If option ID is set in optionsSelectedCounts, use the count from that, and add selected_by to the array
             if(isset($optionsSelectedCounts[$option['id']])) {
                 $option['count'] = $optionsSelectedCounts[$option['id']];
+                $option['selected_by'] = $optionsSelectedBy[$option['id']];
             }
-            //Otherwise, option hasn't been chosen, so set count to 0
+            //Otherwise, option hasn't been chosen, so set count to 0 and selected_by as empty array
             else {
                 $option['count'] = 0;
+                $option['selected_by'] = [];
             }
         }
         //pr($optionsSelectedCounts);
         //pr($selections);
         //pr($options);
         
-        $this->set(compact('choosingInstance', 'options', 'optionIndexesById', 'selections'));
-        $this->set('_serialize', ['choosingInstance', 'options', 'optionIndexesById', 'selections']);
+        $this->set(compact('choosingInstance', 'options', 'optionIndexesById', 'selections', 'selectionIndexesById'));
+        $this->set('_serialize', ['choosingInstance', 'options', 'optionIndexesById', 'selections', 'selectionIndexesById']);
     }
 }

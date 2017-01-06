@@ -101,10 +101,23 @@ function SortWrapper(WrappedComponent) {
             
             return items;
         },
+        
+        updateIndexesById: function(items, idField) {
+            if(!idField) {
+                idField = 'id';
+            }
+            var itemIndexesById = {};
+            items.forEach(function(item, index) {
+                itemIndexesById[item[idField]] = index;
+            });
+            
+            return itemIndexesById;
+        },
 
         render: function() {
             var newProps = {
                 sortHelper: this.sort,
+                updateIndexesByIdHelper: this.updateIndexesById,
             }
             
             return (

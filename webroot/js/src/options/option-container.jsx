@@ -323,7 +323,7 @@ var OptionContainer = React.createClass({
             optionEditing: optionEditingDefaults,
             options: {
                 options: sortedOptions,
-                indexesById: this.updateOptionIndexesById(sortedOptions),
+                indexesById: this.props.updateIndexesByIdHelper(sortedOptions),
                 loaded: true,
             },
             snackbar: {
@@ -626,7 +626,7 @@ var OptionContainer = React.createClass({
         this.setState({
             options: {
                 options: optionsState,
-                indexesById: this.updateOptionIndexesById(optionsState),
+                indexesById: this.props.updateIndexesByIdHelper(optionsState),
                 loaded: true,
             },
             optionsSelectedTableOrder: optionsSelectedTableOrder,
