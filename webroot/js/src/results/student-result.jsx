@@ -66,22 +66,6 @@ var ResultsIndex = React.createClass({
                         />
                     }
                 </div>
-                
-                
-                {/*selection.options_selections.map(function(optionSelection) {
-                    var option = this.props.options[this.props.optionIndexesById[optionSelection.choices_option_id]];
-                    
-                    return (
-                        <div>
-                            <Text 
-                                value={
-                                    ((this.props.choice.use_code)?(option.code + ": "):"")
-                                    + option.title
-                                }
-                            />
-                        </div>
-                    );
-                }, this)*/}
             </Container>
         );
     }

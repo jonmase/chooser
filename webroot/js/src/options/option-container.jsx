@@ -25,6 +25,7 @@ import Confirmed from './selection-confirmed.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import OptionsTable from './option-table.jsx';
 import OptionEditPage from './option-edit-page.jsx';
+import OptionTitle from './option-title.jsx';
 import DefaultFields from './default-fields.jsx';
 import ExtraFieldLabelled from './extra-field-labelled.jsx';
 
@@ -1014,11 +1015,11 @@ var OptionContainer = React.createClass({
         
                 return (
                     <div>
-                        <h3>
-                            {this.props.choice.use_code && (option.code + ": ")}
-                            {option.title}
-                        </h3>
-                    
+                        <OptionTitle 
+                            code={this.props.choice.use_code && option.code}
+                            title={option.title}
+                        />
+                        
                         <DefaultFields
                             defaults={defaults}
                             option={option}

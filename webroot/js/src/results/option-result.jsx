@@ -4,6 +4,11 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
 
+import NumberLabelled from '../elements/display/number-labelled.jsx';
+import OptionTitle from '../options/option-title.jsx';
+import DefaultFields from '../options/default-fields.jsx';
+
+
 var ResultsIndex = React.createClass({
     getInitialState: function () {
         var initialState = {
@@ -24,7 +29,35 @@ var ResultsIndex = React.createClass({
 
         return (
             <Container topbar={topbar} title={null}>
-                {this.props.option.id}
+                <OptionTitle 
+                    code={this.props.choice.use_code && this.props.option.code}
+                    title={this.props.option.title}
+                />
+
+                <DefaultFields
+                    defaults={this.props.optionDefaultFields}
+                    option={this.props.option}
+                />
+                
+                <NumberLabelled 
+                    label="Times Selected"
+                    value={this.props.option.count}
+                />
+
+                {/*selection.options_selections.map(function(optionSelection) {
+                    var option = this.props.options[this.props.optionIndexesById[optionSelection.choices_option_id]];
+                    
+                    return (
+                        <div>
+                            <Text 
+                                value={
+                                    ((this.props.choice.use_code)?(option.code + ": "):"")
+                                    + option.title
+                                }
+                            />
+                        </div>
+                    );
+                }, this)*/}
             </Container>
         );
     }

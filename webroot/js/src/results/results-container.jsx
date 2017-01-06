@@ -100,12 +100,50 @@ var ResultsContainer = React.createClass({
     },
 
     render: function() {
+        var optionDefaultFields = [];
+        if(this.props.choice.use_code) {
+            optionDefaultFields.push({
+                name: 'code',
+                label: 'Code',
+                type: 'text',
+            })
+        }
+        if(this.props.choice.use_title) {
+            optionDefaultFields.push({
+                name: 'title',
+                label: 'Title',
+                type: 'text',
+            })
+        }
+        if(this.props.choice.use_min_places) {
+            optionDefaultFields.push({
+                name: 'min_places',
+                label: 'Min. Places',
+                type: 'number',
+            })
+        }
+        if(this.props.choice.use_max_places) {
+            optionDefaultFields.push({
+                name: 'max_places',
+                label: 'Max. Places',
+                type: 'number',
+            })
+        }
+        if(this.props.choice.use_points) {
+            optionDefaultFields.push({
+                name: 'points',
+                label: 'Points',
+                type: 'number',
+            })
+        }
+    
         return (
             <div>
                 {(this.state.action === 'index') &&
                     <ResultsIndex
                         loaded={this.state.loaded}
                         instance={this.state.instance}
+                        optionDefaultFields={optionDefaultFields}
                         options={this.state.options}
                         resultsContainerHandlers={{
                             goToOptionView: this.goToOptionView,
@@ -133,6 +171,7 @@ var ResultsContainer = React.createClass({
                 {(this.state.action === 'option') &&
                     <OptionResult
                         option={this.state.options[this.state.optionBeingViewedIndex]}
+                        optionDefaultFields={optionDefaultFields}
                         resultsContainerHandlers={{
                             goToIndex: this.goToIndex,
                         }}
