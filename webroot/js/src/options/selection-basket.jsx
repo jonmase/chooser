@@ -53,10 +53,9 @@ var SelectionBasket = React.createClass({
                         {/*<p style={{margin: 0}}>You have chosen the following options:</p>*/}
                         {(this.props.optionsSelectedTableOrder.length > 0)?
                             <OptionList
-                                action="view"
-                                instance={this.props.instance}
-                                optionIds={this.props.optionsSelectedTableOrder}
-                                options={this.props.options}
+                                optionIndexesById={this.props.options.indexesById}
+                                options={this.props.options.options}
+                                optionsSelectedIdsOrdered={this.props.optionsSelectedTableOrder}
                                 removeButton={false}
                                 //removeHandler={this.props.optionContainerHandlers.remove}
                                 useCode={this.props.useCode}

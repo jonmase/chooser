@@ -74,12 +74,13 @@ var SelectionConfirmed = React.createClass({
                                 {(this.props.optionsSelectedPreferenceOrder.length > 0)?
                                     <div style={{width: '100%'}}>
                                         <OptionList
-                                            action="confirmed"
-                                            instance={this.props.instance.instance}
-                                            optionIds={this.props.optionsSelectedPreferenceOrder}
-                                            options={this.props.options}
-                                            optionsSelected={this.props.optionsSelected}
-                                            removeButton={false}
+                                            optionIndexesById={this.props.options.indexesById}
+                                            options={this.props.options.options}
+                                            optionsSelectedById={this.props.optionsSelected}
+                                            optionsSelectedIdsOrdered={this.props.optionsSelectedPreferenceOrder}
+                                            preferenceType={this.props.instance.instance.preference_type}
+                                            showCommentsTextPerOption={this.props.instance.instance.comments_per_option}
+                                            showPreferenceValues={this.props.instance.instance.preference}
                                             style={{paddingTop: 0}}
                                             useCode={this.props.choice.use_code}
                                         />

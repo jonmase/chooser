@@ -188,37 +188,47 @@ class SelectionsController extends AppController
         $options = $this->Selections->OptionsSelections->ChoicesOptions->Options->getForView($choiceId, true, true);
         $optionIndexesById = $this->Selections->OptionsSelections->ChoicesOptions->Options->getOptionIndexesById($options);
         
-        $optionsSelected = [];
+        $optionsSelectedCounts = [];
         
         foreach($selections as &$selection) {
             $selection['modified'] = $this->Selections->formatDatetimeObjectForView($selection['modified']);
             $selection['option_count'] = count($selection['options_selections']);
             
-            //If the selection is confirmed, increment the counts for the chosen options
-            if($selection['confirmed']) {
-                foreach($selection['options_selections'] as $optionSelected) {
+            $optionsSelectedIdsOrdered = [];
+            $optionsSelectedById = [];
+            
+            foreach($selection['options_selections'] as $optionSelected) {
+                $optionsSelectedIdsOrdered[] = $optionSelected['choices_option_id'];
+                $optionsSelectedById[$optionSelected['choices_option_id']] = $optionSelected;
+                
+                //If the selection is confirmed, increment the counts for the chosen options
+                if($selection['confirmed']) {
                     //If option ID does not already have a count
-                    if(!isset($optionsSelected[$optionSelected['choices_option_id']])) {
-                        $optionsSelected[$optionSelected['choices_option_id']] = 1;
+                    if(!isset($optionsSelectedCounts[$optionSelected['choices_option_id']])) {
+                        $optionsSelectedCounts[$optionSelected['choices_option_id']] = 1;
                     }
                     else {
-                        $optionsSelected[$optionSelected['choices_option_id']]++;
+                        $optionsSelectedCounts[$optionSelected['choices_option_id']]++;
                     }
                 }
             }
+            
+            $selection['options_selected_ids_ordered'] = $optionsSelectedIdsOrdered;
+            $selection['options_selected_by_id'] = $optionsSelectedById;
+            unset($selection['options_selections']);
         }
         
         foreach($options as &$option) {
-            //If option ID is set in optionsSelected, use the count from that
-            if(isset($optionsSelected[$option['id']])) {
-                $option['count'] = $optionsSelected[$option['id']];
+            //If option ID is set in optionsSelectedCounts, use the count from that
+            if(isset($optionsSelectedCounts[$option['id']])) {
+                $option['count'] = $optionsSelectedCounts[$option['id']];
             }
             //Otherwise, option hasn't been chosen, so set count to 0
             else {
                 $option['count'] = 0;
             }
         }
-        //pr($optionsSelected);
+        //pr($optionsSelectedCounts);
         //pr($selections);
         //pr($options);
         

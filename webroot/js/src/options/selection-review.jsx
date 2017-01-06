@@ -41,15 +41,17 @@ var SelectionReview = React.createClass({
                     <div>
                         <p style={{marginBottom: 0}}>You have chosen the following options:</p>
                         <OptionList
-                            action="review"
                             handleOrderChange={this.props.optionContainerHandlers.orderChange}
                             handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
-                            instance={this.props.instance.instance}
-                            optionIds={this.props.optionsSelectedPreferenceOrder}
-                            options={this.props.options}
-                            optionsSelected={this.props.optionsSelected}
+                            hiddenOptionIdField={true}
+                            optionIndexesById={this.props.options.indexesById}
+                            options={this.props.options.options}
+                            optionsSelectedById={this.props.optionsSelected}
+                            optionsSelectedIdsOrdered={this.props.optionsSelectedPreferenceOrder}
+                            preferenceType={this.props.instance.instance.preference_type}
                             rankSelectsDisabled={this.props.rankSelectsDisabled}
-                            removeButton={false}
+                            showCommentsFieldPerOption={this.props.instance.instance.comments_per_option}
+                            showPreferenceInputs={this.props.instance.instance.preference}
                             useCode={this.props.choice.use_code}
                         />
                     </div>

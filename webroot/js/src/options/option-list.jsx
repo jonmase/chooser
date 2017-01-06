@@ -16,16 +16,13 @@ var OptionList = React.createClass({
             //height: '72px'
         };
         
-        var showPreferenceInputs = this.props.action === 'review' && this.props.instance.preference;
-        var showPreferenceValues = this.props.action === 'confirmed' && this.props.instance.preference;
-
-        if(showPreferenceInputs) {
+        if(this.props.showPreferenceInputs) {
             listItemStyle.marginLeft = '50px';
             
             //Generate the options for the ranking list
-            if(this.props.instance.preference_type === 'rank') {
+            if(this.props.preferenceType === 'rank') {
                 var rankDropdownOptions = [];
-                var optionCount = this.props.optionIds.length;
+                var optionCount = this.props.optionsSelectedIdsOrdered.length;
                 for(var i = 0; i < optionCount; i++) {
                     rankDropdownOptions.push({
                         value: i,
@@ -35,26 +32,23 @@ var OptionList = React.createClass({
             }
         }
         
-        if(showPreferenceValues) {
+        if(this.props.showPreferenceValues) {
             listItemStyle.marginLeft = '20px';
         }
         
-        var showCommentsFieldPerOption = this.props.action === 'review' && this.props.instance.comments_per_option;
-        var showCommentsTextPerOption = this.props.action === 'confirmed' && this.props.instance.comments_per_option;
-        
-        if(showCommentsFieldPerOption) {
+        if(this.props.showCommentsFieldPerOption) {
             listItemStyle.marginRight = '270px';
         }
         
-        //If not using code, action is review and either preference or comments field is showing, move the listItem down slightly so the title appears in the centre of the block
-        if(!this.props.useCode && this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
+        //If not using code and either preference or comments field is showing, move the listItem down slightly so the title appears in the centre of the block
+        if(!this.props.useCode && (this.props.showPreferenceInputs || this.props.showCommentsFieldPerOption)) {
             listItemStyle.top = '8px';
         }
                     
         return (
             <List style={this.props.style}>
-                {this.props.optionIds.map(function(optionId, optionIndex) {
-                    var option = this.props.options.options[this.props.options.indexesById[optionId]];
+                {this.props.optionsSelectedIdsOrdered.map(function(optionId, optionIndex) {
+                    var option = this.props.options[this.props.optionIndexesById[optionId]];
                     
                     if(this.props.useCode) {
                         var primaryText = option.code;
@@ -66,8 +60,8 @@ var OptionList = React.createClass({
                         
                         //Make secondary text blank...
                         var secondaryText = "";
-                        //...unless action is review and either preference or comments field is showing, in which case make it a space, so that it is still there to pad out the list item block
-                        if(this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
+                        //...unless either preference or comments field is showing, in which case make it a space, so that it is still there to pad out the list item block
+                        if(this.props.showPreferenceInputs || this.props.showCommentsFieldPerOption) {
                             secondaryText = " ";
                         }
                         
@@ -76,9 +70,9 @@ var OptionList = React.createClass({
                     
                     return (
                         <div key={optionId}>
-                            {(showPreferenceInputs)?
+                            {(this.props.showPreferenceInputs)?
                                 <div style={{float: 'left'}}>
-                                    {(this.props.instance.preference_type === 'rank')?
+                                    {(this.props.preferenceType === 'rank')?
                                         <DropdownField
                                             field={{
                                                 disabled: this.props.rankSelectsDisabled,
@@ -94,37 +88,36 @@ var OptionList = React.createClass({
                                     :""}
                                 </div>
                             :""}
-                            {(showPreferenceValues)?
+                            {(this.props.showPreferenceValues)?
                                 <div style={{float: 'left', width: '20px', display: 'table', height: itemHeight, tableLayout: 'fixed'}}>
                                     <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
-                                        {(this.props.instance.preference_type === 'rank')?
-                                            (this.props.optionsSelected[optionId].rank + 1)
-                                        :""}
+                                        {(this.props.preferenceType === 'rank')&&
+                                            (this.props.optionsSelectedById[optionId].rank + 1)
+                                        }
                                     </div>
                                 </div>
                             :""}
                         
-                            {(showCommentsFieldPerOption)?
+                            {(this.props.showCommentsFieldPerOption)?
                                 <div style={{float: 'right', marginTop: '-8px'}}>
                                     <TextField field={{
-                                        defaultValue: this.props.optionsSelected[optionId].comments,
+                                        defaultValue: this.props.optionsSelectedById[optionId].comments,
                                         label: "Option-specific comments",
-                                        //instructions: this.props.instance.comments_overall_instructions,
                                         name: "options." + optionId + ".comments",
                                         onChange: this.props.handleCommentsChange,
                                         section: false,
                                     }} />
                                 </div>
                             :""}
-                            {(showCommentsTextPerOption)?
+                            {(this.props.showCommentsTextPerOption)?
                                 <div style={{float: 'right', width: '50%', minWidth: '200px', display: 'table', height: itemHeight, tableLayout: 'fixed', textAlign: 'right'}}>
                                     <div style={{display: 'table-cell', verticalAlign: 'middle', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
-                                        {this.props.optionsSelected[optionId].comments}
+                                        {this.props.optionsSelectedById[optionId].comments}
                                     </div>
                                 </div>
                             :""}
                             
-                            {this.props.action === 'review' &&
+                            {this.props.hiddenOptionIdField &&
                                 <HiddenField value={optionId} name={"options." + optionId + ".choices_option_id"} />
                             }
                             
@@ -139,7 +132,7 @@ var OptionList = React.createClass({
                                         >
                                             close
                                         </IconButton>
-                                    :null
+                                    :null   //Have to give null as false value, otherwise get warning about using bool when expecting ReactElement
                                 }
                                 secondaryText={secondaryText}
                                 secondaryTextLines={1}

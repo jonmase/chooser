@@ -120,6 +120,7 @@ var ResultsContainer = React.createClass({
                 }
                 {(this.state.action === 'student') &&
                     <StudentResult
+                        instance={this.state.instance}
                         options={this.state.options}
                         optionIndexesById={this.state.optionIndexesById}
                         resultsContainerHandlers={{
