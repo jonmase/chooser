@@ -41,13 +41,17 @@ var ResultsIndex = React.createClass({
             title={<AppTitle subtitle={this.props.choice.name + ": Results"} />}
             zDepth={0}
         />;
+        
+        var loaderDiv = <div style={{padding: '20px'}}>
+                            <Loader />
+                        </div>;
 
         var tabs = {
             onChange: this.props.resultsContainerHandlers.tabChange,
             tabs: [
                 {
                     content: (!this.props.loaded)?
-                            <Loader />
+                            loaderDiv
                         :
                             <ResultsTableByStudent 
                                 handlers={{
@@ -61,7 +65,7 @@ var ResultsIndex = React.createClass({
                 },
                 {
                     content: (!this.props.loaded)?
-                            <Loader />
+                            loaderDiv
                         :
                             <ResultsTableByOption
                                 choice={this.props.choice}
