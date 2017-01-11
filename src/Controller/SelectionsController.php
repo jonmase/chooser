@@ -176,10 +176,19 @@ class SelectionsController extends AppController
     }
     
     public function download($choiceId, $type = 'student') {
+        if(!$choiceId) {
+            throw new InternalErrorException(__('Cannot download results - missing choice ID'));
+        }
+        
         //Make sure the user is allowed to view the results for this Choice
         $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
+        }
+        
+        //Make sure type is either student or option
+        if($type !== 'student' && $type !== 'option') {
+            $type = 'student';
         }
         
         //Get the choice
@@ -193,8 +202,11 @@ class SelectionsController extends AppController
         //pr($statistics);
         //pr($selections);
         
+        $filename = str_replace(' ', '_', $choice['name'])  . "_Responses" . "_By" . ucfirst($type) . ".xls";
         
+        $this->set(compact('choice', 'choosingInstance', 'options', 'selections', 'statistics', 'filename'));
         
-        $this->set(compact('choice', 'choosingInstance', 'options', 'selections', 'statistics'));
+        $this->viewBuilder()->layout('excel');
+        $this->render('download_' . $type);
     }
 }
