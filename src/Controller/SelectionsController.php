@@ -154,7 +154,7 @@ class SelectionsController extends AppController
         $this->set(compact('choice', 'sections'));
     }
     
-    public function getSelections($choiceId) {
+    public function getResults($choiceId) {
         //Make sure the user is allowed to view the results for this Choice
         $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
         if(!$canViewResults) {

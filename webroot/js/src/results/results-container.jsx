@@ -8,7 +8,7 @@ import SortWrapper from '../elements/wrappers/sort.jsx';
 
 var ResultsContainer = React.createClass({
     loadSelectionsFromServer: function() {
-        var url = '../get-selections/' + this.props.choice.id + '.json';
+        var url = '../get-results/' + this.props.choice.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',

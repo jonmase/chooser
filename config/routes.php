@@ -62,6 +62,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     //$routes->connect('/choices/choosing/:id', ['controller' => 'ChoosingInstances', 'action' => 'view'], ['id' => '\d+', 'pass' => ['id']]);
     $routes->connect('/results/:id', ['controller' => 'Selections', 'action' => 'index'], ['id' => '\d+', 'pass' => ['id']]);
     $routes->connect('/results/download/:id/:type', ['controller' => 'Selections', 'action' => 'download'], ['id' => '\d+', 'pass' => ['id', 'type']]);
+    $routes->connect('/results/get-results/:id', ['controller' => 'Selections', 'action' => 'get-results'], ['id' => '\d+', 'pass' => ['id']]);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
