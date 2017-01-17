@@ -20,6 +20,7 @@ var EmailField = React.createClass({
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    type="email"
                     validations="isEmail"
                     validationError="Please enter a valid email address"
                     value={field.value}

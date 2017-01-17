@@ -15,6 +15,7 @@ var UrlField = React.createClass({
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    type="url"
                     validations="isUrl"
                     validationError="Please enter a valid URL (web address)"
                     value={field.value}
