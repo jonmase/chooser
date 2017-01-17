@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
+use Cake\Network\Exception\NotFoundException;
 
 /**
  * Users Controller
@@ -207,7 +208,7 @@ class UsersController extends AppController
         $user = $this->Users->findByUsernameThenEmail($searchValue);
         
         if(empty($user)) {
-            throw new ForbiddenException(__('User not found.'));
+            throw new NotFoundException(__('User not found.'));
         }
         
         $this->set(compact('user'));
