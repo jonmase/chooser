@@ -6,7 +6,7 @@ var PointsField = React.createClass({
         return (
             <NumberField
                 field={{
-                    hint: "Enter a number",
+                    instructions: "Enter a number",
                     label: "Points*",
                     name: "points",
                     onChange: this.props.onChange,
