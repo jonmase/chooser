@@ -150,6 +150,18 @@ class UsersTable extends Table
         $contextId = $tool->context->getId();
         $ltiUserId = $tool->user->getId();
         
+        //Get username from displayid or lti_result_sourcedid
+        if(isset($tool->user->displayid)) { $username = $tool->user->displayid; }
+        else { $username = $tool->user->lti_result_sourcedid; }
+        
+        //Get the user's email
+        if(isset($tool->user->email)) { 
+            $userEmail = $tool->user->email; 
+        }
+        else {
+            $userEmail = null;
+        }
+        
         //Set up the data for the ltiUserUsers table
         $ltiUserUsersData = $this->LtiUserUsers->newEntity([
             'lti_consumer_key' => $consumerKey,
@@ -165,15 +177,34 @@ class UsersTable extends Table
         ];
         
         //Get the LtiUserUsers record that match the consumer_key and lti_user_id
-        $userQuery = $this->LtiUserUsers->find('all', [
+        $litUserQuery = $this->LtiUserUsers->find('all', [
             'conditions' => $basicConditions,
             'contain' => ['Users'],
         ]);
         //Use the first result, as it doesn't matter which context we get it from, the User record will be the same
-        $savedUser = $userQuery->first();
+        $savedUser = $litUserQuery->first();
+        pr($savedUser);
         
         if(empty($savedUser)) {
-            //No user matches this consumer_key and user_id, so create a new User
+            //Check whether there is a user with this user or username already in the users table
+            //This will be user who has been given additional permissions before they have access Chooser
+           /* $conditionsString = '(\'' . $username . '\'';
+            if($userEmail && $userEmail != $username) {
+                $conditionsString .= ', \'' . $userEmail . '\'';
+            }
+            $conditionsString .= ')';*/
+
+            $userQuery = $this->LtiUserUsers->Users->find('all', [
+                'conditions' => ['Users.username' => $username]
+            ]);
+            pr($userQuery);
+            $savedUser = $userQuery->first();
+            pr($savedUser);
+        }
+        pr(empty($savedUser));
+        
+        if(empty($savedUser)) {
+            //User does not already, so create a new User record
             $user = $this->newEntity();
         }
         else {
@@ -194,11 +225,8 @@ class UsersTable extends Table
         }
 
         //Add or Update the user details
-        //Get username from displayid or lti_result_sourcedid
-        if(isset($tool->user->displayid)) { $user->username = $tool->user->displayid; }
-        else { $user->username = $tool->user->lti_result_sourcedid; }
-        //Add the remaining user details if set
-        if(isset($tool->user->email)) { $user->email = $tool->user->email; }
+        $user->username = $username;
+        $user->email = $userEmail;
         if(isset($tool->user->fullname)) { $user->fullname = $tool->user->fullname; }
         if(isset($tool->user->firstname)) { $user->firstname = $tool->user->firstname; }
         if(isset($tool->user->lastname)) { $user->lastname = $tool->user->lastname; }
@@ -206,7 +234,7 @@ class UsersTable extends Table
         //If the LtiUserUsers data is set, add it to the $user object
         if($ltiUserUsersData) { $user->lti_user_users = [$ltiUserUsersData]; }
         
-        //pr($user); //exit;    //Debugging
+        pr($user); exit;    //Debugging
         if($this->save($user)) {
             //Send back just the user record - used for logging in
             unset($user->lti_user_users);
