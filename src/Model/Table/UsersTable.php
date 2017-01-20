@@ -177,15 +177,15 @@ class UsersTable extends Table
         ];
         
         //Get the LtiUserUsers record that match the consumer_key and lti_user_id
-        $litUserQuery = $this->LtiUserUsers->find('all', [
+        $ltiUserQuery = $this->LtiUserUsers->find('all', [
             'conditions' => $basicConditions,
             'contain' => ['Users'],
         ]);
         //Use the first result, as it doesn't matter which context we get it from, the User record will be the same
-        $savedUser = $litUserQuery->first();
-        pr($savedUser);
+        $savedLtiUser = $ltiUserQuery->first();
+        pr($savedLtiUser);
         
-        if(empty($savedUser)) {
+        if(empty($savedLtiUser)) {
             //Check whether there is a user with this user or username already in the users table
             //This will be user who has been given additional permissions before they have access Chooser
            /* $conditionsString = '(\'' . $username . '\'';
@@ -200,28 +200,29 @@ class UsersTable extends Table
             pr($userQuery);
             $savedUser = $userQuery->first();
             pr($savedUser);
-        }
-        pr(empty($savedUser));
-        
-        if(empty($savedUser)) {
-            //User does not already, so create a new User record
-            $user = $this->newEntity();
+            if(empty($savedUser)) {
+                $user = $this->newEntity();
+            }
+            else {
+                $user = $savedUser;
+            }
+            
         }
         else {
-            //User already exists, so get their ID and basic details
-            $userId = $savedUser->user_id;
-            $user = $savedUser->user;
-
-            //Is there an LtiUserUsers record for this consumer_key, user_id and context_id
-            $contextUserQuery = $this->LtiUserUsers->find('all', [
-                'conditions' => array_merge($basicConditions, ['lti_context_id' => $contextId]),
-            ]);
-            $savedContextUser = $contextUserQuery->first();
-            
-            //If there is already an LtiUserUsers record for this context_id, don't need to resave it
-            if(!empty($savedContextUser)) {
-                $ltiUserUsersData = null;
-            }
+            //Get user from LTI 
+            $user = $savedLtiUser->user;
+        }
+        pr($user);
+        
+        //Is there an LtiUserUsers record for this consumer_key, user_id and context_id
+        $contextUserQuery = $this->LtiUserUsers->find('all', [
+            'conditions' => array_merge($basicConditions, ['lti_context_id' => $contextId]),
+        ]);
+        $savedContextUser = $contextUserQuery->first();
+        
+        //If there is already an LtiUserUsers record for this context_id, don't need to resave it
+        if(!empty($savedContextUser)) {
+            $ltiUserUsersData = null;
         }
 
         //Add or Update the user details
