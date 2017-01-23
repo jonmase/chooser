@@ -36,6 +36,15 @@ var SelectionConfirmed = React.createClass({
         return (
             <div>
                 <Card className="page-card">
+                    <CardHeader title="Feedback on Chooser" />
+                    <CardText style={{paddingTop: 0}}>
+                        <p style={{marginTop: 0, marginBottom: 0}}>
+                            Thank you for submitting your choices. Please <a href="https://weblearn.ox.ac.uk/direct/eval-evaluation/15221" target="_blank">tell us quickly what you thought about Chooser</a>. Thank you!
+                        </p>
+                    </CardText>
+                </Card>
+
+                <Card className="page-card">
                     <CardHeader title={headerTitle} />
                     <CardText style={{paddingTop: 0}}>
                         <p style={{marginTop: 0}}>

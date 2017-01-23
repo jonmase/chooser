@@ -221,8 +221,12 @@ class OptionsTable extends Table
                 }
             }
             else if($type === 'checkbox') {
-                $extraValues[$name] = get_object_vars($extraValues[$name]);
-            }
+                if(!empty($extraValues[$name])) {
+                    $extraValues[$name] = get_object_vars($extraValues[$name]);
+                }
+                else {
+                    $extraValues[$name] = null;
+                }            }
         }        
         //pr($extraValues);
         
