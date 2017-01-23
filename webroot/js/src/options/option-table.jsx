@@ -271,18 +271,30 @@ var OptionsTable = React.createClass({
                                         })}
                                         
                                         {sortableExtraFields.map(function(fieldIndex) {
-                                            return (
-                                                <TableRowColumn style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
-                                                    <ExtraField 
-                                                        extra={this.props.choice.extra_fields[fieldIndex].extra}
-                                                        label={this.props.choice.extra_fields[fieldIndex].label}
-                                                        options={this.props.choice.extra_fields[fieldIndex].options}
-                                                        //field={this.props.choice.extra_fields[fieldIndex]}
-                                                        type={this.props.choice.extra_fields[fieldIndex].type}
-                                                        value={option[this.props.choice.extra_fields[fieldIndex].name]}
-                                                    />
-                                                </TableRowColumn>
-                                            );
+                                            var type = this.props.choice.extra_fields[fieldIndex].type;
+                                            var extraField = <ExtraField 
+                                                extra={this.props.choice.extra_fields[fieldIndex].extra}
+                                                label={this.props.choice.extra_fields[fieldIndex].label}
+                                                options={this.props.choice.extra_fields[fieldIndex].options}
+                                                //field={this.props.choice.extra_fields[fieldIndex]}
+                                                type={type}
+                                                value={option[this.props.choice.extra_fields[fieldIndex].name]}
+                                            />;
+                                            
+                                            if(type === "url" || type === "email") {
+                                                return (
+                                                    <UnselectableCell style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
+                                                        {extraField}
+                                                    </UnselectableCell>
+                                                );
+                                            }
+                                            else {
+                                                return (
+                                                    <TableRowColumn style={styles.tableRowColumn} key={this.props.choice.extra_fields[fieldIndex].label}>
+                                                        {extraField}
+                                                    </TableRowColumn>
+                                                );
+                                            }
                                         }, this)}
                                         
                                         {(this.props.action === 'edit')?

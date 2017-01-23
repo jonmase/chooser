@@ -9,7 +9,7 @@ var UnselectableCell = React.createClass({
                 <div onClick={(e) => {
                     //Stop row from being (de)selected when this cell is clicked
                     //See https://github.com/callemall/material-ui/issues/4535
-                    e.preventDefault();
+                    //e.preventDefault();
                     e.stopPropagation();
                 }}>
                     {this.props.children}
