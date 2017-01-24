@@ -154,7 +154,7 @@ class UsersTable extends Table
         if(isset($tool->user->displayid)) { $username = $tool->user->displayid; }
         else { $username = $tool->user->lti_result_sourcedid; }
         
-        //Get the user's email
+        //Get the user's email, if it's set in the LTI request
         if(isset($tool->user->email)) { 
             $userEmail = $tool->user->email; 
         }
@@ -162,67 +162,70 @@ class UsersTable extends Table
             $userEmail = null;
         }
         
-        //Set up the data for the ltiUserUsers table
-        $ltiUserUsersData = $this->LtiUserUsers->newEntity([
-            'lti_consumer_key' => $consumerKey,
-            'lti_context_id' => $contextId,
-            'lti_user_id' => $ltiUserId,
-        ]);
-
         //Set up the basic LtiUserUsers query conditions
-        $basicConditions = [
+        //Users are uniquely defined by the consumer_key and lti_user_id
+        //A single consumer key should only be used for a single institution
+        //A single institution can have multiple consumer keys, which will mean that the same lti_user_id represents a different user in Chooser
+        $uniqueUserConditions = [
             'lti_consumer_key' => $consumerKey,
             'lti_user_id' => $ltiUserId,
-            //'lti_context_id' => $contextId,   //Don't worry about context for initial user query, as User records will not be context specific
         ];
         
         //Get the LtiUserUsers record that match the consumer_key and lti_user_id
         $ltiUserQuery = $this->LtiUserUsers->find('all', [
-            'conditions' => $basicConditions,
+            'conditions' => $uniqueUserConditions,
             'contain' => ['Users'],
         ]);
-        //Use the first result, as it doesn't matter which context we get it from, the User record will be the same
-        $savedLtiUser = $ltiUserQuery->first();
-        pr($savedLtiUser);
         
-        if(empty($savedLtiUser)) {
-            //Check whether there is a user with this user or username already in the users table
-            //This will be user who has been given additional permissions before they have access Chooser
-           /* $conditionsString = '(\'' . $username . '\'';
-            if($userEmail && $userEmail != $username) {
-                $conditionsString .= ', \'' . $userEmail . '\'';
-            }
-            $conditionsString .= ')';*/
-
-            $userQuery = $this->LtiUserUsers->Users->find('all', [
-                'conditions' => ['Users.username' => $username]
-            ]);
-            pr($userQuery);
-            $savedUser = $userQuery->first();
-            pr($savedUser);
-            if(empty($savedUser)) {
-                $user = $this->newEntity();
-            }
-            else {
-                $user = $savedUser;
-            }
-            
-        }
-        else {
+        //If there is an LtiUserUsers record for this user, use this user
+        $savedLtiUser = $ltiUserQuery->first(); //Use the first result, as it doesn't matter which context we get it from, the User record will be the same
+        if(!empty($savedLtiUser)) {
             //Get user from LTI 
             $user = $savedLtiUser->user;
         }
-        pr($user);
-        
+        else {
+            //Look for user matching username and, if set, email address in users table
+            //This will happen if user has been given additional permissions in a choice before they have accessed Chooser
+            //Users can be given additional permissions by username or by email, but whichever is used it will be put in the 'username' field of the Users table, so search this field for either username or email
+            $userConditions = ['Users.username' => $username];
+            if($userEmail && $userEmail != $username) { //If email is set, add this to the conditions
+                $userConditions = ['OR' => [
+                    $userConditions,
+                    ['Users.username' => $userEmail]
+                ]];
+            }
+
+            $userQuery = $this->LtiUserUsers->Users->find('all', [
+                'conditions' => $userConditions
+            ]);
+            $savedUser = $userQuery->first();
+            
+            if(!empty($savedUser)) {
+                //User appears in Users table, so use this user
+                $user = $savedUser;
+            }
+            else {
+                //User not in Users table, so create a new user entity
+                $user = $this->newEntity();
+            }
+        }
+
         //Is there an LtiUserUsers record for this consumer_key, user_id and context_id
         $contextUserQuery = $this->LtiUserUsers->find('all', [
-            'conditions' => array_merge($basicConditions, ['lti_context_id' => $contextId]),
+            'conditions' => array_merge($uniqueUserConditions, ['lti_context_id' => $contextId]),
         ]);
         $savedContextUser = $contextUserQuery->first();
         
-        //If there is already an LtiUserUsers record for this context_id, don't need to resave it
-        if(!empty($savedContextUser)) {
-            $ltiUserUsersData = null;
+        //If there is not already an LtiUserUsers record for this context_id, save it as an association to User
+        if(empty($savedContextUser)) {
+            //Set up the data for the ltiUserUsers table
+            $user->lti_user_users = [
+                $this->LtiUserUsers->newEntity([
+                    'lti_consumer_key' => $consumerKey,
+                    'lti_context_id' => $contextId,
+                    'lti_user_id' => $ltiUserId,
+                ])
+            ];
         }
 
         //Add or Update the user details
@@ -232,10 +235,7 @@ class UsersTable extends Table
         if(isset($tool->user->firstname)) { $user->firstname = $tool->user->firstname; }
         if(isset($tool->user->lastname)) { $user->lastname = $tool->user->lastname; }
         
-        //If the LtiUserUsers data is set, add it to the $user object
-        if($ltiUserUsersData) { $user->lti_user_users = [$ltiUserUsersData]; }
-        
-        pr($user); exit;    //Debugging
+        //pr($user); exit;    //Debugging
         if($this->save($user)) {
             //Send back just the user record - used for logging in
             unset($user->lti_user_users);
