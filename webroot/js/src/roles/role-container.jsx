@@ -2,6 +2,7 @@ import React from 'react';
 
 import Snackbar from 'material-ui/Snackbar';
 
+import RolesExplanations from './role-explanations.jsx';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
 
@@ -504,6 +505,7 @@ var RolesContainer = React.createClass({
         return (
 			<Container topbar={topbar} title="Dashboard - User Permissions">
                 <div>
+                    <RolesExplanations />
                     <RolesSettingsForm 
                         state={this.state} 
                         roleOptions={this.props.roleOptions} 

@@ -109,6 +109,20 @@ h6 {
     margin-bottom: 2rem;
 }
 
+/* DEFINITION LISTS */
+.page-card dl {
+    margin: 0;
+}
+dt {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+dd {
+    margin: 0 0 20px;
+}
+div:last-child > dd {
+    margin-bottom: 0;
+}
 
 /* FORMS */
 form {
