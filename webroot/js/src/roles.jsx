@@ -10,10 +10,6 @@ ReactDOM.render(
     <RolesContainer 
         choice={data.choice} 
         dashboardUrl={data.dashboard} 
-        initialNotify={data.choice.notify_additional_permissions} 
-        initialDefaultRoles={data.choice.instructor_default_roles} 
-        initialUsers={data.users} 
-        initialUserSortField={data.userSortField} 
         roleOptions={data.roleOptions} 
         sections={data.sections} 
     />, 

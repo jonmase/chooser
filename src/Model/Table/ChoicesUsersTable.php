@@ -19,33 +19,33 @@ class ChoicesUsersTable extends Table
         [
             'id' => 'editor', 
             'title' => 'Editor', 
-            'description' => 'can create and edit options, and edit their profile',
+            'description' => 'can create and edit their own options, and edit their profile',
         ],
-        [
+        /*[
             'id' => 'approver', 
             'title' => 'Approver', 
-            'description' => 'can approve options that have been published by editors (where approval is required)',
-        ],
+            'description' => 'only relevant in Choices that include an approval step, Approvers can view and approve or reject options that have been published by editors',
+        ],*/
         [
             'id' => 'reviewer', 
             'title' => 'Reviewer', 
-            'description' => 'can view all of the results',
+            'description' => 'can view and download all of the results',
         ],
-        [
+        /*[
             'id' => 'allocator', 
             'title' => 'Allocator', 
-            'description' => 'can allocate users to options',
-        ],
+            'description' => 'can view/download the results and allocate Viewers to options',
+        ],*/
     ];
     private $_adminRole = [
         'id' => 'admin', 
         'title' => 'Administrator', 
-        'description' => 'has full control over the Choice and can give and remove additional permissions to others',
+        'description' => 'has full control to do everything for a Choice and can give additional permissions to others',
     ];
     private $_viewRole = [
         'id' => 'view', 
         'title' => 'Viewer', 
-        'description' => 'can view and choose options',
+        'description' => 'can view published (and, where applicable, approved) options and make choices. This is the default \'student\' role, and everyone who is able to access the Choice will have this role.',
     ];
 
 
@@ -136,6 +136,7 @@ class ChoicesUsersTable extends Table
      */
     public function getAllRoles() {
         $allRoles = $this->_nonAdminRoles;
+        array_unshift($allRoles, $this->_viewRole);
         array_push($allRoles, $this->_adminRole);
         return $allRoles;
     }
@@ -149,17 +150,6 @@ class ChoicesUsersTable extends Table
     public function getNonAdminRoles() {
         $nonAdminRoles = $this->_nonAdminRoles;
         return $nonAdminRoles;
-    }
-
-    /**
-     * getRoleDescriptions method
-     * Returns the array of role descriptions
-     *
-     * @return array $allRoles array of additional roles
-     */
-    public function getRoleDescriptions() {
-        $roleDescriptions = $this->_roleDescriptions;
-        return $roleDescriptions;
     }
 
     /**
@@ -210,31 +200,6 @@ class ChoicesUsersTable extends Table
     }
     
     /**
-     * getRolesAsIDsArray method
-     * Looks up the User's roles for a Choice and returns array of role IDs
-     *
-     * @param $choiceId ID of the Choice
-     * @param $userId ID of the User
-     * @param boolean $includeView Whether or not include 'view' as one of the roles
-     * @return array $roles array of the User's role IDs only (or empty array if not associated)
-     */
-    public function getRolesAsIDsArray($choiceId = null, $userId = null, $includeView = false) {
-        //If either choiceId or userId isn't set, return empty array (i.e. no role)
-        if(!$choiceId || !$userId) {
-            $roles = [];
-        }
-        
-        $rolesObjects = $this->getRoles($choiceId, $userId, $includeView);
-        
-        $roles = [];
-        foreach($rolesObjects as $role) {
-            $roles[] = $role['id'];
-        }
-        
-        return $roles;
-    }
-    
-    /**
      * processRoles method
      * Takes a ChoicesUsers record and process the roles into an array
      *
@@ -244,23 +209,24 @@ class ChoicesUsersTable extends Table
      */
     function processRoles($choicesUser = null, $includeView = false) {
         $roles = [];
+
         //If the user is not associated with this Choice, return empty array, i.e. no role
         if(!empty($choicesUser)) {
             //If admin, don't need to return any other roles for this user
             if($choicesUser->admin) {
-                $roles[] = $this->_adminRole;
+                $roles[] = $this->_adminRole['id'];
             }
             else {
                 foreach($this->_nonAdminRoles as $role) {
                     $roleId = $role['id'];
                     if($choicesUser->$roleId) {
-                        $roles[] = $role;
+                        $roles[] = $role['id'];
                     }
                 }
             }
             
             //Anyone associated with a Choice, and without additional permissions, still has the view role
-            if(empty($roles) && $includeView) { $roles[] = $this->_viewRole; }
+            if(empty($roles) && $includeView) { $roles[] = $this->_viewRole['id']; }
         }
         
         return $roles;
@@ -381,7 +347,7 @@ class ChoicesUsersTable extends Table
             return false;
         }
         
-        $userRoles = $this->getRolesAsIDsArray($choiceId, $userId);
+        $userRoles = $this->getRoles($choiceId, $userId);
 
         //If user is admin then they have that role
         if(in_array('admin', $userRoles)) {

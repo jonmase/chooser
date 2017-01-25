@@ -243,7 +243,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => Router::url(['controller' => 'choices', 'action' => 'roles', $choiceId]),
+                        'url' => Router::url(['controller' => 'users', 'action' => 'index', $choiceId]),
                     ]
                 ],
                 'roles' => ['admin'],
@@ -409,7 +409,7 @@ class ChoicesTable extends Table
             return [];
         }
         
-        $roles = $this->ChoicesUsers->getRolesAsIDsArray($choiceId, $userId);
+        $roles = $this->ChoicesUsers->getRoles($choiceId, $userId);
         if(empty($roles)) {
             return [];
         }

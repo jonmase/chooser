@@ -13,31 +13,45 @@ import AppTitle from '../elements/app-title.jsx';
 var blankFindUserMessage = '\u00A0';
 
 var RolesContainer = React.createClass({
-    getInitialState: function () {
-        /*var filterRoles = {};
-        this.props.roleOptions.forEach(function(role) {
-            filterRoles[role.id] = false;
-        });*/
-        var users = this.props.initialUsers;
-        var userIndexesByUsername = {};
-        var filteredUserIndexes = [];
-        users.forEach(function(user, index) {
-            userIndexesByUsername[user.username] = index;
-            filteredUserIndexes.push(index);
+    loadUsersFromServer: function() {
+        var url = '../../users/get/' + this.props.choice.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                var filteredUserIndexes = [];
+                data.users.forEach(function(user, index) {
+                    //userIndexesByUsername[user.username] = index;
+                    filteredUserIndexes.push(index);
+                });
+                
+                var stateData = {
+                    filteredUserIndexes: filteredUserIndexes,
+                    users: data.users,
+                    userIndexesById: data.userIndexesById,
+                };
+                
+                
+                this.setState(stateData);
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
         });
-    
+    },
+    getInitialState: function () {
         return {
             addUserDialogOpen: false,
-            defaultRoles: this.props.initialDefaultRoles,
+            defaultRoles: this.props.choice.instructor_default_roles,
             editSelectedUsersDialogOpen: false,
             editUserDialogOpen: false,
             //filterRoles: filterRoles,
             filterRoles: [],
-            filteredUserIndexes: filteredUserIndexes,
-            sortUsersField: this.props.initialUserSortField,
+            filteredUserIndexes: [],
             findUserMessage: {blankFindUserMessage},
             foundUser: {},
-            notify: this.props.initialNotify,
+            notify: this.props.choice.notify_additional_permissions,
             selectAllSelected: true,
             settingsButton: {
                 disabled: true,
@@ -47,11 +61,16 @@ var RolesContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            users: users,
-            userIndexesByUsername: userIndexesByUsername,
+            sortField: 'username',
+            sortDirection: 'ASC',
+            users: [],
+            userIndexesById: [],
             usersBeingEdited: [],
             usersSelected: [],
         };
+    },
+    componentWillMount: function() {
+        this.loadUsersFromServer();
     },
     
     handleAddUserChange: function() {
@@ -505,7 +524,9 @@ var RolesContainer = React.createClass({
         return (
 			<Container topbar={topbar} title="Dashboard - User Permissions">
                 <div>
-                    <RolesExplanations />
+                    <RolesExplanations 
+                        roleOptions={this.props.roleOptions} 
+                    />
                     <RolesSettingsForm 
                         state={this.state} 
                         roleOptions={this.props.roleOptions} 

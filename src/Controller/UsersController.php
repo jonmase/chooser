@@ -25,6 +25,137 @@ class UsersController extends AppController
     }
     
     /**
+     * get method
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When Users or Choices record not found.
+     */
+    public function get($choiceId = null)
+    {
+        //$this->viewBuilder()->layout('ajax');
+        //$this->autoRender = false;
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
+        }
+        
+        $sortField = 'username';
+        $sortDirection = 'ASC';
+        $usersQuery = $this->Users->find('all', ['sort' => ['Users.' . $sortField => $sortDirection]]);
+        $usersQuery->matching('ChoicesUsers', function ($q) use ($choiceId) {
+            return $q->where(['ChoicesUsers.choice_id >=' => $choiceId]);
+        });
+        $users = $usersQuery->toArray();
+        
+        $userIndexesById = [];
+        foreach($users as $index => &$user) {
+            //Get roles from _matchingData, including view role
+            $user->roles = $this->Users->ChoicesUsers->processRoles($user->_matchingData['ChoicesUsers'], true);  
+            unset($user->_matchingData);
+            
+            if($user->id === $this->Auth->user('id')) {
+                $user->current = true;
+            }
+            
+            $userIndexesById[$user->id] = $index;
+        }
+        
+        $this->set(compact('users', 'userIndexesById', 'sortField', 'sortDirection'));
+        $this->set('_serialize', ['users', 'userIndexesById', 'sortField', 'sortDirection']);
+       // pr($users);
+    }
+    
+    
+    /**
+     * index method
+     * Displays, and allows editing of, additional roles for this Choice 
+     *
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
+     */
+    public function index($id = null)
+    {
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(!$isAdmin) {
+            throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
+        }
+
+        $choice = $this->Users->ChoicesUsers->Choices->get($id);
+        
+        $defaultRolesArray = explode(',', $choice->instructor_default_roles);
+        $roleOptions = $this->Users->ChoicesUsers->getAllRoles();
+        
+        $defaultRolesObject = [];
+        foreach($roleOptions as $role) {
+            $defaultRolesObject[$role['id']] = in_array($role['id'], $defaultRolesArray);
+        }
+        $choice->instructor_default_roles = $defaultRolesObject;
+        
+        //Get the sections to show in the menu  bar
+        $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        
+        $this->set(compact('choice', 'roleOptions', 'sections'));
+    }
+    
+    /**
+     * roleSettings method
+     * 
+     * @param string|null $id Choice id.
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
+     */
+    public function roleSettings($id = null)
+    {
+        $this->request->allowMethod(['patch', 'post', 'put']);
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        if(!$isAdmin) {
+            throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
+        }
+
+        $choice = $this->Choices->get($id, [
+            'contain' => []
+        ]);
+        
+        $data = [];
+        
+        //Set the notify value
+        $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+        
+        //Set the default roles value
+        $defaultRoles = [];
+        foreach($this->request->data['defaultRoles'] as $role => $default) {
+            if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
+                $defaultRoles[] = $role;
+            }
+        }
+        $data['instructor_default_roles'] = implode(',', $defaultRoles);
+        
+        $choice = $this->Choices->patchEntity($choice, $data);
+
+        if ($this->Choices->save($choice)) {
+            $this->set('response', 'Role settings saved');
+        } 
+        else {
+            throw new InternalErrorException(__('Problem with saving role settings'));
+        }
+    }
+
+    /**
      * add method
      * 
      * @param string|null $id Choice id.
