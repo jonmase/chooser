@@ -12,6 +12,7 @@ import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
@@ -57,7 +58,7 @@ var AddUser = React.createClass({
             });
             
             if(userIsSelfOrAlreadyAssociated) {
-                var findUserMessage = 'User already associated.';
+                var findUserMessage = 'This user is already associated with this Choice. You can edit their permissions below.';
             
                 //TODO: Update the add/edit form with this user's permissions, so that they can be edited
             }
@@ -75,7 +76,7 @@ var AddUser = React.createClass({
             
             this.setState({
                 findUserMessage: findUserMessage,
-                foundUser: 'error',
+                foundUser: null,
             });
         }
         
@@ -107,7 +108,7 @@ var AddUser = React.createClass({
                     this.setState({
                         //findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
                         findUserMessage: 'There was an error trying to find this user. Please try again.',
-                        foundUser: false,
+                        foundUser: null,
                         userChecked: false,
                     });
                 }.bind(this)
@@ -115,15 +116,32 @@ var AddUser = React.createClass({
         }
     },
     
-    //Submit the user form (if using action inside Form)
-    handleSubmit: function (user) {
+    handleSaveClick: function() {
         //Make sure user has been checked
         if(!this.state.userChecked) {
-            if(this.checkUserAssociation(user.username)) {
+            var userSearchValue = this.getUserSearchValueFromInput();
+            if(this.checkUserAssociation(userSearchValue)) {
                 return false;
             }
         }
+        
+        //Submit the form by ref
+        this.refs.add.submit();
+    },
     
+    handleSubmit: function(user) {
+        //If a user was successfully found, set the ID in the data to be posted
+        if(this.state.foundUser) {
+            user.id = this.state.foundUser.id;
+        }
+        //If a user was searched for and not found, set the ID to 0
+        else if(this.state.foundUser === false) {
+            user.id = 0;
+        }
+        else {
+            //Otherwise, the user was not searched for, or an error occurred, so do not set the user id, and the search will be performed on the backend
+        }
+        
         this.props.handlers.submit(user);
     },
     
@@ -145,9 +163,15 @@ var AddUser = React.createClass({
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
-            iconRight={null}
+            iconRight={<RaisedButton 
+                disabled={!this.state.canSubmit}
+                label="Save" 
+                onTouchTap={this.handleSaveClick}
+                //primary={true}
+                style={{marginTop: '6px'}}
+            />}
             sections={this.props.sections} 
-            title="Add User"
+            title="Grant Additional Permissions"
         />;
 
         return (
@@ -159,6 +183,7 @@ var AddUser = React.createClass({
                     onInvalid={this.disableSubmitButton}
                     onValidSubmit={this.handleSubmit}
                     noValidate={true}
+                    ref="add"
                 >
                     <div className="section">
                         <FormsyText 

@@ -73,7 +73,7 @@ var UsersTable = React.createClass({
                             />&nbsp;
                             <AddButton
                                 handleAdd={this.props.addButtonClickHandler}
-                                tooltip="Add User"
+                                tooltip="Grant Permissions"
                             />
                             {/*<UsersActionMenu
                             
@@ -120,7 +120,7 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.tableRowColumn}>
                                                 {user.roles.map(function(role) {
                                                     return (
-                                                        <UsersRole key={user.username + '_' + role.id} user={user} role={role} />
+                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
                                                     );
                                                 })}
                                             </TableRowColumn>

@@ -128,15 +128,26 @@ var RolesContainer = React.createClass({
                 
                 //Update state with the new users array
                 this.setState({
+                    action: 'index',
                     users: currentUsers,
                     userIndexesByUsername: userIndexesByUsername,
                     filteredUserIndexes: filteredUserIndexes,
                     snackbar: snackbar,
                 });
-                this.handleAddUserDialogClose();
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
+                
+                //Show the snackbar
+                var snackbar = {
+                    open: true,
+                    message: "Error saving user permissions: " + err.toString(),
+                }
+                
+                //Update state with the new users array
+                this.setState({
+                    snackbar: snackbar,
+                });
             }.bind(this)
         });
     },

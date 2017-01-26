@@ -190,7 +190,7 @@ class UsersController extends AppController
         else if($this->request->data['id']) {
             $user = $this->Users->get($this->request->data['id']);
         }
-        
+
         //If we don't have a user yet, create one from the username in the request data
         if(empty($user)) {
             $user = $this->Users->newEntity();
@@ -199,7 +199,7 @@ class UsersController extends AppController
         
         //TODO: Make sure there isn't already a ChoicesUsers record for this user and Choice
         
-        $choice = $this->Users->Choices->get($id);
+        $choice = $this->Users->Choices->get($id, ['fields' => ['id']]);
         $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
         //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
         
@@ -211,6 +211,7 @@ class UsersController extends AppController
         
         $user->choices = [$choice];
         
+        //pr($user); exit;
         if ($this->Users->save($user)) {
             //Get roles from _joinData, including view role
             $user->roles = $this->Users->ChoicesUsers->processRoles($choice->_joinData, true);  
