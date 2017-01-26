@@ -20,11 +20,11 @@ var RolesExplanations = React.createClass({
                     style={{paddingTop: '0px'}}
                 >
                     <dl>
-                        {this.props.roleOptions.map(function(role) {
+                        {this.props.roles.map(function(role) {
                             return (
                                 <div key={role.title}>
                                     <dt>{role.title}</dt>
-                                    <dd>{role.description}</dd>
+                                    <dd>{role.description.charAt(0).toUpperCase() + role.description.substr(1)}</dd>
                                 </div>
                             );
                         })}

@@ -8,6 +8,9 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
 var RolesSettingsForm = React.createClass({
     render: function() {
+        var editorRole = this.props.roles[this.props.roleIndexesById['editor']];
+        var reviewerRole = this.props.roles[this.props.roleIndexesById['reviewer']];
+
         return (
             <Card 
                 className="page-card"
@@ -31,7 +34,8 @@ var RolesSettingsForm = React.createClass({
                         <div className="section">
                             <FormsyToggle
                                 name="defaultRoles.editor"
-                                label="Instructors are Editors, so they can create/edit their own options and profile (in most situations, you would want this ticked)"
+                                //label={"Instructors are " + editorRole.title + "s, so they " + editorRole.description + " (in most situations, you would want this ticked)"}
+                                label={"Instructors are " + editorRole.title + "s, so they " + editorRole.description}
                                 defaultToggled={this.props.state.defaultRoles['editor']}
                                 labelPosition="right"
                                 onChange={this.props.handlers.change}
@@ -40,13 +44,14 @@ var RolesSettingsForm = React.createClass({
                         <div className="section">
                             <FormsyToggle
                                 name="defaultRoles.reviewer"
-                                label="Instructors are Reviewers, so they can view all the results and selections (normally they would only see who has selected their own options)"
+                                //label={"Instructors are " + reviewerRole.title + "s, so they " + reviewerRole.description + " (normally they would only see who has selected their own options)"}
+                                label={"Instructors are " + reviewerRole.title + "s, so they " + reviewerRole.description}
                                 defaultToggled={this.props.state.defaultRoles['reviewer']}
                                 labelPosition="right"
                                 onChange={this.props.handlers.change}
                             />
                         </div>
-                        <div className="section">
+                        {/*<div className="section">
                             <FormsyToggle
                                 name="notify"
                                 //label={<span><span>Notify users by email when they are given additional permissions</span><br /><span className="sublabel">This can be overridden when additional permissions are given</span></span>}
@@ -55,7 +60,7 @@ var RolesSettingsForm = React.createClass({
                                 labelPosition="right"
                                 onChange={this.props.handlers.change}
                             />
-                        </div>
+                        </div>*/}
                         <RaisedButton 
                             label={this.props.state.settingsButton.label} 
                             primary={true} 

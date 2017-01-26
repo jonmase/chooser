@@ -10,7 +10,8 @@ ReactDOM.render(
     <RolesContainer 
         choice={data.choice} 
         dashboardUrl={data.dashboard} 
-        roleOptions={data.roleOptions} 
+        roles={data.roles} 
+        roleIndexesById={data.roleIndexesById} 
         sections={data.sections} 
     />, 
     document.getElementById('roles')

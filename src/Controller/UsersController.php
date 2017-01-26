@@ -92,18 +92,20 @@ class UsersController extends AppController
         $choice = $this->Users->ChoicesUsers->Choices->get($id);
         
         $defaultRolesArray = explode(',', $choice->instructor_default_roles);
-        $roleOptions = $this->Users->ChoicesUsers->getAllRoles();
+        $roles = $this->Users->ChoicesUsers->getAllRoles();
         
+        $roleIndexesById = [];
         $defaultRolesObject = [];
-        foreach($roleOptions as $role) {
+        foreach($roles as $index => $role) {
             $defaultRolesObject[$role['id']] = in_array($role['id'], $defaultRolesArray);
+            $roleIndexesById[$role['id']] = $index;
         }
         $choice->instructor_default_roles = $defaultRolesObject;
         
         //Get the sections to show in the menu  bar
         $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
         
-        $this->set(compact('choice', 'roleOptions', 'sections'));
+        $this->set(compact('choice', 'roles', 'roleIndexesById', 'sections'));
     }
     
     /**
@@ -127,29 +129,31 @@ class UsersController extends AppController
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
-        $choice = $this->Choices->get($id, [
-            'contain' => []
-        ]);
+        $choice = $this->Users->ChoicesUsers->Choices->get($id);
         
         $data = [];
         
         //Set the notify value
-        $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+        if(isset($this->request->data['notify'])) {
+            $data['notify_additional_permissions'] = filter_var($this->request->data['notify'], FILTER_VALIDATE_BOOLEAN);
+        }
         
         //Set the default roles value
         $defaultRoles = [];
-        foreach($this->request->data['defaultRoles'] as $role => $default) {
-            if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
-                $defaultRoles[] = $role;
+        if(isset($this->request->data['defaultRoles'])) {
+            foreach($this->request->data['defaultRoles'] as $role => $default) {
+                if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
+                    $defaultRoles[] = $role;
+                }
             }
         }
         $data['instructor_default_roles'] = implode(',', $defaultRoles);
         
-        $choice = $this->Choices->patchEntity($choice, $data);
+        $choice = $this->Users->ChoicesUsers->Choices->patchEntity($choice, $data);
 
-        if ($this->Choices->save($choice)) {
+        if ($this->Users->ChoicesUsers->Choices->save($choice)) {
             $this->set('response', 'Role settings saved');
-        } 
+        }
         else {
             throw new InternalErrorException(__('Problem with saving role settings'));
         }

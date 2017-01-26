@@ -82,7 +82,7 @@ var EditSelectedUsers = React.createClass({
                         label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
                         instructions='This will replace their current additional permissions, and will add to, but not replace, the default permissions (see "Default Permissions", above) that are based on their role in WebLearn'
                     />
-                    <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roleOptions={this.props.roleOptions} />
+                    <RoleCheckboxes nameBase="editRoles" roleStates={rolesSelected} roles={this.props.roles} />
                 </div>
                 <FormsyToggle
                     label={toggleLabel}

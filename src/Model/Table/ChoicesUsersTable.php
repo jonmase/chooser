@@ -20,6 +20,7 @@ class ChoicesUsersTable extends Table
             'id' => 'editor', 
             'title' => 'Editor', 
             'description' => 'can create and edit their own options, and edit their profile',
+            //'description' => 'can create and edit their own options, edit their profile and see who has chosen their options',
         ],
         /*[
             'id' => 'approver', 
@@ -29,7 +30,7 @@ class ChoicesUsersTable extends Table
         [
             'id' => 'reviewer', 
             'title' => 'Reviewer', 
-            'description' => 'can view and download all of the results',
+            'description' => 'can view and download the results',
         ],
         /*[
             'id' => 'allocator', 
@@ -43,9 +44,9 @@ class ChoicesUsersTable extends Table
         'description' => 'has full control to do everything for a Choice and can give additional permissions to others',
     ];
     private $_viewRole = [
-        'id' => 'view', 
+        'id' => 'viewer', 
         'title' => 'Viewer', 
-        'description' => 'can view published (and, where applicable, approved) options and make choices. This is the default \'student\' role, and everyone who is able to access the Choice will have this role.',
+        'description' => 'can view published options and make choices. This is the default \'student\' role, and everyone who is able to access the Choice will have this role.',
     ];
 
 
@@ -331,6 +332,10 @@ class ChoicesUsersTable extends Table
     public function isReviewer($choiceId = null, $userId = null) {
         return $this->isRoles($choiceId, $userId, ['reviewer']);
     }
+    
+    public function canViewResults($choiceId = null, $userId = null) {
+        return $this->isRoles($choiceId, $userId, ['reviewer', 'allocator']);
+    }
 
     /**
      * isRoles method
@@ -362,9 +367,5 @@ class ChoicesUsersTable extends Table
         }
         
         return false;
-    }
-    
-    public function canViewResults($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['reviewer', 'allocator']);
     }
 }

@@ -18,7 +18,7 @@ var RoleCheckboxes = React.createClass({
             style = horizontalStyle;
         }
         
-        var roleNodes = this.props.roleOptions.map(function(role) {
+        var roleNodes = this.props.roles.map(function(role) {
             return (
                 <FormsyCheckbox
                     key={role.id}

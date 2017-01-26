@@ -7,7 +7,7 @@ var UserFilters = React.createClass({
     nameBase: "filterRoles",
     
     render: function() {
-        var menuItems = this.props.roleOptions.map(function(role) {
+        var menuItems = this.props.roles.map(function(role) {
             return (
                 <MenuItem
                     value={role.id}

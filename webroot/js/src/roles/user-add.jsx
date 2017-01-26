@@ -142,7 +142,7 @@ var AddUser = React.createClass({
                             label='Which additional roles should this user have?'
                             instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
                         />
-                        <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roleOptions={this.props.roleOptions} />
+                        <RoleCheckboxes nameBase="addRoles" roleStates={this.props.state.defaultRoles} roles={this.props.roles} />
                     </div>
                     <FormsyToggle
                         label="Notify this user of their additional roles by email"

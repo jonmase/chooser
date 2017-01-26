@@ -525,17 +525,19 @@ var RolesContainer = React.createClass({
 			<Container topbar={topbar} title="Dashboard - User Permissions">
                 <div>
                     <RolesExplanations 
-                        roleOptions={this.props.roleOptions} 
+                        roles={this.props.roles} 
                     />
                     <RolesSettingsForm 
                         state={this.state} 
-                        roleOptions={this.props.roleOptions} 
+                        roles={this.props.roles} 
+                        roleIndexesById={this.props.roleIndexesById} 
                         handlers={settingsHandlers}
                     />
                     <UsersTable 
                         choiceId={this.props.choice.id} 
                         state={this.state} 
-                        roleOptions={this.props.roleOptions} 
+                        roles={this.props.roles} 
+                        roleIndexesById={this.props.roleIndexesById} 
                         addUserHandlers={addUserHandlers}
                         editUserHandlers={editUserHandlers}
                         filterUsersHandlers={filterUsersHandlers}

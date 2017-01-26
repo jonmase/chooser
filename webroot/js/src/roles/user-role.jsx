@@ -45,7 +45,7 @@ var UsersRole = React.createClass({
         return (
             <span key={this.props.user.username + '_' + this.props.role.id} style={styles.roleContainer}>
                 <span style={styles.roleText}>
-                    {this.props.role.title.toUpperCase()}
+                    {this.props.role.toUpperCase()}
                 </span>
                 {/*{closeButton}*/}
             </span>

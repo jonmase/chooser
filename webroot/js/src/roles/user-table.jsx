@@ -63,7 +63,7 @@ var UsersTable = React.createClass({
                             />&nbsp;
                             <FilterUsers
                                 state={props.state} 
-                                roleOptions={props.roleOptions} 
+                                roles={props.roles} 
                                 handlers={props.filterUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
                             />&nbsp;
@@ -73,7 +73,7 @@ var UsersTable = React.createClass({
                             />&nbsp;
                             <AddUser 
                                 state={props.state} 
-                                roleOptions={props.roleOptions} 
+                                roles={props.roles} 
                                 handlers={props.addUserHandlers} 
                             />
                             {/*<UsersActionMenu
@@ -143,7 +143,7 @@ var UsersTable = React.createClass({
                 </Card>
                 <EditUserDialog 
                     state={props.state} 
-                    roleOptions={props.roleOptions} 
+                    roles={props.roles} 
                     handlers={props.editUserHandlers} 
                 />
             </div>
