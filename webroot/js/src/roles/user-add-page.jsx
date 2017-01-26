@@ -44,23 +44,42 @@ var AddUser = React.createClass({
     checkUserAssociation: function(searchValue) {
         console.log("Checking whether User is associated: ", searchValue);
 
-        var userAlreadyAssociated = this.props.users.some(function(user) {
-            return user.username === searchValue || user.email === searchValue;
-        });
+        //Check that this user isn't the current logged in user
+        var currentUser = this.props.users[this.props.userIndexesById[this.props.currentUserId]];
+        var userIsSelfOrAlreadyAssociated = (currentUser.username === searchValue || currentUser.email === searchValue);
+        if(userIsSelfOrAlreadyAssociated) {
+            var findUserMessage = 'This is you! You are already associated with this Choice, and you can\'t change your own permissions.';
+        }
+        else {
+            //Check whether the user is already associated
+            var userIsSelfOrAlreadyAssociated = this.props.users.some(function(user) {
+                return user.username === searchValue || user.email === searchValue;
+            });
+            
+            if(userIsSelfOrAlreadyAssociated) {
+                var findUserMessage = 'User already associated.';
+            
+                //TODO: Update the add/edit form with this user's permissions, so that they can be edited
+            }
+        }
+        
         
         //Set userChecked to true, so can't recheck
         this.setState({
             userChecked: true,
         });
+        
         //If user is associated, disable the submit button
-        if(userAlreadyAssociated) {
+        if(userIsSelfOrAlreadyAssociated) {
             this.disableSubmitButton();
+            
             this.setState({
-                findUserMessage: 'User already associated. [[LINK: Edit their permissions]]',
+                findUserMessage: findUserMessage,
                 foundUser: 'error',
             });
         }
-        return userAlreadyAssociated;
+        
+        return userIsSelfOrAlreadyAssociated;
     },
 
     //Look up a user in the DB based on their username/email
@@ -77,31 +96,19 @@ var AddUser = React.createClass({
                 type: 'GET',
                 success: function(data) {
                     console.log(data);
-                        
-                    var message = 'User found: '
-                    if(data.user.fullname === null) {
-                        message += data.user.username;
-                    }
-                    else {
-                        message += data.user.fullname;
-                        message += ' (';
-                        message += data.user.username;
-                        if(data.user.email !== null && data.user.username !== data.user.email) {
-                            message += ', ' + data.user.email;
-                        }
-                        message += ')';
-                    }
 
                     this.setState({
-                        findUserMessage: message,
+                        findUserMessage: data.message,
                         foundUser: data.user,
                     });
                 }.bind(this),
                 error: function(xhr, status, err) {
                     console.error(url, status, err.toString());
                     this.setState({
-                        findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
+                        //findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
+                        findUserMessage: 'There was an error trying to find this user. Please try again.',
                         foundUser: false,
+                        userChecked: false,
                     });
                 }.bind(this)
             });
@@ -110,6 +117,7 @@ var AddUser = React.createClass({
     
     //Submit the user form (if using action inside Form)
     handleSubmit: function (user) {
+        //Make sure user has been checked
         if(!this.state.userChecked) {
             if(this.checkUserAssociation(user.username)) {
                 return false;
@@ -170,7 +178,7 @@ var AddUser = React.createClass({
                             onTouchTap={this.handleFindUser}
                             style={{marginLeft: '10px'}}
                         />
-                        <div>{this.state.findUserMessage}</div>
+                        <div style={{marginTop: '15px'}}>{this.state.findUserMessage}</div>
                     </div>
                     <div className="section">
                         <FieldLabel

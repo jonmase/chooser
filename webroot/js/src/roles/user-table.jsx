@@ -6,12 +6,11 @@ import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColu
 import UsersRole from './user-role.jsx';
 import SortUsers from './user-sort.jsx';
 import FilterUsers from './user-filter.jsx';
-import AddUser from './user-add.jsx';
-import EditButton from '../elements/buttons/edit-button.jsx';
+import AddButton from '../elements/buttons/add-button.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx'; 
 import EditUserDialog from './user-edit-dialog.jsx';
 import EditSelectedUsers from './user-edit-selected.jsx';
 import UsersActionMenu from './user-action-menu.jsx';
-import AddButton from '../elements/buttons/add-button.jsx';
 
 var styles = {
     tableRowColumn: {

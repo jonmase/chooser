@@ -487,6 +487,7 @@ var RolesContainer = React.createClass({
             return (
                 <AddUser
                     choiceId={this.props.choice.id} 
+                    currentUserId={this.props.currentUserId} 
                     dashboardUrl={this.props.dashboardUrl} 
                     defaultRoles={this.state.defaultRoles}
                     handlers={addUserHandlers}
@@ -494,6 +495,7 @@ var RolesContainer = React.createClass({
                     roles={this.props.roles} 
                     sections={this.props.sections} 
                     users={this.state.users}
+                    userIndexesById={this.state.userIndexesById}
                 />
             );
         }

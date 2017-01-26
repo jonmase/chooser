@@ -7,5 +7,6 @@
     data.sections = <?= json_encode($sections); ?>;
     data.roles = <?= json_encode($roles); ?>;
     data.roleIndexesById = <?= json_encode($roleIndexesById); ?>;
+    data.currentUserId = <?= $currentUserId; ?>;
 <?= $this->Html->scriptEnd(); ?>
 <?= $this->Html->script('dist/roles-bundle', ['block' => 'script']); ?>

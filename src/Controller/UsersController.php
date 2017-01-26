@@ -66,6 +66,7 @@ class UsersController extends AppController
             $userIndexesById[$user->id] = $index;
         }
         
+        
         $this->set(compact('users', 'userIndexesById', 'sortField', 'sortDirection'));
         $this->set('_serialize', ['users', 'userIndexesById', 'sortField', 'sortDirection']);
        // pr($users);
@@ -104,8 +105,9 @@ class UsersController extends AppController
         
         //Get the sections to show in the menu  bar
         $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        $currentUserId = $this->Auth->user('id');
         
-        $this->set(compact('choice', 'roles', 'roleIndexesById', 'sections'));
+        $this->set(compact('choice', 'currentUserId', 'roles', 'roleIndexesById', 'sections'));
     }
     
     /**
@@ -343,10 +345,28 @@ class UsersController extends AppController
         $user = $this->Users->findByUsernameThenEmail($searchValue);
         
         if(empty($user)) {
-            throw new NotFoundException(__('User not found.'));
+            //throw new NotFoundException(__('User not found.'));
+            $message =  'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.';
+            $user = false;
+        }
+        else {
+            //Generate the user found message
+            $message = 'User found: ';
+            if($user->fullname === null) {
+                $message .= $user->username;
+            }
+            else {
+                $message += $user->fullname;
+                $message += ' (';
+                $message += $user->username;
+                if($user->email !== null && $user->username !== $user->email) {
+                    $message += ', ' + $user->email;
+                }
+                $message += ')';
+            }
         }
         
-        $this->set(compact('user'));
-        $this->set('_serialize', ['user']);
+        $this->set(compact('user', 'message'));
+        $this->set('_serialize', ['user', 'message']);
     }
 }

@@ -9,6 +9,7 @@ injectTapEventPlugin();
 ReactDOM.render(
     <RolesContainer 
         choice={data.choice} 
+        currentUserId={data.currentUserId} 
         dashboardUrl={data.dashboard} 
         roles={data.roles} 
         roleIndexesById={data.roleIndexesById} 
