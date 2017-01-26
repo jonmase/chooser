@@ -11,6 +11,7 @@ import EditButton from '../elements/buttons/edit-button.jsx';
 import EditUserDialog from './user-edit-dialog.jsx';
 import EditSelectedUsers from './user-edit-selected.jsx';
 import UsersActionMenu from './user-action-menu.jsx';
+import AddButton from '../elements/buttons/add-button.jsx';
 
 var styles = {
     tableRowColumn: {
@@ -71,10 +72,9 @@ var UsersTable = React.createClass({
                                 state={props.state} 
                                 handlers={props.editUserHandlers} 
                             />&nbsp;
-                            <AddUser 
-                                state={props.state} 
-                                roles={props.roles} 
-                                handlers={props.addUserHandlers} 
+                            <AddButton
+                                handleAdd={this.props.addButtonClickHandler}
+                                tooltip="Add User"
                             />
                             {/*<UsersActionMenu
                             

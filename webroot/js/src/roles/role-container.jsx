@@ -5,12 +5,12 @@ import Snackbar from 'material-ui/Snackbar';
 import RolesExplanations from './role-explanations.jsx';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
+import AddUser from './user-add-page.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 
-var blankFindUserMessage = '\u00A0';
 
 var RolesContainer = React.createClass({
     loadUsersFromServer: function() {
@@ -42,6 +42,7 @@ var RolesContainer = React.createClass({
     },
     getInitialState: function () {
         return {
+            action: 'index',
             addUserDialogOpen: false,
             defaultRoles: this.props.choice.instructor_default_roles,
             editSelectedUsersDialogOpen: false,
@@ -49,8 +50,6 @@ var RolesContainer = React.createClass({
             //filterRoles: filterRoles,
             filterRoles: [],
             filteredUserIndexes: [],
-            findUserMessage: {blankFindUserMessage},
-            foundUser: {},
             notify: this.props.choice.notify_additional_permissions,
             selectAllSelected: true,
             settingsButton: {
@@ -73,37 +72,28 @@ var RolesContainer = React.createClass({
         this.loadUsersFromServer();
     },
     
-    handleAddUserChange: function() {
+    handleGoToAddPage: function() {
         this.setState({
-            findUserMessage: blankFindUserMessage,
-            foundUser: {},
+            action: 'add',
         });
     },
 
-    handleAddUserDialogOpen: function() {
+    handleGoToIndexPage: function() {
         this.setState({
-            addUserDialogOpen: true,
-            findUserMessage: blankFindUserMessage,
-            foundUser: {},
-        });
-    },
-
-    handleAddUserDialogClose: function() {
-        this.setState({
-            addUserDialogOpen: false,
+            action: 'index',
         });
     },
 
     //Submit the add user form
-    handleAddUserSubmit: function (user) {
+    handleAddUserSubmit: function (user, foundUserId) {
         console.log("Saving User for Choice " + this.props.choice.id + ": ", user);
         
         //If user was found, add the ID to the user data
-        if(typeof(this.state.foundUser.id) !== "undefined") {
-            user.id = this.state.foundUser.id;
+        if(typeof(foundUserId) !== "undefined") {
+            user.id = foundUserId;
         }
-        //If user was looked for and not found, add set the user ID to false
-        else if(this.state.foundUser === false) {
+        //If user was looked for and not found, set the user ID to false
+        else if(foundUserId === false) {
             user.id = 0;
         }
         
@@ -149,22 +139,6 @@ var RolesContainer = React.createClass({
                 console.error(url, status, err.toString());
             }.bind(this)
         });
-    },
-    
-    //Check whether user is already associated with this Choice
-    handleCheckUserAssociation: function(searchValue) {
-        console.log("Checking whether User is associated: ", searchValue);
-        
-        var userAlreadyAssociated = this.state.users.some(function(user) {
-            return user.username === searchValue || user.email === searchValue;
-        });
-        if(userAlreadyAssociated) {
-            this.setState({
-                findUserMessage: 'User already associated. [[LINK: Edit their permissions]]',
-                foundUser: 'error',
-            });
-        }
-        return userAlreadyAssociated;
     },
     
     handleEditUserDialogOpen: function(users) {
@@ -284,48 +258,6 @@ var RolesContainer = React.createClass({
         return filteredUserIndexes;
     },
 
-    //Look up a user in the DB based on their username/email
-    handleFindUser: function(searchValue) {
-        console.log("Attempting to find User: ", searchValue);
-        
-        //Look the user up
-        var url = '../../users/find_user/' + this.props.choice.id + '/' + searchValue + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'GET',
-            success: function(data) {
-                console.log(data);
-                    
-                var message = 'User found: '
-                if(data.user.fullname === null) {
-                    message += data.user.username;
-                }
-                else {
-                    message += data.user.fullname;
-                    message += ' (';
-                    message += data.user.username;
-                    if(data.user.email !== null && data.user.username !== data.user.email) {
-                        message += ', ' + data.user.email;
-                    }
-                    message += ')';
-                }
-
-                this.setState({
-                    findUserMessage: message,
-                    foundUser: data.user,
-                });
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                this.setState({
-                    findUserMessage: 'That user wasn\'t found in Chooser, but you can still give them additional roles. They will have these roles when they first access the Choice.',
-                    foundUser: false,
-                });
-            }.bind(this)
-        });
-    },
-    
     handleSnackbarClose: function() {
         this.setState({
             snackbar: {
@@ -487,11 +419,7 @@ var RolesContainer = React.createClass({
         };
 
         var addUserHandlers={
-            change: this.handleAddUserChange,
-            checkUserAssociation: this.handleCheckUserAssociation,
-            dialogOpen: this.handleAddUserDialogOpen,
-            dialogClose: this.handleAddUserDialogClose,
-            findUser: this.handleFindUser,
+            backButtonClick: this.handleGoToIndexPage,
             submit: this.handleAddUserSubmit,
         };
     
@@ -521,38 +449,54 @@ var RolesContainer = React.createClass({
             title={<AppTitle subtitle={this.props.choice.name} />}
         />;
 
-        return (
-			<Container topbar={topbar} title="Dashboard - User Permissions">
-                <div>
-                    <RolesExplanations 
-                        roles={this.props.roles} 
-                    />
-                    <RolesSettingsForm 
-                        state={this.state} 
-                        roles={this.props.roles} 
-                        roleIndexesById={this.props.roleIndexesById} 
-                        handlers={settingsHandlers}
-                    />
-                    <UsersTable 
-                        choiceId={this.props.choice.id} 
-                        state={this.state} 
-                        roles={this.props.roles} 
-                        roleIndexesById={this.props.roleIndexesById} 
-                        addUserHandlers={addUserHandlers}
-                        editUserHandlers={editUserHandlers}
-                        filterUsersHandlers={filterUsersHandlers}
-                        selectUserHandlers={selectUserHandlers}
-                        sortUsersHandlers={sortUsersHandlers}
-                    />
-                    <Snackbar
-                        open={this.state.snackbar.open}
-                        message={this.state.snackbar.message}
-                        autoHideDuration={3000}
-                        onRequestClose={this.handleSnackbarClose}
-                    />
-                </div>
-			</Container>
-        );
+        if(this.state.action === 'index') {
+            return (
+                <Container topbar={topbar} title="Dashboard - User Permissions">
+                    <div>
+                        <RolesExplanations 
+                            roles={this.props.roles} 
+                        />
+                        <RolesSettingsForm 
+                            state={this.state} 
+                            roles={this.props.roles} 
+                            roleIndexesById={this.props.roleIndexesById} 
+                            handlers={settingsHandlers}
+                        />
+                        <UsersTable 
+                            choiceId={this.props.choice.id} 
+                            state={this.state} 
+                            roles={this.props.roles} 
+                            roleIndexesById={this.props.roleIndexesById} 
+                            addButtonClickHandler={this.handleGoToAddPage}
+                            editUserHandlers={editUserHandlers}
+                            filterUsersHandlers={filterUsersHandlers}
+                            selectUserHandlers={selectUserHandlers}
+                            sortUsersHandlers={sortUsersHandlers}
+                        />
+                        <Snackbar
+                            open={this.state.snackbar.open}
+                            message={this.state.snackbar.message}
+                            autoHideDuration={3000}
+                            onRequestClose={this.handleSnackbarClose}
+                        />
+                    </div>
+                </Container>
+            );
+        }
+        else {
+            return (
+                <AddUser
+                    choiceId={this.props.choice.id} 
+                    dashboardUrl={this.props.dashboardUrl} 
+                    defaultRoles={this.state.defaultRoles}
+                    handlers={addUserHandlers}
+                    notify={this.props.notify}
+                    roles={this.props.roles} 
+                    sections={this.props.sections} 
+                    users={this.state.users}
+                />
+            );
+        }
     }
 });
 

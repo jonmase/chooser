@@ -7,7 +7,7 @@ import CancelDialog from './option-edit-cancel-dialog.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
-import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
+import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';

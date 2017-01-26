@@ -2,7 +2,7 @@ import React from 'react';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
-import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
+import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import Text from '../elements/display/text.jsx';
 import TextLabelled from '../elements/display/text-labelled.jsx';

@@ -4,7 +4,7 @@ import {List, ListItem} from 'material-ui/List';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
-import TopBarBackButton from '../elements/icons/topbar-back-button.jsx';
+import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import NumberLabelled from '../elements/display/number-labelled.jsx';
 import OptionTitle from '../options/option-title.jsx';

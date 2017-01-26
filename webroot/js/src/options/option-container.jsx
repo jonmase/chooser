@@ -12,6 +12,7 @@ import Checkbox from 'material-ui/Checkbox';
 //import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
+import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import Loader from '../elements/loader.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
@@ -907,14 +908,7 @@ var OptionContainer = React.createClass({
             //Unless action is unavailable...
             if(action !== 'unavailable') {
                 //...left icon is always back arrow
-                topbarIconLeft=
-                    <IconButton
-                        iconClassName="material-icons"
-                        onTouchTap={backAction}
-                        iconStyle={iconStyle}
-                    >
-                        arrow_back
-                    </IconButton>;
+                topbarIconLeft=<TopBarBackButton onTouchTap={backAction} />;
             }
         }
        
