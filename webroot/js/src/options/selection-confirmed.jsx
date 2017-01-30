@@ -84,6 +84,7 @@ var SelectionConfirmed = React.createClass({
                                     <div style={{width: '100%'}}>
                                         <OptionList
                                             action="confirmed"
+                                            choice={this.props.choice}
                                             instance={this.props.instance.instance}
                                             optionIds={this.props.optionsSelectedPreferenceOrder}
                                             options={this.props.options}

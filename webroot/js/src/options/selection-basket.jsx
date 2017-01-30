@@ -54,6 +54,7 @@ var SelectionBasket = React.createClass({
                         {(this.props.optionsSelectedTableOrder.length > 0)?
                             <OptionList
                                 action="view"
+                                choice={this.props.choice}
                                 instance={this.props.instance}
                                 optionIds={this.props.optionsSelectedTableOrder}
                                 options={this.props.options}

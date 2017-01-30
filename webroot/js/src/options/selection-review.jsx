@@ -42,6 +42,7 @@ var SelectionReview = React.createClass({
                         <p style={{marginBottom: 0}}>You have chosen the following options:</p>
                         <OptionList
                             action="review"
+                            choice={this.props.choice}
                             handleOrderChange={this.props.optionContainerHandlers.orderChange}
                             handleCommentsChange={this.props.optionContainerHandlers.optionCommentsChange}
                             instance={this.props.instance.instance}

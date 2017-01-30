@@ -9,6 +9,7 @@ import Text from '../elements/display/text.jsx';
 import TextField from '../elements/fields/text.jsx';
 import DropdownField from '../elements/fields/dropdown.jsx';
 import HiddenField from '../elements/fields/hidden.jsx';
+import ExtraField from './extra-field.jsx';
 
 var OptionList = React.createClass({
     render: function() {
@@ -46,26 +47,73 @@ var OptionList = React.createClass({
             listItemStyle.marginRight = '270px';
         }
         
-        //If not using code, action is review and either preference or comments field is showing, move the listItem down slightly so the title appears in the centre of the block
-        if(!this.props.useCode && this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
+        var secondaryFields = [];
+        if(this.props.choice.use_min_places) {
+            secondaryFields.push({
+                name: 'min_places',
+                label: 'Min. Places',
+                type: 'number',
+            })
+        }
+        if(this.props.choice.use_max_places) {
+            secondaryFields.push({
+                name: 'max_places',
+                label: 'Max. Places',
+                type: 'number',
+            })
+        }
+        if(this.props.choice.use_points) {
+            secondaryFields.push({
+                name: 'points',
+                label: 'Points',
+                type: 'number',
+            })
+        }
+        
+        this.props.choice.extra_fields.forEach(function(field) {
+            if(field.sortable) {
+                secondaryFields.push(field);
+            }
+        });
+        
+        //If no secondary fields, action is review and either preference or comments field is showing, move the listItem down slightly so the primary text appears in the centre of the block
+        if(secondaryFields.length === 0 && this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
             listItemStyle.top = '8px';
         }
-                    
+
         return (
             <List style={this.props.style}>
                 {this.props.optionIds.map(function(optionId, optionIndex) {
                     var option = this.props.options.options[this.props.options.indexesById[optionId]];
                     
+                    var primaryText = option.title;
                     if(this.props.useCode) {
-                        var primaryText = option.code;
-                        var secondaryText = option.title;
-                        var itemHeight = '71px'
+                        primaryText = option.code + " - " + primaryText;
+                    }
+                    
+                    var secondaryText;
+                    if(secondaryFields.length > 0) {
+                        var itemHeight = '69px';
+                        
+                        secondaryText = <span>
+                            {
+                                secondaryFields.map(function(field, index) {
+                                    var extraField = <ExtraField 
+                                        extra={field.extra}
+                                        label={field.label}
+                                        options={field.options}
+                                        type={field.type}
+                                        value={option[field.name]}
+                                    />;
+                                    
+                                    return (<span key={field.name}>{(index > 0) && "; \u00a0"}{field.label}: {extraField}</span>);
+                                })
+                            }
+                        </span>;
                     }
                     else {
-                        var primaryText = option.title;
-                        
-                        //Make secondary text blank...
-                        var secondaryText = "";
+                        //Secondary text is blank...
+                        secondaryText = "";
                         //...unless action is review and either preference or comments field is showing, in which case make it a space, so that it is still there to pad out the list item block
                         if(this.props.action === 'review' && (showPreferenceInputs || showCommentsFieldPerOption)) {
                             secondaryText = " ";

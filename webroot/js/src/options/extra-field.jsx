@@ -74,13 +74,13 @@ var ExtraField = React.createClass({
         }
 
         return (
-            <div>
+            <span>
                 {(ComponentClass)?
                     <ComponentClass {...displayProps} />
                 :
                     <span>-</span>
                 }
-            </div>
+            </span>
         );
     }
 });
