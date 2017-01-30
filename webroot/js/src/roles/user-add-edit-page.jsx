@@ -47,20 +47,30 @@ var AddUser = React.createClass({
 
         //Check that this user isn't the current logged in user
         var currentUser = this.props.users[this.props.userIndexesById[this.props.currentUserId]];
-        var userIsSelfOrAlreadyAssociated = (currentUser.username === searchValue || currentUser.email === searchValue);
-        if(userIsSelfOrAlreadyAssociated) {
-            var findUserMessage = 'This is you! You are already associated with this Choice, and you can\'t change your own permissions.';
+        var userIsSelf = (currentUser.username === searchValue || currentUser.email === searchValue);
+        if(userIsSelf) {
+            this.disableSubmitButton();
+            var findUserMessage = 'This is you! You are an Administrator for this Choice, and you can\'t change your own permissions.';
         }
         else {
             //Check whether the user is already associated
-            var userIsSelfOrAlreadyAssociated = this.props.users.some(function(user) {
-                return user.username === searchValue || user.email === searchValue;
+            var userId;
+            var userIsAlreadyAssociated = this.props.users.some(function(user) {
+                if(user.username === searchValue || user.email === searchValue) {
+                    userId = user.id;
+                    return true;
+                }   
+                return false;
             });
             
-            if(userIsSelfOrAlreadyAssociated) {
+            if(userIsAlreadyAssociated) {
                 var findUserMessage = 'This user is already associated with this Choice. You can edit their permissions below.';
             
                 //TODO: Update the add/edit form with this user's permissions, so that they can be edited
+                //Use the user ID obtained above
+                var user = this.props.users[this.props.userIndexesById[userId]];
+                
+                
             }
         }
         
@@ -71,8 +81,7 @@ var AddUser = React.createClass({
         });
         
         //If user is associated, disable the submit button
-        if(userIsSelfOrAlreadyAssociated) {
-            this.disableSubmitButton();
+        if(userIsSelf || userIsAlreadyAssociated) {
             
             this.setState({
                 findUserMessage: findUserMessage,
@@ -173,9 +182,44 @@ var AddUser = React.createClass({
             sections={this.props.sections} 
             title="Grant Additional Permissions"
         />;
+        
+        var multipleUsersBeingEdited = this.props.action === 'edit' && this.props.usersBeingEdited.length > 1;
+        var toggleLabel = "Notify the user";
+        toggleLabel += multipleUsersBeingEdited?"s":"";
+        toggleLabel += " of ";
+        if(this.props.action === 'edit') {
+            toggleLabel += "the changes to ";
+        }
+        toggleLabel += "their additional roles by email";
+
 
         return (
             <Container topbar={topbar}>
+                {this.props.action === 'edit' && 
+                    <div>
+                        <p>The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:</p>
+                        <ul>
+                            {this.props.usersBeingEdited.map(function(userIndex) {
+                                var user = this.props.users[this.props.userIndexesById[username]];
+                                var fullname = user.fullname;
+                                var email = user.email;
+                                var nameOrEmail = fullname || email;
+                                var nameAndEmail = fullname && email;
+                                var inputName = "users." + userIndex;
+                                return (
+                                    <li key={username}>
+                                        {username} 
+                                        {nameOrEmail?" (":""}
+                                        {fullname}
+                                        {nameAndEmail?", ":""}
+                                        {email}
+                                        {nameOrEmail?")":""}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                }
                 <Formsy.Form
                     id="add_user_form"
                     method="POST"
@@ -185,29 +229,32 @@ var AddUser = React.createClass({
                     noValidate={true}
                     ref="add"
                 >
-                    <div className="section">
-                        <FormsyText 
-                            name="username"
-                            id="add_username"
-                            hintText="Email address or SSO username" 
-                            floatingLabelText="Email/Username (required)"
-                            validations="minLength:1"
-                            validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
-                            required
-                            onChange={this.handleUserChange}
-                        />
-                        <FlatButton
-                            label="Check User"
-                            type="button"
-                            disabled={!this.state.canSubmit || this.state.userChecked}
-                            onTouchTap={this.handleFindUser}
-                            style={{marginLeft: '10px'}}
-                        />
-                        <div style={{marginTop: '15px'}}>{this.state.findUserMessage}</div>
-                    </div>
+                    {this.props.action === 'add' && 
+                        <div className="section">
+                            <FormsyText 
+                                name="username"
+                                id="add_username"
+                                hintText="Email address or SSO username" 
+                                floatingLabelText="Email/Username (required)"
+                                validations="minLength:1"
+                                validationError="Please enter the email address or Oxford SSO username for the user you wish to add"
+                                required
+                                onChange={this.handleUserChange}
+                            />
+                            <FlatButton
+                                label="Check User"
+                                type="button"
+                                disabled={!this.state.canSubmit || this.state.userChecked}
+                                onTouchTap={this.handleFindUser}
+                                style={{marginLeft: '10px'}}
+                            />
+                            <div style={{marginTop: '15px'}}>{this.state.findUserMessage}</div>
+                        </div>
+                    }
+                    
                     <div className="section">
                         <FieldLabel
-                            label='Which additional roles should this user have?'
+                            label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
                             instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
                         />
                         <RoleCheckboxes nameBase="addRoles" roleStates={this.props.defaultRoles} roles={this.props.roles} />

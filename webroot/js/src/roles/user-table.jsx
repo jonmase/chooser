@@ -8,7 +8,6 @@ import SortUsers from './user-sort.jsx';
 import FilterUsers from './user-filter.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx'; 
-import EditUserDialog from './user-edit-dialog.jsx';
 import EditSelectedUsers from './user-edit-selected.jsx';
 import UsersActionMenu from './user-action-menu.jsx';
 
@@ -42,7 +41,7 @@ var UsersTable = React.createClass({
     },
     render: function() {
         var props = this.props;
-        var filterRoles = this.props.state.filterRoles;
+        var filterRoles = props.filterRoles;
         return (
             <div>
                 <Card 
@@ -56,7 +55,7 @@ var UsersTable = React.createClass({
                         //showExpandableButton={true}
                     >
                         <div style={{float: 'right'}}>
-                            <SortUsers 
+                            {/*<SortUsers 
                                 state={props.state}
                                 handlers={props.sortUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
@@ -66,10 +65,15 @@ var UsersTable = React.createClass({
                                 roles={props.roles} 
                                 handlers={props.filterUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
-                            />&nbsp;
-                            <EditSelectedUsers
+                            />&nbsp;*/}
+                            {/*<EditSelectedUsers
                                 state={props.state} 
                                 handlers={props.editUserHandlers} 
+                            />&nbsp;*/}
+                            <EditButton
+                                handleEdit={this.props.editButtonClickHandler}
+                                id={this.props.usersSelected}
+                                tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
                             <AddButton
                                 handleAdd={this.props.addButtonClickHandler}
@@ -105,14 +109,14 @@ var UsersTable = React.createClass({
                                 //displayRowCheckbox={false}
                                 deselectOnClickaway={false}
                             >
-                                {props.state.filteredUserIndexes.map(function(userIndex) {
-                                    var user = props.state.users[userIndex];
+                                {props.filteredUserIndexes.map(function(userIndex, index) {
+                                    var user = props.users[userIndex];
                                     return (
                                         <TableRow 
                                             key={user.username} 
                                             className={user.current?"self":""}
                                             selectable={!user.current}
-                                            selected={props.state.usersSelected.indexOf(user.username) !== -1}
+                                            selected={props.usersSelected.indexOf(index) !== -1}
                                         >
                                             <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
                                             <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
@@ -127,8 +131,8 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
-                                                        handleEdit={props.editUserHandlers.dialogOpen} 
-                                                        id={[user.username]}
+                                                        handleEdit={props.editButtonClickHandler} 
+                                                        id={[index]}
                                                         tooltip=""
                                                     />
                                                 :""}
@@ -140,11 +144,6 @@ var UsersTable = React.createClass({
                         </Table>
                     </CardText>
                 </Card>
-                <EditUserDialog 
-                    state={props.state} 
-                    roles={props.roles} 
-                    handlers={props.editUserHandlers} 
-                />
             </div>
         );
     }

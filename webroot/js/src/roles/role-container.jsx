@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import RolesExplanations from './role-explanations.jsx';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
-import AddUser from './user-add-page.jsx';
+import AddEditUser from './user-add-edit-page.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -78,14 +78,22 @@ var RolesContainer = React.createClass({
         });
     },
 
+    handleGoToEditPage: function(users) {
+        this.setState({
+            action: 'edit',
+            usersBeingEdited: users,
+        });
+    },
+
     handleGoToIndexPage: function() {
         this.setState({
             action: 'index',
+            usersBeingEdited: [],
         });
     },
 
     //Submit the add user form
-    handleAddUserSubmit: function (user, foundUserId) {
+    handleAddEditUserSubmit: function (user, foundUserId) {
         console.log("Saving User for Choice " + this.props.choice.id + ": ", user);
         
         //If user was found, add the ID to the user data
@@ -152,20 +160,6 @@ var RolesContainer = React.createClass({
         });
     },
     
-    handleEditUserDialogOpen: function(users) {
-        this.setState({
-            editUserDialogOpen: true,
-            usersBeingEdited: users,
-        });
-    },
-
-    handleEditUserDialogClose: function() {
-        this.setState({
-            editUserDialogOpen: false,
-            usersBeingEdited: [],
-        });
-    },
-
     //Submit the edit user form
     handleEditUserSubmit: function (data) {
         console.log("Editing User(s) for Choice " + this.props.choice.id + ": ", data);
@@ -280,9 +274,13 @@ var RolesContainer = React.createClass({
     
     handleSelectUserChange: function(rowIndexes) {
         var userIndexes = [];
-        var filteredUserIndexes = this.state.filteredUserIndexes;
+        //var filteredUserIndexes = this.state.filteredUserIndexes;
         
-        rowIndexes.forEach(function(index) {
+        this.setState({
+            usersSelected: rowIndexes,
+        });
+        
+        /*rowIndexes.forEach(function(index) {
             userIndexes.push(filteredUserIndexes[index]);
         });
         
@@ -290,7 +288,7 @@ var RolesContainer = React.createClass({
         //Caused issues in combination with filters, so disabled
         //TODO: Check whether Material-UI updates have fixed issues
         //Problem came when selecting all filtered, then removing filters, all of the users would be selected not just those that were visible when filtered
-        /*if(rowIndexes === "all") {
+        if(rowIndexes === "all") {
             filteredUserIndexes.forEach(function(userIndex) {
                 userIndexes.push(userIndex);
             });
@@ -309,7 +307,7 @@ var RolesContainer = React.createClass({
             rowIndexes.forEach(function(index) {
                 userIndexes.push(filteredUserIndexes[index]);
             });
-        }*/
+        }
     
         //Sort as numbers rather than strings
         userIndexes.sort(function(a, b) {
@@ -331,7 +329,7 @@ var RolesContainer = React.createClass({
             thisThis.setState({
                 usersSelected: usersSelected,
             });
-        }, 1);
+        }, 1);*/
     },
     
     handleSettingsChange: function() {
@@ -429,15 +427,9 @@ var RolesContainer = React.createClass({
             submit: this.handleSettingsSubmit,
         };
 
-        var addUserHandlers={
+        var addEditUserHandlers={
             backButtonClick: this.handleGoToIndexPage,
-            submit: this.handleAddUserSubmit,
-        };
-    
-        var editUserHandlers={
-            dialogOpen: this.handleEditUserDialogOpen,
-            dialogClose: this.handleEditUserDialogClose,
-            submit: this.handleEditUserSubmit,
+            submit: this.handleAddEditUserSubmit,
         };
     
         var filterUsersHandlers={
@@ -474,15 +466,20 @@ var RolesContainer = React.createClass({
                             handlers={settingsHandlers}
                         />
                         <UsersTable 
+                            addButtonClickHandler={this.handleGoToAddPage}
                             choiceId={this.props.choice.id} 
-                            state={this.state} 
+                            editButtonClickHandler={this.handleGoToEditPage}
+                            filteredUserIndexes={this.state.filteredUserIndexes}
+                            filterRoles={this.state.filterRoles} 
+                            filterUsersHandlers={filterUsersHandlers}
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 
-                            addButtonClickHandler={this.handleGoToAddPage}
-                            editUserHandlers={editUserHandlers}
-                            filterUsersHandlers={filterUsersHandlers}
                             selectUserHandlers={selectUserHandlers}
                             sortUsersHandlers={sortUsersHandlers}
+                            users={this.state.users}
+                            userIndexesById={this.state.userIndexesById}
+                            usersBeingEdited={this.state.usersBeingEdited}
+                            usersSelected={this.state.usersSelected}
                         />
                         <Snackbar
                             open={this.state.snackbar.open}
@@ -496,17 +493,19 @@ var RolesContainer = React.createClass({
         }
         else {
             return (
-                <AddUser
+                <AddEditUser
+                    action={this.state.action}
                     choiceId={this.props.choice.id} 
                     currentUserId={this.props.currentUserId} 
                     dashboardUrl={this.props.dashboardUrl} 
                     defaultRoles={this.state.defaultRoles}
-                    handlers={addUserHandlers}
+                    handlers={addEditUserHandlers}
                     notify={this.props.notify}
                     roles={this.props.roles} 
                     sections={this.props.sections} 
                     users={this.state.users}
                     userIndexesById={this.state.userIndexesById}
+                    usersSelected={this.state.usersSelected}
                 />
             );
         }
