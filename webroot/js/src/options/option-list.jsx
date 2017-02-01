@@ -95,7 +95,9 @@ var OptionList = React.createClass({
                     if(secondaryFields.length > 0) {
                         var itemHeight = '69px';
                         
-                        secondaryText = <span>
+                        //Generate secondary text from the array of secondary fields
+                        //Wrap in paragraph tags (as opposed to span) so that the overflow is hidden and an ellipsis is shown
+                        secondaryText = <p>
                             {
                                 secondaryFields.map(function(field, index) {
                                     var extraField = <ExtraField 
@@ -109,7 +111,7 @@ var OptionList = React.createClass({
                                     return (<span key={field.name}>{(index > 0) && "; \u00a0"}{field.label}: {extraField}</span>);
                                 })
                             }
-                        </span>;
+                        </p>;
                     }
                     else {
                         //Secondary text is blank...
