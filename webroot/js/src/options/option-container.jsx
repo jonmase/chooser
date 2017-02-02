@@ -1068,6 +1068,7 @@ var OptionContainer = React.createClass({
             case 'basket': //Basket
                 return (
                     <Basket
+                        choice={this.props.choice}
                         instance={this.state.instance}
                         optionContainerHandlers={{
                             change: this.handleSelectionBackToEdit,
