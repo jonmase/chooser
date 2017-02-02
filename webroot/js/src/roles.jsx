@@ -7,7 +7,7 @@ import RolesContainer from './roles/role-container.jsx';
 injectTapEventPlugin();
 
 ReactDOM.render(
-    <RolesContainer 
+    <RolesContainer
         choice={data.choice} 
         currentUserId={data.currentUserId} 
         dashboardUrl={data.dashboard} 

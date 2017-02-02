@@ -72,17 +72,16 @@ var RolesContainer = React.createClass({
         this.loadUsersFromServer();
     },
     
-    handleGoToAddPage: function() {
+    handleGoToAddEditPage: function(users) {
         this.setState({
-            action: 'add',
+            action: 'addedit',
         });
-    },
-
-    handleGoToEditPage: function(users) {
-        this.setState({
-            action: 'edit',
-            usersBeingEdited: users,
-        });
+        
+        if(users) {
+            this.setState({
+                usersBeingEdited: users,
+            });
+        }
     },
 
     handleGoToIndexPage: function() {
@@ -93,25 +92,18 @@ var RolesContainer = React.createClass({
     },
 
     //Submit the add user form
-    handleAddEditUserSubmit: function (user, foundUserId) {
-        console.log("Saving User for Choice " + this.props.choice.id + ": ", user);
-        
-        //If user was found, add the ID to the user data
-        if(typeof(foundUserId) !== "undefined") {
-            user.id = foundUserId;
-        }
-        //If user was looked for and not found, set the user ID to false
-        else if(foundUserId === false) {
-            user.id = 0;
-        }
-        
+    handleAddEditUserSubmit: function (users) {
+        console.log("Saving User(s) for Choice " + this.props.choice.id + ": ", users);
+
         //Save the settings
         var url = '../../users/add/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: user,
+            data: {
+                users: users,
+            },
             success: function(returnedData) {
                 //console.log(returnedData.response);
                 
@@ -121,7 +113,7 @@ var RolesContainer = React.createClass({
                     message: returnedData.response,
                 }
                 
-                var currentUsers = this.state.users;    //Get the current users
+                /*var currentUsers = this.state.users;    //Get the current users
                 
                 currentUsers.push(returnedData.user);   //Add the new user to current users
                 currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
@@ -133,13 +125,13 @@ var RolesContainer = React.createClass({
                 
                 //Refilter the users to account for new roles/removed users
                 var filteredUserIndexes = this.filterUsers(currentUsers, this.state.filterRoles);
-                
+                */
                 //Update state with the new users array
                 this.setState({
                     action: 'index',
-                    users: currentUsers,
-                    userIndexesByUsername: userIndexesByUsername,
-                    filteredUserIndexes: filteredUserIndexes,
+                    //users: currentUsers,
+                    //userIndexesByUsername: userIndexesByUsername,
+                    //filteredUserIndexes: filteredUserIndexes,
                     snackbar: snackbar,
                 });
             }.bind(this),
@@ -156,82 +148,6 @@ var RolesContainer = React.createClass({
                 this.setState({
                     snackbar: snackbar,
                 });
-            }.bind(this)
-        });
-    },
-    
-    //Submit the edit user form
-    handleEditUserSubmit: function (data) {
-        console.log("Editing User(s) for Choice " + this.props.choice.id + ": ", data);
-        
-        //Get the state
-        var currentUsers = this.state.users;
-        var usersBeingEdited = this.state.usersBeingEdited;
-        var userIndexesByUsername = this.state.userIndexesByUsername;
-        var filterRoles = this.state.filterRoles;
-        
-        var userIndexesBeingEdited = [];    //Keep track of the indexes of the users we are editing
-        data.users = [];    //Create array for adding the users to the data that will be sent
-        
-        //Loop through the users being edited...
-        usersBeingEdited.forEach(function(username) {
-            var userIndex = userIndexesByUsername[username];    //Get the index of the user
-            data.users.push(currentUsers[userIndex].id);   //Add the user ID to the data.users array
-            userIndexesBeingEdited.push(userIndex); //Add the index to userIndexesBeingEdited array
-        });
-        
-        //Save the users' roles
-        var url = '../../users/edit/' + this.props.choice.id;
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: data,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                
-                //Loop through the indexes of the users being edited
-                //Have to loop backwards to avoid changing the indexes when splicing
-                var userIndex = currentUsers.length;
-                while(userIndex--) {    //Loop through the users array backwards
-                    if(userIndexesBeingEdited.indexOf(userIndex) !== -1) {  //Is this user being edited?
-                        //User ID will only be in returnedData.deletedUsers array if user was successfully deleted
-                        if(returnedData.deletedUsers.indexOf(currentUsers[userIndex].id) !== -1) { 
-                            //Remove the user from the users array
-                            currentUsers.splice(userIndex, 1);
-                        }
-                        
-                        //User ID will only be in returnedData.savedUsers array if user was successfully updated
-                        if(returnedData.savedUsers.indexOf(currentUsers[userIndex].id) !== -1) { 
-                            //Update the roles of the users being edited, to update state
-                            currentUsers[userIndex].roles = returnedData.roles;
-                        }
-                        
-                        //TODO: Deal with users that were not saved (in returnedData.failedUsers)
-                    }
-                }
-                
-                //Refilter the users to account for new roles/removed users
-                var filteredUserIndexes = this.filterUsers(currentUsers, filterRoles);
-                
-                //Show the snackbar
-                var snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                
-                //Update state with the new users array and filteredIndexes
-                this.setState({
-                    users: currentUsers,
-                    filteredUserIndexes: filteredUserIndexes,
-                    usersBeingEdited: [],
-                    usersSelected: [],  //Unselect users - otherwise it will be confusing if users are no longer shown as they don't match the filters, but remain selected.
-                    snackbar: snackbar,
-                });
-                this.handleEditUserDialogClose();
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
             }.bind(this)
         });
     },
@@ -466,9 +382,8 @@ var RolesContainer = React.createClass({
                             handlers={settingsHandlers}
                         />
                         <UsersTable 
-                            addButtonClickHandler={this.handleGoToAddPage}
+                            addEditButtonClickHandler={this.handleGoToAddEditPage}
                             choiceId={this.props.choice.id} 
-                            editButtonClickHandler={this.handleGoToEditPage}
                             filteredUserIndexes={this.state.filteredUserIndexes}
                             filterRoles={this.state.filterRoles} 
                             filterUsersHandlers={filterUsersHandlers}
@@ -494,7 +409,6 @@ var RolesContainer = React.createClass({
         else {
             return (
                 <AddEditUser
-                    action={this.state.action}
                     choiceId={this.props.choice.id} 
                     currentUserId={this.props.currentUserId} 
                     dashboardUrl={this.props.dashboardUrl} 
@@ -504,8 +418,8 @@ var RolesContainer = React.createClass({
                     roles={this.props.roles} 
                     sections={this.props.sections} 
                     users={this.state.users}
+                    usersBeingEdited={this.state.usersBeingEdited}
                     userIndexesById={this.state.userIndexesById}
-                    usersSelected={this.state.usersSelected}
                 />
             );
         }

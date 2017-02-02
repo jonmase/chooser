@@ -4,15 +4,16 @@ import Formsy from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
-import Container from '../elements/container.jsx';
-import TopBar from '../elements/topbar.jsx';
-import AppTitle from '../elements/app-title.jsx';
-import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
-
+import {List, ListItem} from 'material-ui/List';
 import FlatButton from 'material-ui/FlatButton';
 import IconButton from 'material-ui/IconButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import RaisedButton from 'material-ui/RaisedButton';
+
+import Container from '../elements/container.jsx';
+import TopBar from '../elements/topbar.jsx';
+import AppTitle from '../elements/app-title.jsx';
+import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
@@ -127,7 +128,7 @@ var AddUser = React.createClass({
     
     handleSaveClick: function() {
         //Make sure user has been checked
-        if(!this.state.userChecked) {
+        if(this.props.usersBeingEdited.length === 0 && !this.state.userChecked) {
             var userSearchValue = this.getUserSearchValueFromInput();
             if(this.checkUserAssociation(userSearchValue)) {
                 return false;
@@ -139,19 +140,36 @@ var AddUser = React.createClass({
     },
     
     handleSubmit: function(user) {
-        //If a user was successfully found, set the ID in the data to be posted
-        if(this.state.foundUser) {
-            user.id = this.state.foundUser.id;
+        var users = [];
+        
+        //Is there are a user being edited
+        if(this.props.usersBeingEdited.length > 0) {
+            //Loop through the users being edited and add each to the users array
+            this.props.usersBeingEdited.forEach(function(userIndex) {
+                var userData = {};
+                userData.roles = user.roles;
+                userData.id = this.props.users[userIndex].id;
+                users.push(userData);
+            }, this);
         }
-        //If a user was searched for and not found, set the ID to 0
-        else if(this.state.foundUser === false) {
-            user.id = 0;
-        }
+        //Otherwise, adding a new user
         else {
-            //Otherwise, the user was not searched for, or an error occurred, so do not set the user id, and the search will be performed on the backend
+            //If a user was successfully found, set the ID in the data to be posted
+            if(this.state.foundUser) {
+                user.id = this.state.foundUser.id;
+            }
+            //If a user was searched for and not found, set the ID to 0
+            else if(this.state.foundUser === false) {
+                user.id = 0;
+            }
+            else {
+                //Otherwise, the user was not searched for, or an error occurred, so do not set the user id, and the search will be performed on the backend
+            }
+            
+            users.push(user);
         }
         
-        this.props.handlers.submit(user);
+        this.props.handlers.submit(users);
     },
     
     handleUserChange: function() {
@@ -183,41 +201,52 @@ var AddUser = React.createClass({
             title="Grant Additional Permissions"
         />;
         
-        var multipleUsersBeingEdited = this.props.action === 'edit' && this.props.usersBeingEdited.length > 1;
+        var edit = this.props.usersBeingEdited.length > 0;
+        var multipleUsersBeingEdited = edit && this.props.usersBeingEdited.length > 1;
+        
         var toggleLabel = "Notify the user";
         toggleLabel += multipleUsersBeingEdited?"s":"";
         toggleLabel += " of ";
-        if(this.props.action === 'edit') {
+        if(edit) {
             toggleLabel += "the changes to ";
         }
         toggleLabel += "their additional roles by email";
 
+        var roleStates;
+        if(!edit || multipleUsersBeingEdited) {
+            roleStates = this.props.defaultRoles;
+        }
+        else {
+            roleStates = {};
+            var user = this.props.users[this.props.usersBeingEdited[0]];
+            user.roles.map(function(role) {
+                roleStates[role] = true;
+            });
+        }
 
+        //Get the array of roles not including view
+        var rolesWithoutViewer = this.props.roles.slice(1);
+        
         return (
             <Container topbar={topbar}>
-                {this.props.action === 'edit' && 
+                {edit && 
                     <div>
                         <p>The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:</p>
-                        <ul>
+                        <List style={{paddingTop: '0px', marginBottom: '15px'}}>
                             {this.props.usersBeingEdited.map(function(userIndex) {
-                                var user = this.props.users[this.props.userIndexesById[username]];
-                                var fullname = user.fullname;
-                                var email = user.email;
-                                var nameOrEmail = fullname || email;
-                                var nameAndEmail = fullname && email;
-                                var inputName = "users." + userIndex;
+                                var user = this.props.users[userIndex];
+                                var nameOrEmail = user.fullname || user.email;
+                                var nameAndEmail = user.fullname && user.email;
                                 return (
-                                    <li key={username}>
-                                        {username} 
-                                        {nameOrEmail?" (":""}
-                                        {fullname}
-                                        {nameAndEmail?", ":""}
-                                        {email}
-                                        {nameOrEmail?")":""}
-                                    </li>
+                                    <ListItem 
+                                        disabled={true}
+                                        key={user.username}
+                                        primaryText={user.username}
+                                        secondaryText={nameOrEmail?(user.fullname + (nameAndEmail?", ":"") + user.email):false}
+                                    />
                                 );
-                            })}
-                        </ul>
+                            }, this)}
+                        </List>
                     </div>
                 }
                 <Formsy.Form
@@ -229,7 +258,7 @@ var AddUser = React.createClass({
                     noValidate={true}
                     ref="add"
                 >
-                    {this.props.action === 'add' && 
+                    {!edit && 
                         <div className="section">
                             <FormsyText 
                                 name="username"
@@ -254,10 +283,10 @@ var AddUser = React.createClass({
                     
                     <div className="section">
                         <FieldLabel
-                            label='Which additional permissions should {multipleUsersBeingEdited?"these users":"this user"} have?'
-                            instructions='Additional permissions will add to, but not replace, the default permissions (see "Default Permissions", above) that a user has based on their role in WebLearn'
+                            label={"Which additional permissions should " + (multipleUsersBeingEdited?"these users":"this user") + " have?"}
+                            instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
-                        <RoleCheckboxes nameBase="addRoles" roleStates={this.props.defaultRoles} roles={this.props.roles} />
+                        <RoleCheckboxes nameBase="roles" roleStates={roleStates} roles={rolesWithoutViewer} />
                     </div>
                     {/*<FormsyToggle
                         label="Notify this user of their additional roles by email"

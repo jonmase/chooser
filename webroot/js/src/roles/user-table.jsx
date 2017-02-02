@@ -36,9 +36,6 @@ var UsersTable = React.createClass({
     _onRowSelection: function(selectedRows){
         this.props.selectUserHandlers.change(selectedRows);
     },
-    _onSelectAll: function(selectedRows){
-        this.props.selectUserHandlers.change(selectedRows);
-    },
     render: function() {
         var props = this.props;
         var filterRoles = props.filterRoles;
@@ -71,12 +68,12 @@ var UsersTable = React.createClass({
                                 handlers={props.editUserHandlers} 
                             />&nbsp;*/}
                             <EditButton
-                                handleEdit={this.props.editButtonClickHandler}
+                                handleEdit={this.props.addEditButtonClickHandler}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
                             <AddButton
-                                handleAdd={this.props.addButtonClickHandler}
+                                handleAdd={this.props.addEditButtonClickHandler}
                                 tooltip="Grant Permissions"
                             />
                             {/*<UsersActionMenu
@@ -131,7 +128,7 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
-                                                        handleEdit={props.editButtonClickHandler} 
+                                                        handleEdit={props.addEditButtonClickHandler} 
                                                         id={[index]}
                                                         tooltip=""
                                                     />

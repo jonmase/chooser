@@ -182,43 +182,68 @@ class UsersController extends AppController
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
 
-        //If user ID is not set in the data (it can be set to false), User has not yet been searched for
-        if(!isset($this->request->data['id'])) {
-            $user = $this->Users->findByUsernameThenEmail($this->request->data['username']);
-        }
-        //User has already been searched for and found
-        else if($this->request->data['id']) {
-            $user = $this->Users->get($this->request->data['id']);
+        $users = [];
+        foreach($this->request->data['users'] as $userData) {
+            //If user ID is not set in the data (it can be set to false), User has not yet been searched for
+            if(!isset($userData['id'])) {
+                $user = $this->Users->findByUsernameThenEmail($userData['username']);
+                $userData['id'] = $user['id'];
+            }
+            
+            //If user has been found, get that user, with ChoicesUsers record for this choice, if it exists
+            if($userData['id']) {
+                $user = $this->Users->get($userData['id'], [
+                    'contain' => [
+                        'Choices' => function ($q) use ($id) {
+                            return $q
+                                ->select(['id'])
+                                ->where(['Choices.id' => $id]);
+                        }
+                    ]
+                ]);
+            }
+            
+            //pr($user);
+            
+            //If we don't have a user yet, create one from the username in the request data
+            if(empty($user)) {
+                $user = $this->Users->newEntity();
+                $user->username = $userData['username'];
+            }
+            
+            //If user->choices is empty, user is not already associated with this choice
+            if(empty($user->choices)) {
+                $choice = $this->Users->Choices->get($id, ['fields' => ['id']]);
+                $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
+            }
+            else {
+                $choice = $user->choices[0];
+            }
+            
+            //Set the roles values
+            foreach($userData['roles'] as $role => $value) {
+                $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            }
+            
+            $user->choices = [$choice];
+
+            $users[] = $user;
         }
 
-        //If we don't have a user yet, create one from the username in the request data
-        if(empty($user)) {
-            $user = $this->Users->newEntity();
-            $user->username = $this->request->data['username'];
-        }
-        
-        //TODO: Make sure there isn't already a ChoicesUsers record for this user and Choice
-        
-        $choice = $this->Users->Choices->get($id, ['fields' => ['id']]);
-        $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
         //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
         
-        //Set the roles values
-        $defaultRoles = [];
-        foreach($this->request->data['addRoles'] as $role => $value) {
-            $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        }
         
-        $user->choices = [$choice];
         
-        //pr($user); exit;
-        if ($this->Users->save($user)) {
+        //pr($users); exit;
+        if ($this->Users->saveMany($users)) {
+            //TODO: return the full list of users and indexes by ID
+            
             //Get roles from _joinData, including view role
-            $user->roles = $this->Users->ChoicesUsers->processRoles($choice->_joinData, true);  
-            unset($user->choices);
-
+            //$user->roles = $this->Users->ChoicesUsers->processRoles($choice->_joinData, true);  
+            //unset($user->choices);
+            //$this->set('user', $user);
+            
             $this->set('response', 'Additional permissions granted');
-            $this->set('user', $user);
         } 
         else {
             throw new InternalErrorException(__('Problem with adding user'));
