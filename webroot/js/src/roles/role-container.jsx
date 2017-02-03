@@ -80,15 +80,18 @@ var RolesContainer = React.createClass({
     },
    
     handleGoToAddEditPage: function(users) {
-        this.setState({
+        var stateData = {
             action: 'addedit',
-        });
+        };
         
         if(users) {
-            this.setState({
-                usersBeingEdited: users,
-            });
+            stateData.usersBeingEdited = users;
         }
+        else {
+            stateData.usersBeingEdited = [];
+        }
+        
+        this.setState(stateData);
     },
 
     handleGoToIndexPage: function() {
