@@ -58,8 +58,14 @@ function SortWrapper(WrappedComponent) {
                         if(fieldA) {
                             valueA = fieldA;
                         }
+                        else {
+                            valueA = 0;
+                        }
                         if(fieldB) {
                             valueB = fieldB;
+                        }
+                        else {
+                            valueB = 0;
                         }
                     }
                     else if(fieldType === 'checkbox') {
@@ -83,8 +89,14 @@ function SortWrapper(WrappedComponent) {
                         if(fieldA) {
                             valueA = fieldA.toUpperCase(); // ignore upper and lowercase
                         }
+                        else {
+                            valueA = '';
+                        }
                         if(fieldB) {
                             valueB = fieldB.toUpperCase(); // ignore upper and lowercase
+                        }
+                        else {
+                            valueB = '';
                         }
                     }
                     
