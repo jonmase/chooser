@@ -155,16 +155,16 @@ var RolesContainer = React.createClass({
     },
     
     //Update state when user role filter is changed
-    handleFilterUsersChange: function(event, roles) {
+    handleFilterUsers: function(event, filteredRoles) {
         console.log("User Role Filter changed");
         
-        var filteredUserIndexes = this.filterUsers(this.state.users, roles);
+        /*var filteredUserIndexes = this.filterUsers(this.state.users, filteredRoles);
         
         this.setState({
             filterRoles: roles,
             filteredUserIndexes: filteredUserIndexes,
             selectAllSelected: false,
-        });
+        });*/
     },
     
     filterUsers: function(users, roles) {
@@ -340,10 +340,6 @@ var RolesContainer = React.createClass({
             submit: this.handleSetUserSubmit,
         };
     
-        var filterUsersHandlers={
-            change: this.handleFilterUsersChange,
-        };
-    
         var selectUserHandlers={
             change: this.handleSelectUserChange,
         };
@@ -374,7 +370,7 @@ var RolesContainer = React.createClass({
                             choiceId={this.props.choice.id} 
                             filteredUserIndexes={this.state.filteredUserIndexes}
                             filterRoles={this.state.filterRoles} 
-                            filterUsersHandlers={filterUsersHandlers}
+                            filterHandler={this.handleFilterUsers}
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 
                             selectUserHandlers={selectUserHandlers}

@@ -70,17 +70,12 @@ var UsersTable = React.createClass({
                         //showExpandableButton={true}
                     >
                         <div style={{float: 'right'}}>
-                            {/*<SortUsers 
-                                state={props.state}
-                                handlers={props.sortUsersHandlers} 
-                                titleStyle={styles.sortFilterTitles}
-                            />&nbsp;
                             <FilterUsers
                                 state={props.state} 
                                 roles={props.roles} 
-                                handlers={props.filterUsersHandlers} 
+                                handler={props.filterHandler} 
                                 titleStyle={styles.sortFilterTitles}
-                            />&nbsp;*/}
+                            />&nbsp;
                             <EditButton
                                 handleEdit={this.props.setButtonClickHandler}
                                 id={this.props.usersSelected}

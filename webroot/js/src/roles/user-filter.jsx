@@ -4,8 +4,6 @@ import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 
 var UserFilters = React.createClass({
-    nameBase: "filterRoles",
-    
     render: function() {
         var menuItems = this.props.roles.map(function(role) {
             return (
@@ -23,8 +21,8 @@ var UserFilters = React.createClass({
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
                 targetOrigin={{horizontal: 'right', vertical: 'top'}}
                 multiple={true}
-                value={this.props.state.filterRoles}
-                onChange={this.props.handlers.change}
+                value={this.props.roles}
+                onChange={this.props.handler}
             >
                 {menuItems}
             </IconMenu>            
