@@ -198,7 +198,7 @@ var AddUser = React.createClass({
                 style={{marginTop: '6px'}}
             />}
             sections={this.props.sections} 
-            title="Grant Additional Permissions"
+            title="Set Additional Permissions"
         />;
         
         var edit = this.props.usersBeingEdited.length > 0;

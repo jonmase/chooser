@@ -47,12 +47,6 @@ class UsersController extends AppController
         
         $users = $this->Users->getForChoice($choiceId, $this->Auth->user('id'));
         
-        /*$userIndexesById = [];
-        foreach($users as $index => &$user) {
-            $userIndexesById[$user->id] = $index;
-        }*/
-        
-        
         $this->set(compact('users'));
         $this->set('_serialize', ['users']);
        // pr($users);
@@ -159,13 +153,13 @@ class UsersController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Users or Choices record not found.
      */
-    public function add($id = null)
+    public function add($choiceId = null)
     {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
@@ -182,10 +176,10 @@ class UsersController extends AppController
             if($userData['id']) {
                 $user = $this->Users->get($userData['id'], [
                     'contain' => [
-                        'Choices' => function ($q) use ($id) {
+                        'Choices' => function ($q) use ($choiceId) {
                             return $q
                                 ->select(['id'])
-                                ->where(['Choices.id' => $id]);
+                                ->where(['Choices.id' => $choiceId]);
                         }
                     ]
                 ]);
@@ -201,7 +195,7 @@ class UsersController extends AppController
             
             //If user->choices is empty, user is not already associated with this choice
             if(empty($user->choices)) {
-                $choice = $this->Users->Choices->get($id, ['fields' => ['id']]);
+                $choice = $this->Users->Choices->get($choiceId, ['fields' => ['id']]);
                 $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
             }
             else {
@@ -224,14 +218,12 @@ class UsersController extends AppController
         
         //pr($users); exit;
         if ($this->Users->saveMany($users)) {
-            //TODO: return the full list of users and indexes by ID
+            //Get the updated users list and return it
+            $users = $this->Users->getForChoice($choiceId, $this->Auth->user('id'));
+        
+            $this->set(compact('users'));
             
-            //Get roles from _joinData, including view role
-            //$user->roles = $this->Users->ChoicesUsers->processRoles($choice->_joinData, true);  
-            //unset($user->choices);
-            //$this->set('user', $user);
-            
-            $this->set('response', 'Additional permissions granted');
+            $this->set('response', 'Additional permissions set');
         } 
         else {
             throw new InternalErrorException(__('Problem with adding user'));

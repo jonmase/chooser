@@ -112,13 +112,32 @@ var RolesContainer = React.createClass({
                 users: users,
             },
             success: function(returnedData) {
-                //console.log(returnedData.response);
+                console.log(returnedData.response);
                 
                 //Show the snackbar
                 var snackbar = {
                     open: true,
                     message: returnedData.response,
                 }
+                
+                //Sort the returned users
+                var sortedUsers = this.props.sortHelper(this.props.deepCopyHelper(returnedData.users), this.state.sort.field, this.state.sort.fieldType, this.state.sort.direction);
+                
+                //Add all the users to the filteredUserIndexes array
+                var filteredUserIndexes = [];
+                sortedUsers.forEach(function(user, index) {
+                    //userIndexesByUsername[user.username] = index;
+                    filteredUserIndexes.push(index);
+                });
+                
+                this.setState({
+                    action: 'index',
+                    filteredUserIndexes: filteredUserIndexes,
+                    snackbar: snackbar,
+                    users: sortedUsers,
+                    userIndexesById: this.props.updateIndexesByIdHelper(sortedUsers),
+                });
+                
                 
                 /*var currentUsers = this.state.users;    //Get the current users
                 
@@ -132,7 +151,7 @@ var RolesContainer = React.createClass({
                 
                 //Refilter the users to account for new roles/removed users
                 var filteredUserIndexes = this.filterUsers(currentUsers, this.state.filterRoles);
-                */
+                
                 //Update state with the new users array
                 this.setState({
                     action: 'index',
@@ -140,7 +159,7 @@ var RolesContainer = React.createClass({
                     //userIndexesByUsername: userIndexesByUsername,
                     //filteredUserIndexes: filteredUserIndexes,
                     snackbar: snackbar,
-                });
+                });*/
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
