@@ -81,8 +81,9 @@ var AddUser = React.createClass({
             userChecked: true,
         });
         
+        var userIsSelfOrAlreadyAssociated = userIsSelf || userIsAlreadyAssociated;
         //If user is associated, disable the submit button
-        if(userIsSelf || userIsAlreadyAssociated) {
+        if(userIsSelfOrAlreadyAssociated) {
             
             this.setState({
                 findUserMessage: findUserMessage,

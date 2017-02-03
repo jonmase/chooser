@@ -8,7 +8,6 @@ import SortUsers from './user-sort.jsx';
 import FilterUsers from './user-filter.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx'; 
-import EditSelectedUsers from './user-edit-selected.jsx';
 import UsersActionMenu from './user-action-menu.jsx';
 
 var styles = {
@@ -63,18 +62,14 @@ var UsersTable = React.createClass({
                                 handlers={props.filterUsersHandlers} 
                                 titleStyle={styles.sortFilterTitles}
                             />&nbsp;*/}
-                            {/*<EditSelectedUsers
-                                state={props.state} 
-                                handlers={props.editUserHandlers} 
-                            />&nbsp;*/}
                             <EditButton
-                                handleEdit={this.props.addEditButtonClickHandler}
+                                handleEdit={this.props.setButtonClickHandler}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
                             <AddButton
-                                handleAdd={this.props.addEditButtonClickHandler}
-                                tooltip="Grant Permissions"
+                                handleAdd={this.props.setButtonClickHandler}
+                                tooltip="Set Permissions"
                             />
                             {/*<UsersActionMenu
                             
@@ -128,7 +123,7 @@ var UsersTable = React.createClass({
                                             <TableRowColumn style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
-                                                        handleEdit={props.addEditButtonClickHandler} 
+                                                        handleEdit={props.setButtonClickHandler} 
                                                         id={[index]}
                                                         tooltip=""
                                                     />

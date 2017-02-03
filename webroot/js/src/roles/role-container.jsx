@@ -5,7 +5,7 @@ import Snackbar from 'material-ui/Snackbar';
 import RolesExplanations from './role-explanations.jsx';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
-import AddEditUser from './user-add-edit-page.jsx';
+import SetUser from './user-set-page.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -47,10 +47,7 @@ var RolesContainer = React.createClass({
     getInitialState: function () {
         return {
             action: 'index',
-            addUserDialogOpen: false,
             defaultRoles: this.props.choice.instructor_default_roles,
-            editSelectedUsersDialogOpen: false,
-            editUserDialogOpen: false,
             //filterRoles: filterRoles,
             filterRoles: [],
             filteredUserIndexes: [],
@@ -79,9 +76,9 @@ var RolesContainer = React.createClass({
         this.loadUsersFromServer();
     },
    
-    handleGoToAddEditPage: function(users) {
+    handleGoToSetPage: function(users) {
         var stateData = {
-            action: 'addedit',
+            action: 'set',
         };
         
         if(users) {
@@ -101,8 +98,8 @@ var RolesContainer = React.createClass({
         });
     },
 
-    //Submit the add user form
-    handleAddEditUserSubmit: function (users) {
+    //Submit the set user form
+    handleSetUserSubmit: function (users) {
         console.log("Saving User(s) for Choice " + this.props.choice.id + ": ", users);
 
         //Save the settings
@@ -372,9 +369,9 @@ var RolesContainer = React.createClass({
             submit: this.handleSettingsSubmit,
         };
 
-        var addEditUserHandlers={
+        var setUserHandlers={
             backButtonClick: this.handleGoToIndexPage,
-            submit: this.handleAddEditUserSubmit,
+            submit: this.handleSetUserSubmit,
         };
     
         var filterUsersHandlers={
@@ -411,7 +408,7 @@ var RolesContainer = React.createClass({
                             handlers={settingsHandlers}
                         />
                         <UsersTable 
-                            addEditButtonClickHandler={this.handleGoToAddEditPage}
+                            setButtonClickHandler={this.handleGoToSetPage}
                             choiceId={this.props.choice.id} 
                             filteredUserIndexes={this.state.filteredUserIndexes}
                             filterRoles={this.state.filterRoles} 
@@ -437,12 +434,12 @@ var RolesContainer = React.createClass({
         }
         else {
             return (
-                <AddEditUser
+                <SetUser
                     choiceId={this.props.choice.id} 
                     currentUserId={this.props.currentUserId} 
                     dashboardUrl={this.props.dashboardUrl} 
                     defaultRoles={this.state.defaultRoles}
-                    handlers={addEditUserHandlers}
+                    handlers={setUserHandlers}
                     notify={this.props.notify}
                     roles={this.props.roles} 
                     sections={this.props.sections} 
