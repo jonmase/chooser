@@ -6,9 +6,12 @@ import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColu
 import UsersRole from './user-role.jsx';
 import SortUsers from './user-sort.jsx';
 import FilterUsers from './user-filter.jsx';
+import UsersActionMenu from './user-action-menu.jsx';
+
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx'; 
-import UsersActionMenu from './user-action-menu.jsx';
+import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
+
 
 var styles = {
     tableRowColumn: {
@@ -38,6 +41,22 @@ var UsersTable = React.createClass({
     render: function() {
         var props = this.props;
         var filterRoles = props.filterRoles;
+        
+        var sortableColumns = [
+            {
+                field: "username",
+                label: "Username",
+            },
+            {
+                field: "lastname",
+                label: "Name",
+            },
+            {
+                field: "email",
+                label: "Email",
+            },
+        ]
+        
         return (
             <div>
                 <Card 
@@ -90,9 +109,19 @@ var UsersTable = React.createClass({
                                 displaySelectAll={false}
                             >
                                 <TableRow>
-                                    <TableHeaderColumn>Username</TableHeaderColumn>
-                                    <TableHeaderColumn>Name</TableHeaderColumn>
-                                    <TableHeaderColumn>Email</TableHeaderColumn>
+                                    {sortableColumns.map(function(field) {
+                                        return (
+                                            <SortableTableHeaderColumn
+                                                sortField={this.props.sort.field}
+                                                sortDirection={this.props.sort.direction}
+                                                field={field.field}
+                                                fieldType="text"
+                                                key={field.field}
+                                                label={field.label}
+                                                sortHandler={this.props.sortHandler}
+                                            />
+                                        );
+                                    }, this)}
                                     <TableHeaderColumn>Roles</TableHeaderColumn>
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>

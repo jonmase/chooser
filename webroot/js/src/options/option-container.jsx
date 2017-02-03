@@ -615,7 +615,7 @@ var OptionContainer = React.createClass({
     handleSort: function(field, fieldType) {
         var direction = 'asc';
         if(field === this.state.optionsSort.field) {
-            if(this.state.optionsSort.direction === 'asc') {
+            if(this.state.optionsSort.direction.toLowerCase() === 'asc') {
                 direction = 'desc';
             }
         }

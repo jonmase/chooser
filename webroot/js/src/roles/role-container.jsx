@@ -332,35 +332,25 @@ var RolesContainer = React.createClass({
         }); 
     },
 
-    handleSortUsersChange: function(event, value) {
-        console.log("User Sort changed to " + value);
-        
-        var currentUsers = this.sortUsers(this.state.users, value);
-       
-        //Update state with the sorted users array and sortField
-        this.setState({
-            sortUsersField: value,
-            users: currentUsers,
-        });
-        return false;
-    },
+    handleSort: function(field, fieldType) {
+        var direction = 'asc';
+        if(field === this.state.sort.field) {
+            if(this.state.sort.direction.toLowerCase() === 'asc') {
+                direction = 'desc';
+            }
+        }
     
-    sortUsers: function(users, sortField) {
-        users.sort(function (a, b) {
-            var aField = a[sortField];
-            var bField = b[sortField];
-            var aString = (aField === null) ? "" : "" + aField;
-            var bString = (bField === null) ? "" : "" + bField;
-            if (aString > bString) {
-                return 1;
-            }
-            if (aString < bString) {
-                return -1;
-            }
-            //values are equal
-            return 0;
+        var usersState = this.props.sortHelper(this.props.deepCopyHelper(this.state.users), field, fieldType, direction);
+        
+        this.setState({
+            users: usersState,
+            indexesById: this.props.updateIndexesByIdHelper(usersState),
+            sort: {
+                direction: direction,
+                field: field,
+                fieldType: fieldType,
+            },
         });
-        return users;
     },
 
     render: function() {
@@ -380,10 +370,6 @@ var RolesContainer = React.createClass({
     
         var selectUserHandlers={
             change: this.handleSelectUserChange,
-        };
-    
-        var sortUsersHandlers={
-            change: this.handleSortUsersChange,
         };
     
         var topbar = <TopBar 
@@ -416,7 +402,8 @@ var RolesContainer = React.createClass({
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 
                             selectUserHandlers={selectUserHandlers}
-                            sortUsersHandlers={sortUsersHandlers}
+                            sort={this.state.sort}
+                            sortHandler={this.handleSort}
                             users={this.state.users}
                             userIndexesById={this.state.userIndexesById}
                             usersBeingEdited={this.state.usersBeingEdited}
