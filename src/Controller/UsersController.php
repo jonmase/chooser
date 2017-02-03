@@ -45,30 +45,16 @@ class UsersController extends AppController
             throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
         }
         
-        $sortField = 'username';
-        $sortDirection = 'ASC';
-        $usersQuery = $this->Users->find('all', ['sort' => ['Users.' . $sortField => $sortDirection]]);
-        $usersQuery->matching('ChoicesUsers', function ($q) use ($choiceId) {
-            return $q->where(['ChoicesUsers.choice_id >=' => $choiceId]);
-        });
-        $users = $usersQuery->toArray();
+        $users = $this->Users->getForChoice($choiceId, $this->Auth->user('id'));
         
-        $userIndexesById = [];
+        /*$userIndexesById = [];
         foreach($users as $index => &$user) {
-            //Get roles from _matchingData, including view role
-            $user->roles = $this->Users->ChoicesUsers->processRoles($user->_matchingData['ChoicesUsers'], true);  
-            unset($user->_matchingData);
-            
-            if($user->id === $this->Auth->user('id')) {
-                $user->current = true;
-            }
-            
             $userIndexesById[$user->id] = $index;
-        }
+        }*/
         
         
-        $this->set(compact('users', 'userIndexesById', 'sortField', 'sortDirection'));
-        $this->set('_serialize', ['users', 'userIndexesById', 'sortField', 'sortDirection']);
+        $this->set(compact('users'));
+        $this->set('_serialize', ['users']);
        // pr($users);
     }
     
@@ -89,6 +75,8 @@ class UsersController extends AppController
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
+        
+        //pr($this->request->session()->read());
 
         $choice = $this->Users->ChoicesUsers->Choices->get($id);
         

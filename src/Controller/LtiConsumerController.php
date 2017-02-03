@@ -81,6 +81,7 @@ class LtiConsumerController extends AppController
                     if(!empty($choiceContext)) {
                         //Get the Choice
                         $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->get($choiceContext->choice_id);
+                        $session->write('choice', $choiceContext->choice_id);
                         
                         //Get the user's existing roles for this Choice
                         $choicesUsers = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->ChoicesUsers->findAllByChoiceIdAndUserId($choice->id, $this->Auth->user('id'));

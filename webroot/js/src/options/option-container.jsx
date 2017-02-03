@@ -620,7 +620,7 @@ var OptionContainer = React.createClass({
             }
         }
     
-        var optionsState = this.props.sortHelper(this.deepCopy(this.state.options.options), field, fieldType, direction);
+        var optionsState = this.props.sortHelper(this.props.deepCopyHelper(this.state.options.options), field, fieldType, direction);
         
         var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.slice(), optionsState);
         
@@ -783,28 +783,6 @@ var OptionContainer = React.createClass({
             }
         });
         return idsSortedByTableOrder;
-    },
-    
-    deepCopy: function(o) {
-        var copy = o,k;
-     
-        if (o && typeof o === 'object') {
-            copy = Object.prototype.toString.call(o) === '[object Array]' ? [] : {};
-            for (k in o) {
-                copy[k] = this.deepCopy(o[k]);
-            }
-        }
-     
-        return copy;
-    },
-
-    updateOptionIndexesById: function(options) {
-        var optionIndexesById = {};
-        options.forEach(function(option, index) {
-            optionIndexesById[option.id] = index;
-        });
-        
-        return optionIndexesById;
     },
     
     getTopbar: function(action) {

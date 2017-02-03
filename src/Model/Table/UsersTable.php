@@ -277,4 +277,26 @@ class UsersTable extends Table
         
         return $user;
     }
+    
+    public function getForChoice($choiceId, $userId) {
+        $sortField = 'username';
+        $sortDirection = 'ASC';
+        $usersQuery = $this->find('all', ['sort' => ['Users.' . $sortField => $sortDirection]]);
+        $usersQuery->matching('ChoicesUsers', function ($q) use ($choiceId) {
+            return $q->where(['ChoicesUsers.choice_id >=' => $choiceId]);
+        });
+        $users = $usersQuery->toArray();
+
+        foreach($users as $index => &$user) {
+            //Get roles from _matchingData, including view role
+            $user->roles = $this->ChoicesUsers->processRoles($user->_matchingData['ChoicesUsers'], true);  
+            unset($user->_matchingData);
+            
+            if($user->id === $userId) {
+                $user->current = true;
+            }
+        }
+
+        return $users;
+    }
 }

@@ -69,6 +69,9 @@ class ChoicesController extends AppController
                 'associated' => ['Users._joinData', 'ChoicesLtiContext']
             ]);
             if($this->Choices->save($choice)) {
+                //Add the choice to the session
+                $session->write('choice', $choice->id);
+                
                 //Redirect to the Choice dashboard page
                 $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choice->id]);
             }

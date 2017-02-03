@@ -10,6 +10,7 @@ import AddEditUser from './user-add-edit-page.jsx';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
+import SortWrapper from '../elements/wrappers/sort.jsx';
 
 
 var RolesContainer = React.createClass({
@@ -20,18 +21,21 @@ var RolesContainer = React.createClass({
             dataType: 'json',
             cache: false,
             success: function(data) {
+                //Sort the returned users
+                var sortedUsers = this.props.sortHelper(this.props.deepCopyHelper(data.users), this.state.sort.field, this.state.sort.fieldType, this.state.sort.direction);
+                
+                //Add all the users to the filteredUserIndexes array
                 var filteredUserIndexes = [];
-                data.users.forEach(function(user, index) {
+                sortedUsers.forEach(function(user, index) {
                     //userIndexesByUsername[user.username] = index;
                     filteredUserIndexes.push(index);
                 });
                 
                 var stateData = {
                     filteredUserIndexes: filteredUserIndexes,
-                    users: data.users,
-                    userIndexesById: data.userIndexesById,
+                    users: sortedUsers,
+                    userIndexesById: this.props.updateIndexesByIdHelper(sortedUsers),
                 };
-                
                 
                 this.setState(stateData);
             }.bind(this),
@@ -60,8 +64,11 @@ var RolesContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            sortField: 'username',
-            sortDirection: 'ASC',
+            sort: {
+                field: 'username',
+                fieldType: 'text',
+                direction: 'ASC',
+            },
             users: [],
             userIndexesById: [],
             usersBeingEdited: [],
@@ -71,7 +78,7 @@ var RolesContainer = React.createClass({
     componentWillMount: function() {
         this.loadUsersFromServer();
     },
-    
+   
     handleGoToAddEditPage: function(users) {
         this.setState({
             action: 'addedit',
@@ -426,4 +433,4 @@ var RolesContainer = React.createClass({
     }
 });
 
-module.exports = RolesContainer;
+module.exports = SortWrapper(RolesContainer);

@@ -3,6 +3,8 @@ import React from 'react';
 function SortWrapper(WrappedComponent) {
     return React.createClass({
         sort: function(items, field, fieldType, direction) {
+            direction = direction.toLowerCase();
+        
             items.sort(
                 function(a, b) {
                     var textTypes = ['text', 'wysiwyg', 'list', 'email', 'url'];
@@ -102,6 +104,19 @@ function SortWrapper(WrappedComponent) {
             return items;
         },
         
+        deepCopy: function(o) {
+            var copy = o,k;
+         
+            if (o && typeof o === 'object') {
+                copy = Object.prototype.toString.call(o) === '[object Array]' ? [] : {};
+                for (k in o) {
+                    copy[k] = this.deepCopy(o[k]);
+                }
+            }
+         
+            return copy;
+        },
+        
         updateIndexesById: function(items, idField) {
             if(!idField) {
                 idField = 'id';
@@ -116,6 +131,7 @@ function SortWrapper(WrappedComponent) {
 
         render: function() {
             var newProps = {
+                deepCopyHelper: this.deepCopy,
                 sortHelper: this.sort,
                 updateIndexesByIdHelper: this.updateIndexesById,
             }
