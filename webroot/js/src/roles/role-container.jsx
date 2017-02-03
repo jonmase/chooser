@@ -126,7 +126,6 @@ var RolesContainer = React.createClass({
                 //Add all the users to the filteredUserIndexes array
                 var filteredUserIndexes = [];
                 sortedUsers.forEach(function(user, index) {
-                    //userIndexesByUsername[user.username] = index;
                     filteredUserIndexes.push(index);
                 });
                 
@@ -137,29 +136,6 @@ var RolesContainer = React.createClass({
                     users: sortedUsers,
                     userIndexesById: this.props.updateIndexesByIdHelper(sortedUsers),
                 });
-                
-                
-                /*var currentUsers = this.state.users;    //Get the current users
-                
-                currentUsers.push(returnedData.user);   //Add the new user to current users
-                currentUsers = this.sortUsers(currentUsers, this.state.sortUsersField);
-                
-                var userIndexesByUsername = {};
-                currentUsers.forEach(function(user, index) {
-                    userIndexesByUsername[user.username] = index;
-                });
-                
-                //Refilter the users to account for new roles/removed users
-                var filteredUserIndexes = this.filterUsers(currentUsers, this.state.filterRoles);
-                
-                //Update state with the new users array
-                this.setState({
-                    action: 'index',
-                    //users: currentUsers,
-                    //userIndexesByUsername: userIndexesByUsername,
-                    //filteredUserIndexes: filteredUserIndexes,
-                    snackbar: snackbar,
-                });*/
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
