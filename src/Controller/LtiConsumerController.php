@@ -53,6 +53,7 @@ class LtiConsumerController extends AppController
             //This calls the onLaunch method in the LTIToolProviderComponent, which just sets ltilaunch = true
             //Normally would do the LTI launch processing there, but that has to be a static function
             //Therefore, we will do all the processing from here, so we check for ltilaunch below then do the processing
+            //Having ltilaunch set to true proves that we have been to LTIToolProviderComponent::onLaunch, which in turns proves that the LTI request was authenticated (see handle_request() method in LTI_Tool_Provider.php)
             $tool = new \LTI_Tool_Provider('App\Controller\Component\LTIToolProviderComponent::onLaunch', $db_connector);
             $tool->execute();
             
@@ -75,50 +76,18 @@ class LtiConsumerController extends AppController
                     //Look up whether there is a Choice already linked with this Context
                     $choiceContext = $this->LtiConsumer->LtiContext->ChoicesLtiContext->getContextChoice($tool);
                     
-                    $staffOrAdmin = $tool->user->isStaff() || $tool->user->isAdmin();
-                    
                     //If there is a Choice linked with this Context, make sure the user is associated with it, then go to it
                     if(!empty($choiceContext)) {
-                        //Get the Choice
-                        $choice = $this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->get($choiceContext->choice_id);
-                        $session->write('choice', $choiceContext->choice_id);
+                        $choiceId = $choiceContext->choice_id;
+                        $session->write('choice', $choiceId);   //Write the choice ID into the session
                         
-                        //Get the user's existing roles for this Choice
-                        $choicesUsers = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->ChoicesUsers->findAllByChoiceIdAndUserId($choice->id, $this->Auth->user('id'));
-                        
-                        if($choicesUsers->isEmpty()) {
-                            //If $choicesUsers, create _joinData as new ChoicesUsers Entity
-                            $user->_joinData = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->ChoicesUsers->newEntity([]);
+                        if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $this->Auth->user('id'), $tool)) {
+                            //If user has additional roles, redirect to the Choice dashboard page
+                            $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceId]);
                         }
                         else {
-                            //Otherwise, use first (and only) result for _joinData
-                            $user->_joinData = $choicesUsers->first();
-                        }
-                        
-                        //If User is staff or admin, add the instructor_default_roles to _joinData
-                        if($staffOrAdmin) {
-                            $instructorDefaultRoles = explode(',', $choice->instructor_default_roles);
-
-                            if(!empty($instructorDefaultRoles)) {
-                                foreach($instructorDefaultRoles as $role) {
-                                    //If role is not empty string, add it to the joinData
-                                    if($role !== '') {
-                                        $user->_joinData->$role = true;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        //Link the User to the Choice
-                        if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->Users->link($choice, [$user])) {
-                            if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->hasAdditionalRoles($choice->id, $this->Auth->user('id'))) {
-                                //If user has additional roles, redirect to the Choice dashboard page
-                                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choice->id]);
-                            }
-                            else {
-                                //Otherwise, just redirect to the view page
-                                $this->redirect(['controller' => 'options', 'action' => 'view', $choice->id]);
-                            }
+                            //Otherwise, just redirect to the view page
+                            $this->redirect(['controller' => 'options', 'action' => 'view', $choiceId]);
                         }
                     }
                     //If there is no linked Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/link a Choice

@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  */
 class ChoicesUsersTable extends Table
 {
-    private $_nonAdminRoles = [
+    private $_nonAdminOrViewRoles = [
         [
             'id' => 'editor', 
             'title' => 'Editor', 
@@ -131,36 +131,35 @@ class ChoicesUsersTable extends Table
     
     /**
      * getAllRoles method
-     * Returns the array of additional roles
+     * Returns the array of roles
      *
-     * @return array $allRoles array of additional roles
+     * @return array $allRoles array of roles
      */
     public function getAllRoles() {
-        $allRoles = $this->_nonAdminRoles;
+        $allRoles = $this->getNonViewRoles();
         array_unshift($allRoles, $this->_viewRole);
-        array_push($allRoles, $this->_adminRole);
         return $allRoles;
     }
 
     /**
-     * getNonAdminRoles method
-     * Returns the array of additional roles, except admin
+     * getNonViewRoles method
+     * Returns the array of roles, except view
      *
-     * @return array $nonAdminRoles array of additional roles, except admin
+     * @return array $nonViewRoles array of roles, except view
      */
-    public function getNonAdminRoles() {
-        $nonAdminRoles = $this->_nonAdminRoles;
-        return $nonAdminRoles;
+    public function getNonViewRoles() {
+        $nonViewRoles = $this->_nonAdminOrViewRoles;
+        array_push($nonViewRoles, $this->_adminRole);
+        return $nonViewRoles;
     }
 
     /**
      * getChoicesUser method
-     * Looks up the User's roles for a Choice and returns array of arrays
+     * Looks up the ChoicesUsers record for a specified choice and user
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
-     * @param boolean $includeView Whether or not include 'view' as one of the roles
-     * @return array $roles array of the User's roles with full role info (or empty array if not associated)
+     * @return array $choicesUser ChoicesUsers record for choice/user
      */
     public function getChoicesUser($choiceId = null, $userId = null) {
         //If either choiceId or userId isn't set, return empty array (i.e. no result)
@@ -179,15 +178,80 @@ class ChoicesUsersTable extends Table
     }
 
     /**
-     * getRoles method
-     * Looks up the User's roles for a Choice and returns array of arrays
+     * getUserRoles method
+     * Looks up the User's roles (both default ones based on LTI role and additional ones saved in ChoicesUsers table) for a Choice and returns array of role ids
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
-     * @param boolean $includeView Whether or not include 'view' as one of the roles
+     * @param $ltiTool LTI tool object
+     * @return array $roles array of the User's roles with full role info (or empty array if no roles)
+     */
+    public function getUserRoles($choiceId = null, $userId = null, $ltiTool = null) {
+        //If choiceId or both userId and ltiTool are't set, return empty array (i.e. no role)
+        if(!$choiceId || (!$ltiTool && !$userId)) {
+            return [];
+        }
+        
+        $roles = [];
+
+        //If user is staff or admin based on LTI role, get default instructor permissions
+        if($this->isLTIStaffOrAdmin($ltiTool)) {
+            $roles = $this->Choices->getInstructorDefaultRolesFromChoiceId($choiceId);
+        }
+        
+        //Get additional roles from ChoicesUsers Table
+        $additionalRoles = $this->getUserAdditionalRoles($choiceId, $userId);
+        foreach($additionalRoles as $additionalRole) {
+            if(!in_array($additionalRole, $roles)) {
+                $roles[] = $additionalRole;
+            }
+        }
+        
+        return $roles;
+    }
+    
+    /**
+     * getUserRolesWithInfo method
+     * Looks up the User's roles (both default ones based on LTI role and additional ones saved in ChoicesUsers table) for a Choice and returns array of role ids
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
+     * @return array $rolesWithInfo array of the User's roles with full role info (or empty array if no roles)
+     */
+    public function getUserRolesWithInfo($choiceId = null, $userId = null, $ltiTool = null) {
+        //If choiceId or both userId and ltiTool are't set, return empty array (i.e. no role)
+        if(!$choiceId || (!$ltiTool && !$userId)) {
+            return [];
+        }
+        
+        //Get the role IDs
+        $roleIds = $this->getUserRoles($choiceId, $userId, $ltiTool);
+
+        //Get the role info for all the roles except view
+        $roleInfo = $this->getNonViewRoles();
+        
+        $rolesWithInfo = [];
+        
+        //Loop through role info, checking whether user has this role, and, if so, adding this role to the rolesWithInfo array
+        foreach($roleInfo as $role) {
+            if(in_array($role['id'], $roleIds)) {
+                $rolesWithInfo[] = $role;
+            }
+        }
+        
+        return $rolesWithInfo;
+    }
+    
+    /**
+     * getUserAdditionalRoles method
+     * Looks up the User's additional roles (stored in ChoicesUsers table) for a Choice and returns array of role ids
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
      * @return array $roles array of the User's roles with full role info (or empty array if not associated)
      */
-    public function getRoles($choiceId = null, $userId = null, $includeView = false) {
+    public function getUserAdditionalRoles($choiceId = null, $userId = null) {
         //If either choiceId or userId isn't set, return empty array (i.e. no role)
         if(!$choiceId || !$userId) {
             $roles = [];
@@ -195,20 +259,19 @@ class ChoicesUsersTable extends Table
         
         $choicesUser = $this->getChoicesUser($choiceId, $userId);
 
-        $roles = $this->processRoles($choicesUser, $includeView);
+        $roles = $this->processRoles($choicesUser);
 
         return $roles;
     }
     
     /**
      * processRoles method
-     * Takes a ChoicesUsers record and process the roles into an array
+     * Takes a ChoicesUsers record and process the roles into an array of role ids
      *
      * @param array $choicesUser ChoicesUsers record
-     * @param boolean $includeView Whether or not include 'view' as one of the roles
-     * @return array $roles array of the User's roles (or empty array if not associated)
+     * @return array $roles array of the User's role ids (or empty array if not associated)
      */
-    function processRoles($choicesUser = null, $includeView = false) {
+    function processRoles($choicesUser = null) {
         $roles = [];
 
         //If the user is not associated with this Choice, return empty array, i.e. no role
@@ -218,40 +281,30 @@ class ChoicesUsersTable extends Table
                 $roles[] = $this->_adminRole['id'];
             }
             else {
-                foreach($this->_nonAdminRoles as $role) {
+                foreach($this->_nonAdminOrViewRoles as $role) {
                     $roleId = $role['id'];
                     if($choicesUser->$roleId) {
-                        $roles[] = $role['id'];
+                        $roles[] = $roleId;
                     }
                 }
             }
             
             //Anyone associated with a Choice, and without additional permissions, still has the view role
-            if(empty($roles) && $includeView) { $roles[] = $this->_viewRole['id']; }
+            //if(empty($roles) && $includeView) { $roles[] = $this->_viewRole['id']; }
         }
         
         return $roles;
     }
     
     /**
-     * hasAdditionalRoles method
-     * Checks whether a User has additional roles (i.e. more than view) over a Choice
+     * isLTIStaffOrAdmin method
+     * Checks whether a User has an LTI staff or admin role
      *
-     * @param $choiceId ID of the Choice
-     * @param $userId ID of the User
-     * @return boolean True if the User has additional roles, false if not
+     * @param $ltiTool LTI tool object
+     * @return boolean True if the User has an LTI staff or admin role, false if not
      */
-    public function hasAdditionalRoles($choiceId = null, $userId = null) {
-        //If either choiceId or userId isn't set, return false (i.e. no role)
-        if(!$choiceId || !$userId) {
-            return false;
-        }
-        
-        //Get the user's roles, omitting view
-        $roles = $this->getRoles($choiceId, $userId);
-        
-        //If the user has any role (view is omitted), they have additional permissions
-        if(!empty($roles)) {
+    public function isLTIStaffOrAdmin($ltiTool = null) {
+        if($ltiTool && ($ltiTool->user->isStaff() || $ltiTool->user->isAdmin())) {
             return true;
         }
         else {
@@ -260,17 +313,36 @@ class ChoicesUsersTable extends Table
     }
     
     /**
+     * isMoreThanViewer method
+     * Checks whether a User has roles other than view over a Choice
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
+     * @return boolean True if the User has additional roles, false if not
+     */
+    public function isMoreThanViewer($choiceId = null, $userId = null, $ltiTool = null) {
+        $nonViewRoles = $this->getNonViewRoles();
+        $nonViewRolesIds = [];
+        foreach($nonViewRoles as $role) {
+            $nonViewRolesIds[] = $role['id'];
+        }
+        //pr($nonViewRolesIds);
+        return $this->isRoles($choiceId, $userId, $ltiTool, $nonViewRolesIds);
+    }
+    
+    /**
      * isViewer method
      * Checks whether a User is allowed to view a Choice
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is allowed to view, false if not
      */
-    public function isViewer($choiceId = null, $userId = null) {
-        $choicesUser = $this->getChoicesUser($choiceId, $userId);
-        
-        return !empty($choicesUser);
+    public function isViewer($choiceId = null, $userId = null, $userId = null) {
+        //User will alawys be allowed to view choice - not having option to switch between and not passing choice ID in URLs
+        return true;
     }
 
     /**
@@ -279,10 +351,11 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is an admin, false if not
      */
-    public function isAdmin($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['admin']);
+    public function isAdmin($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['admin']);
     }
 
     /**
@@ -291,10 +364,11 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is an Allocator, false if not
      */
-    public function isAllocator($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['allocator']);
+    public function isAllocator($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['allocator']);
     }
     
     /**
@@ -303,10 +377,11 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is an Approver, false if not
      */
-    public function isApprover($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['approver']);
+    public function isApprover($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['approver']);
     }
 
     /**
@@ -315,10 +390,11 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is an Editor, false if not
      */
-    public function isEditor($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['editor']);
+    public function isEditor($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['editor']);
     }
 
     /**
@@ -327,14 +403,24 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return boolean True if the User is an Reviewer, false if not
      */
-    public function isReviewer($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['reviewer']);
+    public function isReviewer($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['reviewer']);
     }
     
-    public function canViewResults($choiceId = null, $userId = null) {
-        return $this->isRoles($choiceId, $userId, ['reviewer', 'allocator']);
+    /**
+     * canViewResults method
+     * Checks whether a User has permission to view results (i.e. is reviewer or approver)
+     *
+     * @param $choiceId ID of the Choice
+     * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
+     * @return boolean True if the User is an Reviewer, false if not
+     */
+    public function canViewResults($choiceId = null, $userId = null, $ltiTool = null) {
+        return $this->isRoles($choiceId, $userId, $ltiTool, ['reviewer', 'allocator']);
     }
 
     /**
@@ -343,16 +429,17 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @param $role Role to check
      * @return boolean True if the User has the role, false if not
      */
-    public function isRoles($choiceId = null, $userId = null, $roles = []) {
+    public function isRoles($choiceId = null, $userId = null, $ltiTool = null, $roles = []) {
         //If either choiceId or userId isn't set, return false
-        if(!$choiceId || !$userId || !$roles) {
+        if(!$choiceId || (!$userId && !$ltiTool) || !$roles) {
             return false;
         }
         
-        $userRoles = $this->getRoles($choiceId, $userId);
+        $userRoles = $this->getUserRoles($choiceId, $userId, $ltiTool);
 
         //If user is admin then they have that role
         if(in_array('admin', $userRoles)) {
@@ -361,7 +448,7 @@ class ChoicesUsersTable extends Table
         
         //Otherwise, loop through the roles we are checking, and make sure the user has one of them
         foreach($roles as $role) {
-            if(in_array($role, $userRoles) || in_array('admin', $userRoles)) {
+            if(in_array($role, $userRoles)) {
                 return true;
             }
         }

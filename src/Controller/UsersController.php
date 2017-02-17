@@ -40,12 +40,12 @@ class UsersController extends AppController
         //$this->autoRender = false;
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
         }
         
-        $users = $this->Users->getForChoice($choiceId, $this->Auth->user('id'));
+        $users = $this->Users->getForChoice($choiceId, $this->request->session()->read('tool'), $this->Auth->user('id'));
         
         $this->set(compact('users'));
         $this->set('_serialize', ['users']);
@@ -65,7 +65,7 @@ class UsersController extends AppController
     public function index($id = null)
     {
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
@@ -74,7 +74,8 @@ class UsersController extends AppController
 
         $choice = $this->Users->ChoicesUsers->Choices->get($id);
         
-        $defaultRolesArray = explode(',', $choice->instructor_default_roles);
+        //$defaultRolesArray = explode(',', $choice->instructor_default_roles);
+        $defaultRolesArray = $this->Users->ChoicesUsers->Choices->splitInstructorDefaultRoles($choice->instructor_default_roles)
         $roles = $this->Users->ChoicesUsers->getAllRoles();
         
         $roleIndexesById = [];
@@ -86,7 +87,7 @@ class UsersController extends AppController
         $choice->instructor_default_roles = $defaultRolesObject;
         
         //Get the sections to show in the menu  bar
-        $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         $currentUserId = $this->Auth->user('id');
         
         $this->set(compact('choice', 'currentUserId', 'roles', 'roleIndexesById', 'sections'));
@@ -108,7 +109,7 @@ class UsersController extends AppController
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
@@ -127,7 +128,7 @@ class UsersController extends AppController
         if(isset($this->request->data['defaultRoles'])) {
             foreach($this->request->data['defaultRoles'] as $role => $default) {
                 if(filter_var($default, FILTER_VALIDATE_BOOLEAN)) {
-                    $defaultRoles[] = $role;
+                    $defaultRoles[] = trim($role);
                 }
             }
         }
@@ -159,7 +160,7 @@ class UsersController extends AppController
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
@@ -219,7 +220,7 @@ class UsersController extends AppController
         //pr($users); exit;
         if ($this->Users->saveMany($users)) {
             //Get the updated users list and return it
-            $users = $this->Users->getForChoice($choiceId, $this->Auth->user('id'));
+            $users = $this->Users->getForChoice($choiceId, $this->request->session()->read('tool'), $this->Auth->user('id'));
         
             $this->set(compact('users'));
             
@@ -245,7 +246,7 @@ class UsersController extends AppController
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -343,7 +344,7 @@ class UsersController extends AppController
         }
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to look up users for this Choice.'));
         }

@@ -28,7 +28,7 @@ class ExtraFieldsController extends AppController
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -152,7 +152,7 @@ class ExtraFieldsController extends AppController
         $extraField = $this->ExtraFields->get($extraFieldId);
 
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($extraField->choice_id, $this->Auth->user('id'));
+        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($extraField->choice_id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to delete extra field for this Choice.'));
         }

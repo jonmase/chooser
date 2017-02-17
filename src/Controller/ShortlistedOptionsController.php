@@ -31,7 +31,7 @@ class ShortlistedOptionsController extends AppController
         $instance = $this->ShortlistedOptions->ChoosingInstances->get($instanceId);
         
         //Make sure this user is allowed to view this choice
-        $isViewer = $this->ShortlistedOptions->ChoicesOptions->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'));
+        $isViewer = $this->ShortlistedOptions->ChoicesOptions->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isViewer)) {
             throw new ForbiddenException(__('Not permitted to add favourites for this Choice.'));
         }

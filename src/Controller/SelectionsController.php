@@ -59,7 +59,7 @@ class SelectionsController extends AppController
         $instance = $this->Selections->ChoosingInstances->get($this->request->data['instance_id']);
         
         //Make sure the user is a viewer for this Choice
-        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'));
+        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isViewer) {
             throw new ForbiddenException(__('Not allowed to view this Choice.'));
         }
@@ -115,7 +115,7 @@ class SelectionsController extends AppController
         $instance = $this->Selections->ChoosingInstances->get($this->request->data['selection']['choosing_instance_id']);
         
         //Make sure the user is a viewer for this Choice
-        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'));
+        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isViewer) {
             throw new ForbiddenException(__('Not allowed to view this Choice.'));
         }
@@ -141,13 +141,13 @@ class SelectionsController extends AppController
     
     public function index($choiceId) {
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
 
         //Get the sections to display in the Dashboard menu
-        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsFromId($choiceId, $this->Auth->user('id'));
+        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
 
         $choice = $this->Selections->ChoosingInstances->Choices->getChoiceWithProcessedExtraFields($choiceId);
 
@@ -156,7 +156,7 @@ class SelectionsController extends AppController
     
     public function getResults($choiceId) {
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
@@ -181,7 +181,7 @@ class SelectionsController extends AppController
         }
         
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'));
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }

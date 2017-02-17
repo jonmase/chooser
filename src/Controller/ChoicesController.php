@@ -30,7 +30,7 @@ class ChoicesController extends AppController
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
             //Redirect users with more than view role to Choice dashboard page
-            if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
+            if($this->Choices->ChoicesUsers->isMoreThanViewer($choiceContext->choice_id, $this->Auth->user('id'), $tool)) {
                 $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }
             //Redirect users with view role to Choice view page
@@ -40,13 +40,14 @@ class ChoicesController extends AppController
         }
         
         //Make sure that the user is Staff or Admin
-        if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
+        if(!$this->Choices->ChoicesUsers->isLTIStaffOrAdmin($tool)) {
             throw new ForbiddenException(__('Not permitted to create Choice link.'));
         }
       
+        //If request is post, process the posted data
         if ($this->request->is('post')) {
             $data = $this->request->data;
-            $data['private'] = (isset($data['indirect_access']) && $data['indirect_access'] === 'on')?false:true;
+            //$data['private'] = (isset($data['indirect_access']) && $data['indirect_access'] === 'on')?false:true;
             
             //Associate the new Choice with the current user, with Admin permissions
             $data['users'] = [
@@ -64,10 +65,12 @@ class ChoicesController extends AppController
                 ]
             ];
 
-            //Save everything
+            //Hydrate the Choice
             $choice = $this->Choices->newEntity($data, [
                 'associated' => ['Users._joinData', 'ChoicesLtiContext']
             ]);
+            
+            //Save everything
             if($this->Choices->save($choice)) {
                 //Add the choice to the session
                 $session->write('choice', $choice->id);
@@ -95,13 +98,25 @@ class ChoicesController extends AppController
     public function dashboard($id = null)
     {
         //Get the sections to show
-        $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        $sections = $this->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($sections)) {
             //User doesn't have permission to view any dashboard sections, so redirect to Choice view
             $this->redirect(['controller' => 'options', 'action' => 'view', $id]);
         }
         
         $choice = $this->Choices->get($id);
+        
+        $tool = $this->request->session()->read('tool');
+        //pr($session->read('tool'));
+        //$tool = $session->read('tool');
+        if($tool->user->isStaff() || $tool->user->isAdmin()) {
+            
+            pr("staff");
+        }
+        else {
+            
+            pr("learner");
+        }
 
         $this->set(compact('choice', 'sections'));
     }
@@ -117,7 +132,7 @@ class ChoicesController extends AppController
      */
     public function form($id = null) {
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -125,7 +140,7 @@ class ChoicesController extends AppController
         $choice = $this->Choices->getChoiceWithProcessedExtraFields($id);
         
         //Get the sections to show in the menu  bar
-        $sections = $this->Choices->getDashboardSectionsFromId($id, $this->Auth->user('id'));
+        $sections = $this->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'));
         
         $this->set(compact('choice', 'sections'));
     }
@@ -146,7 +161,7 @@ class ChoicesController extends AppController
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'));
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -181,7 +196,7 @@ class ChoicesController extends AppController
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
             //Redirect users with more than view role to Choice dashboard page
-            if($this->Choices->ChoicesUsers->hasAdditionalRoles($choiceContext->choice_id, $this->Auth->user('id'))) {
+            if($this->Choices->ChoicesUsers->isMoreThanViewer($choiceContext->choice_id, $this->Auth->user('id'), $tool)) {
                 $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }
             //Redirect users with view role to Choice view page
@@ -191,7 +206,7 @@ class ChoicesController extends AppController
         }
         
         //Make sure that the user is Staff or Admin
-        if(!$tool->user->isStaff() && !$tool->user->isAdmin()) {
+        if(!$this->Choices->ChoicesUsers->isLTIStaffOrAdmin($tool)) {
             throw new ForbiddenException(__('Not permitted to create Choice link.'));
         }
       
@@ -203,10 +218,14 @@ class ChoicesController extends AppController
                 'choice_id' => $this->request->data['choice'],
             ];
 
-            //Save everything
+            //Hydrate the Choice
             $choiceContext = $this->Choices->ChoicesLtiContext->newEntity($data);
 
+            //Save everything
             if($this->Choices->ChoicesLtiContext->save($choiceContext)) {
+                //Add the choice to the session
+                $session->write('choice', $choice->id);
+                
                 //Redirect to the Choice
                 $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
             }

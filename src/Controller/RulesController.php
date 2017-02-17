@@ -22,7 +22,7 @@ class RulesController extends AppController
      //Now do this as part of getting instance
     /*public function get($choiceId = null, $instanceId = null, $action = 'settings') {
         //Make sure the user is an admin for this Choice or the Choice is visible to viewers
-        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             //TODO: if(Choosing Instance is not available to viewers) {
                 throw new ForbiddenException(__('Not permitted to view rules for this Choice.'));
@@ -56,7 +56,7 @@ class RulesController extends AppController
         $this->request->allowMethod(['post']);
 
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -100,7 +100,7 @@ class RulesController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'));
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to delete rules for this Choice.'));
         }

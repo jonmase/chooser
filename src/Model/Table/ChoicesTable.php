@@ -167,6 +167,44 @@ class ChoicesTable extends Table
         
         return $choice;
     }
+    
+    /**
+     * getDefaultRoles method
+     *
+     * @param int $choiceId The DB ID of the choice
+     * @return array An array of the default instructor roles for the Choice
+     */
+    public function getInstructorDefaultRolesFromChoiceId($choiceId = null) {
+        if(!$choiceId) {
+            return [];  //Return empty array so that it doesn't cause error when iterated
+        }
+        
+        $choice = $this->get($choiceId, ['fields' => 'instructor_default_roles']);
+
+        return $this->splitInstructorDefaultRoles($choice->instructor_default_roles);
+    }
+        
+    public function splitInstructorDefaultRoles($instructorDefaultRolesField) {
+        if(!$instructorDefaultRolesField) {
+            return [];  //Return empty array so that it doesn't cause error when iterated
+        }
+        
+        //Explode the default roles string
+        $defaultRolesArray = explode(',', $instructorDefaultRolesField);
+        
+        //Get all the roles
+        $allRoles = $this->ChoicesUsers->getAllRoles();
+        
+        //Add all the roles from the split default roles string that match one of the roles
+        $defaultRoles = [];
+        foreach($allRoles as $role) {
+            if(in_array($role['id'], $defaultRolesArray)) {
+                 $defaultRoles[] = $role['id'];
+            }
+        }
+        
+        return $defaultRoles;
+    }
         
     /**
      * getExtraFieldTypes method
@@ -404,12 +442,12 @@ class ChoicesTable extends Table
         return $userSections;
     }
 
-    public function getDashboardSectionsFromId($choiceId = null, $userId = null) {
-        if(!$choiceId || !$userId) {
+    public function getDashboardSectionsForUser($choiceId = null, $userId = null, $ltiTool = null) {
+        if(!$choiceId || (!$userId && !$ltiTool)) {
             return [];
         }
         
-        $roles = $this->ChoicesUsers->getRoles($choiceId, $userId);
+        $roles = $this->ChoicesUsers->getUserRoles($choiceId, $userId, $ltiTool);
         if(empty($roles)) {
             return [];
         }

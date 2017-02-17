@@ -278,7 +278,21 @@ class UsersTable extends Table
         return $user;
     }
     
-    public function getForChoice($choiceId, $userId) {
+    /**
+     * getForChoice method
+     * Get an array of users for this choice, with roles
+     * 
+     * @param $choiceId ID of the Choice
+     * @param $ltiTool LTI tool object
+     * @param $userId ID of the User
+     * @return array $users Array of Users
+     */
+    public function getForChoice($choiceId = null, $ltiTool = null, $userId = null) {
+        //Must have choiceId, otherwise return empty array
+        if(!$choiceId) {
+            return [];
+        }
+        
         $sortField = 'username';
         $sortDirection = 'ASC';
         $usersQuery = $this->find('all', ['sort' => ['Users.' . $sortField => $sortDirection]]);
@@ -289,8 +303,11 @@ class UsersTable extends Table
 
         foreach($users as $index => &$user) {
             //Get roles from _matchingData, including view role
-            $user->roles = $this->ChoicesUsers->processRoles($user->_matchingData['ChoicesUsers'], true);  
+            //$user->roles = $this->ChoicesUsers->processRoles($user->_matchingData['ChoicesUsers'], true);  
             unset($user->_matchingData);
+            
+            //Get user's roles
+            $user->roles = $this->ChoicesUsers->getUserRoles($choiceId, $user->id, $ltiTool);
             
             if($user->id === $userId) {
                 $user->current = true;
