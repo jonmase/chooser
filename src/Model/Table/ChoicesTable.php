@@ -250,7 +250,7 @@ class ChoicesTable extends Table
                     'label' => 'View/Edit',
                     'menuLabel' => 'Edit Settings',
                     'description' => '',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
                 ];
             }
             else {
@@ -258,7 +258,7 @@ class ChoicesTable extends Table
                     'label' => 'Set Up',
                     'menuLabel' => 'Set Up Choice',
                     'description' => '',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
                 ];
             }
             
@@ -268,7 +268,7 @@ class ChoicesTable extends Table
                     'label' => 'View Archive',
                     'menuLabel' => 'View Archived Settings',
                     'description' => '',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive', $choiceId]),
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive']),
                 ];
             }*/
         }
@@ -281,7 +281,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => Router::url(['controller' => 'users', 'action' => 'index', $choiceId]),
+                        'url' => Router::url(['controller' => 'users', 'action' => 'index']),
                     ]
                 ],
                 'roles' => ['admin'],
@@ -293,7 +293,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => Router::url(['controller' => 'choices', 'action' => 'form', $choiceId]),
+                        'url' => Router::url(['controller' => 'choices', 'action' => 'form']),
                     ]
                 ],
                 'roles' => ['admin'],
@@ -330,7 +330,7 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'Edit',
-                        'url' => Router::url(['controller' => 'profiles', 'action' => 'view', $choiceId]),
+                        'url' => Router::url(['controller' => 'profiles', 'action' => 'view']),
                     ]
                 ],
                 'roles' => ['admin', 'editor'],
@@ -343,20 +343,20 @@ class ChoicesTable extends Table
                     [
                         'label' => 'View All',
                         'menuLabel' => 'View All Options',
-                        'url' => Router::url(['controller' => 'options', 'action' => 'view', $choiceId]),
+                        'url' => Router::url(['controller' => 'options', 'action' => 'view']),
                     ],
                     [
                         'icon' => 'edit',
                         'label' => 'Edit',
                         'menuLabel' => 'Edit Options',
-                        'url' => Router::url(['controller' => 'options', 'action' => 'edit', $choiceId]),
+                        'url' => Router::url(['controller' => 'options', 'action' => 'edit']),
                         'roles' => ['admin', 'editor'],
                     ],
                     /*[
                         'icon' => 'check',
                         'label' => 'Approve',
                         'menuLabel' => 'Approve Options',
-                        'url' => Router::url(['controller' => 'options', 'action' => 'approve', $choiceId]),
+                        'url' => Router::url(['controller' => 'options', 'action' => 'approve']),
                         'roles' => ['admin', 'approver'],
                     ]*/
                 ],
@@ -376,19 +376,19 @@ class ChoicesTable extends Table
                 'actions' => [
                     [
                         'label' => 'View',
-                        'url' => Router::url(['controller' => 'selections', 'action' => 'index', $choiceId]),
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'index']),
                     ],
                     [
                         'icon' => 'file_download',
                         'label' => 'Download by Student',
                         'menuLabel' => 'Download Student Results',
-                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', $choiceId, 'student']),
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', 'student']),
                     ],
                     [
                         'icon' => 'file_download',
                         'label' => 'Download by Option',
                         'menuLabel' => 'Download Option Results',
-                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', $choiceId, 'option']),
+                        'url' => Router::url(['controller' => 'selections', 'action' => 'download', 'option']),
                     ]
                 ],
                 'roles' => ['admin', 'reviewer', 'allocator'],
