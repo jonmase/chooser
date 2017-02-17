@@ -27,25 +27,25 @@ class UsersController extends AppController
     /**
      * get method
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Users or Choices record not found.
      */
-    public function get($choiceId = null)
+    public function get()
     {
-        //$this->viewBuilder()->layout('ajax');
-        //$this->autoRender = false;
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
         }
         
-        $users = $this->Users->getForChoice($choiceId, $this->request->session()->read('tool'), $this->Auth->user('id'));
+        $users = $this->Users->getForChoice($choiceId, $currentUserId, $tool);
         
         $this->set(compact('users'));
         $this->set('_serialize', ['users']);
@@ -57,25 +57,28 @@ class UsersController extends AppController
      * index method
      * Displays, and allows editing of, additional roles for this Choice 
      *
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
-    public function index($id = null)
+    public function index()
     {
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
         
         //pr($this->request->session()->read());
 
-        $choice = $this->Users->ChoicesUsers->Choices->get($id);
+        $choice = $this->Users->ChoicesUsers->Choices->get($choiceId);
         
         //$defaultRolesArray = explode(',', $choice->instructor_default_roles);
-        $defaultRolesArray = $this->Users->ChoicesUsers->Choices->splitInstructorDefaultRoles($choice->instructor_default_roles)
+        $defaultRolesArray = $this->Users->ChoicesUsers->Choices->splitInstructorDefaultRoles($choice->instructor_default_roles);
         $roles = $this->Users->ChoicesUsers->getAllRoles();
         
         $roleIndexesById = [];
@@ -87,8 +90,7 @@ class UsersController extends AppController
         $choice->instructor_default_roles = $defaultRolesObject;
         
         //Get the sections to show in the menu  bar
-        $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
-        $currentUserId = $this->Auth->user('id');
+        $sections = $this->Users->ChoicesUsers->Choices->getDashboardSectionsForUser($choiceId, $currentUserId, $tool);
         
         $this->set(compact('choice', 'currentUserId', 'roles', 'roleIndexesById', 'sections'));
     }
@@ -96,7 +98,6 @@ class UsersController extends AppController
     /**
      * roleSettings method
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Network\Exception\InternalErrorException When save fails.
@@ -108,13 +109,17 @@ class UsersController extends AppController
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
         }
 
-        $choice = $this->Users->ChoicesUsers->Choices->get($id);
+        $choice = $this->Users->ChoicesUsers->Choices->get($choiceId);
         
         $data = [];
         
@@ -147,20 +152,23 @@ class UsersController extends AppController
     /**
      * add method
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Users or Choices record not found.
      */
-    public function add($choiceId = null)
+    public function add()
     {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
@@ -185,8 +193,6 @@ class UsersController extends AppController
                     ]
                 ]);
             }
-            
-            //pr($user);
             
             //If we don't have a user yet, create one from the username in the request data
             if(empty($user)) {
@@ -215,12 +221,10 @@ class UsersController extends AppController
 
         //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
         
-        
-        
         //pr($users); exit;
         if ($this->Users->saveMany($users)) {
             //Get the updated users list and return it
-            $users = $this->Users->getForChoice($choiceId, $this->request->session()->read('tool'), $this->Auth->user('id'));
+            $users = $this->Users->getForChoice($choiceId, $currentUserId, $tool);
         
             $this->set(compact('users'));
             
@@ -234,24 +238,27 @@ class UsersController extends AppController
     /**
      * edit method
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      */
-    public function edit($id = null)
+    public function edit()
     {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
-        $choice = $this->Users->Choices->get($id); //Get the choice
+        $choice = $this->Users->Choices->get($choiceId); //Get the choice
         //$choice->_joinData = $this->Users->ChoicesUsers->newEntity();
         
         //Set the roles
@@ -338,13 +345,17 @@ class UsersController extends AppController
      * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When user not found.
      */
-    public function findUser($choiceId = null, $searchValue = null) {
+    public function findUser($searchValue = null) {
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         if(!$choiceId || !$searchValue) {
             throw new InternalErrorException(__('Problem with finding user - insufficient data'));
         }
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to look up users for this Choice.'));
         }

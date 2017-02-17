@@ -283,11 +283,11 @@ class UsersTable extends Table
      * Get an array of users for this choice, with roles
      * 
      * @param $choiceId ID of the Choice
-     * @param $ltiTool LTI tool object
      * @param $userId ID of the User
+     * @param $ltiTool LTI tool object
      * @return array $users Array of Users
      */
-    public function getForChoice($choiceId = null, $ltiTool = null, $userId = null) {
+    public function getForChoice($choiceId = null, $userId = null, $ltiTool = null) {
         //Must have choiceId, otherwise return empty array
         if(!$choiceId) {
             return [];

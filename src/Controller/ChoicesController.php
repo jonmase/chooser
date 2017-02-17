@@ -97,16 +97,16 @@ class ChoicesController extends AppController
      * Dashboard method
      * Displays Choice management options that are available to this user
      *
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function dashboard()
     {
         $choiceId = $this->SessionData->getChoiceId();
+        $userId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        if(!$this->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $this->Auth->user('id'), $tool)) {
+        if(!$this->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $userId, $tool)) {
             //If user is only viewer, redirect to the view page
             $this->redirect(['controller' => 'options', 'action' => 'view']);
         }
@@ -115,7 +115,7 @@ class ChoicesController extends AppController
         $choice = $this->Choices->get($choiceId);
         
         //Get the sections to show
-        $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'), $tool);
+        $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $userId, $tool);
 
         $this->set(compact('choice', 'sections'));
     }
@@ -124,22 +124,25 @@ class ChoicesController extends AppController
      * form method
      * Create the options form for the Choice
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
-    public function form($id = null) {
+    public function form() {
+        $choiceId = $this->SessionData->getChoiceId();
+        $userId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
-        $choice = $this->Choices->getChoiceWithProcessedExtraFields($id);
+        $choice = $this->Choices->getChoiceWithProcessedExtraFields($choiceId);
         
         //Get the sections to show in the menu  bar
-        $sections = $this->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'));
+        $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $userId);
         
         $this->set(compact('choice', 'sections'));
     }
@@ -155,17 +158,21 @@ class ChoicesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
-    public function formDefaults($id = null) {
+    public function formDefaults() {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        $choiceId = $this->SessionData->getChoiceId();
+        $userId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
-        $choice = $this->Choices->get($id);
+        $choice = $this->Choices->get($choiceId);
         
         foreach($this->request->data as $field => $value) {
             $choice['use_' . $field] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
