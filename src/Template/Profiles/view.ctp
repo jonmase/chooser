@@ -3,7 +3,7 @@
 <?= $this->Html->scriptStart(['block' => true]); ?>
     var data = {};
     data.choice = <?= json_encode($choice); ?>;
-    data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard', $choice->id]); ?>";
+    data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard']); ?>";
     data.profile = <?= json_encode($profile); ?>;
     data.sections = <?= json_encode($sections); ?>;
 <?= $this->Html->scriptEnd(); ?>

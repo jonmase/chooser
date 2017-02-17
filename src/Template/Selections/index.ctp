@@ -6,7 +6,7 @@
     data.choice = <?= json_encode($choice); ?>;
     data.title = "Dashboard - Results";
     <?php if(!empty($sections)): ?>
-        data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard', $choice->id]); ?>";
+        data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard']); ?>";
         data.sections = <?= json_encode($sections); ?>;
     <?php endif; ?>
 <?= $this->Html->scriptEnd(); ?>

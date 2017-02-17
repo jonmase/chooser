@@ -13,6 +13,22 @@ use Cake\Network\Exception\InternalErrorException;
 class ChoicesController extends AppController
 {
     /**
+     * Initialization hook method.
+     *
+     * Use this method to add common initialization code like loading components.
+     *
+     * e.g. `$this->loadComponent('Security');`
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->loadComponent('Redirection');
+    }
+
+    /**
      * Add method
      * Displays the Choices available to the current user (i.e. those they have admin rights over)
      * User can choose an available Choice (which then uses link method), create a new one
@@ -23,20 +39,11 @@ class ChoicesController extends AppController
     public function add()
     {
         // Get the tool from the session
-        $session = $this->request->session();
-        $tool = $session->read('tool');
-        //pr($tool);
+        $tool = $this->SessionData->getLtiTool();
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            //Redirect users with more than view role to Choice dashboard page
-            if($this->Choices->ChoicesUsers->isMoreThanViewer($choiceContext->choice_id, $this->Auth->user('id'), $tool)) {
-                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
-            }
-            //Redirect users with view role to Choice view page
-            else {
-                $this->redirect(['controller' => 'options', 'action' => 'view', $choiceContext->choice_id]);
-            }
+            $this->Redirection->goToDashboardOrView($choiceContext->choice_id, $tool);
         }
         
         //Make sure that the user is Staff or Admin
@@ -73,17 +80,16 @@ class ChoicesController extends AppController
             //Save everything
             if($this->Choices->save($choice)) {
                 //Add the choice to the session
-                $session->write('choice', $choice->id);
+                $session->write('choiceId', $choice->id);
                 
                 //Redirect to the Choice dashboard page
-                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choice->id]);
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
             }
             $this->Flash->error('The new Choice could not be saved. Please try again', ['key' => 'new-choice-error']);
         }
         
         //Get the existing Choices that this user has Admin rights on
-        $userId = $this->Auth->user('id');
-        $choices = $this->Choices->getChoices($userId, 'admin');
+        $choices = $this->Choices->getChoices($this->Auth->user('id'), 'admin');
         $this->set(compact('choices'));
     }
 
@@ -95,28 +101,21 @@ class ChoicesController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
-    public function dashboard($id = null)
+    public function dashboard()
     {
+        $choiceId = $this->SessionData->getChoiceId();
+        $tool = $this->SessionData->getLtiTool();
+        
+        if(!$this->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $this->Auth->user('id'), $tool)) {
+            //If user is only viewer, redirect to the view page
+            $this->redirect(['controller' => 'options', 'action' => 'view']);
+        }
+        
+        //Get the choice
+        $choice = $this->Choices->get($choiceId);
+        
         //Get the sections to show
-        $sections = $this->Choices->getDashboardSectionsForUser($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
-        if(empty($sections)) {
-            //User doesn't have permission to view any dashboard sections, so redirect to Choice view
-            $this->redirect(['controller' => 'options', 'action' => 'view', $id]);
-        }
-        
-        $choice = $this->Choices->get($id);
-        
-        $tool = $this->request->session()->read('tool');
-        //pr($session->read('tool'));
-        //$tool = $session->read('tool');
-        if($tool->user->isStaff() || $tool->user->isAdmin()) {
-            
-            pr("staff");
-        }
-        else {
-            
-            pr("learner");
-        }
+        $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'), $tool);
 
         $this->set(compact('choice', 'sections'));
     }
@@ -190,19 +189,11 @@ class ChoicesController extends AppController
     public function link()
     {
         // Get the tool from the session
-        $session = $this->request->session();
-        $tool = $session->read('tool');
+        $tool = $this->SessionData->getLtiTool();
         
         //Check that there is not already a Choice associated with this context
         if($choiceContext = $this->Choices->ChoicesLtiContext->getContextChoice($tool)) {
-            //Redirect users with more than view role to Choice dashboard page
-            if($this->Choices->ChoicesUsers->isMoreThanViewer($choiceContext->choice_id, $this->Auth->user('id'), $tool)) {
-                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
-            }
-            //Redirect users with view role to Choice view page
-            else {
-                $this->redirect(['controller' => 'options', 'action' => 'view', $choiceContext->choice_id]);
-            }
+            $this->Redirection->goToDashboardOrView($choiceContext->choice_id, $tool);
         }
         
         //Make sure that the user is Staff or Admin
@@ -224,10 +215,10 @@ class ChoicesController extends AppController
             //Save everything
             if($this->Choices->ChoicesLtiContext->save($choiceContext)) {
                 //Add the choice to the session
-                $session->write('choice', $choice->id);
+                $session->write('choiceId', $choice->id);
                 
                 //Redirect to the Choice
-                $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceContext->choice_id]);
+                $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
             }
             $this->Flash->error('The Choice could not be linked. Please try again', ['key' => 'link-choice-error']);
         }

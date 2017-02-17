@@ -15,6 +15,22 @@ use Cake\Event\Event;
  */
 class LtiConsumerController extends AppController
 {
+    /**
+     * Initialization hook method.
+     *
+     * Use this method to add common initialization code like loading components.
+     *
+     * e.g. `$this->loadComponent('Security');`
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->loadComponent('Redirection');
+    }
+
 	public function beforeFilter(Event $event) {
         parent::beforeFilter($event);
 		$this->Auth->allow('launch');
@@ -79,16 +95,9 @@ class LtiConsumerController extends AppController
                     //If there is a Choice linked with this Context, make sure the user is associated with it, then go to it
                     if(!empty($choiceContext)) {
                         $choiceId = $choiceContext->choice_id;
-                        $session->write('choice', $choiceId);   //Write the choice ID into the session
+                        $session->write('choiceId', $choiceId);   //Write the choice ID into the session
                         
-                        if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $this->Auth->user('id'), $tool)) {
-                            //If user has additional roles, redirect to the Choice dashboard page
-                            $this->redirect(['controller' => 'choices', 'action' => 'dashboard', $choiceId]);
-                        }
-                        else {
-                            //Otherwise, just redirect to the view page
-                            $this->redirect(['controller' => 'options', 'action' => 'view', $choiceId]);
-                        }
+                        $this->Redirection->goToDashboardOrView($choiceId, $tool);
                     }
                     //If there is no linked Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/link a Choice
                     else if($staffOrAdmin ) {

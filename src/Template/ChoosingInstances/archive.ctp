@@ -21,7 +21,7 @@
     data.options = <?= json_encode($options); ?>;
     data.optionIds = <?= json_encode($optionIds); ?>;
     <?php if($hasAdditionalRoles): ?>
-        data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard', $choice->id]); ?>";
+        data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard']); ?>";
         data.sections = <?= json_encode($sections); ?>;
     <?php endif; ?>
 <?= $this->Html->scriptEnd(); ?>
