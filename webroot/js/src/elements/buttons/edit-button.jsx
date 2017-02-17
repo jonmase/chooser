@@ -7,6 +7,8 @@ var EditButton = React.createClass({
     },
     
     render: function() {
+        var disabled = (this.props.disabled)?true:false;
+        
         var tooltip = this.props.tooltip
         if(typeof(tooltip) === "undefined") {
             tooltip = "Edit";
@@ -14,6 +16,7 @@ var EditButton = React.createClass({
         
         return (
             <IconButton
+                disabled={disabled}
                 iconClassName="material-icons"
                 iconStyle={this.props.iconStyle}
                 onTouchTap={this.handleEdit}

@@ -77,6 +77,7 @@ var UsersTable = React.createClass({
                                 titleStyle={styles.sortFilterTitles}
                             />&nbsp;
                             <EditButton
+                                disabled={this.props.usersSelected.length===0?true:false}
                                 handleEdit={this.props.setButtonClickHandler}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
