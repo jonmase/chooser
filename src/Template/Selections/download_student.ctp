@@ -129,6 +129,11 @@ if($choosingInstance['comments_per_option']): $optionColspan++; endif;
                         endif;
                     endif; ?>
                 </td>
+                <?php if($choosingInstance['comments_per_option']): ?> 
+                    <td>
+                        <?php echo $selection['options_selected_by_id'][$option['id']]['comments']; ?>
+                    </td>
+                <?php endif; ?>
             <?php endforeach; ?>
         </tr>
     <?php endforeach; ?>
