@@ -15,7 +15,7 @@ import SortWrapper from '../elements/wrappers/sort.jsx';
 
 var RolesContainer = React.createClass({
     loadUsersFromServer: function() {
-        var url = '/chooser/users/get/' + this.props.choice.id + '.json';
+        var url = 'users/get/' + this.props.choice.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -103,7 +103,7 @@ var RolesContainer = React.createClass({
         console.log("Saving User(s) for Choice " + this.props.choice.id + ": ", users);
 
         //Save the settings
-        var url = '/chooser/users/add/' + this.props.choice.id;
+        var url = 'users/add/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -271,7 +271,7 @@ var RolesContainer = React.createClass({
         console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
         
         //Save the settings
-        var url = '/chooser/users/role_settings/' + this.props.choice.id;
+        var url = 'users/role_settings/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
