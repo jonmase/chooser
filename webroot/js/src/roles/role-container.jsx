@@ -395,6 +395,13 @@ var RolesContainer = React.createClass({
             title={<AppTitle subtitle={this.props.choice.name} />}
         />;
 
+        var snackbar = <Snackbar
+                            open={this.state.snackbar.open}
+                            message={this.state.snackbar.message}
+                            autoHideDuration={3000}
+                            onRequestClose={this.handleSnackbarClose}
+                        />;
+        
         if(this.state.action === 'index') {
             return (
                 <Container topbar={topbar} title="Dashboard - User Permissions">
@@ -425,12 +432,7 @@ var RolesContainer = React.createClass({
                             usersBeingEdited={this.state.usersBeingEdited}
                             usersSelected={this.state.usersSelected}
                         />
-                        <Snackbar
-                            open={this.state.snackbar.open}
-                            message={this.state.snackbar.message}
-                            autoHideDuration={3000}
-                            onRequestClose={this.handleSnackbarClose}
-                        />
+                        {snackbar}
                     </div>
                     <DeleteDialog
                         handleCancel={this.handleDeleteDialogClose}
@@ -444,19 +446,22 @@ var RolesContainer = React.createClass({
         }
         else {
             return (
-                <SetUser
-                    choiceId={this.props.choice.id} 
-                    currentUserId={this.props.currentUserId} 
-                    dashboardUrl={this.props.dashboardUrl} 
-                    defaultRoles={this.state.defaultRoles}
-                    handlers={setUserHandlers}
-                    notify={this.props.notify}
-                    roles={this.props.roles} 
-                    sections={this.props.sections} 
-                    users={this.state.users}
-                    usersBeingEdited={this.state.usersBeingEdited}
-                    userIndexesById={this.state.userIndexesById}
-                />
+                <div>
+                    <SetUser
+                        choiceId={this.props.choice.id} 
+                        currentUserId={this.props.currentUserId} 
+                        dashboardUrl={this.props.dashboardUrl} 
+                        defaultRoles={this.state.defaultRoles}
+                        handlers={setUserHandlers}
+                        notify={this.props.notify}
+                        roles={this.props.roles} 
+                        sections={this.props.sections} 
+                        snackbar={snackbar}
+                        users={this.state.users}
+                        usersBeingEdited={this.state.usersBeingEdited}
+                        userIndexesById={this.state.userIndexesById}
+                    />
+                </div>
             );
         }
     }

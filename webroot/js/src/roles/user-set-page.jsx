@@ -91,6 +91,11 @@ var AddUser = React.createClass({
                     usersBeingEdited: [userIndex],
                 });
             }
+            else {
+                this.setState({
+                    action: 'add',
+                });
+            }
         }
         
         
@@ -367,7 +372,7 @@ var AddUser = React.createClass({
                         name="notify"
                     />*/}
                 </Formsy.Form>
-
+                {this.props.snackbar}
             </Container>
         )
         

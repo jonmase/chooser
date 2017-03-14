@@ -182,9 +182,7 @@ class UsersController extends AppController
             }
         }
         if(empty($rolesToSave)) {
-            //Delete the selected users
-            pr("Delete users");
-            pr($this->request->data['users']);
+            throw new InternalErrorException(__('No additional roles set'));
         }
         else {
             $users = [];
