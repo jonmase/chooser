@@ -33,6 +33,7 @@ var AddUser = React.createClass({
         return {
             action: action,
             canSubmit: false,
+            editingCurrentUser: false,
             findUserMessage: blankFindUserMessage,
             foundUser: null,
             originalAction: action,
@@ -62,10 +63,18 @@ var AddUser = React.createClass({
         var currentUser = this.props.users[this.props.userIndexesById[this.props.currentUserId]];
         var userIsSelf = (currentUser.username === searchValue || currentUser.email === searchValue);
         if(userIsSelf) {
-            this.disableSubmitButton();
+            this.setState({
+                editingCurrentUser: true,
+                rolesChecked: {admin: true},
+            });
             var findUserMessage = 'This is you! You are an Administrator for this Choice, and you can\'t change your own permissions.';
+            
         }
         else {
+            this.setState({
+                editingCurrentUser: false,
+            });
+        
             //Check whether the user is already associated
             var userId;
             var userIsAlreadyAssociated = this.props.users.some(function(user) {
@@ -79,7 +88,7 @@ var AddUser = React.createClass({
             if(userIsAlreadyAssociated) {
                 var findUserMessage = 'This user is already associated with this Choice. You can edit their permissions below.';
             
-                //TODO: Update the add/edit form with this user's permissions, so that they can be edited
+                //Update the add/edit form with this user's permissions, so that they can be edited
                 //Use the user ID obtained above
                 //var user = this.props.users[this.props.userIndexesById[userId]];
                 
@@ -296,7 +305,7 @@ var AddUser = React.createClass({
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
-                disabled={!this.state.canSubmit || (this.state.action === 'add' && this.getRolesCheckedCount() == 0)}
+                disabled={!this.state.canSubmit || this.state.editingCurrentUser || (this.state.action === 'add' && this.getRolesCheckedCount() == 0)}
                 label={(this.state.originalAction === 'add' && !this.state.userChecked)?"Check User & Save":"Save"}
                 onTouchTap={this.handleSaveClick}
                 //primary={true}
@@ -358,7 +367,7 @@ var AddUser = React.createClass({
                             label={this.getPermissionsLabel()}
                             instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
-                        <RoleCheckboxes nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={rolesWithoutViewer} />
+                        <RoleCheckboxes disableAll={this.state.editingCurrentUser} nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={rolesWithoutViewer} />
                         {(this.getRolesCheckedCount() == 0) &&
                             <p>
                                 <HighlightedText value={this.getNoRolesCheckedMessage()} />
