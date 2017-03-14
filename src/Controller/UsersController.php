@@ -173,78 +173,93 @@ class UsersController extends AppController
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
         }
 
-        $users = [];
-        foreach($this->request->data['users'] as $userData) {
-            //If user ID is not set in the data (it can be set to false), User has not yet been searched for
-            if(!isset($userData['id'])) {
-                $user = $this->Users->findByUsernameThenEmail($userData['username']);
-                $userData['id'] = $user['id'];
+        //Make sure some roles have been selected, and otherwise delete the users
+        $rolesToSave = [];
+        //Use the first user - all user will have the same roles
+        foreach($this->request->data['users'][0]['roles'] as $role => $value) {
+            if(filter_var($value, FILTER_VALIDATE_BOOLEAN)) {
+                $rolesToSave[] = $role;
             }
-            
-            //If user has been found, get that user, with ChoicesUsers record for this choice, if it exists
-            if($userData['id']) {
-                $user = $this->Users->get($userData['id'], [
-                    'contain' => [
-                        'Choices' => function ($q) use ($choiceId) {
-                            return $q
-                                ->select(['id'])
-                                ->where(['Choices.id' => $choiceId]);
-                        }
-                    ]
-                ]);
-            }
-            
-            //If we don't have a user yet, create one from the username in the request data
-            if(empty($user)) {
-                $user = $this->Users->newEntity();
-                $user->username = $userData['username'];
-            }
-            
-            //If user->choices is empty, user is not already associated with this choice
-            if(empty($user->choices)) {
-                $choice = $this->Users->Choices->get($choiceId, ['fields' => ['id']]);
-                $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
-            }
-            else {
-                $choice = $user->choices[0];
-            }
-            
-            //Set the roles values
-            //Start with blank values for each role
-            $nonViewRoles = $this->Users->ChoicesUsers->getNonViewRoles();
-            foreach($nonViewRoles as $role) {
-                $choice->_joinData->$role['id'] = false;
-            }
-            
-            //If user is admin, set only admin to true
-            if(filter_var($userData['roles']['admin'], FILTER_VALIDATE_BOOLEAN)) {
-                $choice->_joinData->admin = true;
-            }
-            //Otherwise, set each of the selected roles to true
-            else {
-                foreach($userData['roles'] as $role => $value) {
-                    $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-                }
-            }
-            
-            $user->choices = [$choice];
-
-            $users[] = $user;
         }
-
-        //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
-        
-        //pr($users); exit;
-        if ($this->Users->saveMany($users)) {
-            //Get the updated users list and return it
-            $users = $this->Users->getForChoice($choiceId, $currentUserId);
-            //pr($users); exit;
-            $this->set(compact('users'));
-            
-            $this->set('response', 'Additional permissions set');
-        } 
+        if(empty($rolesToSave)) {
+            //Delete the selected users
+            pr("Delete users");
+            pr($this->request->data['users']);
+        }
         else {
-            throw new InternalErrorException(__('Problem with adding user'));
+            $users = [];
+            foreach($this->request->data['users'] as $userData) {
+                //If user ID is not set in the data (it can be set to false), User has not yet been searched for
+                if(!isset($userData['id'])) {
+                    $user = $this->Users->findByUsernameThenEmail($userData['username']);
+                    $userData['id'] = $user['id'];
+                }
+                
+                //If user has been found, get that user, with ChoicesUsers record for this choice, if it exists
+                if($userData['id']) {
+                    $user = $this->Users->get($userData['id'], [
+                        'contain' => [
+                            'Choices' => function ($q) use ($choiceId) {
+                                return $q
+                                    ->select(['id'])
+                                    ->where(['Choices.id' => $choiceId]);
+                            }
+                        ]
+                    ]);
+                }
+                
+                //If we don't have a user yet, create one from the username in the request data
+                if(empty($user)) {
+                    $user = $this->Users->newEntity();
+                    $user->username = $userData['username'];
+                }
+                
+                //If user->choices is empty, user is not already associated with this choice
+                if(empty($user->choices)) {
+                    $choice = $this->Users->Choices->get($choiceId, ['fields' => ['id']]);
+                    $choice->_joinData = $this->Users->ChoicesUsers->newEntity();
+                }
+                else {
+                    $choice = $user->choices[0];
+                }
+                
+                //Set the roles values
+                //Start with blank values for each role
+                $nonViewRoles = $this->Users->ChoicesUsers->getNonViewRoles();
+                foreach($nonViewRoles as $role) {
+                    $choice->_joinData->$role['id'] = false;
+                }
+                
+                //If user is admin, set only admin to true
+                if(array_search('admin', $rolesToSave) !== false) {
+                    $choice->_joinData->admin = true;
+                }
+                //Otherwise, set each of the selected roles to true
+                else {
+                    foreach($userData['roles'] as $role => $value) {
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                        $choice->_joinData->$role = $value;
+                    }
+                }
+                
+                $user->choices = [$choice];
+                $users[] = $user;
+            }
+
+            //$user->_joinData->notify_additional_permissions = $this->request->data['notify'];
+            
+            //pr($users); exit;
+            if ($this->Users->saveMany($users)) {
+                //Get the updated users list and return it
+                $users = $this->Users->getForChoice($choiceId, $currentUserId);
+                //pr($users); exit;
+                $this->set(compact('users'));
+                
+                $this->set('response', 'Additional permissions set');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with adding user'));
+            }
         }
     }
     
