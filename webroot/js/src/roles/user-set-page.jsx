@@ -1,4 +1,5 @@
 import React from 'react';
+import update from 'react-addons-update';
 
 import Formsy from 'formsy-react';
 import FormsyText from 'formsy-material-ui/lib/FormsyText';
@@ -20,12 +21,13 @@ import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
 
 var blankFindUserMessage = '\u00A0';
+var roleCheckboxesNameBase = 'roles';
 
 var AddUser = React.createClass({
     getInitialState: function () {
         var action = this.props.usersBeingEdited.length > 0?'edit':'add';
         
-        var roleStates = this.getRoleStates(action, this.props.usersBeingEdited[0]);
+        var rolesChecked = this.getRolesChecked(action, this.props.usersBeingEdited[0]);
 
         return {
             action: action,
@@ -33,7 +35,7 @@ var AddUser = React.createClass({
             findUserMessage: blankFindUserMessage,
             foundUser: null,
             originalAction: action,
-            roleStates: roleStates,
+            rolesChecked: rolesChecked,
             userChecked: false,
             usersBeingEdited: this.props.usersBeingEdited,
         };
@@ -81,10 +83,10 @@ var AddUser = React.createClass({
                 //var user = this.props.users[this.props.userIndexesById[userId]];
                 
                 var userIndex = this.props.userIndexesById[userId];
-                var roleStates = this.getRoleStates('edit', userIndex);
+                var rolesChecked = this.getRolesChecked('edit', userIndex);
                 this.setState({
                     action: 'edit',
-                    roleStates: roleStates,
+                    rolesChecked: rolesChecked,
                     usersBeingEdited: [userIndex],
                 });
             }
@@ -142,6 +144,27 @@ var AddUser = React.createClass({
         }
     },
     
+    handleRoleChange: function(event, checked) {
+        var role = event.target.name.substr(roleCheckboxesNameBase.length + 1);
+        
+        var rolesChecked = this.state.rolesChecked;
+        var newRolesChecked = update(rolesChecked, {
+            [role]: {$set: checked},
+        });
+        this.setState({rolesChecked: newRolesChecked});
+        
+        /*if(role === 'admin') {
+            if(checked) {
+            
+            }
+        }*/
+    
+        /*console.log('role changed');
+        console.log(event.target.name);
+        console.log(event.target.checked);
+        console.log(checked);*/
+    },
+    
     handleSaveClick: function() {
         //Make sure user has been checked
         if(this.state.usersBeingEdited.length === 0 && !this.state.userChecked) {
@@ -192,7 +215,7 @@ var AddUser = React.createClass({
         this.setState({
             findUserMessage: blankFindUserMessage,
             foundUser: null,
-            roleStates: this.props.defaultRoles,
+            rolesChecked: this.props.defaultRoles,
             usersBeingEdited: [],
             userChecked: false,
         });
@@ -214,18 +237,18 @@ var AddUser = React.createClass({
         return "Which additional permissions should " + ((this.state.usersBeingEdited.length > 1)?"these users":"this user") + " have?";
     },
     
-    getRoleStates: function(action, userIndex) {
-        var roleStates = {};
+    getRolesChecked: function(action, userIndex) {
+        var rolesChecked = {};
         if(action === 'add' || this.props.usersBeingEdited.length > 1) {    //Use props.usersBeingEdited, as call this function before initial state is set, and state.usersBeingEdited will only be more than 1 if props.usersBeingEdited was, as state.usersBeingEdited is only updated if a single already-associated user is 'checked' on the user add page
-            roleStates = this.props.defaultRoles;
+            rolesChecked = this.props.defaultRoles;
         }
         else {
             var user = this.props.users[userIndex];
             user.roles.map(function(role) {
-                roleStates[role] = true;
+                rolesChecked[role] = true;
             });
         }
-        return roleStates;
+        return rolesChecked;
     },
    
     getUserSearchValueFromInput: function() {
@@ -244,7 +267,7 @@ var AddUser = React.createClass({
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
                 disabled={!this.state.canSubmit}
-                label={(this.state.userChecked)?"Save":"Check User & Save"}
+                label={(this.state.originalAction === 'add' && !this.state.userChecked)?"Check User & Save":"Save"}
                 onTouchTap={this.handleSaveClick}
                 //primary={true}
                 style={{marginTop: '6px'}}
@@ -316,7 +339,7 @@ var AddUser = React.createClass({
                             label={this.getPermissionsLabel()}
                             instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
-                        <RoleCheckboxes nameBase="roles" roleStates={this.state.roleStates} roles={rolesWithoutViewer} />
+                        <RoleCheckboxes nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={rolesWithoutViewer} />
                     </div>
                     {/*<FormsyToggle
                         label={this.getNotificationToggleLabel()}

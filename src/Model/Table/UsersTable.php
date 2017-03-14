@@ -284,10 +284,9 @@ class UsersTable extends Table
      * 
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
-     * @param $ltiTool LTI tool object
      * @return array $users Array of Users
      */
-    public function getForChoice($choiceId = null, $userId = null, $ltiTool = null) {
+    public function getForChoice($choiceId = null, $userId = null) {
         //Must have choiceId, otherwise return empty array
         if(!$choiceId) {
             return [];
@@ -307,7 +306,7 @@ class UsersTable extends Table
             unset($user->_matchingData);
             
             //Get user's roles
-            $user->roles = $this->ChoicesUsers->getUserRoles($choiceId, $user->id, $ltiTool);
+            $user->roles = $this->ChoicesUsers->getUserAdditionalRoles($choiceId, $user->id);
             
             if($user->id === $userId) {
                 $user->current = true;

@@ -45,7 +45,7 @@ class UsersController extends AppController
             throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
         }
         
-        $users = $this->Users->getForChoice($choiceId, $currentUserId, $tool);
+        $users = $this->Users->getForChoice($choiceId, $currentUserId);
         
         $this->set(compact('users'));
         $this->set('_serialize', ['users']);
@@ -210,8 +210,21 @@ class UsersController extends AppController
             }
             
             //Set the roles values
-            foreach($userData['roles'] as $role => $value) {
-                $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            //Start with blank values for each role
+            $nonViewRoles = $this->Users->ChoicesUsers->getNonViewRoles();
+            foreach($nonViewRoles as $role) {
+                $choice->_joinData->$role['id'] = false;
+            }
+            
+            //If user is admin, set only admin to true
+            if(filter_var($userData['roles']['admin'], FILTER_VALIDATE_BOOLEAN)) {
+                $choice->_joinData->admin = true;
+            }
+            //Otherwise, set each of the selected roles to true
+            else {
+                foreach($userData['roles'] as $role => $value) {
+                    $choice->_joinData->$role = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                }
             }
             
             $user->choices = [$choice];
@@ -224,8 +237,8 @@ class UsersController extends AppController
         //pr($users); exit;
         if ($this->Users->saveMany($users)) {
             //Get the updated users list and return it
-            $users = $this->Users->getForChoice($choiceId, $currentUserId, $tool);
-        
+            $users = $this->Users->getForChoice($choiceId, $currentUserId);
+            //pr($users); exit;
             $this->set(compact('users'));
             
             $this->set('response', 'Additional permissions set');
@@ -243,7 +256,7 @@ class UsersController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Choice record not found.
      */
-    public function edit()
+    /*public function edit()
     {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
@@ -333,7 +346,7 @@ class UsersController extends AppController
         //Process the roles that have been given the users and pass them to the view
         $roles = $this->Users->ChoicesUsers->processRoles($choice->_joinData, true);
         $this->set('roles', $roles);
-    }
+    }*/
 
     /**
      * findUser method

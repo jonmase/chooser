@@ -201,6 +201,8 @@ class ChoicesUsersTable extends Table
         
         //Get additional roles from ChoicesUsers Table
         $additionalRoles = $this->getUserAdditionalRoles($choiceId, $userId);
+        
+        //Add the additional roles to the roles array
         foreach($additionalRoles as $additionalRole) {
             if(!in_array($additionalRole, $roles)) {
                 $roles[] = $additionalRole;
@@ -249,7 +251,7 @@ class ChoicesUsersTable extends Table
      *
      * @param $choiceId ID of the Choice
      * @param $userId ID of the User
-     * @return array $roles array of the User's roles with full role info (or empty array if not associated)
+     * @return array $roles array of the User's role ids (or empty array if not associated)
      */
     public function getUserAdditionalRoles($choiceId = null, $userId = null) {
         //If either choiceId or userId isn't set, return empty array (i.e. no role)
