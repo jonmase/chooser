@@ -119,7 +119,7 @@ var AddUser = React.createClass({
         
         //If user is not already associated with this choice, look them up
         if(!this.checkUserAssociation(searchValue)) {
-            var url = 'users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
+            var url = 'users/find_user/' + searchValue + '.json';
             $.ajax({
                 url: url,
                 dataType: 'json',

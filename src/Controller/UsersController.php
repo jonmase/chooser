@@ -423,7 +423,7 @@ class UsersController extends AppController
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to look up users for this Choice.'));
         }
-
+        
         $user = $this->Users->findByUsernameThenEmail($searchValue);
         
         if(empty($user)) {
@@ -438,13 +438,13 @@ class UsersController extends AppController
                 $message .= $user->username;
             }
             else {
-                $message += $user->fullname;
-                $message += ' (';
-                $message += $user->username;
+                $message .= $user->fullname;
+                $message .= ' (';
+                $message .= $user->username;
                 if($user->email !== null && $user->username !== $user->email) {
-                    $message += ', ' + $user->email;
+                    $message .= ', ' + $user->email;
                 }
-                $message += ')';
+                $message .= ')';
             }
         }
         
