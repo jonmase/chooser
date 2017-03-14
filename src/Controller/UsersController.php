@@ -104,7 +104,7 @@ class UsersController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
-    public function roleSettings($id = null)
+    public function roleSettings()
     {
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
@@ -260,6 +260,42 @@ class UsersController extends AppController
             else {
                 throw new InternalErrorException(__('Problem with adding user'));
             }
+        }
+    }
+    
+    /**
+     * delete method
+     * 
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     */
+    public function delete()
+    {
+        $this->request->allowMethod(['post']);
+        $this->viewBuilder()->layout('ajax');
+        
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        //Make sure the user is an admin for this Choice
+        $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to remove user permissions for this Choice.'));
+        }
+
+        //Delete all the users given by ID in $this->request->data['users']
+        if ($this->Users->ChoicesUsers->deleteAll(['user_id IN' => $this->request->data['users']])) {
+            //Get the updated users list and return it
+            $users = $this->Users->getForChoice($choiceId, $currentUserId);
+            $this->set(compact('users'));
+            
+            $this->set('response', 'Permissions removed');
+        } 
+        else {
+            throw new InternalErrorException(__('Problem with removing user permissions'));
         }
     }
     

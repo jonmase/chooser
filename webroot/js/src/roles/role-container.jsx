@@ -16,7 +16,7 @@ import SortWrapper from '../elements/wrappers/sort.jsx';
 
 var RolesContainer = React.createClass({
     loadUsersFromServer: function() {
-        var url = 'users/get/' + this.props.choice.id + '.json';
+        var url = 'users/get.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -89,10 +89,21 @@ var RolesContainer = React.createClass({
     handleDelete: function(users) {
         console.log("delete users");
         
-        this.setState({
+        var url = 'users/delete';
+        
+        var userIds = [];
+        this.state.usersBeingDeleted.map(function(userIndex) {
+            userIds.push(this.state.users[userIndex].id);
+        }, this);
+        var data = {users: userIds};
+        var successStateChanges = {
             deleteDialogOpen: false,
             usersBeingDeleted: [],
-        });
+            usersSelected: [],
+        };
+        var errorMessage = "Error removing user permissions: ";
+        
+        this.sendUserRequest(url, data, successStateChanges, errorMessage);
     },
 
     handleDeleteDialogClose: function(users) {
@@ -123,20 +134,13 @@ var RolesContainer = React.createClass({
             usersBeingEdited: [],
         });
     },
-
-    //Submit the set user form
-    handleSetUserSubmit: function (users) {
-        console.log("Saving User(s) for Choice " + this.props.choice.id + ": ", users);
-
-        //Save the settings
-        var url = 'users/add/' + this.props.choice.id;
+    
+    sendUserRequest: function(url, data, successStateChanges, errorMessage) {
         $.ajax({
             url: url,
             dataType: 'json',
             type: 'POST',
-            data: {
-                users: users,
-            },
+            data: data,
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
@@ -155,13 +159,13 @@ var RolesContainer = React.createClass({
                     filteredUserIndexes.push(index);
                 });
                 
-                this.setState({
-                    action: 'index',
-                    filteredUserIndexes: filteredUserIndexes,
-                    snackbar: snackbar,
-                    users: sortedUsers,
-                    userIndexesById: this.props.updateIndexesByIdHelper(sortedUsers),
-                });
+                successStateChanges.action = 'index';
+                successStateChanges.filteredUserIndexes = filteredUserIndexes;
+                successStateChanges.snackbar = snackbar;
+                successStateChanges.users = sortedUsers;
+                successStateChanges.userIndexesById = this.props.updateIndexesByIdHelper(sortedUsers);
+                
+                this.setState(successStateChanges);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
@@ -169,15 +173,28 @@ var RolesContainer = React.createClass({
                 //Show the snackbar
                 var snackbar = {
                     open: true,
-                    message: "Error saving user permissions: " + err.toString(),
+                    message: errorMessage + err.toString(),
                 }
                 
-                //Update state with the new users array
+                //Update state
                 this.setState({
                     snackbar: snackbar,
                 });
             }.bind(this)
         });
+    },
+    
+    //Submit the set user form
+    handleSetUserSubmit: function (users) {
+        console.log("Saving User(s) for Choice " + this.props.choice.id + ": ", users);
+
+        //Save the settings
+        var url = 'users/add';
+        var data = {users: users};
+        var successStateChanges = {};
+        var errorMessage = "Error saving user permissions: ";
+        
+        this.sendUserRequest(url, data, {}, errorMessage);
     },
     
     //Update state when user role filter is changed
@@ -297,7 +314,7 @@ var RolesContainer = React.createClass({
         console.log("Saving settings for Choice " + this.props.choice.id + ": ", settings);
         
         //Save the settings
-        var url = 'users/role_settings/' + this.props.choice.id;
+        var url = 'users/role_settings';
         $.ajax({
             url: url,
             dataType: 'json',
