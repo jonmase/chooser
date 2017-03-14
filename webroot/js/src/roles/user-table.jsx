@@ -84,6 +84,12 @@ var UsersTable = React.createClass({
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
+                            <DeleteButton
+                                disabled={this.props.usersSelected.length===0?true:false}
+                                handleDelete={this.props.deleteButtonClickHandler}
+                                id={this.props.usersSelected}
+                                tooltip={this.props.usersSelected.length===0?"":"Remove Selected Users"}
+                            />&nbsp;
                             <AddButton
                                 handleAdd={this.props.setButtonClickHandler}
                                 tooltip="Set Permissions"
