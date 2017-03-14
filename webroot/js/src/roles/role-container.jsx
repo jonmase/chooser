@@ -419,7 +419,8 @@ var RolesContainer = React.createClass({
                         handleCancel={this.handleDeleteDialogClose}
                         handleSubmit={this.handleDelete}
                         open={this.state.deleteDialogOpen}
-                        users={this.state.usersBeingDeleted}
+                        users={this.state.users}
+                        usersBeingDeleted={this.state.usersBeingDeleted}
                     />
                 </Container>
             );

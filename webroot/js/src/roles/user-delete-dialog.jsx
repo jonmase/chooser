@@ -3,9 +3,7 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
-import Text from '../elements/display/text-labelled.jsx';
-import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
-import Toggle from '../elements/display/toggle-labelled.jsx';
+import UserList from './user-list.jsx';
 
 var RuleViewDialog = React.createClass({
     render: function() {
@@ -25,7 +23,7 @@ var RuleViewDialog = React.createClass({
             />,
         ];
         
-        var pluralise = this.props.users.length > 0;
+        var pluralise = this.props.usersBeingDeleted.length > 0;
         
         var title = "Remove User";
         if(pluralise) {
@@ -41,6 +39,10 @@ var RuleViewDialog = React.createClass({
                 title={title}
             >
                 <p>Are you sure you want to remove the additional permissions for <span>{pluralise?"these users":"this user"}</span>?</p>
+                <UserList
+                    users={this.props.users}
+                    userIndexesToList={this.props.usersBeingDeleted}
+                />
             </Dialog>
         );
     }

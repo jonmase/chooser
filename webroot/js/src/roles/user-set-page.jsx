@@ -17,6 +17,7 @@ import AppTitle from '../elements/app-title.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 import HighlightedText from '../elements/display/text-highlighted.jsx';
 
+import UserList from './user-list.jsx';
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
 
@@ -309,21 +310,10 @@ var AddUser = React.createClass({
                 {this.state.originalAction === 'edit' && 
                     <div>
                         {this.getUsersLabel()}
-                        <List style={{paddingTop: '0px', marginBottom: '15px'}}>
-                            {this.state.usersBeingEdited.map(function(userIndex) {
-                                var user = this.props.users[userIndex];
-                                var nameOrEmail = user.fullname || user.email;
-                                var nameAndEmail = user.fullname && user.email;
-                                return (
-                                    <ListItem 
-                                        disabled={true}
-                                        key={user.username}
-                                        primaryText={user.username}
-                                        secondaryText={nameOrEmail?(user.fullname + (nameAndEmail?", ":"") + user.email):false}
-                                    />
-                                );
-                            }, this)}
-                        </List>
+                        <UserList
+                            users={this.props.users}
+                            userIndexesToList={this.state.usersBeingEdited}
+                        />
                     </div>
                 }
                 <Formsy.Form
