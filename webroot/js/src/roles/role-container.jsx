@@ -6,6 +6,7 @@ import RolesExplanations from './role-explanations.jsx';
 import RolesSettingsForm from './role-settings.jsx';
 import UsersTable from './user-table.jsx';
 import SetUser from './user-set-page.jsx';
+import DeleteDialog from './user-delete-dialog.jsx';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -48,6 +49,7 @@ var RolesContainer = React.createClass({
         return {
             action: 'index',
             defaultRoles: this.props.choice.instructor_default_roles,
+            deleteDialogOpen: false,
             //filterRoles: filterRoles,
             filterRoles: [],
             filteredUserIndexes: [],
@@ -69,6 +71,7 @@ var RolesContainer = React.createClass({
             users: [],
             userIndexesById: [],
             usersBeingEdited: [],
+            usersBeingDeleted: [],
             usersSelected: [],
         };
     },
@@ -76,6 +79,29 @@ var RolesContainer = React.createClass({
         this.loadUsersFromServer();
     },
    
+    handleDeleteClick: function(users) {
+        this.setState({
+            deleteDialogOpen: true,
+            usersBeingDeleted: users,
+        });
+    },
+
+    handleDelete: function(users) {
+        console.log("delete users");
+        
+        this.setState({
+            deleteDialogOpen: false,
+            usersBeingDeleted: [],
+        });
+    },
+
+    handleDeleteDialogClose: function(users) {
+        this.setState({
+            deleteDialogOpen: false,
+            usersBeingDeleted: [],
+        });
+    },
+
     handleGoToSetPage: function(users) {
         var stateData = {
             action: 'set',
@@ -366,14 +392,15 @@ var RolesContainer = React.createClass({
                             handlers={settingsHandlers}
                         />
                         <UsersTable 
-                            setButtonClickHandler={this.handleGoToSetPage}
                             choiceId={this.props.choice.id} 
+                            deleteButtonClickHandler={this.handleDeleteClick}
                             filteredUserIndexes={this.state.filteredUserIndexes}
                             filterRoles={this.state.filterRoles} 
                             filterHandler={this.handleFilterUsers}
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 
                             selectUserHandlers={selectUserHandlers}
+                            setButtonClickHandler={this.handleGoToSetPage}
                             sort={this.state.sort}
                             sortHandler={this.handleSort}
                             users={this.state.users}
@@ -388,6 +415,12 @@ var RolesContainer = React.createClass({
                             onRequestClose={this.handleSnackbarClose}
                         />
                     </div>
+                    <DeleteDialog
+                        handleCancel={this.handleDeleteDialogClose}
+                        handleSubmit={this.handleDelete}
+                        open={this.state.deleteDialogOpen}
+                        users={this.state.usersBeingDeleted}
+                    />
                 </Container>
             );
         }

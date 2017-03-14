@@ -10,7 +10,9 @@ import UsersActionMenu from './user-action-menu.jsx';
 
 import AddButton from '../elements/buttons/add-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx'; 
+import DeleteButton from '../elements/buttons/delete-button.jsx'; 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
+import UnselectableCell from '../elements/table/unselectable-cell.jsx';
 
 
 var styles = {
@@ -120,6 +122,7 @@ var UsersTable = React.createClass({
                                     }, this)}
                                     <TableHeaderColumn>Roles</TableHeaderColumn>
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                    <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
                             <TableBody 
@@ -145,7 +148,7 @@ var UsersTable = React.createClass({
                                                     );
                                                 })}
                                             </TableRowColumn>
-                                            <TableRowColumn style={styles.actionsTableRowColumn}>
+                                            <UnselectableCell style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
                                                         handleEdit={props.setButtonClickHandler} 
@@ -153,7 +156,16 @@ var UsersTable = React.createClass({
                                                         tooltip=""
                                                     />
                                                 :""}
-                                            </TableRowColumn>
+                                            </UnselectableCell>
+                                            <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                {!user.current?
+                                                    <DeleteButton
+                                                        handleDelete={props.deleteButtonClickHandler} 
+                                                        id={[index]}
+                                                        tooltip=""
+                                                    />
+                                                :""}
+                                            </UnselectableCell>
                                         </TableRow>
                                     );
                                 })}
