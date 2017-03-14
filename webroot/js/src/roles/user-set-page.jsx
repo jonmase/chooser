@@ -16,10 +16,11 @@ import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 import HighlightedText from '../elements/display/text-highlighted.jsx';
+import FieldLabel from '../elements/fields/label.jsx';
 
 import UserList from './user-list.jsx';
 import RoleCheckboxes from './role-checkboxes.jsx';
-import FieldLabel from '../elements/fields/label.jsx';
+import DeleteDialog from './user-delete-dialog.jsx';
 
 var blankFindUserMessage = '\u00A0';
 var roleCheckboxesNameBase = 'roles';
@@ -187,6 +188,11 @@ var AddUser = React.createClass({
             if(this.checkUserAssociation(userSearchValue)) {
                 return false;
             }
+        }
+        
+        if(this.getRolesCheckedCount() === 0) {
+            this.props.handlers.deleteOpen(this.state.usersBeingEdited);
+            return false;
         }
         
         //Submit the form by ref
@@ -384,6 +390,13 @@ var AddUser = React.createClass({
                     />*/}
                 </Formsy.Form>
                 {this.props.snackbar}
+                <DeleteDialog
+                    handleCancel={this.props.handlers.deleteCancel}
+                    handleSubmit={this.props.handlers.deleteSubmit}
+                    open={this.props.deleteDialogOpen}
+                    users={this.props.users}
+                    usersBeingDeleted={this.props.usersBeingDeleted}
+                />
             </Container>
         )
         

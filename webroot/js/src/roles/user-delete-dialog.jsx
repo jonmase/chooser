@@ -25,10 +25,7 @@ var RuleViewDialog = React.createClass({
         
         var pluralise = this.props.usersBeingDeleted.length > 0;
         
-        var title = "Remove User";
-        if(pluralise) {
-            title += "s";
-        }
+        var title = "Remove User Permissions";
         
         return (
             <Dialog

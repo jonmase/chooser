@@ -86,7 +86,7 @@ var RolesContainer = React.createClass({
         });
     },
 
-    handleDelete: function(users) {
+    handleDelete: function() {
         console.log("delete users");
         
         var url = 'users/delete';
@@ -380,6 +380,9 @@ var RolesContainer = React.createClass({
 
         var setUserHandlers={
             backButtonClick: this.handleGoToIndexPage,
+            deleteCancel: this.handleDeleteDialogClose,
+            deleteOpen: this.handleDeleteClick,
+            deleteSubmit: this.handleDelete,
             submit: this.handleSetUserSubmit,
         };
     
@@ -452,12 +455,14 @@ var RolesContainer = React.createClass({
                         currentUserId={this.props.currentUserId} 
                         dashboardUrl={this.props.dashboardUrl} 
                         defaultRoles={this.state.defaultRoles}
+                        deleteDialogOpen={this.state.deleteDialogOpen}
                         handlers={setUserHandlers}
                         notify={this.props.notify}
                         roles={this.props.roles} 
                         sections={this.props.sections} 
                         snackbar={snackbar}
                         users={this.state.users}
+                        usersBeingDeleted={this.state.usersBeingDeleted}
                         usersBeingEdited={this.state.usersBeingEdited}
                         userIndexesById={this.state.userIndexesById}
                     />
