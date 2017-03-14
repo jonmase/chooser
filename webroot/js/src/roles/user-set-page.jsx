@@ -221,6 +221,18 @@ var AddUser = React.createClass({
         });
     },
     
+    getNoRolesCheckedMessage: function() {
+        if(this.state.action === 'edit') {
+            var message = "If you do not check any roles, ";
+            message += (this.state.usersBeingEdited.length > 1)?"these users":"this user";
+            message += " will be removed from the list of users with additional permissions, but will still have their default permissions based on their role in WebLearn";
+        }
+        else {
+            var message = "You must give the user some additional permissions before you can save";
+        }
+        return message;
+    },
+
     getNotificationToggleLabel: function() {
         var notificationToggleLabel = "Notify the user";
         notificationToggleLabel += (this.state.usersBeingEdited.length > 1)?"s":"";
@@ -251,6 +263,18 @@ var AddUser = React.createClass({
         return rolesChecked;
     },
    
+    getRolesCheckedCount: function() {
+        var rolesCheckedCount = 0;
+
+        for(var role in this.state.rolesChecked) {
+            if(this.state.rolesChecked[role]) {
+                rolesCheckedCount++;
+            }
+        }
+
+        return rolesCheckedCount;
+    },
+   
     getUserSearchValueFromInput: function() {
         var usernameInput = $('#add_username');
         var searchValue = usernameInput[0].value;
@@ -266,7 +290,7 @@ var AddUser = React.createClass({
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
-                disabled={!this.state.canSubmit}
+                disabled={!this.state.canSubmit || (this.state.action === 'add' && this.getRolesCheckedCount() == 0)}
                 label={(this.state.originalAction === 'add' && !this.state.userChecked)?"Check User & Save":"Save"}
                 onTouchTap={this.handleSaveClick}
                 //primary={true}
@@ -340,6 +364,11 @@ var AddUser = React.createClass({
                             instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
                         <RoleCheckboxes nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={rolesWithoutViewer} />
+                        {(this.getRolesCheckedCount() == 0) &&
+                            <p>
+                                <HighlightedText value={this.getNoRolesCheckedMessage()} />
+                            </p>
+                        }
                     </div>
                     {/*<FormsyToggle
                         label={this.getNotificationToggleLabel()}
