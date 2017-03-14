@@ -297,7 +297,7 @@ class UsersTable extends Table
         $sortDirection = 'ASC';
         $usersQuery = $this->find('all', ['sort' => ['Users.' . $sortField => $sortDirection]]);
         $usersQuery->matching('ChoicesUsers', function ($q) use ($choiceId) {
-            return $q->where(['ChoicesUsers.choice_id >=' => $choiceId]);
+            return $q->where(['ChoicesUsers.choice_id =' => $choiceId]);
         });
         $users = $usersQuery->toArray();
 

@@ -25,9 +25,9 @@ var RoleCheckboxes = React.createClass({
                     name={nameBase + '.' + role.id}
                     //label={role.id.charAt(0).toUpperCase() + role.id.substring(1)}
                     label={role.title + ' - ' + role.description}
-                    defaultChecked={roleStates[role.id]}
                     onChange={onChange}
                     style={style}
+                    value={roleStates[role.id]}
                 />
             );
         });

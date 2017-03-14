@@ -14,6 +14,7 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
+import HighlightedText from '../elements/display/text-highlighted.jsx';
 
 import RoleCheckboxes from './role-checkboxes.jsx';
 import FieldLabel from '../elements/fields/label.jsx';
@@ -22,11 +23,19 @@ var blankFindUserMessage = '\u00A0';
 
 var AddUser = React.createClass({
     getInitialState: function () {
+        var action = this.props.usersBeingEdited.length > 0?'edit':'add';
+        
+        var roleStates = this.getRoleStates(action, this.props.usersBeingEdited[0]);
+
         return {
+            action: action,
             canSubmit: false,
             findUserMessage: blankFindUserMessage,
             foundUser: null,
+            originalAction: action,
+            roleStates: roleStates,
             userChecked: false,
+            usersBeingEdited: this.props.usersBeingEdited,
         };
     },
 
@@ -69,9 +78,15 @@ var AddUser = React.createClass({
             
                 //TODO: Update the add/edit form with this user's permissions, so that they can be edited
                 //Use the user ID obtained above
-                var user = this.props.users[this.props.userIndexesById[userId]];
+                //var user = this.props.users[this.props.userIndexesById[userId]];
                 
-                
+                var userIndex = this.props.userIndexesById[userId];
+                var roleStates = this.getRoleStates('edit', userIndex);
+                this.setState({
+                    action: 'edit',
+                    roleStates: roleStates,
+                    usersBeingEdited: [userIndex],
+                });
             }
         }
         
@@ -101,7 +116,7 @@ var AddUser = React.createClass({
         
         //If user is not already associated with this choice, look them up
         if(!this.checkUserAssociation(searchValue)) {
-            var url = '../../users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
+            var url = 'users/find_user/' + this.props.choiceId + '/' + searchValue + '.json';
             $.ajax({
                 url: url,
                 dataType: 'json',
@@ -129,7 +144,7 @@ var AddUser = React.createClass({
     
     handleSaveClick: function() {
         //Make sure user has been checked
-        if(this.props.usersBeingEdited.length === 0 && !this.state.userChecked) {
+        if(this.state.usersBeingEdited.length === 0 && !this.state.userChecked) {
             var userSearchValue = this.getUserSearchValueFromInput();
             if(this.checkUserAssociation(userSearchValue)) {
                 return false;
@@ -144,9 +159,9 @@ var AddUser = React.createClass({
         var users = [];
         
         //Is there are a user being edited
-        if(this.props.usersBeingEdited.length > 0) {
+        if(this.state.usersBeingEdited.length > 0) {
             //Loop through the users being edited and add each to the users array
-            this.props.usersBeingEdited.forEach(function(userIndex) {
+            this.state.usersBeingEdited.forEach(function(userIndex) {
                 var userData = {};
                 userData.roles = user.roles;
                 userData.id = this.props.users[userIndex].id;
@@ -177,14 +192,50 @@ var AddUser = React.createClass({
         this.setState({
             findUserMessage: blankFindUserMessage,
             foundUser: null,
+            roleStates: this.props.defaultRoles,
+            usersBeingEdited: [],
             userChecked: false,
         });
     },
     
-    getUserSearchValueFromInput() {
+    getNotificationToggleLabel: function() {
+        var notificationToggleLabel = "Notify the user";
+        notificationToggleLabel += (this.state.usersBeingEdited.length > 1)?"s":"";
+        notificationToggleLabel += " of ";
+        if(this.state.action === 'edit') {
+            notificationToggleLabel += "the changes to ";
+        }
+        notificationToggleLabel += "their additional roles by email";
+
+        return notificationToggleLabel;
+    },
+    
+    getPermissionsLabel: function() {
+        return "Which additional permissions should " + ((this.state.usersBeingEdited.length > 1)?"these users":"this user") + " have?";
+    },
+    
+    getRoleStates: function(action, userIndex) {
+        var roleStates = {};
+        if(action === 'add' || this.props.usersBeingEdited.length > 1) {    //Use props.usersBeingEdited, as call this function before initial state is set, and state.usersBeingEdited will only be more than 1 if props.usersBeingEdited was, as state.usersBeingEdited is only updated if a single already-associated user is 'checked' on the user add page
+            roleStates = this.props.defaultRoles;
+        }
+        else {
+            var user = this.props.users[userIndex];
+            user.roles.map(function(role) {
+                roleStates[role] = true;
+            });
+        }
+        return roleStates;
+    },
+   
+    getUserSearchValueFromInput: function() {
         var usernameInput = $('#add_username');
         var searchValue = usernameInput[0].value;
         return searchValue;
+    },
+    
+    getUsersLabel: function() {
+        return <p>The additional permissions will be edited for the following user{(this.state.usersBeingEdited.length > 1)?"s":""}:</p>;
     },
     
     render: function() {
@@ -193,7 +244,7 @@ var AddUser = React.createClass({
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
                 disabled={!this.state.canSubmit}
-                label="Save" 
+                label={(this.state.userChecked)?"Save":"Check User & Save"}
                 onTouchTap={this.handleSaveClick}
                 //primary={true}
                 style={{marginTop: '6px'}}
@@ -202,39 +253,17 @@ var AddUser = React.createClass({
             title="Set Additional Permissions"
         />;
         
-        var edit = this.props.usersBeingEdited.length > 0;
-        var multipleUsersBeingEdited = edit && this.props.usersBeingEdited.length > 1;
         
-        var toggleLabel = "Notify the user";
-        toggleLabel += multipleUsersBeingEdited?"s":"";
-        toggleLabel += " of ";
-        if(edit) {
-            toggleLabel += "the changes to ";
-        }
-        toggleLabel += "their additional roles by email";
-
-        var roleStates;
-        if(!edit || multipleUsersBeingEdited) {
-            roleStates = this.props.defaultRoles;
-        }
-        else {
-            roleStates = {};
-            var user = this.props.users[this.props.usersBeingEdited[0]];
-            user.roles.map(function(role) {
-                roleStates[role] = true;
-            });
-        }
-
         //Get the array of roles not including view
         var rolesWithoutViewer = this.props.roles.slice(1);
         
         return (
             <Container topbar={topbar}>
-                {edit && 
+                {this.state.originalAction === 'edit' && 
                     <div>
-                        <p>The additional permissions will be edited for the following user{multipleUsersBeingEdited?"s":""}:</p>
+                        {this.getUsersLabel()}
                         <List style={{paddingTop: '0px', marginBottom: '15px'}}>
-                            {this.props.usersBeingEdited.map(function(userIndex) {
+                            {this.state.usersBeingEdited.map(function(userIndex) {
                                 var user = this.props.users[userIndex];
                                 var nameOrEmail = user.fullname || user.email;
                                 var nameAndEmail = user.fullname && user.email;
@@ -259,7 +288,7 @@ var AddUser = React.createClass({
                     noValidate={true}
                     ref="add"
                 >
-                    {!edit && 
+                    {this.state.originalAction === 'add' && 
                         <div className="section">
                             <FormsyText 
                                 name="username"
@@ -278,19 +307,19 @@ var AddUser = React.createClass({
                                 onTouchTap={this.handleFindUser}
                                 style={{marginLeft: '10px'}}
                             />
-                            <div style={{marginTop: '15px'}}>{this.state.findUserMessage}</div>
+                            <div style={{marginTop: '15px'}}><HighlightedText value={this.state.findUserMessage} /></div>
                         </div>
                     }
                     
                     <div className="section">
                         <FieldLabel
-                            label={"Which additional permissions should " + (multipleUsersBeingEdited?"these users":"this user") + " have?"}
+                            label={this.getPermissionsLabel()}
                             instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
-                        <RoleCheckboxes nameBase="roles" roleStates={roleStates} roles={rolesWithoutViewer} />
+                        <RoleCheckboxes nameBase="roles" roleStates={this.state.roleStates} roles={rolesWithoutViewer} />
                     </div>
                     {/*<FormsyToggle
-                        label="Notify this user of their additional roles by email"
+                        label={this.getNotificationToggleLabel()}
                         defaultToggled={this.props.notify}
                         labelPosition="right"
                         name="notify"
