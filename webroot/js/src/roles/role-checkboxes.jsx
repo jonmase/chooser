@@ -28,7 +28,7 @@ var RoleCheckboxes = React.createClass({
         
             return (
                 <FormsyCheckbox
-                    disabled={disabled}
+                    disabled={disabled || this.props.disableAll}
                     key={role.id}
                     name={nameBase + '.' + role.id}
                     //label={role.id.charAt(0).toUpperCase() + role.id.substring(1)}

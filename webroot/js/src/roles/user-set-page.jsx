@@ -228,9 +228,10 @@ var AddUser = React.createClass({
     
     handleUserChange: function() {
         this.setState({
+            editingCurrentUser: false,
             findUserMessage: blankFindUserMessage,
             foundUser: null,
-            rolesChecked: this.props.defaultRoles,
+            rolesChecked: {},
             usersBeingEdited: [],
             userChecked: false,
         });
@@ -238,7 +239,7 @@ var AddUser = React.createClass({
     
     getNoRolesCheckedMessage: function() {
         if(this.state.action === 'edit') {
-            var message = "If you do not check any roles, ";
+            var message = "If you do not select any roles, ";
             message += (this.state.usersBeingEdited.length > 1)?"these users":"this user";
             message += " will be removed from the list of users with additional permissions, but will still have their default permissions based on their role in WebLearn";
         }
@@ -267,7 +268,8 @@ var AddUser = React.createClass({
     getRolesChecked: function(action, userIndex) {
         var rolesChecked = {};
         if(action === 'add' || this.props.usersBeingEdited.length > 1) {    //Use props.usersBeingEdited, as call this function before initial state is set, and state.usersBeingEdited will only be more than 1 if props.usersBeingEdited was, as state.usersBeingEdited is only updated if a single already-associated user is 'checked' on the user add page
-            rolesChecked = this.props.defaultRoles;
+            //rolesChecked = this.props.defaultRoles;
+            rolesChecked = {};
         }
         else {
             var user = this.props.users[userIndex];
