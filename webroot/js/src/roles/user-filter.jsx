@@ -1,6 +1,7 @@
 import React from 'react';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
+import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
 
 var UserFilters = React.createClass({
@@ -9,11 +10,18 @@ var UserFilters = React.createClass({
             return (
                 <MenuItem
                     value={role.id}
-                    primaryText={role.id.charAt(0).toUpperCase() + role.id.substr(1,role.length)}
+                    primaryText={role.id.charAt(0).toUpperCase() + role.id.substr(1,role.length) + "s"}
                     key={role.id}
                 />
             );
         });
+        
+        menuItems.push(<Divider key="divider" />);
+        menuItems.push(<MenuItem
+                    value="clear"
+                    primaryText="Clear"
+                    key="clear"
+                />);
         
         return (
             <IconMenu

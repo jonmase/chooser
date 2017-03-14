@@ -386,8 +386,12 @@ var RolesContainer = React.createClass({
             submit: this.handleSetUserSubmit,
         };
     
-        var selectUserHandlers={
-            change: this.handleSelectUserChange,
+        var userTableHandlers={
+            deleteButtonClick: this.handleDeleteClick,
+            filter: this.handleFilterUsers,
+            selectChange: this.handleSelectUserChange,
+            setButtonClick: this.handleGoToSetPage,
+            sort: this.handleSort,
         };
     
         var topbar = <TopBar 
@@ -420,16 +424,12 @@ var RolesContainer = React.createClass({
                         />
                         <UsersTable 
                             choiceId={this.props.choice.id} 
-                            deleteButtonClickHandler={this.handleDeleteClick}
                             filteredUserIndexes={this.state.filteredUserIndexes}
                             filterRoles={this.state.filterRoles} 
-                            filterHandler={this.handleFilterUsers}
+                            handlers={userTableHandlers}
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 
-                            selectUserHandlers={selectUserHandlers}
-                            setButtonClickHandler={this.handleGoToSetPage}
                             sort={this.state.sort}
-                            sortHandler={this.handleSort}
                             users={this.state.users}
                             userIndexesById={this.state.userIndexesById}
                             usersBeingEdited={this.state.usersBeingEdited}

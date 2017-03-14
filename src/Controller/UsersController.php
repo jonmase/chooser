@@ -79,7 +79,8 @@ class UsersController extends AppController
         
         //$defaultRolesArray = explode(',', $choice->instructor_default_roles);
         $defaultRolesArray = $this->Users->ChoicesUsers->Choices->splitInstructorDefaultRoles($choice->instructor_default_roles);
-        $roles = $this->Users->ChoicesUsers->getAllRoles();
+        //$roles = $this->Users->ChoicesUsers->getAllRoles();
+        $roles = $this->Users->ChoicesUsers->getNonViewRoles();
         
         $roleIndexesById = [];
         $defaultRolesObject = [];

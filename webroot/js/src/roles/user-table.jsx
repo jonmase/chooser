@@ -38,7 +38,7 @@ var styles = {
     
 var UsersTable = React.createClass({
     _onRowSelection: function(selectedRows){
-        this.props.selectUserHandlers.change(selectedRows);
+        this.props.handlers.selectChange(selectedRows);
     },
     render: function() {
         var props = this.props;
@@ -76,23 +76,23 @@ var UsersTable = React.createClass({
                             <FilterUsers
                                 state={props.state} 
                                 roles={props.roles} 
-                                handler={props.filterHandler} 
+                                handler={props.handlers.filter} 
                                 titleStyle={styles.sortFilterTitles}
                             />&nbsp;
                             <EditButton
                                 disabled={this.props.usersSelected.length===0?true:false}
-                                handleEdit={this.props.setButtonClickHandler}
+                                handleEdit={this.props.handlers.setButtonClick}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
                             <DeleteButton
                                 disabled={this.props.usersSelected.length===0?true:false}
-                                handleDelete={this.props.deleteButtonClickHandler}
+                                handleDelete={this.props.handlers.deleteButtonClick}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Remove Selected Users"}
                             />&nbsp;
                             <AddButton
-                                handleAdd={this.props.setButtonClickHandler}
+                                handleAdd={this.props.handlers.setButtonClick}
                                 tooltip="Set Permissions"
                             />
                             {/*<UsersActionMenu
@@ -123,7 +123,7 @@ var UsersTable = React.createClass({
                                                 fieldType="text"
                                                 key={field.field}
                                                 label={field.label}
-                                                sortHandler={this.props.sortHandler}
+                                                sortHandler={this.props.handlers.sort}
                                             />
                                         );
                                     }, this)}
@@ -158,7 +158,7 @@ var UsersTable = React.createClass({
                                             <UnselectableCell style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <EditButton
-                                                        handleEdit={props.setButtonClickHandler} 
+                                                        handleEdit={props.handlers.setButtonClick} 
                                                         id={[index]}
                                                         tooltip=""
                                                     />
@@ -167,7 +167,7 @@ var UsersTable = React.createClass({
                                             <UnselectableCell style={styles.actionsTableRowColumn}>
                                                 {!user.current?
                                                     <DeleteButton
-                                                        handleDelete={props.deleteButtonClickHandler} 
+                                                        handleDelete={props.handlers.deleteButtonClick} 
                                                         id={[index]}
                                                         tooltip=""
                                                     />
