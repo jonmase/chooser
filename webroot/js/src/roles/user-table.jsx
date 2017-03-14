@@ -68,6 +68,7 @@ var UsersTable = React.createClass({
                     <CardHeader
                         title="Additional Permissions"
                         subtitle="Give additional permissions to specific users"
+                        textStyle={{paddingRight: '20px'}}
                         //actAsExpander={true}
                         //showExpandableButton={true}
                     >
