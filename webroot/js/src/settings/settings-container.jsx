@@ -153,7 +153,7 @@ var SettingsContainer = React.createClass({
         });
     },
     
-    handleRuleReturnedData: function(returnedData) {
+    handleRuleSuccess: function(returnedData) {
         this.setState({
             action: 'view',
             ruleBeingEdited: null,
@@ -226,7 +226,7 @@ var SettingsContainer = React.createClass({
         });
     },
     
-    handleSettingsReturnedData: function(returnedData) {
+    handleSettingsSuccess: function(returnedData) {
         this.setState({
             action: 'view',
             instance: returnedData.instance,
@@ -257,7 +257,7 @@ var SettingsContainer = React.createClass({
         var settingsHandlers={
             backButtonClick: this.handleBackClick,
             editButtonClick: this.handleSettingsEditClick,
-            returnedData: this.handleSettingsReturnedData,
+            success: this.handleSettingsSuccess,
             snackbarOpen: this.handleSnackbarOpen,
         };
         var rulesHandlers={
@@ -266,8 +266,8 @@ var SettingsContainer = React.createClass({
             deleteDialogClose: this.handleRuleDeleteDialogClose,
             delete: this.handleRuleDelete,
             editButtonClick: this.handleRuleEditClick,
-            returnedData: this.handleRuleReturnedData,
             settingsEditButtonClick: this.handleSettingsEditClick,
+            success: this.handleRuleSuccess,
         };
 
         var topbar = <TopBar 

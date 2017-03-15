@@ -118,7 +118,7 @@ var RuleEditor = React.createClass({
                     saveButtonLabel: 'Save',
                 });
                 
-                this.props.handlers.returnedData(returnedData);
+                this.props.handlers.success(returnedData);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
