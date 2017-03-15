@@ -102,7 +102,6 @@ var RuleDialog = React.createClass({
                     label: "Instructions",
                     instructions: "Provide instructions for the students on fulfilling this rule.",
                     name: "instructions",
-                    //onChange: this.props.handlers.wysiwygChange,
                     section: false,
                     value: rule.instructions,
                 }} />
@@ -111,7 +110,6 @@ var RuleDialog = React.createClass({
                     label: "Warning Message",
                     instructions: "This message will be shown to students if they fail to fulfil this rule.",
                     name: "warning",
-                    //onChange: this.props.handlers.wysiwygChange,
                     section: true,
                     value: rule.warning,
                 }} />

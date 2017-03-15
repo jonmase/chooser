@@ -21,9 +21,9 @@ var ruleDefaults = {
     categoryFieldOptionValue: null,
 };
 
-var FormContainer = React.createClass({
+var SettingsContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = 'get-active/' + this.props.choice.id + '/settings.json';
+        var url = 'get-active/settings.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -44,9 +44,6 @@ var FormContainer = React.createClass({
                         settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
                         settingsWysiwyg_choosing_instructions: data.choosingInstance.choosing_instructions,
                         settingsWysiwyg_reviewing_instructions: data.choosingInstance.reviewing_instructions,
-                        //settingsWysiwyg_preference_instructions: data.choosingInstance.preference_instructions,
-                        //settingsWysiwyg_comments_overall_instructions: data.choosingInstance.comments_overall_instructions,
-                        //settingsWysiwyg_comments_per_option_instructions: data.choosingInstance.comments_per_option_instructions,
                     });
                 }
             }.bind(this),
@@ -56,10 +53,6 @@ var FormContainer = React.createClass({
         });
     },
     getInitialState: function () {
-        //Open dialog straight away if there is no current instance
-        //var settingsDialogOpen = this.props.instance.id?false:true;
-        var settingsDialogOpen = false;
-        
         return {
             action: 'edit',
             instance: [],
@@ -81,7 +74,6 @@ var FormContainer = React.createClass({
             ruleBeingDeleted: null,
             ruleDeleteButtonEnabled: true,
             ruleDeleteButtonLabel: 'Delete',
-            settingsDialogOpen: settingsDialogOpen,
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
             settingsToggle_preference: false,
@@ -89,21 +81,17 @@ var FormContainer = React.createClass({
             settingsToggle_comments_per_option: false,
             settingsWysiwyg_choosing_instructions: '',
             settingsWysiwyg_reviewing_instructions: '',
-            //settingsWysiwyg_preference_instructions: '',
-            //settingsWysiwyg_comments_overall_instructions: '',
-            //settingsWysiwyg_comments_per_option_instructions: '',
             snackbar: {
                 open: false,
                 message: '',
             },
-            //ruleWysiwyg_instructions: '',
-            //ruleWysiwyg_warning: '',
         };
     },
     componentDidMount: function() {
         this.loadInstanceFromServer();
         //this.loadRulesFromServer();
     },
+    
     handleRuleDeleteDialogOpen: function(ruleIndex) {
         this.setState({
             ruleDeleteDialogOpen: true,
@@ -278,10 +266,6 @@ var FormContainer = React.createClass({
             ruleSaveButtonLabel: 'Saving',
         });
 
-        //Get the wysiwyg editor data
-        //rule.instructions = this.state.ruleWysiwyg_instructions;
-        //rule.warning = this.state.ruleWysiwyg_warning;
-        
         //Get the IDs of the category field and option
         if(rule.scope === 'category') {
             var extraField = this.state.ruleCategoryFields[rule.category_field];
@@ -299,7 +283,7 @@ var FormContainer = React.createClass({
         console.log("Saving rule: ", rule);
         
         //Save the Rule
-        var url = '../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
+        var url = '../rules/save/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -374,14 +358,11 @@ var FormContainer = React.createClass({
         //Get the wysiwyg editor data
         settings.choosing_instructions = this.state.settingsWysiwyg_choosing_instructions;
         settings.reviewing_instructions = this.state.settingsWysiwyg_reviewing_instructions;
-        //settings.preference_instructions = this.state.settingsWysiwyg_preference_instructions;
-        //settings.comments_overall_instructions = this.state.settingsWysiwyg_comments_overall_instructions;
-        //settings.comments_per_option_instructions = this.state.settingsWysiwyg_comments_per_option_instructions;
         
         console.log("Saving settings: ", settings);
         
         //Save the settings
-        var url = 'save/' + this.props.choice.id;
+        var url = 'save';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -442,12 +423,6 @@ var FormContainer = React.createClass({
         this.setState(stateData);
     },
     
-    handleRuleWysiwygChange: function(element, value) {
-        var stateData = {};
-        stateData['ruleWysiwyg_' + element] = value;
-        this.setState(stateData);
-    },
-    
     render: function() {
         var settingsHandlers={
             backButtonClick: this.handleSettingsBackClick,
@@ -468,7 +443,6 @@ var FormContainer = React.createClass({
             scopeChange: this.handleRuleScopeChange,
             settingsDialogOpen: this.handleSettingsDialogOpen,
             typeChange: this.handleRuleTypeChange,
-            wysiwygChange: this.handleRuleWysiwygChange,
         };
 
         var topbar = <TopBar 
@@ -539,4 +513,4 @@ var FormContainer = React.createClass({
     }
 });
 
-module.exports = FormContainer;
+module.exports = SettingsContainer;

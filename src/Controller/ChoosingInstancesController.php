@@ -65,7 +65,7 @@ class ChoosingInstancesController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not a Viewer
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function getActive($choiceId = null, $action = 'view')
+    public function getActive($action = 'view')
     {
         //Make sure the user is an admin for this Choice
         //Not just for admins, needed for viewing choices as well. Can't think of any security issue here that needs admin check
@@ -138,7 +138,7 @@ class ChoosingInstancesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When instance record not found.
      */
-    public function save($choiceId = null)
+    public function save()
     {
         $this->request->allowMethod(['post']);
 

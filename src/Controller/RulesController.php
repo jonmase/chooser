@@ -51,12 +51,15 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function save($choiceId = null, $instanceId = null)
+    public function save($instanceId = null)
     {
         $this->request->allowMethod(['post']);
 
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -95,12 +98,15 @@ class RulesController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When Rules record not found.
      */
-    public function delete($choiceId = null, $instanceId = null)
+    public function delete($instanceId = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->Rules->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to delete rules for this Choice.'));
         }
