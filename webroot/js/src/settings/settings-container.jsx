@@ -34,6 +34,7 @@ var SettingsContainer = React.createClass({
                     instanceLoaded: true
                 });
                 
+                //If there is a choosing instance, update the remaining state values
                 if(data.choosingInstance.id) {
                     this.setState({
                         rules: data.rules,
@@ -76,6 +77,7 @@ var SettingsContainer = React.createClass({
             ruleDeleteButtonLabel: 'Delete',
             settingsSaveButtonEnabled: true,
             settingsSaveButtonLabel: 'Save',
+            //Have separate state values for toggles and WYSIWYGs, as can't just update state.instance, because state.instance is the saved instance, not necessarily the values of the form
             settingsToggle_preference: false,
             settingsToggle_comments_overall: false,
             settingsToggle_comments_per_option: false,
@@ -324,25 +326,13 @@ var SettingsContainer = React.createClass({
             }.bind(this)
         });
     },
-
-    handleSettingsDialogOpen: function(event) {
-        this.setState({
-            settingsDialogOpen: true,
-        });
-    },
-
-    handleSettingsDialogClose: function() {
-        this.setState({
-            settingsDialogOpen: false,
-        });
-    },
-
+    
+    //Handling switching between settings edit screen and view screen
     handleSettingsBackClick: function() {
         this.setState({
             action: 'view',
         });
     },
-
     handleSettingsEditClick: function() {
         this.setState({
             action: 'edit',
@@ -401,15 +391,6 @@ var SettingsContainer = React.createClass({
             }.bind(this)
         });
     },
-
-    handleSnackbarClose: function() {
-        this.setState({
-            snackbar: {
-                open: false,
-                message: '',
-            },
-        });
-    },
     
     handleSettingsToggleChange: function(event, value) {
         var stateData = {};
@@ -421,6 +402,16 @@ var SettingsContainer = React.createClass({
         var stateData = {};
         stateData['settingsWysiwyg_' + element] = value;
         this.setState(stateData);
+    },
+    
+
+    handleSnackbarClose: function() {
+        this.setState({
+            snackbar: {
+                open: false,
+                message: '',
+            },
+        });
     },
     
     render: function() {
