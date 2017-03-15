@@ -40,12 +40,6 @@ var styles = {
         whiteSpace: 'normal',
         width: '48px',
     },
-    sortFilterTitles: {
-        display: 'inline-block', 
-        fontWeight: '500',
-        verticalAlign: '30%', 
-        width: '120px',
-    },
     cardText: {
         paddingTop: '0px',
     }

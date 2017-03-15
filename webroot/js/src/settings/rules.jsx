@@ -34,12 +34,6 @@ var styles = {
         paddingLeft: '12px',
         paddingRight: '12px',
     },
-    sortFilterTitles: {
-        verticalAlign: '30%', 
-        display: 'inline-block', 
-        fontWeight: '500',
-        width: '120px',
-    },
     cardText: {
         paddingTop: '0px',
     }

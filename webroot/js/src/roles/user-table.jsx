@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+import {indigo500} from 'material-ui/styles/colors';
 
 import UsersRole from './user-role.jsx';
 import SortUsers from './user-sort.jsx';
@@ -24,12 +25,6 @@ var styles = {
         width: '48px',
         paddingLeft: '12px',
         paddingRight: '12px',
-    },
-    sortFilterTitles: {
-        verticalAlign: '30%', 
-        display: 'inline-block', 
-        fontWeight: '500',
-        width: '120px',
     },
     cardText: {
         paddingTop: '0px',
@@ -75,9 +70,9 @@ var UsersTable = React.createClass({
                         <div style={{float: 'right'}}>
                             <FilterUsers
                                 filteredRoles={this.props.filteredRoles}
-                                roles={props.roles} 
                                 handler={props.handlers.filter} 
-                                titleStyle={styles.sortFilterTitles}
+                                iconStyle={(this.props.filteredRoles.length > 0) && {color: indigo500}}
+                                roles={props.roles} 
                             />&nbsp;
                             <EditButton
                                 disabled={this.props.usersSelected.length===0?true:false}

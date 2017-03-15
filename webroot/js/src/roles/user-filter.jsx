@@ -25,12 +25,13 @@ var UserFilters = React.createClass({
         
         return (
             <IconMenu
-                iconButtonElement={<IconButton iconClassName="material-icons" tooltip="Filter by Role">filter_list</IconButton>}
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                iconButtonElement={<IconButton iconClassName="material-icons" tooltip="Filter by Role">filter_list</IconButton>}
+                iconStyle={this.props.iconStyle}
                 multiple={true}
-                value={this.props.filteredRoles}
                 onChange={this.props.handler}
+                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                value={this.props.filteredRoles}
             >
                 {menuItems}
             </IconMenu>            
