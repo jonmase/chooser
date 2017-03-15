@@ -156,9 +156,11 @@ var SettingsContainer = React.createClass({
     handleRuleReturnedData: function(returnedData) {
         this.setState({
             action: 'view',
+            ruleBeingEdited: null,
+            ruleIndexesById: returnedData.ruleIndexesById,
             rules: returnedData.rules,
         });
-        
+
         this.handleSnackbarOpen(returnedData.response);
     },
 

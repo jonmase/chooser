@@ -237,7 +237,7 @@ var RuleEditor = React.createClass({
                                 field={{
                                     label: "Rule Type",
                                     name: "combined_type",
-                                    onChange: this.props.handlers.typeChange,
+                                    onChange: this.handleTypeChange,
                                     options: [
                                         {
                                             label: "Number - Min and/or Max",
@@ -306,7 +306,7 @@ var RuleEditor = React.createClass({
                                 field={{
                                     label: "Rule Applies To",
                                     name: "scope",
-                                    onChange: this.props.handlers.scopeChange,
+                                    onChange: this.handleScopeChange,
                                     options: [
                                         {
                                             label: "Entire Choice",
@@ -327,7 +327,7 @@ var RuleEditor = React.createClass({
                                         field={{
                                             label: "Category Field",
                                             name: "category_field",
-                                            onChange:this.handleCategoryFieldChange,
+                                            onChange: this.handleCategoryFieldChange,
                                             options: this.props.ruleCategoryFields,
                                             section: true, 
                                             value:  this.state.categoryFieldIndex,
@@ -356,7 +356,7 @@ var RuleEditor = React.createClass({
                                                 section: true, 
                                                 value:  this.state.categoryFieldOptionValue,
                                             }} 
-                                            onChange={this.handlerCategoryFieldOptionChange}
+                                            onChange={this.handleCategoryFieldOptionChange}
                                         />
                                     :""}
                                     
