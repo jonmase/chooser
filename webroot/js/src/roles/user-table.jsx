@@ -3,6 +3,7 @@ import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
 import {indigo500} from 'material-ui/styles/colors';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import UsersRole from './user-role.jsx';
 import SortUsers from './user-sort.jsx';
@@ -127,52 +128,64 @@ var UsersTable = React.createClass({
                                     <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody 
-                                //displayRowCheckbox={false}
-                                deselectOnClickaway={false}
-                            >
-                                {props.filteredUserIndexes.map(function(userIndex) {
-                                    var user = props.users[userIndex];
-                                    return (
-                                        <TableRow 
-                                            key={user.username} 
-                                            className={user.current?"self":""}
-                                            selectable={!user.current}
-                                            selected={props.usersSelected.indexOf(userIndex) !== -1}
-                                        >
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
-                                            <TableRowColumn style={styles.tableRowColumn}>
-                                                {user.roles.map(function(role) {
-                                                    return (
-                                                        <UsersRole key={user.username + '_' + role} user={user} role={role} />
-                                                    );
-                                                })}
-                                            </TableRowColumn>
-                                            <UnselectableCell style={styles.actionsTableRowColumn}>
-                                                {!user.current?
-                                                    <EditButton
-                                                        handleEdit={props.handlers.setButtonClick} 
-                                                        id={[userIndex]}
-                                                        tooltip=""
-                                                    />
-                                                :""}
-                                            </UnselectableCell>
-                                            <UnselectableCell style={styles.actionsTableRowColumn}>
-                                                {!user.current?
-                                                    <DeleteButton
-                                                        handleDelete={props.handlers.deleteButtonClick} 
-                                                        id={[userIndex]}
-                                                        tooltip=""
-                                                    />
-                                                :""}
-                                            </UnselectableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
+                                {(props.filteredUserIndexes.length > 0) && 
+                                <TableBody 
+                                    //displayRowCheckbox={false}
+                                    deselectOnClickaway={false}
+                                >
+                                    {props.filteredUserIndexes.map(function(userIndex) {
+                                        var user = props.users[userIndex];
+                                        return (
+                                            <TableRow 
+                                                key={user.username} 
+                                                className={user.current?"self":""}
+                                                selectable={!user.current}
+                                                selected={props.usersSelected.indexOf(userIndex) !== -1}
+                                            >
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>{user.email}</TableRowColumn>
+                                                <TableRowColumn style={styles.tableRowColumn}>
+                                                    {user.roles.map(function(role) {
+                                                        return (
+                                                            <UsersRole key={user.username + '_' + role} user={user} role={role} />
+                                                        );
+                                                    })}
+                                                </TableRowColumn>
+                                                <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                    {!user.current?
+                                                        <EditButton
+                                                            handleEdit={props.handlers.setButtonClick} 
+                                                            id={[userIndex]}
+                                                            tooltip=""
+                                                        />
+                                                    :""}
+                                                </UnselectableCell>
+                                                <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                    {!user.current?
+                                                        <DeleteButton
+                                                            handleDelete={props.handlers.deleteButtonClick} 
+                                                            id={[userIndex]}
+                                                            tooltip=""
+                                                        />
+                                                    :""}
+                                                </UnselectableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                </TableBody>
+                            }
                         </Table>
+                        {(props.filteredUserIndexes.length === 0) && 
+                            <div>
+                                <p>There are no users that match the current filters.</p>
+                                <RaisedButton 
+                                    label="Clear Filters"
+                                    onTouchTap={function() { props.handlers.filter(event, ['clear']) }}
+                                    primary={true}
+                                />
+                            </div>
+                        }
                     </CardText>
                 </Card>
             </div>
