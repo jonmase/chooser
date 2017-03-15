@@ -460,13 +460,12 @@ var FormContainer = React.createClass({
             iconLeft="menu"
             iconRight={null}
             sections={this.props.sections} 
-            title={<AppTitle subtitle={this.props.choice.name} />}
+            title={<AppTitle subtitle={this.props.choice.name + ": Choice Settings"} />}
         />;
 
         return (
-			<Container topbar={topbar} title="Dashboard - Choice Settings">
+			<Container topbar={topbar} title={false}>
                 <div>
-                    <p>Provide instructions, deadlines, rules, etc for students to make their choices.</p>
                     <Settings
                         choice={this.props.choice}
                         handlers={settingsHandlers}
