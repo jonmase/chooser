@@ -80,7 +80,7 @@ var Rules = React.createClass({
                     <div style={{float: 'right'}}>
                         {(this.props.containerState.instance.id)?
                             <AddButton
-                                handleAdd={this.props.handlers.editDialogOpen}
+                                handleAdd={this.props.handlers.editButtonClick}
                                 tooltip="Add Rule"
                             />
                         :""}
@@ -106,7 +106,7 @@ var Rules = React.createClass({
                             (this.props.containerState.rules.length === 0)?
                                 <div>
                                     <p style={{marginTop: 0}}>There are no rules yet.</p>
-                                    <AddButtonRaised handleAdd={this.props.handlers.editDialogOpen} label="Add Rule" />
+                                    <AddButtonRaised handleAdd={this.props.handlers.editButtonClick} label="Add Rule" />
                                 </div>
                             :
                                 <Table 
@@ -154,7 +154,7 @@ var Rules = React.createClass({
                                                             tooltip=""
                                                         />
                                                         <EditButton
-                                                            handleEdit={this.props.handlers.editDialogOpen} 
+                                                            handleEdit={this.props.handlers.editButtonClick} 
                                                             id={index}
                                                             tooltip=""
                                                         />
@@ -171,10 +171,6 @@ var Rules = React.createClass({
                                 </Table>
                     }
                 </CardText>
-                <RuleEditDialog
-                    handlers={this.props.handlers}
-                    containerState={this.props.containerState}
-                />
                 <RuleDeleteDialog
                     handlers={this.props.handlers}
                     containerState={this.props.containerState}

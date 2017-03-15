@@ -9,6 +9,7 @@ import AppTitle from '../elements/app-title.jsx';
 import Settings from './settings.jsx';
 import Rules from './rules.jsx';
 import SettingsEdit from './settings-edit-page.jsx';
+import RuleEdit from './rule-edit-page.jsx';
 
 var update = require('react-addons-update');
 
@@ -56,16 +57,7 @@ var SettingsContainer = React.createClass({
             rules: [],
             ruleIndexesById: [],
             ruleCategoryFields: [],
-            ruleEditDialogOpen: false,
             ruleBeingEdited: null,
-            ruleSaveButtonEnabled: true,
-            ruleSaveButtonLabel: 'Save',
-            ruleType: ruleDefaults.type,
-            ruleValueType: ruleDefaults.valueType,
-            ruleCombinedType: ruleDefaults.combinedType,
-            ruleScope: ruleDefaults.scope,
-            ruleCategoryFieldIndex: ruleDefaults.categoryFieldIndex,
-            ruleCategoryFieldOptionValue: ruleDefaults.categoryFieldOptionValue,
             ruleDeleteDialogOpen: false,
             ruleBeingDeleted: null,
             ruleDeleteButtonEnabled: true,
@@ -79,6 +71,13 @@ var SettingsContainer = React.createClass({
     componentDidMount: function() {
         this.loadInstanceFromServer();
         //this.loadRulesFromServer();
+    },
+    
+    //Handle going back to view screen
+    handleBackClick: function() {
+        this.setState({
+            action: 'view',
+        });
     },
     
     handleRuleDeleteDialogOpen: function(ruleIndex) {
@@ -147,7 +146,24 @@ var SettingsContainer = React.createClass({
         });
     },
 
-    handleRuleEditDialogOpen: function(ruleIndex) {
+    handleRuleEditClick: function(ruleIndex) {
+        this.setState({
+            action: 'rule',
+            ruleBeingEdited: (typeof(ruleIndex) !== "undefined"?this.state.rules[ruleIndex].id:null),
+        });
+    },
+    
+    handleRuleReturnedData: function(returnedData) {
+        this.setState({
+            action: 'view',
+            rules: returnedData.rules,
+        });
+        
+        this.handleSnackbarOpen(returnedData.response);
+    },
+
+    
+    /*handleRuleEditDialogOpen: function(ruleIndex) {
         var stateData = {
             ruleEditDialogOpen: true,
         }
@@ -200,126 +216,8 @@ var SettingsContainer = React.createClass({
         }
     
         this.setState(stateData);
-    },
+    },*/
 
-    handleRuleEditDialogClose: function() {
-        this.setState({
-            ruleEditDialogOpen: false,
-            ruleBeingEdited: null,
-        });
-    },
-
-    handleRuleCategoryFieldChange: function(event, value) {
-        this.setState({
-            ruleCategoryFieldIndex: value,
-            ruleCategoryFieldOptionValue: null,
-        });
-    },
-
-    handleRuleCategoryFieldOptionChange: function(event, value) {
-        this.setState({
-            ruleCategoryFieldOptionValue: value,
-        });
-    },
-
-    handleRuleScopeChange: function(event, value) {
-        this.setState({
-            ruleScope: value,
-            ruleCategoryFieldIndex: null,
-            ruleCategoryFieldOptionValue: null,
-        });
-    },
-
-    handleRuleTypeChange: function(event, value) {
-        var stateData = {
-            ruleCombinedType: value,
-        }
-        
-        var splitValue = value.split('_');
-        
-        stateData.ruleType = splitValue[0];
-        
-        if(typeof(splitValue[1]) !== "undefined") {
-            stateData.ruleValueType = splitValue[1];
-        }
-        else {
-            stateData.ruleValueType = null;
-        }
-    
-        this.setState(stateData);
-    },
-
-    handleRuleSubmit: function(rule) {
-        this.setState({
-            ruleSaveButtonEnabled: false,
-            ruleSaveButtonLabel: 'Saving',
-        });
-
-        //Get the IDs of the category field and option
-        if(rule.scope === 'category') {
-            var extraField = this.state.ruleCategoryFields[rule.category_field];
-            rule.extra_field_id = extraField.id;
-            
-            if(rule.category === 'all') {
-                rule.scope = 'category_all';
-            }
-            else {
-                var option = extraField.extra_field_options.find(function(option) { return option.value === rule.category; });
-                rule.extra_field_option_id = option.id;
-            }
-        }
-        
-        console.log("Saving rule: ", rule);
-        
-        //Save the Rule
-        var url = '../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: rule,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                stateData.ruleSaveButtonEnabled = true;
-                stateData.ruleSaveButtonLabel = 'Save';
-                stateData.ruleEditDialogOpen = false;   //Close the Dialog
-                stateData.ruleBeingEdited = null;
-                
-                //Update the state instance
-                stateData.rules = returnedData.rules;
-                stateData.ruleIndexesById = returnedData.ruleIndexesById;
-                
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.setState({
-                    ruleSaveButtonEnabled: true,
-                    ruleSaveButtonLabel: 'Resave',
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-            }.bind(this)
-        });
-    },
-    
-    //Handling switching between settings edit screen and view screen
-    handleSettingsBackClick: function() {
-        this.setState({
-            action: 'view',
-        });
-    },
     handleSettingsEditClick: function() {
         this.setState({
             action: 'edit',
@@ -355,23 +253,19 @@ var SettingsContainer = React.createClass({
     
     render: function() {
         var settingsHandlers={
-            backButtonClick: this.handleSettingsBackClick,
+            backButtonClick: this.handleBackClick,
             editButtonClick: this.handleSettingsEditClick,
             returnedData: this.handleSettingsReturnedData,
             snackbarOpen: this.handleSnackbarOpen,
         };
         var rulesHandlers={
-            categoryFieldChange: this.handleRuleCategoryFieldChange,
-            categoryFieldOptionChange: this.handleRuleCategoryFieldOptionChange,
+            backButtonClick: this.handleBackClick,
             deleteDialogOpen: this.handleRuleDeleteDialogOpen,
             deleteDialogClose: this.handleRuleDeleteDialogClose,
             delete: this.handleRuleDelete,
-            editDialogOpen: this.handleRuleEditDialogOpen,
-            editDialogClose: this.handleRuleEditDialogClose,
-            editSubmit: this.handleRuleSubmit,
-            scopeChange: this.handleRuleScopeChange,
+            editButtonClick: this.handleRuleEditClick,
+            returnedData: this.handleRuleReturnedData,
             settingsEditButtonClick: this.handleSettingsEditClick,
-            typeChange: this.handleRuleTypeChange,
         };
 
         var topbar = <TopBar 
@@ -418,18 +312,22 @@ var SettingsContainer = React.createClass({
                 />
             );
         }
-        /*else if(this.state.action === 'rule') {
+        else if(this.state.action === 'rule') {
             return (
-                <SettingsEdit
+                <RuleEdit
                     choice={this.props.choice}
                     dashboardUrl={this.props.dashboardUrl} 
-                    handlers={settingsHandlers}
+                    handlers={rulesHandlers}
                     instance={this.state.instance}
+                    rules={this.state.rules}
+                    ruleCategoryFields={this.state.ruleCategoryFields}
+                    ruleIndexesById={this.state.ruleIndexesById}
+                    ruleBeingEdited={this.state.ruleBeingEdited}
                     sections={this.props.sections} 
                     snackbar={snackbar}
                 />
             );
-        }*/
+        }
     }
 });
 

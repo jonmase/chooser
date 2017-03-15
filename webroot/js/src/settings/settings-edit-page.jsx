@@ -18,7 +18,7 @@ import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
 
-var SettingsPage = React.createClass({
+var SettingsEditor = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
@@ -364,4 +364,4 @@ var SettingsPage = React.createClass({
     }
 });
 
-module.exports = SettingsPage
+module.exports = SettingsEditor;
