@@ -36,6 +36,7 @@ var RuleViewDialog = React.createClass({
                 title={title}
             >
                 <p>Are you sure you want to remove the additional permissions for <span>{pluralise?"these users":"this user"}</span>?</p>
+                <p>Please note that users will still have their default permissions based on their role in the WebLearn site that this choice is launched from.</p>
                 <UserList
                     users={this.props.users}
                     userIndexesToList={this.props.usersBeingDeleted}
