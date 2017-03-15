@@ -284,7 +284,7 @@ var SettingsPage = React.createClass({
                                     </div>*/}
                                 </div>
                             </div>
-                            <div id="comments_options" style={{paddingBottom: '2rem'}}>
+                            <div id="comments_options">
                                 <div className="section">
                                     <FormsyToggle
                                         defaultToggled={this.props.settingsToggle_comments_per_option}

@@ -43,7 +43,7 @@ var SettingsContainer = React.createClass({
                         settingsToggle_comments_overall: data.choosingInstance.comments_overall,
                         settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
                         settingsWysiwyg_choosing_instructions: data.choosingInstance.choosing_instructions,
-                        settingsWysiwyg_reviewing_instructions: data.choosingInstance.reviewing_instructions,
+                        settingsWysiwyg_review_instructions: data.choosingInstance.review_instructions,
                     });
                 }
             }.bind(this),
@@ -80,7 +80,7 @@ var SettingsContainer = React.createClass({
             settingsToggle_comments_overall: false,
             settingsToggle_comments_per_option: false,
             settingsWysiwyg_choosing_instructions: '',
-            settingsWysiwyg_reviewing_instructions: '',
+            settingsWysiwyg_review_instructions: '',
             snackbar: {
                 open: false,
                 message: '',
@@ -283,7 +283,7 @@ var SettingsContainer = React.createClass({
         console.log("Saving rule: ", rule);
         
         //Save the Rule
-        var url = '../rules/save/' + this.state.instance.id + '.json';
+        var url = '../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -357,7 +357,7 @@ var SettingsContainer = React.createClass({
 
         //Get the wysiwyg editor data
         settings.choosing_instructions = this.state.settingsWysiwyg_choosing_instructions;
-        settings.reviewing_instructions = this.state.settingsWysiwyg_reviewing_instructions;
+        settings.review_instructions = this.state.settingsWysiwyg_review_instructions;
         
         console.log("Saving settings: ", settings);
         
@@ -489,7 +489,7 @@ var SettingsContainer = React.createClass({
                     settingsToggle_comments_overall={this.state.settingsToggle_comments_overall}
                     settingsToggle_comments_per_option={this.state.settingsToggle_comments_per_option}
                     settingsWysiwyg_choosing_instructions={this.state.settingsWysiwyg_choosing_instructions}
-                    settingsWysiwyg_reviewing_instructions={this.state.settingsWysiwyg_reviewing_instructions}
+                    settingsWysiwyg_review_instructions={this.state.settingsWysiwyg_review_instructions}
                     snackbar={snackbar}
                 />
             );
