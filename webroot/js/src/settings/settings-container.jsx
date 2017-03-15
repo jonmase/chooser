@@ -164,62 +164,6 @@ var SettingsContainer = React.createClass({
         this.handleSnackbarOpen(returnedData.response);
     },
 
-    
-    /*handleRuleEditDialogOpen: function(ruleIndex) {
-        var stateData = {
-            ruleEditDialogOpen: true,
-        }
-        
-        if(typeof(ruleIndex) !== "undefined") {
-            //Editing a rule, so update the state with the values for this rule
-            stateData.ruleBeingEdited = this.state.rules[ruleIndex].id;
-            stateData.ruleType = this.state.rules[ruleIndex].type;
-            stateData.ruleValueType = this.state.rules[ruleIndex].value_type;
-            stateData.ruleCombinedType = this.state.rules[ruleIndex].combined_type;
-            
-            var scope = this.state.rules[ruleIndex].scope;
-            if(scope === 'category_all') {
-                stateData.ruleScope = 'category';
-            }
-            else {
-                stateData.ruleScope = scope;
-            }
-            
-            if(this.state.rules[ruleIndex].extra_field_id) {
-                this.state.ruleCategoryFields.some(function(field, index) {
-                    if(field.id === this.state.rules[ruleIndex].extra_field_id) {
-                        stateData.ruleCategoryFieldIndex = index;
-                        return true;
-                    }
-                }, this);
-                
-                if(scope === 'category_all') {
-                    stateData.ruleCategoryFieldOptionValue = 'all';
-                }
-                else if(this.state.rules[ruleIndex].extra_field_option_id) {
-                    this.state.ruleCategoryFields[stateData.ruleCategoryFieldIndex].extra_field_options.some(function(option, index) {
-                        if(option.id === this.state.rules[ruleIndex].extra_field_option_id) {
-                            stateData.ruleCategoryFieldOptionValue = option.value;
-                            return true;
-                        }
-                    }, this);
-                }
-            }
-        }
-        else {
-            //Adding a rule, so make sure the rule fields are set to the defaults
-            stateData.ruleBeingEdited = null;
-            stateData.ruleType = ruleDefaults.type;
-            stateData.ruleValueType = ruleDefaults.valueType;
-            stateData.ruleCombinedType = ruleDefaults.combinedType;
-            stateData.ruleScope = ruleDefaults.scope;
-            stateData.ruleCategoryFieldIndex = ruleDefaults.categoryFieldIndex;
-            stateData.ruleCategoryFieldOptionValue = ruleDefaults.categoryFieldOptionValue;
-        }
-    
-        this.setState(stateData);
-    },*/
-
     handleSettingsEditClick: function() {
         this.setState({
             action: 'edit',
