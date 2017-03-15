@@ -38,10 +38,14 @@ class ChoosingInstancesController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($choiceId = null)
+    public function view()
     {
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -65,7 +69,11 @@ class ChoosingInstancesController extends AppController
     {
         //Make sure the user is an admin for this Choice
         //Not just for admins, needed for viewing choices as well. Can't think of any security issue here that needs admin check
-        $isViewer = $this->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+
+        $isViewer = $this->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
         if(empty($isViewer)) {
             throw new ForbiddenException(__('Not permitted to view this Choice.'));
         }
@@ -135,7 +143,10 @@ class ChoosingInstancesController extends AppController
         $this->request->allowMethod(['post']);
 
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }

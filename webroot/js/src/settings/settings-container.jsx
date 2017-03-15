@@ -23,7 +23,7 @@ var ruleDefaults = {
 
 var FormContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = '../get-active/' + this.props.choice.id + '/settings.json';
+        var url = 'get-active/' + this.props.choice.id + '/settings.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -125,7 +125,7 @@ var FormContainer = React.createClass({
         console.log("Deleting rule: ", rule);
         
         //Save the Rule
-        var url = '../../rules/delete/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
+        var url = '../rules/delete/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -296,7 +296,7 @@ var FormContainer = React.createClass({
         console.log("Saving rule: ", rule);
         
         //Save the Rule
-        var url = '../../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
+        var url = '../rules/save/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -365,7 +365,7 @@ var FormContainer = React.createClass({
         console.log("Saving settings: ", settings);
         
         //Save the settings
-        var url = '../save/' + this.props.choice.id;
+        var url = 'save/' + this.props.choice.id;
         $.ajax({
             url: url,
             dataType: 'json',
