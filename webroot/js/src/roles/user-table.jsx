@@ -23,8 +23,8 @@ var styles = {
     actionsTableRowColumn: {
         whiteSpace: 'normal',
         width: '48px',
-        paddingLeft: '12px',
-        paddingRight: '12px',
+        paddingLeft: '0px',
+        paddingRight: '0px',
     },
     cardText: {
         paddingTop: '0px',
@@ -71,7 +71,7 @@ var UsersTable = React.createClass({
                             <FilterUsers
                                 filteredRoles={this.props.filteredRoles}
                                 handler={props.handlers.filter} 
-                                iconStyle={(this.props.filteredRoles.length > 0) && {color: indigo500}}
+                                iconStyle={(this.props.filteredRoles.length > 0)?{color: indigo500}:{}}
                                 roles={props.roles} 
                             />&nbsp;
                             <EditButton
