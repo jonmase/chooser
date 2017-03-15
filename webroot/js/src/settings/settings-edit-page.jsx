@@ -21,18 +21,16 @@ import Hidden from '../elements/fields/hidden.jsx';
 var SettingsPage = React.createClass({
     getInitialState: function () {
         return {
-            commentsOverallToggle: false,
-            commentsPerOptionToggle: false,
-            preferenceToggle: false,
-            preferenceType: 'rank',
             canSubmit: false,
+            choosing_instructions: this.props.instance.choosing_instructions,
+            comments_overall: this.props.instance.comments_overall,
+            comments_per_option: this.props.instance.comments_per_option,
+            preferenceType: 'rank',
+            preference: this.props.instance.preference,
+            review_instructions: this.props.instance.review_instructions,
+            saveButtonEnabled: true,
+            saveButtonLabel: 'Save',
         };
-    },
-
-    enableSubmitButton: function () {
-        this.setState({
-            canSubmit: true
-        });
     },
 
     disableSubmitButton: function () {
@@ -41,22 +39,69 @@ var SettingsPage = React.createClass({
         });
     },
     
-    handleCommentsOverallChange: function(event, value) {
+    enableSubmitButton: function () {
         this.setState({
-            commentsOverallToggle: value
+            canSubmit: true
         });
     },
 
-    handleCommentsPerOptionChange: function(event, value) {
+    handleSaveClick: function() {
+        //Submit the form by ref
+        this.refs.settings.submit();
+    },
+    
+    handleSubmit: function(settings) {
         this.setState({
-            commentsPerOptionToggle: value
+            saveButtonEnabled: false,
+            saveButtonLabel: 'Saving',
+        });
+
+        //Get the wysiwyg editor data
+        settings.choosing_instructions = this.state.choosing_instructions;
+        settings.review_instructions = this.state.review_instructions;
+        
+        console.log("Saving settings: ", settings);
+        
+        //Save the settings
+        var url = 'save';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: settings,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                this.setState({
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Save',
+                });
+                
+                this.props.handlers.returnedData(returnedData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Resave',
+                });
+                
+                this.props.handlers.snackbarOpen('Save error (' + err.toString() + ')');
+            }.bind(this)
         });
     },
+    
+    handleToggleChange: function(event, value) {
+        var stateData = {};
+        stateData[event.target.name] = value;
+        this.setState(stateData);
+    },
 
-    handlePreferenceChange: function(event, value) {
-        this.setState({
-            preferenceToggle: value
-        });
+    handleWysiwygChange: function(element, value) {
+        var stateData = {};
+        stateData[element] = value;
+        this.setState(stateData);
     },
 
     handlePreferenceTypeChange: function(event, value) {
@@ -72,8 +117,8 @@ var SettingsPage = React.createClass({
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
-                disabled={!this.state.canSubmit}
-                label="Save"
+                disabled={!this.state.canSubmit && this.state.saveButtonEnabled}
+                label={this.state.saveButtonLabel}
                 onTouchTap={this.handleSaveClick}
                 style={{marginTop: '6px'}}
             />}
@@ -88,14 +133,12 @@ var SettingsPage = React.createClass({
                     method="POST"
                     onValid={this.enableSubmitButton}
                     onInvalid={this.disableSubmitButton}
-                    onValidSubmit={this.props.handlers.submit}
+                    onValidSubmit={this.handleSubmit}
                     noValidate={true}
                     ref="settings"
                 >
-                    {instance.id?
+                    {instance.id && 
                         <Hidden name="instance_id" value={instance.id} />
-                        :
-                        <p>You have not set this Choice up yet for students to choose their options. Complete the fields below to set up the Choice.</p>
                     }
                     <Card 
                         className="page-card"
@@ -113,7 +156,7 @@ var SettingsPage = React.createClass({
                         >
                             <DateTime field={{
                                     label: "Opens",
-                                    instructions: "Set the date/time when the choice will become available to students",
+                                    instructions: "Set the date/time when the choice will become available",
                                     name: "opens",
                                     section: true,
                                     value: instance.opens || null,
@@ -122,7 +165,7 @@ var SettingsPage = React.createClass({
                             />
                             <DateTime field={{
                                     label: "Deadline",
-                                    instructions: "Set the date/time when the students must submit their choices",
+                                    instructions: "Set the date/time when choices must be submitted",
                                     name: "deadline",
                                     section: true,
                                     value:  instance.deadline || null,
@@ -131,7 +174,7 @@ var SettingsPage = React.createClass({
                             />
                             <DateTime field={{
                                     label: "Extension",
-                                    instructions: "Set an extension date/time, after which the students will still be able to make their choices, but they will be marked as late",
+                                    instructions: "Set an extension date/time. Up until this time it will still be possible to make choices, but they will be marked as late",
                                     name: "extension",
                                     section: true, 
                                     value:  instance.extension || null,
@@ -148,7 +191,7 @@ var SettingsPage = React.createClass({
                         <CardHeader
                             actAsExpander={true}
                             showExpandableButton={true}
-                            subtitle="Set the instructions that students will see when choosing options and reviewing their selection"
+                            subtitle="Set the instructions for choosing and reviewing options"
                             title="Instructions"
                         >
                         </CardHeader>
@@ -157,25 +200,24 @@ var SettingsPage = React.createClass({
                         >
                             <Wysiwyg field={{
                                 label: "Instructions for Choosing",
-                                instructions: "Provide instructions for the students on making their choices. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.",
+                                instructions: "Provide instructions that will be shown on the choosing page. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.",
                                 name: "choosing_instructions",
-                                onChange: this.props.handlers.handleWysiwygChange,
+                                onChange: this.handleWysiwygChange,
                                 section: true,
-                                value: this.props.settingsWysiwyg_choosing_instructions,
+                                value: this.state.choosing_instructions,
                             }} />
                             <Wysiwyg field={{
                                 label: "Instructions for Reviewing",
-                                instructions: "Provide instructions that the students will see when reviewing their options.",
+                                instructions: "Provide instructions that will be shown on the review page.",
                                 name: "review_instructions",
-                                onChange: this.props.handlers.handleWysiwygChange,
+                                onChange: this.handleWysiwygChange,
                                 section: true,
-                                value: this.props.settingsWysiwyg_review_instructions,
+                                value: this.state.review_instructions,
                             }} />
                             {/*<Multiline field={{
                                 label: "Instructions for Reviewing",
                                 instructions: "Provide instructions that the students will see when reviewing their options.",
                                 name: "review_instructions",
-                                //onChange: this.props.handlers.handleWysiwygChange,
                                 section: true,
                                 value: instance.review_instructions || null,
                             }} />*/}
@@ -199,24 +241,24 @@ var SettingsPage = React.createClass({
                             <div className="section" id="editable">
                                 <FormsyToggle
                                     defaultToggled={(typeof(instance.editable) !== "undefined")?instance.editable:true}
-                                    label="Allow students to edit choices. If switched on, students who have submitted choices, can return and edit them until the deadline"
+                                    label="Allow choices to be edited. If switched on, choosers can return and edit submitted choices until the deadline"
                                     labelPosition="right"
                                     name="editable"
                                 />
                             </div>
                             <div id="preferences">
-                                <div className={this.props.settingsToggle_preference?"":"section"}>
+                                <div className={this.state.preference?"":"section"}>
                                     <FormsyToggle
                                         //defaultToggled={(typeof(instance.preference) !== "undefined")?instance.preference:false}
-                                        defaultToggled={this.props.settingsToggle_preference}
-                                        label="Allow students to express preferences for chosen options, e.g. by ranking or assigning points?"
+                                        defaultToggled={this.state.preference}
+                                        label="Allow choosers to express preferences for chosen options, e.g. by ranking or assigning points?"
                                         labelPosition="right"
                                         name="preference"
-                                        onChange={this.props.handlers.handleToggleChange}
+                                        onChange={this.handleToggleChange}
                                         //toggled={false}
                                     />
                                 </div>
-                                <div className={this.props.settingsToggle_preference?"":"hidden"}>
+                                <div className={this.state.preference?"":"hidden"}>
                                     <Dropdown field={{
                                             label: "Preference Type",
                                             name: "preference_type",
@@ -246,32 +288,30 @@ var SettingsPage = React.createClass({
                                     </div>
                                     {/*<Multiline field={{
                                         label: "Preference Instructions",
-                                        instructions: "Provide instructions for the students on expressing their preferences.",
+                                        instructions: "Provide instructions for expressing preferences.",
                                         name: "preference_instructions",
-                                        //onChange: this.props.handlers.handleWysiwygChange,
                                         section: true,
-                                        value: instance.preference_instructions || null, //this.props.settingsWysiwyg_preference_instructions,
+                                        value: instance.preference_instructions || null,
                                     }} />*/}
                                 </div>
                             </div>
                             <div id="comments_overall">
-                                <div className={this.props.settingsToggle_comments_overall?"":"section"}>
+                                <div className={this.state.comments_overall?"":"section"}>
                                     <FormsyToggle
-                                        defaultToggled={this.props.settingsToggle_comments_overall}
-                                        label="Allow students to make comments about their choice as a whole"
+                                        defaultToggled={this.state.comments_overall}
+                                        label="Allow comments about the choice as a whole"
                                         labelPosition="right"
                                         name="comments_overall"
-                                        onChange={this.props.handlers.handleToggleChange}
+                                        onChange={this.handleToggleChange}
                                     />
                                 </div>
-                                <div className={this.props.settingsToggle_comments_overall?"section":"hidden"}>
+                                <div className={this.state.comments_overall?"section":"hidden"}>
                                     <Multiline field={{
                                         label: "Overall Comments Instructions",
-                                        instructions: "Instructions for adding comments about their choice as a whole",
+                                        instructions: "Instructions for adding comments about the choice as a whole",
                                         name: "comments_overall_instructions",
-                                        onChange: this.props.handlers.handleWysiwygChange,
                                         section: false,
-                                        value: instance.comments_overall_instructions || null, //this.props.settingsWysiwyg_comments_overall_instructions,
+                                        value: instance.comments_overall_instructions || null,
                                     }} />
                                     {/*<div>
                                         <Text field={{
@@ -287,21 +327,21 @@ var SettingsPage = React.createClass({
                             <div id="comments_options">
                                 <div className="section">
                                     <FormsyToggle
-                                        defaultToggled={this.props.settingsToggle_comments_per_option}
-                                        label="Allow students to make separate comments about each option they have chosen"
+                                        defaultToggled={this.state.comments_per_option}
+                                        label="Allow comments about each chosen option"
                                         labelPosition="right"
                                         name="comments_per_option"
-                                        onChange={this.props.handlers.handleToggleChange}
+                                        onChange={this.handleToggleChange}
                                     />
                                 </div>
-                                {/*<div className={this.props.settingsToggle_comments_per_option?"":"hidden"}>
+                                {/*<div className={this.state.comments_per_option?"":"hidden"}>
                                     <Multiline field={{
                                         label: "Option Comments Instructions",
-                                        instructions: "Instructions for adding comments about each option",
+                                        instructions: "Instructions for adding comments about each chosen option",
                                         name: "comments_per_option_instructions",
-                                        //onChange: this.props.handlers.handleWysiwygChange,
+                                        //onChange: this.handleWysiwygChange,
                                         section: false,
-                                        value: instance.comments_per_option_instructions || null, //this.props.settingsWysiwyg_comments_per_option_instructions,
+                                        value: instance.comments_per_option_instructions || null,
                                     }} />
                                     <div>
                                         <Text field={{

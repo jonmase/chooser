@@ -40,11 +40,6 @@ var SettingsContainer = React.createClass({
                         rules: data.rules,
                         ruleCategoryFields: data.ruleCategoryFields,
                         ruleIndexesById: data.ruleIndexesById,
-                        settingsToggle_preference: data.choosingInstance.preference,
-                        settingsToggle_comments_overall: data.choosingInstance.comments_overall,
-                        settingsToggle_comments_per_option: data.choosingInstance.comments_per_option,
-                        settingsWysiwyg_choosing_instructions: data.choosingInstance.choosing_instructions,
-                        settingsWysiwyg_review_instructions: data.choosingInstance.review_instructions,
                     });
                 }
             }.bind(this),
@@ -55,7 +50,7 @@ var SettingsContainer = React.createClass({
     },
     getInitialState: function () {
         return {
-            action: 'edit',
+            action: 'view',
             instance: [],
             instanceLoaded: false,
             rules: [],
@@ -75,14 +70,6 @@ var SettingsContainer = React.createClass({
             ruleBeingDeleted: null,
             ruleDeleteButtonEnabled: true,
             ruleDeleteButtonLabel: 'Delete',
-            settingsSaveButtonEnabled: true,
-            settingsSaveButtonLabel: 'Save',
-            //Have separate state values for toggles and WYSIWYGs, as can't just update state.instance, because state.instance is the saved instance, not necessarily the values of the form
-            settingsToggle_preference: false,
-            settingsToggle_comments_overall: false,
-            settingsToggle_comments_per_option: false,
-            settingsWysiwyg_choosing_instructions: '',
-            settingsWysiwyg_review_instructions: '',
             snackbar: {
                 open: false,
                 message: '',
@@ -339,72 +326,24 @@ var SettingsContainer = React.createClass({
         });
     },
     
-    handleSettingsSubmit: function(settings) {
+    handleSettingsReturnedData: function(returnedData) {
         this.setState({
-            settingsSaveButtonEnabled: false,
-            settingsSaveButtonLabel: 'Saving',
+            action: 'view',
+            instance: returnedData.instance,
         });
-
-        //Get the wysiwyg editor data
-        settings.choosing_instructions = this.state.settingsWysiwyg_choosing_instructions;
-        settings.review_instructions = this.state.settingsWysiwyg_review_instructions;
         
-        console.log("Saving settings: ", settings);
-        
-        //Save the settings
-        var url = 'save';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: settings,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                stateData.settingsSaveButtonEnabled = true;
-                stateData.settingsSaveButtonLabel = 'Save';
-                stateData.settingsDialogOpen = false;   //Close the Dialog
-                
-                //Update the state instance
-                stateData.instance = returnedData.instance;
-                
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.setState({
-                    settingsSaveButtonEnabled: true,
-                    settingsSaveButtonLabel: 'Resave',
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-            }.bind(this)
+        this.handleSnackbarOpen(returnedData.response);
+    },
+    
+    handleSnackbarOpen: function(message) {
+        this.setState({
+            snackbar: {
+                open: true,
+                message: message,
+            },
         });
     },
     
-    handleSettingsToggleChange: function(event, value) {
-        var stateData = {};
-        stateData['settingsToggle_' + event.target.name] = value;
-        this.setState(stateData);
-    },
-
-    handleSettingsWysiwygChange: function(element, value) {
-        var stateData = {};
-        stateData['settingsWysiwyg_' + element] = value;
-        this.setState(stateData);
-    },
-    
-
     handleSnackbarClose: function() {
         this.setState({
             snackbar: {
@@ -418,9 +357,8 @@ var SettingsContainer = React.createClass({
         var settingsHandlers={
             backButtonClick: this.handleSettingsBackClick,
             editButtonClick: this.handleSettingsEditClick,
-            handleToggleChange: this.handleSettingsToggleChange,
-            submit: this.handleSettingsSubmit,
-            handleWysiwygChange: this.handleSettingsWysiwygChange,
+            returnedData: this.handleSettingsReturnedData,
+            snackbarOpen: this.handleSnackbarOpen,
         };
         var rulesHandlers={
             categoryFieldChange: this.handleRuleCategoryFieldChange,
@@ -476,11 +414,6 @@ var SettingsContainer = React.createClass({
                     handlers={settingsHandlers}
                     instance={this.state.instance}
                     sections={this.props.sections} 
-                    settingsToggle_preference={this.state.settingsToggle_preference}
-                    settingsToggle_comments_overall={this.state.settingsToggle_comments_overall}
-                    settingsToggle_comments_per_option={this.state.settingsToggle_comments_per_option}
-                    settingsWysiwyg_choosing_instructions={this.state.settingsWysiwyg_choosing_instructions}
-                    settingsWysiwyg_review_instructions={this.state.settingsWysiwyg_review_instructions}
                     snackbar={snackbar}
                 />
             );
@@ -493,10 +426,6 @@ var SettingsContainer = React.createClass({
                     handlers={settingsHandlers}
                     instance={this.state.instance}
                     sections={this.props.sections} 
-                    settingsToggle_preference={this.state.settingsToggle_preference}
-                    settingsToggle_comments_overall={this.state.settingsToggle_comments_overall}
-                    settingsToggle_comments_per_option={this.state.settingsToggle_comments_per_option}
-                    settingsWysiwyg_choosing_instructions={this.state.settingsWysiwyg_choosing_instructions}
                     snackbar={snackbar}
                 />
             );

@@ -73,7 +73,7 @@ var Rules = React.createClass({
             >
                 <CardHeader
                     title="Rules"
-                    subtitle="Define the rules for making valid choices"
+                    subtitle="The rules for making valid choices"
                     actAsExpander={false}
                     showExpandableButton={false}
                 >

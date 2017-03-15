@@ -32,7 +32,7 @@ var Settings = React.createClass({
                 <CardHeader
                     actAsExpander={false}
                     showExpandableButton={false}
-                    subtitle="Provide instructions, deadlines, and other options"
+                    subtitle="When the choice opens and closes, instructions, and other options"
                     title="Settings"
                 >
                     <div style={{float: 'right'}}>
@@ -60,7 +60,6 @@ var Settings = React.createClass({
                             </div>
                         :
                             <div>
-                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions} />
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
                                         <DateTime label="Opens" value={instance.opens} />
@@ -73,6 +72,7 @@ var Settings = React.createClass({
                                         />
                                     </div>
                                 </div>
+                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions} />
                                 <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || "No instructions given"} />
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
