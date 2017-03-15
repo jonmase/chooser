@@ -37,7 +37,7 @@ var Settings = React.createClass({
                 >
                     <div style={{float: 'right'}}>
                         <EditButton
-                            handleEdit={this.props.handlers.dialogOpen}
+                            handleEdit={this.props.handlers.editButtonClick}
                             id={null}
                             tooltip={editTooltip}
                         />
