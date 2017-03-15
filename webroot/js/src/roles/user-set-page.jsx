@@ -68,7 +68,7 @@ var AddUser = React.createClass({
                 editingCurrentUser: true,
                 rolesChecked: {admin: true},
             });
-            var findUserMessage = 'This is you! You are an Administrator for this Choice, and you can\'t change your own permissions.';
+            var findUserMessage = "This is you! You are an Administrator for this Choice, and you can't change your own permissions.";
             
         }
         else {
@@ -323,10 +323,6 @@ var AddUser = React.createClass({
             title="Set Additional Permissions"
         />;
         
-        
-        //Get the array of roles not including view
-        var rolesWithoutViewer = this.props.roles.slice(1);
-        
         return (
             <Container topbar={topbar}>
                 {this.state.originalAction === 'edit' && 
@@ -375,7 +371,7 @@ var AddUser = React.createClass({
                             label={this.getPermissionsLabel()}
                             instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in WebLearn.'
                         />
-                        <RoleCheckboxes disableAll={this.state.editingCurrentUser} nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={rolesWithoutViewer} />
+                        <RoleCheckboxes disableAll={this.state.editingCurrentUser} nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={this.props.roles} />
                         {(this.getRolesCheckedCount() == 0) &&
                             <p>
                                 <HighlightedText value={this.getNoRolesCheckedMessage()} />
