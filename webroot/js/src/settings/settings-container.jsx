@@ -8,7 +8,7 @@ import AppTitle from '../elements/app-title.jsx';
 
 import Settings from './settings.jsx';
 import Rules from './rules.jsx';
-import SettingsDialog from './settings-dialog.jsx';
+import SettingsEdit from './settings-edit-page.jsx';
 
 var update = require('react-addons-update');
 
@@ -60,6 +60,7 @@ var FormContainer = React.createClass({
         var settingsDialogOpen = false;
         
         return {
+            action: 'view',
             instance: [],
             instanceLoaded: false,
             rules: [],
@@ -350,6 +351,18 @@ var FormContainer = React.createClass({
         });
     },
 
+    handleSettingsBackClick: function() {
+        this.setState({
+            action: 'view',
+        });
+    },
+
+    handleSettingsEditClick: function() {
+        this.setState({
+            action: 'edit',
+        });
+    },
+    
     handleSettingsSubmit: function(settings) {
         this.setState({
             settingsSaveButtonEnabled: false,
@@ -434,8 +447,8 @@ var FormContainer = React.createClass({
     
     render: function() {
         var settingsHandlers={
-            dialogOpen: this.handleSettingsDialogOpen,
-            dialogClose: this.handleSettingsDialogClose,
+            backButtonClick: this.handleSettingsBackClick,
+            editButtonClick: this.handleSettingsEditClick,
             handleToggleChange: this.handleSettingsToggleChange,
             submit: this.handleSettingsSubmit,
             handleWysiwygChange: this.handleSettingsWysiwygChange,
@@ -462,10 +475,17 @@ var FormContainer = React.createClass({
             sections={this.props.sections} 
             title={<AppTitle subtitle={this.props.choice.name + ": Choice Settings"} />}
         />;
+        
+        var snackbar = <Snackbar
+                        open={this.state.snackbar.open}
+                        message={this.state.snackbar.message}
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleSnackbarClose}
+                    />;
 
-        return (
-			<Container topbar={topbar} title={false}>
-                <div>
+        if(this.state.action === 'view') {
+            return (
+                <Container topbar={topbar} title={false}>
                     <Settings
                         choice={this.props.choice}
                         handlers={settingsHandlers}
@@ -476,20 +496,42 @@ var FormContainer = React.createClass({
                         handlers={rulesHandlers}
                         containerState={this.state}
                     />
-                    <SettingsDialog
-                        choice={this.props.choice}
-                        handlers={settingsHandlers}
-                        containerState={this.state}
-                    />
-                    <Snackbar
-                        open={this.state.snackbar.open}
-                        message={this.state.snackbar.message}
-                        autoHideDuration={3000}
-                        onRequestClose={this.handleSnackbarClose}
-                    />
-                </div>
-			</Container>
-        );
+                    {snackbar}
+                </Container>
+            );
+        }
+        else if(this.state.action === 'edit') {
+            return (
+                <SettingsEdit
+                    choice={this.props.choice}
+                    dashboardUrl={this.props.dashboardUrl} 
+                    handlers={settingsHandlers}
+                    instance={this.state.instance}
+                    sections={this.props.sections} 
+                    settingsToggle_preference={this.state.settingsToggle_preference}
+                    settingsToggle_comments_overall={this.state.settingsToggle_comments_overall}
+                    settingsToggle_comments_per_option={this.state.settingsToggle_comments_per_option}
+                    settingsWysiwyg_choosing_instructions={this.state.settingsWysiwyg_choosing_instructions}
+                    snackbar={snackbar}
+                />
+            );
+        }
+        /*else if(this.state.action === 'rule') {
+            return (
+                <SettingsEdit
+                    choice={this.props.choice}
+                    dashboardUrl={this.props.dashboardUrl} 
+                    handlers={settingsHandlers}
+                    instance={this.state.instance}
+                    sections={this.props.sections} 
+                    settingsToggle_preference={this.state.settingsToggle_preference}
+                    settingsToggle_comments_overall={this.state.settingsToggle_comments_overall}
+                    settingsToggle_comments_per_option={this.state.settingsToggle_comments_per_option}
+                    settingsWysiwyg_choosing_instructions={this.state.settingsWysiwyg_choosing_instructions}
+                    snackbar={snackbar}
+                />
+            );
+        }*/
     }
 });
 
