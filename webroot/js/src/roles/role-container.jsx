@@ -241,16 +241,17 @@ var RolesContainer = React.createClass({
     
     handleSelectUserChange: function(rowIndexes) {
         var userIndexes = [];
-        //var filteredUserIndexes = this.state.filteredUserIndexes;
+        
+        //Convert selected row indexes into the correct user indexes, using the filteredUserIndexes array, which has the current row index as its keys and the corresponding user index as its values
+        rowIndexes.forEach(function(rowIndex) {
+            userIndexes.push(this.state.filteredUserIndexes[rowIndex]);
+        }, this);
         
         this.setState({
-            usersSelected: rowIndexes,
+            usersSelected: userIndexes,
         });
         
-        /*rowIndexes.forEach(function(index) {
-            userIndexes.push(filteredUserIndexes[index]);
-        });
-        
+        /*
         //Special case when all rows are selected, users = "all"
         //Caused issues in combination with filters, so disabled
         //TODO: Check whether Material-UI updates have fixed issues
