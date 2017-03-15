@@ -50,8 +50,7 @@ var RolesContainer = React.createClass({
             action: 'index',
             defaultRoles: this.props.choice.instructor_default_roles,
             deleteDialogOpen: false,
-            //filterRoles: filterRoles,
-            filterRoles: [],
+            filteredRoles: [],
             filteredUserIndexes: [],
             notify: this.props.choice.notify_additional_permissions,
             selectAllSelected: true,
@@ -200,23 +199,30 @@ var RolesContainer = React.createClass({
     //Update state when user role filter is changed
     handleFilterUsers: function(event, filteredRoles) {
         console.log("User Role Filter changed");
+        console.log(filteredRoles);
         
-        /*var filteredUserIndexes = this.filterUsers(this.state.users, filteredRoles);
+        if(filteredRoles.indexOf('clear') > -1) {
+            filteredRoles = [];
+        }
+        
+        var filteredUserIndexes = this.filterUsers(filteredRoles);
         
         this.setState({
-            filterRoles: roles,
+            filteredRoles: filteredRoles,
             filteredUserIndexes: filteredUserIndexes,
-            selectAllSelected: false,
-        });*/
+        });
     },
     
-    filterUsers: function(users, roles) {
+    filterUsers: function(filteredRoles) {
         var filteredUserIndexes = [];
         
-        users.forEach(function(user, index) {
-            if(roles.length === 0 || user.roles.some(function(role) { 
-                return roles.indexOf(role.id) > -1; 
-            })) {
+        this.state.users.forEach(function(user, index) {
+            //If there are no role filter, or if the user has one of the filters roles, add it to the filteredUsers array
+            if(filteredRoles.length === 0
+                || user.roles.some(function(role) { 
+                    return filteredRoles.indexOf(role) > -1; 
+                })
+            ) {
                 filteredUserIndexes.push(index);
             }
         });
@@ -425,7 +431,7 @@ var RolesContainer = React.createClass({
                         <UsersTable 
                             choiceId={this.props.choice.id} 
                             filteredUserIndexes={this.state.filteredUserIndexes}
-                            filterRoles={this.state.filterRoles} 
+                            filteredRoles={this.state.filteredRoles} 
                             handlers={userTableHandlers}
                             roles={this.props.roles} 
                             roleIndexesById={this.props.roleIndexesById} 

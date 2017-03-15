@@ -74,7 +74,7 @@ var UsersTable = React.createClass({
                     >
                         <div style={{float: 'right'}}>
                             <FilterUsers
-                                state={props.state} 
+                                filteredRoles={this.props.filteredRoles}
                                 roles={props.roles} 
                                 handler={props.handlers.filter} 
                                 titleStyle={styles.sortFilterTitles}
@@ -136,14 +136,14 @@ var UsersTable = React.createClass({
                                 //displayRowCheckbox={false}
                                 deselectOnClickaway={false}
                             >
-                                {props.filteredUserIndexes.map(function(userIndex, index) {
+                                {props.filteredUserIndexes.map(function(userIndex) {
                                     var user = props.users[userIndex];
                                     return (
                                         <TableRow 
                                             key={user.username} 
                                             className={user.current?"self":""}
                                             selectable={!user.current}
-                                            selected={props.usersSelected.indexOf(index) !== -1}
+                                            selected={props.usersSelected.indexOf(userIndex) !== -1}
                                         >
                                             <TableRowColumn style={styles.tableRowColumn}>{user.username}</TableRowColumn>
                                             <TableRowColumn style={styles.tableRowColumn}>{user.fullname}</TableRowColumn>
@@ -159,7 +159,7 @@ var UsersTable = React.createClass({
                                                 {!user.current?
                                                     <EditButton
                                                         handleEdit={props.handlers.setButtonClick} 
-                                                        id={[index]}
+                                                        id={[userIndex]}
                                                         tooltip=""
                                                     />
                                                 :""}
@@ -168,7 +168,7 @@ var UsersTable = React.createClass({
                                                 {!user.current?
                                                     <DeleteButton
                                                         handleDelete={props.handlers.deleteButtonClick} 
-                                                        id={[index]}
+                                                        id={[userIndex]}
                                                         tooltip=""
                                                     />
                                                 :""}

@@ -29,7 +29,7 @@ var UserFilters = React.createClass({
                 anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
                 targetOrigin={{horizontal: 'right', vertical: 'top'}}
                 multiple={true}
-                value={this.props.roles}
+                value={this.props.filteredRoles}
                 onChange={this.props.handler}
             >
                 {menuItems}
