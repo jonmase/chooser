@@ -95,9 +95,9 @@ var Rules = React.createClass({
                     :
                         (!this.props.containerState.instance.id)?
                             <div>
-                                <p>You cannot create rules until you have set up the Choice.</p>
+                                <p style={{marginTop: 0}}>You cannot create rules until you have set up the Choice.</p>
                                 <EditButtonRaised 
-                                    handleEdit={this.props.handlers.settingsDialogOpen} 
+                                    handleEdit={this.props.handlers.settingsEditButtonClick} 
                                     id={null} 
                                     label="Set Up Choice"
                                 />
@@ -105,7 +105,7 @@ var Rules = React.createClass({
                         :
                             (this.props.containerState.rules.length === 0)?
                                 <div>
-                                    <p>There are no rules yet.</p>
+                                    <p style={{marginTop: 0}}>There are no rules yet.</p>
                                     <AddButtonRaised handleAdd={this.props.handlers.editDialogOpen} label="Add Rule" />
                                 </div>
                             :

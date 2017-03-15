@@ -51,9 +51,9 @@ var Settings = React.createClass({
                     :
                         !instance.id?
                             <div>
-                                <p>This Choice has not been set up yet.</p>
+                                <p style={{marginTop: 0}}>This Choice has not been set up yet.</p>
                                 <EditButtonRaised 
-                                    handleEdit={this.props.handlers.dialogOpen} 
+                                    handleEdit={this.props.handlers.editButtonClick} 
                                     id={null} 
                                     label={editTooltip}
                                 />

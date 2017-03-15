@@ -370,7 +370,7 @@ var SettingsContainer = React.createClass({
             editDialogClose: this.handleRuleEditDialogClose,
             editSubmit: this.handleRuleSubmit,
             scopeChange: this.handleRuleScopeChange,
-            settingsDialogOpen: this.handleSettingsDialogOpen,
+            settingsEditButtonClick: this.handleSettingsEditClick,
             typeChange: this.handleRuleTypeChange,
         };
 
