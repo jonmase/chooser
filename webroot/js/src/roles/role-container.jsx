@@ -406,7 +406,7 @@ var RolesContainer = React.createClass({
             iconLeft="menu"
             iconRight={null}
             sections={this.props.sections} 
-            title={<AppTitle subtitle={this.props.choice.name} />}
+            title={<AppTitle subtitle={this.props.choice.name + ": User Permissions"} />}
         />;
 
         var snackbar = <Snackbar
@@ -418,7 +418,7 @@ var RolesContainer = React.createClass({
         
         if(this.state.action === 'index') {
             return (
-                <Container topbar={topbar} title="Dashboard - User Permissions">
+                <Container topbar={topbar} title={false}>
                     <div>
                         <RolesExplanations 
                             roles={this.props.roles} 
