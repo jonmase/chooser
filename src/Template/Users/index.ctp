@@ -1,3 +1,5 @@
+<?php $this->assign('title', $choice['name'] . ' - User Permissions'); ?>
+
 <div id="roles"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

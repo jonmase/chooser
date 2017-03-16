@@ -1,3 +1,5 @@
+<?php $this->assign('title', $choice['name'] . ' - Settings'); ?>
+
 <div id="view"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

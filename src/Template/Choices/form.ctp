@@ -1,3 +1,5 @@
+<?php $this->assign('title', $choice['name'] . ' - Options Form'); ?>
+
 <div id="form"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>

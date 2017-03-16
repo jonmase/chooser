@@ -1,3 +1,5 @@
+<?php $this->assign('title', $choice['name'] . ' - Dashboard'); ?>
+
 <div id="dashboard">
 </div>
 <?= $this->Html->scriptStart(['block' => true]); ?>

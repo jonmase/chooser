@@ -1,3 +1,5 @@
+<?php $this->assign('title', 'Profile'); ?>
+
 <div id="profile"></div>
 
 <?= $this->Html->scriptStart(['block' => true]); ?>
