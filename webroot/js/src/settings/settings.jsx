@@ -14,7 +14,7 @@ import Loader from '../elements/loader.jsx';
 
 var Settings = React.createClass({
     render: function() {
-        var instance = this.props.containerState.instance;
+        var instance = this.props.instance;
     
         if(instance.id) {
             var editTooltip = "Edit Settings";
@@ -46,7 +46,7 @@ var Settings = React.createClass({
                 <CardText 
                     expandable={false}
                 >
-                    {!this.props.containerState.instanceLoaded?
+                    {!this.props.instanceLoaded?
                         <Loader />
                     :
                         !instance.id?

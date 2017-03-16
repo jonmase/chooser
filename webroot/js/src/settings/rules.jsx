@@ -28,12 +28,6 @@ var styles = {
         paddingRight: '12px',
         textAlign: 'right',
     },
-    favouriteTableRowColumn: {
-        whiteSpace: 'normal',
-        width: '48px',
-        paddingLeft: '12px',
-        paddingRight: '12px',
-    },
     cardText: {
         paddingTop: '0px',
     }
@@ -42,28 +36,93 @@ var styles = {
 var Rules = React.createClass({
     getInitialState: function () {
         var initialState = {
+            deleteButtonEnabled: true,
+            deleteButtonLabel: 'Delete',
+            deleteDialogOpen: false,
+            ruleBeingDeleted: null,
             ruleBeingViewed: null,
-            ruleViewDialogOpen: false,
+            viewDialogOpen: false,
         };
         
         return initialState;
     },
-    handleDialogOpen: function(ruleIndex) {
+    
+    handleViewDialogOpen: function(ruleIndex) {
         this.setState({
             ruleBeingViewed: ruleIndex,
-            ruleViewDialogOpen: true,    //Open the dialog
+            viewDialogOpen: true,    //Open the dialog
         });
     },
-    handleDialogClose: function() {
+    handleViewDialogClose: function() {
         this.setState({
             ruleBeingViewed: null,    //Clear the rule being viewed
-            ruleViewDialogOpen: false,    //Close the dialog
+            viewDialogOpen: false,    //Close the dialog
         });
     },
+    
+    handleDeleteDialogOpen: function(ruleIndex) {
+        this.setState({
+            deleteDialogOpen: true,
+            ruleBeingDeleted: ruleIndex,
+        });
+    },
+    handleDeleteDialogClose: function() {
+        this.setState({
+            deleteDialogOpen: false,
+            ruleBeingDeleted: null,
+        });
+    },
+    
+    handleDelete: function(rule) {
+        this.setState({
+            deleteButtonEnabled: false,
+            deleteButtonLabel: 'Deleting',
+        });
+
+        var rule = this.props.rules[this.state.ruleBeingDeleted];
+        console.log("Deleting rule: ", rule);
+        
+        //Save the Rule
+        var url = '../rules/delete/' + this.props.instance.id + '.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: rule,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+
+                this.setState({
+                    deleteButtonEnabled: true,
+                    deleteButtonLabel: 'Delete',
+                    deleteDialogOpen: false,
+                    ruleBeingDeleted: null,
+                });
+                
+                this.props.handlers.success(returnedData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.setState({
+                    deleteButtonEnabled: true,
+                    deleteButtonLabel: 'Retry',
+                });
+                
+                this.props.handlers.snackbarOpen('Save error (' + err.toString() + ')');
+            }.bind(this)
+        });
+    },
+
     render: function() {
         var viewDialogHandlers = {
-            dialogOpen: this.handleDialogOpen,
-            dialogClose: this.handleDialogClose,
+            dialogOpen: this.handleViewDialogOpen,
+            dialogClose: this.handleViewDialogClose,
+        };
+        var deleteDialogHandlers = {
+            delete: this.handleDelete,
+            dialogOpen: this.handleDeleteDialogOpen,
+            dialogClose: this.handleDeleteDialogClose,
         };
     
         return (
@@ -78,7 +137,7 @@ var Rules = React.createClass({
                     showExpandableButton={false}
                 >
                     <div style={{float: 'right'}}>
-                        {(this.props.containerState.instance.id)?
+                        {(this.props.instance.id)?
                             <AddButton
                                 handleAdd={this.props.handlers.editButtonClick}
                                 tooltip="Add Rule"
@@ -89,11 +148,11 @@ var Rules = React.createClass({
                 <CardText 
                     expandable={true}
                 >
-                    {(!this.props.containerState.instanceLoaded)?
+                    {(!this.props.instanceLoaded)?
                         //Show loader until both instance and rules have been loaded, as rules rely on instance
                         <Loader />
                     :
-                        (!this.props.containerState.instance.id)?
+                        (!this.props.instance.id)?
                             <div>
                                 <p style={{marginTop: 0}}>You cannot create rules until you have set up the Choice.</p>
                                 <EditButtonRaised 
@@ -103,21 +162,21 @@ var Rules = React.createClass({
                                 />
                             </div>
                         :
-                            (this.props.containerState.rules.length === 0)?
+                            (this.props.rules.length === 0)?
                                 <div>
                                     <p style={{marginTop: 0}}>There are no rules yet.</p>
                                     <AddButtonRaised handleAdd={this.props.handlers.editButtonClick} label="Add Rule" />
                                 </div>
                             :
                                 <Table 
-                                    //selectable={false}
-                                    multiSelectable={true}
+                                    selectable={false}
+                                    //multiSelectable={true}
                                     //onRowSelection={this._onRowSelection}
                                     //onCellClick={this.onCellClick}
                                 >
                                     <TableHeader 
-                                        //adjustForCheckbox={false} 
-                                        displaySelectAll={true}
+                                        adjustForCheckbox={false} 
+                                        displaySelectAll={false}
                                     >
                                         <TableRow>
                                             <TableHeaderColumn>Name</TableHeaderColumn>
@@ -129,14 +188,13 @@ var Rules = React.createClass({
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody 
-                                        //displayRowCheckbox={false}
-                                        deselectOnClickaway={false}
+                                        displayRowCheckbox={false}
+                                        //deselectOnClickaway={false}
                                     >
-                                        {this.props.containerState.rules.map(function(rule, index) {
+                                        {this.props.rules.map(function(rule, index) {
                                             return (
                                                 <TableRow 
                                                     key={rule.id} 
-                                                    //selected={this.props.state.optionssSelected.indexOf(user.username) !== -1}
                                                 >
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.name}</TableRowColumn>
                                                     <TableRowColumn style={styles.tableRowColumn}>{rule.type.charAt(0).toUpperCase() + rule.type.slice(1)}</TableRowColumn>
@@ -159,7 +217,7 @@ var Rules = React.createClass({
                                                             tooltip=""
                                                         />
                                                         <DeleteButton
-                                                            handleDelete={this.props.handlers.deleteDialogOpen} 
+                                                            handleDelete={this.handleDeleteDialogOpen} 
                                                             id={index}
                                                             tooltip=""
                                                         />
@@ -172,13 +230,18 @@ var Rules = React.createClass({
                     }
                 </CardText>
                 <RuleDeleteDialog
-                    handlers={this.props.handlers}
-                    containerState={this.props.containerState}
+                    handlers={deleteDialogHandlers}
+                    deleteButtonEnabled={this.state.deleteButtonEnabled}
+                    deleteButtonLabel={this.state.deleteButtonLabel}
+                    deleteDialogOpen={this.state.deleteDialogOpen}
+                    ruleBeingDeleted={this.state.ruleBeingDeleted}
+                    rules={this.props.rules}
                 />
                 <RuleViewDialog
                     handlers={viewDialogHandlers}
-                    containerState={this.props.containerState}
-                    rulesState={this.state}
+                    ruleBeingViewed={this.state.ruleBeingViewed}
+                    rules={this.props.rules}
+                    viewDialogOpen={this.state.viewDialogOpen}
                 />
             </Card>
         );

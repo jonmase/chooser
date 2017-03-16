@@ -23,8 +23,8 @@ var RuleViewDialog = React.createClass({
             />,
         ];
         
-        if(this.props.rulesState.ruleBeingViewed !== null) {
-            var rule = this.props.containerState.rules[this.props.rulesState.ruleBeingViewed];
+        if(this.props.ruleBeingViewed !== null) {
+            var rule = this.props.rules[this.props.ruleBeingViewed];
             var title = "Rule: " + rule.name;
         }
         else {
@@ -37,7 +37,7 @@ var RuleViewDialog = React.createClass({
                 actions={actions}
                 modal={false}
                 onRequestClose={this.props.handlers.dialogClose}
-                open={this.props.rulesState.ruleViewDialogOpen}
+                open={this.props.viewDialogOpen}
                 style={customDialogStyle}
                 title={title}
             >

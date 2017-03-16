@@ -58,10 +58,6 @@ var SettingsContainer = React.createClass({
             ruleIndexesById: [],
             ruleCategoryFields: [],
             ruleBeingEdited: null,
-            ruleDeleteDialogOpen: false,
-            ruleBeingDeleted: null,
-            ruleDeleteButtonEnabled: true,
-            ruleDeleteButtonLabel: 'Delete',
             snackbar: {
                 open: false,
                 message: '',
@@ -80,72 +76,6 @@ var SettingsContainer = React.createClass({
         });
     },
     
-    handleRuleDeleteDialogOpen: function(ruleIndex) {
-        this.setState({
-            ruleDeleteDialogOpen: true,
-            ruleBeingDeleted: ruleIndex,
-        });
-    },
-
-    handleRuleDeleteDialogClose: function() {
-        this.setState({
-            ruleDeleteDialogOpen: false,
-            ruleBeingDeleted: null,
-        });
-    },
-    
-    handleRuleDelete: function(rule) {
-        /*this.setState({
-            ruleDeleteButtonEnabled: false,
-            ruleDeleteButtonLabel: 'Deleting',
-        });*/
-
-        var rule = this.state.rules[this.state.ruleBeingDeleted];
-        console.log("Deleting rule: ", rule);
-        
-        //Save the Rule
-        var url = '../rules/delete/' + this.props.choice.id + '/' + this.state.instance.id + '.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: rule,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                stateData.ruleDeleteButtonEnabled = true;
-                stateData.ruleDeleteButtonLabel = 'Delete';
-                stateData.ruleDeleteDialogOpen = false;   //Close the Dialog
-                stateData.ruleBeingDeleted = null;
-                
-                //Update the state instance
-                stateData.rules = returnedData.rules;
-                stateData.ruleIndexesById = returnedData.ruleIndexesById;
-                
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.setState({
-                    ruleSaveButtonEnabled: true,
-                    ruleSaveButtonLabel: 'Retry',
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-            }.bind(this)
-        });
-    },
-
     handleRuleEditClick: function(ruleIndex) {
         this.setState({
             action: 'rule',
@@ -206,9 +136,6 @@ var SettingsContainer = React.createClass({
         };
         var rulesHandlers={
             backButtonClick: this.handleBackClick,
-            deleteDialogOpen: this.handleRuleDeleteDialogOpen,
-            deleteDialogClose: this.handleRuleDeleteDialogClose,
-            delete: this.handleRuleDelete,
             editButtonClick: this.handleRuleEditClick,
             settingsEditButtonClick: this.handleSettingsEditClick,
             success: this.handleRuleSuccess,
@@ -235,12 +162,15 @@ var SettingsContainer = React.createClass({
                     <Settings
                         choice={this.props.choice}
                         handlers={settingsHandlers}
-                        containerState={this.state}
+                        instance={this.state.instance}
+                        instanceLoaded={this.state.instanceLoaded}
                     />
                     <Rules
                         choice={this.props.choice}
                         handlers={rulesHandlers}
-                        containerState={this.state}
+                        instance={this.state.instance}
+                        instanceLoaded={this.state.instanceLoaded}
+                        rules={this.state.rules}
                     />
                     {snackbar}
                 </Container>

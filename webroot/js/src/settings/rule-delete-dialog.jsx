@@ -18,20 +18,20 @@ var RuleDeleteDialog = React.createClass({
                 key="cancel"
                 label="Cancel"
                 secondary={true}
-                onTouchTap={this.props.handlers.deleteDialogClose}
+                onTouchTap={this.props.handlers.dialogClose}
             />,
             <FlatButton
                 key="delete"
-                label={this.props.containerState.ruleDeleteButtonLabel}
+                label={this.props.deleteButtonLabel}
                 onTouchTap={this.props.handlers.delete}
                 primary={true}
                 type="submit"
-                disabled={!this.props.containerState.ruleDeleteButtonEnabled}
+                disabled={!this.props.deleteButtonEnabled}
             />,
         ];
         
-        if(this.props.containerState.ruleBeingDeleted !== null) {
-            var rule = this.props.containerState.rules[this.props.containerState.ruleBeingDeleted];
+        if(this.props.ruleBeingDeleted !== null) {
+            var rule = this.props.rules[this.props.ruleBeingDeleted];
             var title = "Delete Rule: " + rule.name;
         }
         
@@ -39,8 +39,8 @@ var RuleDeleteDialog = React.createClass({
             <Dialog
                 actions={actions}
                 modal={false}
-                onRequestClose={this.props.handlers.deleteDialogClose}
-                open={this.props.containerState.ruleDeleteDialogOpen}
+                onRequestClose={this.props.handlers.dialogClose}
+                open={this.props.deleteDialogOpen}
                 style={customDialogStyle}
                 title={title}
             >
