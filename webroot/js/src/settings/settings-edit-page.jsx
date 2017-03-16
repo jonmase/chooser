@@ -114,7 +114,6 @@ var SettingsEditor = React.createClass({
         var instance = this.props.instance;
         
         var topbar = <TopBar 
-            dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
                 disabled={!this.state.canSubmit && this.state.saveButtonEnabled}
@@ -122,7 +121,6 @@ var SettingsEditor = React.createClass({
                 onTouchTap={this.handleSaveClick}
                 style={{marginTop: '6px'}}
             />}
-            sections={this.props.sections} 
             title="Edit Choice Settings"
         />;
         

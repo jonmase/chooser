@@ -167,7 +167,6 @@ var RuleEditor = React.createClass({
         ];
         
         var topbar = <TopBar 
-            dashboardUrl={this.props.dashboardUrl} 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
                 disabled={!this.state.canSubmit && this.state.saveButtonEnabled}
@@ -175,7 +174,6 @@ var RuleEditor = React.createClass({
                 onTouchTap={this.handleSaveClick}
                 style={{marginTop: '6px'}}
             />}
-            sections={this.props.sections} 
             title={title}
         />;
         

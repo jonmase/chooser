@@ -181,13 +181,11 @@ var SettingsContainer = React.createClass({
             return (
                 <Container topbar={topbar} title={false}>
                     <Settings
-                        choice={this.props.choice}
                         handlers={settingsHandlers}
                         instance={this.state.instance}
                         instanceLoaded={this.state.instanceLoaded}
                     />
                     <Rules
-                        choice={this.props.choice}
                         handlers={rulesHandlers}
                         instance={this.state.instance}
                         instanceLoaded={this.state.instanceLoaded}
@@ -200,11 +198,8 @@ var SettingsContainer = React.createClass({
         else if(this.state.action === 'settings-edit') {
             return (
                 <SettingsEdit
-                    choice={this.props.choice}
-                    dashboardUrl={this.props.dashboardUrl} 
                     handlers={settingsEditHandlers}
                     instance={this.state.instance}
-                    sections={this.props.sections} 
                     snackbar={snackbar}
                 />
             );
@@ -212,15 +207,12 @@ var SettingsContainer = React.createClass({
         else if(this.state.action === 'rule-edit') {
             return (
                 <RuleEdit
-                    choice={this.props.choice}
-                    dashboardUrl={this.props.dashboardUrl} 
                     handlers={ruleEditHandlers}
                     instance={this.state.instance}
                     rules={this.state.rules}
                     ruleCategoryFields={this.state.ruleCategoryFields}
                     ruleIndexesById={this.state.ruleIndexesById}
                     ruleBeingEdited={this.state.ruleBeingEdited}
-                    sections={this.props.sections} 
                     snackbar={snackbar}
                 />
             );
