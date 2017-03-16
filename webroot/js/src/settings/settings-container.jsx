@@ -202,6 +202,7 @@ var SettingsContainer = React.createClass({
         else if(this.state.action === 'rule-edit') {
             return (
                 <RuleEdit
+                    choice={this.props.choice}
                     handlers={ruleEditHandlers}
                     instance={this.state.instance}
                     rules={this.state.rules}

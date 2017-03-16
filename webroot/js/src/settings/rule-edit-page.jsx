@@ -206,6 +206,38 @@ var RuleEditor = React.createClass({
             {value: 'all', label: 'All Categories (the rule will apply to all the categories for this field)'}
         ];
         
+        var typeOptions = [
+            {
+                label: "Number - Min and/or Max",
+                value: "number_range",
+            },
+            {
+                label: "Number - Specific Values",
+                value: "number_values",
+            },
+        ];
+        
+        //If using points, allow points-based rules
+        if(this.props.choice.use_points) {
+            typeOptions.push(
+                {   
+                    label: "Points - Min and/or Max",
+                    value: "points_range",
+                },
+                {   
+                    label: "Points - Specific Values",
+                    value: "points_values",
+                }
+            );
+        }
+        
+        //TODO: Allow related rules
+        /*{   
+            label: "Related",
+            value: "related",
+        }*/
+        
+        
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
@@ -276,28 +308,7 @@ var RuleEditor = React.createClass({
                                     label: "Rule Type",
                                     name: "combined_type",
                                     onChange: this.handleTypeChange,
-                                    options: [
-                                        {
-                                            label: "Number - Min and/or Max",
-                                            value: "number_range",
-                                        },
-                                        {
-                                            label: "Number - Specific Values",
-                                            value: "number_values",
-                                        },
-                                        {   
-                                            label: "Points - Min and/or Max",
-                                            value: "points_range",
-                                        },
-                                        {   
-                                            label: "Points - Specific Values",
-                                            value: "points_values",
-                                        },
-                                        /*{   
-                                            label: "Related",
-                                            value: "related",
-                                        }*/
-                                    ],
+                                    options: typeOptions,
                                     section: false, 
                                     value:  this.state.combinedType,
                                 }} 
