@@ -84,16 +84,13 @@ class ChoosingInstancesController extends AppController
         $serialize = ['choosingInstance'];
         
         if(!empty($choosingInstance)) {
-            $favourites = [];
-            foreach($choosingInstance->shortlisted_options as $option) {
-                $favourites[] = $option['choices_option_id'];
-            }
+            $shortlistedOptions = $choosingInstance->shortlisted_options;
             unset($choosingInstance->shortlisted_options);
             
             list($rules, $ruleIndexesById) = $this->ChoosingInstances->Rules->getForInstance($choosingInstance->id);
             
-            $this->set(compact('favourites', 'rules', 'ruleIndexesById'));
-            $serialize = array_merge($serialize, ['choosingInstance', 'favourites', 'rules', 'ruleIndexesById']);
+            $this->set(compact('choosingInstance', 'rules'));
+            $serialize = array_merge($serialize, ['choosingInstance', 'rules']);
             
             //If getting the instance for settings, get the ruleCategoryFields
             if($action === 'settings') {
@@ -104,6 +101,12 @@ class ChoosingInstancesController extends AppController
             
             //If getting the instance for view, get the selection-related info
             if($action === 'view') {
+                //Get the user's favourites
+                $favourites = [];
+                foreach(shortlistedOptions as $option) {
+                    $favourites[] = $option['choices_option_id'];
+                }
+                
                 //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
                 $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
                 
@@ -121,8 +124,8 @@ class ChoosingInstancesController extends AppController
                 list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
                 list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
 
-                $this->set(compact('selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings'));
-                $serialize = array_merge($serialize, ['selection', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'allowSubmit', 'ruleWarnings']);
+                $this->set(compact('allowSubmit', 'favourites', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'ruleIndexesById', 'ruleWarnings', 'selection'));
+                $serialize = array_merge($serialize, ['allowSubmit', 'favourites', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'optionsSelected', 'ruleIndexesById', 'ruleWarnings', 'selection']);
             }
         }
 

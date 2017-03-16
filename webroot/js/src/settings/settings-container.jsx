@@ -32,7 +32,6 @@ var SettingsContainer = React.createClass({
                     this.setState({
                         rules: data.rules,
                         ruleCategoryFields: data.ruleCategoryFields,
-                        ruleIndexesById: data.ruleIndexesById,
                     });
                 }
             }.bind(this),
@@ -47,7 +46,6 @@ var SettingsContainer = React.createClass({
             instance: [],
             instanceLoaded: false,
             rules: [],
-            ruleIndexesById: [],
             ruleCategoryFields: [],
             ruleBeingEdited: null,
             ruleBeingViewed: null,
@@ -71,7 +69,7 @@ var SettingsContainer = React.createClass({
     handleRuleEditClick: function(ruleIndex) {
         this.setState({
             action: 'rule-edit',
-            ruleBeingEdited: (typeof(ruleIndex) !== "undefined"?this.state.rules[ruleIndex].id:null),
+            ruleBeingEdited: (typeof(ruleIndex) !== "undefined"?ruleIndex:null),
         });
     },
     
@@ -79,7 +77,6 @@ var SettingsContainer = React.createClass({
         this.setState({
             action: 'view',
             ruleBeingEdited: null,
-            ruleIndexesById: returnedData.ruleIndexesById,
             rules: returnedData.rules,
         });
 
@@ -89,11 +86,9 @@ var SettingsContainer = React.createClass({
     handleRuleViewClick: function(ruleIndex) {
         //Check that a rule index has been passed
         if(typeof(ruleIndex) !== "undefined") {
-            var ruleBeingViewed = this.state.rules[ruleIndex].id;
-            
             this.setState({
                 action: 'rule-view',
-                ruleBeingViewed: ruleBeingViewed,
+                ruleBeingViewed: ruleIndex,
             });
         }
         //Otherwise, do nothing
@@ -211,7 +206,6 @@ var SettingsContainer = React.createClass({
                     instance={this.state.instance}
                     rules={this.state.rules}
                     ruleCategoryFields={this.state.ruleCategoryFields}
-                    ruleIndexesById={this.state.ruleIndexesById}
                     ruleBeingEdited={this.state.ruleBeingEdited}
                     snackbar={snackbar}
                 />
@@ -222,7 +216,6 @@ var SettingsContainer = React.createClass({
                 <RuleView
                     handlers={ruleViewHandlers}
                     ruleBeingViewed={this.state.ruleBeingViewed}
-                    ruleIndexesById={this.state.ruleIndexesById}
                     rules={this.state.rules}
                 />
             );

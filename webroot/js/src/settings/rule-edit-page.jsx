@@ -154,7 +154,7 @@ var RuleEditor = React.createClass({
 
     render: function() {
         if(this.props.ruleBeingEdited) {
-            var rule = this.props.rules[this.props.ruleIndexesById[this.props.ruleBeingEdited]];
+            var rule = this.props.rules[this.props.ruleBeingEdited];
             var title = 'Edit Rule'
         }
         else {

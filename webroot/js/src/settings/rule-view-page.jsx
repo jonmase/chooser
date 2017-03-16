@@ -12,15 +12,14 @@ import Toggle from '../elements/display/toggle-labelled.jsx';
 
 var RuleViewDialog = React.createClass({
     render: function() {
-        var ruleIndex = this.props.ruleIndexesById[this.props.ruleBeingViewed];
-        var rule = this.props.rules[ruleIndex];
+        var rule = this.props.rules[this.props.ruleBeingViewed];
         var title = "Rule: " + rule.name;
         
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.props.handlers.backButtonClick} />}
             iconRight={<RaisedButton 
                 label="Edit"
-                onTouchTap={() => this.props.handlers.editButtonClick(ruleIndex)}
+                onTouchTap={() => this.props.handlers.editButtonClick(this.props.ruleBeingViewed)}
                 style={{marginTop: '6px'}}
             />}
             title={title}
