@@ -43,6 +43,16 @@ class SelectionsController extends AppController
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is a viewer for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
+        if(!$isViewer) {
+            throw new ForbiddenException(__('Not allowed to view this Choice.'));
+        }
+        
         if(empty($this->request->data['selection_id']) || empty($this->request->data['instance_id'])) {
             throw new InternalErrorException(__('Error archiving selection - missing instance or selection ID'));
         }
@@ -51,18 +61,12 @@ class SelectionsController extends AppController
         $selection = $this->Selections->get($this->request->data['selection_id']);
         
         //Make sure that this user is the owner of this selection
-        if($selection->user_id !== $this->Auth->user('id'))   {
+        if($selection->user_id !== $currentUserId)   {
             throw new InternalErrorException(__('Error archiving selection - user is not selection owner'));
         }
         
         //Get the instance
         $instance = $this->Selections->ChoosingInstances->get($this->request->data['instance_id']);
-        
-        //Make sure the user is a viewer for this Choice
-        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
-        if(!$isViewer) {
-            throw new ForbiddenException(__('Not allowed to view this Choice.'));
-        }
         
         if($selection->archived) {
             throw new InternalErrorException(__('Error archiving selection - selection already archived'));
@@ -106,6 +110,17 @@ class SelectionsController extends AppController
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is a viewer for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
+        if(!$isViewer) {
+            throw new ForbiddenException(__('Not allowed to view this Choice.'));
+        }
+        
+        //Make sure there is an instance ID
         if(empty($this->request->data['selection']['choosing_instance_id'])) {
             throw new InternalErrorException(__('Problem with saving selection - missing instance ID'));
         }
@@ -113,12 +128,6 @@ class SelectionsController extends AppController
         //Get the instance, with the user's existing (unarchived) selection for this instance, if there is one
         //$instance = $this->Selections->ChoosingInstances->getWithSelection($this->request->data['choosing_instance_id'], $this->request->data['selection']['id'], $this->Auth->user('id'));
         $instance = $this->Selections->ChoosingInstances->get($this->request->data['selection']['choosing_instance_id']);
-        
-        //Make sure the user is a viewer for this Choice
-        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
-        if(!$isViewer) {
-            throw new ForbiddenException(__('Not allowed to view this Choice.'));
-        }
         
         $selection = $this->Selections->processForSave($this->request->data, $this->Auth->user('id'));
         //pr($selection);
@@ -139,24 +148,32 @@ class SelectionsController extends AppController
         }
     }
     
-    public function index($choiceId) {
+    public function index() {
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $currentUserId, $tool);
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
 
         //Get the sections to display in the Dashboard menu
-        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $currentUserId);
 
         $choice = $this->Selections->ChoosingInstances->Choices->getChoiceWithProcessedExtraFields($choiceId);
 
         $this->set(compact('choice', 'sections'));
     }
     
-    public function getResults($choiceId) {
+    public function getResults() {
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $currentUserId, $tool);
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }
@@ -175,13 +192,13 @@ class SelectionsController extends AppController
         $this->set('_serialize', ['choosingInstance', 'options', 'optionIndexesById', 'selections', 'selectionIndexesById']);
     }
     
-    public function download($choiceId, $type = 'student') {
-        if(!$choiceId) {
-            throw new InternalErrorException(__('Cannot download results - missing choice ID'));
-        }
-        
+    public function download($type = 'student') {
         //Make sure the user is allowed to view the results for this Choice
-        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $canViewResults = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->canViewResults($choiceId, $currentUserId, $tool);
         if(!$canViewResults) {
             throw new ForbiddenException(__('Not permitted to view Choice results.'));
         }

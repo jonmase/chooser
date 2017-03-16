@@ -70,7 +70,7 @@ var FormContainer = React.createClass({
         console.log("Saving default field settings for Choice " + this.props.choice.id + ": ", defaults);
         
         //Save the settings
-        var url = '../form_defaults/' + this.props.choice.id;
+        var url = 'form_defaults';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -133,7 +133,7 @@ var FormContainer = React.createClass({
         console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
         
         //Save the settings
-        var url = '../../ExtraFields/save/' + this.props.choice.id;
+        var url = '../ExtraFields/save/';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -195,7 +195,7 @@ var FormContainer = React.createClass({
         console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + data.id);
         
         //Save the settings
-        var url = '../../ExtraFields/delete';
+        var url = '../ExtraFields/delete';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -256,7 +256,7 @@ var FormContainer = React.createClass({
         console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
         
         //Save the settings
-        var url = '../../ExtraFields/save/' + this.props.choice.id;
+        var url = '../ExtraFields/save';
         $.ajax({
             url: url,
             dataType: 'json',

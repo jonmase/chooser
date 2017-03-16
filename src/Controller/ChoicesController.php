@@ -102,10 +102,10 @@ class ChoicesController extends AppController
      */
     public function dashboard()
     {
+        //Make sure the user has permissions beyond viewer for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $userId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
-        
         if(!$this->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $userId, $tool)) {
             //If user is only viewer, redirect to the view page
             $this->redirect(['controller' => 'options', 'action' => 'view']);
@@ -129,11 +129,10 @@ class ChoicesController extends AppController
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When choice record not found.
      */
     public function form() {
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $userId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
-
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
@@ -162,11 +161,10 @@ class ChoicesController extends AppController
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $userId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
-
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));

@@ -35,11 +35,11 @@ class UsersController extends AppController
      */
     public function get()
     {
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to view users for this Choice.'));
@@ -63,11 +63,11 @@ class UsersController extends AppController
      */
     public function index()
     {
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
@@ -110,11 +110,11 @@ class UsersController extends AppController
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(!$isAdmin) {
             throw new ForbiddenException(__('Not permitted to view/edit Choice roles.'));
@@ -164,11 +164,11 @@ class UsersController extends AppController
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to add users to this Choice.'));
@@ -275,11 +275,11 @@ class UsersController extends AppController
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
+        //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //Make sure the user is an admin for this Choice
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to remove user permissions for this Choice.'));
@@ -409,15 +409,16 @@ class UsersController extends AppController
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When user not found.
      */
     public function findUser($searchValue = null) {
+        //Make sure there is a choice ID and search value
         $choiceId = $this->SessionData->getChoiceId();
-        $currentUserId = $this->Auth->user('id');
-        $tool = $this->SessionData->getLtiTool();
-        
         if(!$choiceId || !$searchValue) {
-            throw new InternalErrorException(__('Problem with finding user - insufficient data'));
+            throw new InternalErrorException(__('Problem with finding user - insufficient information'));
         }
         
         //Make sure the user is an admin for this Choice
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         $isAdmin = $this->Users->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to look up users for this Choice.'));

@@ -25,13 +25,17 @@ class ShortlistedOptionsController extends AppController
     {
         $this->request->allowMethod(['post']);
         if(!$instanceId || !$choicesOptionId) {
-            throw new InternalErrorException(__('Problem with saving favourite - missing data'));
+            throw new InternalErrorException(__('Problem with saving favourite - missing information'));
         }
         
         $instance = $this->ShortlistedOptions->ChoosingInstances->get($instanceId);
         
         //Make sure this user is allowed to view this choice
-        $isViewer = $this->ShortlistedOptions->ChoicesOptions->Choices->ChoicesUsers->isViewer($instance['choice_id'], $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isViewer = $this->ShortlistedOptions->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
         if(empty($isViewer)) {
             throw new ForbiddenException(__('Not permitted to add favourites for this Choice.'));
         }

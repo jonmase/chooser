@@ -18,22 +18,26 @@ class OptionsController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user does not have correct permissions for the action
      */
-    public function getOptions($choiceId = null, $action = 'view')
+    public function getOptions($action = 'view')
     {
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
-            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
             if(!$isEditor) {
                 throw new ForbiddenException(__('Not an editor for this Choice.'));
             }
             
             //Get the options for which this user is an editor
-            $options = $this->Options->getForView($choiceId, false, false, true, $this->Auth->user('id'));
+            $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
         }
         
         //If action is approve, make sure the user is an approver for this Choice
         /*else if($action === 'approve') {
-            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
             if(!$isApprover) {
                 throw new ForbiddenException(__('Not an approver for this Choice.'));
             }
@@ -43,7 +47,7 @@ class OptionsController extends AppController
         }*/
         
         else {
-            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
             if(!$isViewer) {
                 throw new ForbiddenException(__('Not allowed to view this Choice.'));
             }
@@ -66,16 +70,20 @@ class OptionsController extends AppController
      * @throws \Cake\Network\Exception\ForbiddenException If user is not Editor
      * @throws \Cake\Datasource\Exception\RecordNotFoundException If Choice is not found.
      */
-    public function index($choiceId = null, $action = 'view')
+    public function index($action = 'view')
     {
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
         //Does the user have additional roles? I.e., should the dashboard menu be shown?
-        $isMoreThanViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $isMoreThanViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $currentUserId, $tool);
         if($isMoreThanViewer) {
             //Get the sections to display in the Dashboard menu
-            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $currentUserId);
             $this->set(compact('sections'));
             
-            $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
             if($isAdmin) {
                 $role = 'admin';
             }
@@ -89,7 +97,7 @@ class OptionsController extends AppController
         
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
-            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
             if(!$isEditor) {
                 throw new ForbiddenException(__('Not an editor for this Choice.'));
             }
@@ -97,14 +105,14 @@ class OptionsController extends AppController
         
         //If action is approve, make sure the user is an approver for this Choice
         else if($action === 'approve') {
-            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
             if(!$isApprover) {
                 throw new ForbiddenException(__('Not an approver for this Choice.'));
             }
         }
         //Otherwise view action, but need to work out whether it should be initial view or review
         else {
-            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $this->Auth->user('id'), $this->request->session()->read('tool'));
+            $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
             if(!$isViewer) {
                 throw new ForbiddenException(__('Not a viewer for this Choice.'));
             }
@@ -112,10 +120,10 @@ class OptionsController extends AppController
             $instanceQuery = $this->Options->ChoicesOptions->Choices->ChoosingInstances->find('all', [
                 'conditions' => ['choice_id' => $choiceId, 'active' => true],
                 'contain' => [
-                    'Selections' => function ($q) {
+                    'Selections' => function ($q) use ($currentUserId) {
                         return $q
                             ->select(['id', 'choosing_instance_id', 'confirmed', 'modified'])
-                            ->where(['Selections.user_id' => $this->Auth->user('id'), 'archived' => false])
+                            ->where(['Selections.user_id' => $currentUserId, 'archived' => false])
                             ->order(['Selections.confirmed' => 'DESC', 'Selections.modified' => 'DESC']);
                         }
                 ],
@@ -158,13 +166,16 @@ class OptionsController extends AppController
 	 * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      */
-    public function save($choiceId = null) {
+    public function save() {
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an editor for this Choice
-        $userId = $this->Auth->user('id');
-        $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $userId, $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
         if(empty($isChoiceEditor)) {
             throw new ForbiddenException(__('Not permitted to create/edit options for this Choice.'));
         }
@@ -183,11 +194,11 @@ class OptionsController extends AppController
             unset($this->request->data['choices_option_id']);
             
             //If user is not an admin, they must be an editor on the choicesOption
-            $isChoiceAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $this->request->session()->read('tool'));
+            $isChoiceAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
             if(!$isChoiceAdmin) {
-                $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
+                $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($currentUserId) {
                     return $q->where([
-                        'ChoicesOptionsUsers.user_id' => $userId,
+                        'ChoicesOptionsUsers.user_id' => $currentUserId,
                         'ChoicesOptionsUsers.editor' => true,
                     ]);
                 });
@@ -201,7 +212,7 @@ class OptionsController extends AppController
                 throw new ForbiddenException(__('Not permitted to edit this option.'));
             }
         }
-        $updatedChoicesOption = $this->Options->processForSave($choiceId, $userId, $this->request->data, $originalChoicesOption);
+        $updatedChoicesOption = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption);
         $choicesOptions = [$updatedChoicesOption];
         
         if($originalChoicesOption) {
@@ -218,7 +229,7 @@ class OptionsController extends AppController
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');
             
-            $options = $this->Options->getForView($choiceId, false, false, true, $this->Auth->user('id'));
+            $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
             $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
             $this->set(compact('options', 'optionIndexesById'));

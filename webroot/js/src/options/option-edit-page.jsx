@@ -117,7 +117,7 @@ var OptionEditPage = React.createClass({
         }
         
         //Save the settings
-        var url = '../save/' + this.props.choice.id;
+        var url = 'save';
         $.ajax({
             url: url,
             dataType: 'json',

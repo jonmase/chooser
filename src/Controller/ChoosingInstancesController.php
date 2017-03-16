@@ -45,7 +45,6 @@ class ChoosingInstancesController extends AppController
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
-
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
@@ -72,7 +71,6 @@ class ChoosingInstancesController extends AppController
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
-
         $isViewer = $this->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
         if(empty($isViewer)) {
             throw new ForbiddenException(__('Not permitted to view this Choice.'));
@@ -103,7 +101,7 @@ class ChoosingInstancesController extends AppController
             if($action === 'view') {
                 //Get the user's favourites
                 $favourites = [];
-                foreach(shortlistedOptions as $option) {
+                foreach($shortlistedOptions as $option) {
                     $favourites[] = $option['choices_option_id'];
                 }
                 
@@ -144,6 +142,7 @@ class ChoosingInstancesController extends AppController
     public function save()
     {
         $this->request->allowMethod(['post']);
+        $this->viewBuilder()->layout('ajax');
 
         //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();
@@ -154,7 +153,6 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
-        $this->viewBuilder()->layout('ajax');
         
         //Process the data
         $data = $this->ChoosingInstances->processForSave($this->request->data);

@@ -54,15 +54,14 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/launch', ['controller' => 'LtiConsumer', 'action' => 'launch']);
     $routes->connect('/profile/save', ['controller' => 'Profiles', 'action' => 'save']);
     $routes->connect('/profile/*', ['controller' => 'Profiles', 'action' => 'view']);
-    $routes->connect('/options/view/:id', ['controller' => 'Options', 'action' => 'index', 'view'], ['id' => '\d+', 'pass' => ['id']]);
-    $routes->connect('/options/edit/:id', ['controller' => 'Options', 'action' => 'index', 'edit'], ['id' => '\d+', 'pass' => ['id']]);
-    $routes->connect('/options/approve/:id', ['controller' => 'Options', 'action' => 'index', 'approve'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/options/view', ['controller' => 'Options', 'action' => 'index', 'view']);
+    $routes->connect('/options/edit', ['controller' => 'Options', 'action' => 'index', 'edit']);
+    $routes->connect('/options/approve', ['controller' => 'Options', 'action' => 'index', 'approve']);
     //$routes->connect('/choices/archive/:id', ['controller' => 'ChoosingInstances', 'action' => 'archive'], ['id' => '\d+', 'pass' => ['id']]);
     //$routes->connect('/choices/setup/:id', ['controller' => 'ChoosingInstances', 'action' => 'view'], ['id' => '\d+', 'pass' => ['id']]);
     //$routes->connect('/choices/choosing/:id', ['controller' => 'ChoosingInstances', 'action' => 'view'], ['id' => '\d+', 'pass' => ['id']]);
-    $routes->connect('/results/:id', ['controller' => 'Selections', 'action' => 'index'], ['id' => '\d+', 'pass' => ['id']]);
-    $routes->connect('/results/download/:id/:type', ['controller' => 'Selections', 'action' => 'download'], ['id' => '\d+', 'pass' => ['id', 'type']]);
-    $routes->connect('/results/get-results/:id', ['controller' => 'Selections', 'action' => 'get-results'], ['id' => '\d+', 'pass' => ['id']]);
+    $routes->connect('/results/download/*', ['controller' => 'Selections', 'action' => 'download']);
+    $routes->connect('/results/get-results', ['controller' => 'Selections', 'action' => 'get-results']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.

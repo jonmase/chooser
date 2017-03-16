@@ -23,18 +23,22 @@ class ExtraFieldsController extends AppController
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
      */
-    public function save($id = null) {
+    public function save() {
         $this->request->allowMethod(['post']);
         $this->viewBuilder()->layout('ajax');
         
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
 
         $data = $this->request->data;
-        $data['choice_id'] = $id;
+        $data['choice_id'] = $choiceId;
         
         //Is an existing record being updated, i.e. is there an (extra_field_id) id in the data?
         $updating = !empty($data['id']);
@@ -148,14 +152,18 @@ class ExtraFieldsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $this->viewBuilder()->layout('ajax');
 
-        $extraFieldId = $this->request->data['id'];
-        $extraField = $this->ExtraFields->get($extraFieldId);
-
         //Make sure the user is an admin for this Choice
-        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($extraField->choice_id, $this->Auth->user('id'), $this->request->session()->read('tool'));
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to delete extra field for this Choice.'));
         }
+
+        $extraFieldId = $this->request->data['id'];
+        $extraField = $this->ExtraFields->get($extraFieldId);
 
         if ($this->ExtraFields->delete($extraField)) {
             $this->set('response', 'Extra field deleted');

@@ -46,7 +46,7 @@ var OptionContainer = React.createClass({
             });
         }
         else {
-            var url = '../../choosing-instances/get-active/' + this.props.choice.id + '.json';
+            var url = '../choosing-instances/get-active.json';
             $.ajax({
                 url: url,
                 dataType: 'json',
@@ -95,7 +95,7 @@ var OptionContainer = React.createClass({
         }
     },
     loadOptionsFromServer: function() {
-        var url = '../get-options/' + this.props.choice.id + '/' + this.props.action;
+        var url = 'get-options/' + this.props.action;
         url += '.json';
         $.ajax({
             url: url,
@@ -230,7 +230,7 @@ var OptionContainer = React.createClass({
         });
         
         //Save the settings
-        var url = '../../shortlisted-options/favourite/' + action + '/' + this.state.instance.instance.id + '/' + choicesOptionId;
+        var url = '../shortlisted-options/favourite/' + action + '/' + this.state.instance.instance.id + '/' + choicesOptionId;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -428,7 +428,7 @@ var OptionContainer = React.createClass({
         //Otherwise, a new selection has been created for the edits
         else {
             //Archive the selection that is being edited, and return to review page
-            var url = '../../selections/archive.json';
+            var url = '../selections/archive.json';
             var data = {
                 selection_id: this.state.selection.selection.id,
                 instance_id: this.state.instance.instance.id,
@@ -675,7 +675,7 @@ var OptionContainer = React.createClass({
         data.selection.choosing_instance_id = this.state.instance.instance.id;
         data.selection.id = this.state.selection.selection.id || null;
        
-        var url = '../../selections/save.json';
+        var url = '../selections/save.json';
         $.ajax({
             url: url,
             dataType: 'json',
