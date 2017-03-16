@@ -30,16 +30,56 @@ var ruleDefaults = {
 
 var RuleEditor = React.createClass({
     getInitialState: function () {
+        if(this.props.ruleBeingEdited !== null) {
+            var rule = this.props.rules[this.props.ruleBeingEdited];
+        }
+        else {
+            var rule = {};
+        }
+        
+        if(rule.scope === 'category_all') {
+            var scope = 'category';
+        }
+        else if(rule.scope) {
+            var scope = rule.scope;
+        }
+        else {
+            var scope = ruleDefaults.scope;
+        }
+        
+        var categoryFieldIndex = ruleDefaults.categoryFieldIndex;
+        var categoryFieldOptionValue = ruleDefaults.categoryFieldOptionValue;
+        if(rule.extra_field_id) {
+            this.props.ruleCategoryFields.some(function(field, index) {
+                if(field.id === rule.extra_field_id) {
+                    categoryFieldIndex = index;
+                    return true;
+                }
+            }, this);
+            
+            if(rule.scope === 'category_all') {
+                categoryFieldOptionValue = 'all';
+            }
+            else if(rule.extra_field_option_id) {
+                this.props.ruleCategoryFields[categoryFieldIndex].extra_field_options.some(function(option, index) {
+                    if(option.id === rule.extra_field_option_id) {
+                        categoryFieldOptionValue = option.value;
+                        return true;
+                    }
+                }, this);
+            }
+        }       
+            
         return {
             canSubmit: false,
-            categoryFieldIndex: ruleDefaults.categoryFieldIndex,
-            categoryFieldOptionValue: ruleDefaults.categoryFieldOptionValue,
-            combinedType: ruleDefaults.combinedType,
+            categoryFieldIndex: categoryFieldIndex,
+            categoryFieldOptionValue: categoryFieldOptionValue,
+            combinedType: rule.combined_type?rule.combined_type:ruleDefaults.combinedType,
             saveButtonEnabled: true,
             saveButtonLabel: 'Save',
-            scope: ruleDefaults.scope,
-            type: ruleDefaults.type,
-            valueType: ruleDefaults.valueType,
+            scope: scope,
+            type: rule.type?rule.type:ruleDefaults.type,
+            valueType: rule.value_type?rule.value_type:ruleDefaults.valueType,
         };
     },
 
@@ -153,7 +193,7 @@ var RuleEditor = React.createClass({
     },
 
     render: function() {
-        if(this.props.ruleBeingEdited) {
+        if(this.props.ruleBeingEdited !== null) {
             var rule = this.props.rules[this.props.ruleBeingEdited];
             var title = 'Edit Rule'
         }
@@ -199,7 +239,7 @@ var RuleEditor = React.createClass({
                             name: "name",
                             section: false,
                             required: true,
-                            value: rule.name,
+                            defaultValue: rule.name,
                         }}
                     />
                     <Text field={{
@@ -208,7 +248,7 @@ var RuleEditor = React.createClass({
                         instructions: "Provide instructions for the students on fulfilling this rule.",
                         name: "instructions",
                         section: false,
-                        value: rule.instructions,
+                        defaultValue: rule.instructions,
                     }} />
                     <Text field={{
                         fullWidth: true,
@@ -216,7 +256,7 @@ var RuleEditor = React.createClass({
                         instructions: "This message will be shown to students if they fail to fulfil this rule.",
                         name: "warning",
                         section: true,
-                        value: rule.warning,
+                        defaultValue: rule.warning,
                     }} />
                     <p>
                         <strong>Please Note:</strong> If you do not provide instructions or a warning message, these will be generated using the rule details provided below.
