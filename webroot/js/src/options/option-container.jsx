@@ -786,7 +786,6 @@ var OptionContainer = React.createClass({
     },
     
     getTopbar: function(action) {
-        var title = <AppTitle subtitle={this.props.choice.name} />;
         var topbarIconLeft=null;
         var topbarIconRight=null;
         //var showStepTabs=true;
@@ -797,6 +796,12 @@ var OptionContainer = React.createClass({
             if(this.props.sections) {
                 topbarIconLeft='menu';
             }
+            
+            var subtitle = this.props.choice.name;
+            if(action === 'edit') {
+                subtitle += ": Edit Options";
+            }
+            var title = <AppTitle subtitle={subtitle} />;
         
             if(action === 'view' || action === 'confirmed'){
                 //If instance created and open or user is administrator, show selection basket or change selection buttons
@@ -853,10 +858,13 @@ var OptionContainer = React.createClass({
         //
         else {
             if(action === 'basket' || action === 'review') {
-                title = 'Review Your Choices';
+                var title = 'Review Your Choices';
             }
             else if(action === 'more_view' || action === 'more_edit') {
-                title = 'Option Details';
+                var title = 'Option Details';
+            }
+            else {
+                var title = <AppTitle subtitle={this.props.choice.name} />;
             }
             
             var backAction = this.handleBackToView;
@@ -1112,7 +1120,7 @@ var OptionContainer = React.createClass({
         }
         else {
             return (
-                <Container topbar={this.getTopbar(this.state.action)} title={(this.state.action === 'edit')?"Dashboard - Edit Options":((this.state.action === 'approve')?"Dashboard - Approve Options":"")}>
+                <Container topbar={this.getTopbar(this.state.action)}>
                     <div>
                         {(!this.state.options.loaded || !this.state.instance.loaded)?
                             <Loader />

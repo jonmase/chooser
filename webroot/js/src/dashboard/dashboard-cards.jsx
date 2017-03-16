@@ -49,11 +49,11 @@ var SectionsCards = React.createClass({
         var topbar = <TopBar 
             iconLeft={null}
             iconRight={null}
-            title={<AppTitle subtitle={this.props.choice.name} />}
+            title={<AppTitle subtitle={this.props.choice.name + ": Dashboard"} />}
         />;
 
         return (
-            <Container topbar={topbar} title="Dashboard">
+            <Container topbar={topbar}>
                 <div style={styles.root} className="row">
                     {this.props.sections.map(function(card) {
                         return (

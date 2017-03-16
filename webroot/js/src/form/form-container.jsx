@@ -337,13 +337,12 @@ var FormContainer = React.createClass({
             iconLeft="menu"
             iconRight={null}
             sections={this.props.sections} 
-            title={<AppTitle subtitle={this.props.choice.name} />}
+            title={<AppTitle subtitle={this.props.choice.name + ": Options Form"} />}
         />;
 
         return (
-			<Container topbar={topbar} title="Dashboard - Options Form">
+			<Container topbar={topbar}>
                 <div>
-                    <p>Define the fields that you want to appear on the form for creating/editing options. </p>
                     <DefaultFieldToggles 
                         choice={this.props.choice}
                         state={this.state}
