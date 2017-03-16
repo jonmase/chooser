@@ -345,7 +345,7 @@ var RuleEditor = React.createClass({
                                                 section: true, 
                                                 value:  this.props.ruleCategoryFieldOptionIndexes,
                                             }} 
-                                            onChange={this.props.handlers.categoryFieldOptionChange}
+                                            onChange={this.handleCategoryFieldOptionChange}
                                         />*/
                                         <Radio 
                                             field={{
@@ -366,6 +366,7 @@ var RuleEditor = React.createClass({
                         </div>
                     </div>
                 </Formsy.Form>
+                {this.props.snackbar}
             </Container>
         );
     }

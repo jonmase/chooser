@@ -128,17 +128,24 @@ var SettingsContainer = React.createClass({
     },
     
     render: function() {
-        var settingsHandlers={
-            backButtonClick: this.handleBackClick,
-            editButtonClick: this.handleSettingsEditClick,
-            success: this.handleSettingsSuccess,
-            snackbarOpen: this.handleSnackbarOpen,
-        };
         var rulesHandlers={
-            backButtonClick: this.handleBackClick,
             editButtonClick: this.handleRuleEditClick,
             settingsEditButtonClick: this.handleSettingsEditClick,
+            snackbarOpen: this.handleSnackbarOpen,
             success: this.handleRuleSuccess,
+        };
+        var ruleEditHandlers={
+            backButtonClick: this.handleBackClick,
+            snackbarOpen: this.handleSnackbarOpen,
+            success: this.handleRuleSuccess,
+        };
+        var settingsHandlers={
+            editButtonClick: this.handleSettingsEditClick,
+        };
+        var settingsEditHandlers={
+            backButtonClick: this.handleBackClick,
+            snackbarOpen: this.handleSnackbarOpen,
+            success: this.handleSettingsSuccess,
         };
 
         var topbar = <TopBar 
@@ -181,7 +188,7 @@ var SettingsContainer = React.createClass({
                 <SettingsEdit
                     choice={this.props.choice}
                     dashboardUrl={this.props.dashboardUrl} 
-                    handlers={settingsHandlers}
+                    handlers={settingsEditHandlers}
                     instance={this.state.instance}
                     sections={this.props.sections} 
                     snackbar={snackbar}
@@ -193,7 +200,7 @@ var SettingsContainer = React.createClass({
                 <RuleEdit
                     choice={this.props.choice}
                     dashboardUrl={this.props.dashboardUrl} 
-                    handlers={rulesHandlers}
+                    handlers={ruleEditHandlers}
                     instance={this.state.instance}
                     rules={this.state.rules}
                     ruleCategoryFields={this.state.ruleCategoryFields}
