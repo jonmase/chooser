@@ -10,17 +10,9 @@ import Settings from './settings.jsx';
 import Rules from './rules.jsx';
 import SettingsEdit from './settings-edit-page.jsx';
 import RuleEdit from './rule-edit-page.jsx';
+import RuleView from './rule-view-page.jsx';
 
 var update = require('react-addons-update');
-
-var ruleDefaults = {
-    type: 'number',
-    valueType: 'range',
-    combinedType: 'number_range',
-    scope: 'choice',
-    categoryFieldIndex: null,
-    categoryFieldOptionValue: null,
-};
 
 var SettingsContainer = React.createClass({
     loadInstanceFromServer: function() {
@@ -58,6 +50,7 @@ var SettingsContainer = React.createClass({
             ruleIndexesById: [],
             ruleCategoryFields: [],
             ruleBeingEdited: null,
+            ruleBeingViewed: null,
             snackbar: {
                 open: false,
                 message: '',
@@ -66,7 +59,6 @@ var SettingsContainer = React.createClass({
     },
     componentDidMount: function() {
         this.loadInstanceFromServer();
-        //this.loadRulesFromServer();
     },
     
     //Handle going back to view screen
@@ -78,7 +70,7 @@ var SettingsContainer = React.createClass({
     
     handleRuleEditClick: function(ruleIndex) {
         this.setState({
-            action: 'rule',
+            action: 'rule-edit',
             ruleBeingEdited: (typeof(ruleIndex) !== "undefined"?this.state.rules[ruleIndex].id:null),
         });
     },
@@ -94,9 +86,26 @@ var SettingsContainer = React.createClass({
         this.handleSnackbarOpen(returnedData.response);
     },
 
+    handleRuleViewClick: function(ruleIndex) {
+        //Check that a rule index has been passed
+        if(typeof(ruleIndex) !== "undefined") {
+            var ruleBeingViewed = this.state.rules[ruleIndex].id;
+            
+            this.setState({
+                action: 'rule-view',
+                ruleBeingViewed: ruleBeingViewed,
+            });
+        }
+        //Otherwise, do nothing
+        else {
+            console.log("No rule specified to view");
+            return false;
+        }
+    },
+    
     handleSettingsEditClick: function() {
         this.setState({
-            action: 'edit',
+            action: 'settings-edit',
         });
     },
     
@@ -133,11 +142,16 @@ var SettingsContainer = React.createClass({
             settingsEditButtonClick: this.handleSettingsEditClick,
             snackbarOpen: this.handleSnackbarOpen,
             success: this.handleRuleSuccess,
+            viewButtonClick: this.handleRuleViewClick,
         };
         var ruleEditHandlers={
             backButtonClick: this.handleBackClick,
             snackbarOpen: this.handleSnackbarOpen,
             success: this.handleRuleSuccess,
+        };
+        var ruleViewHandlers={
+            backButtonClick: this.handleBackClick,
+            editButtonClick: this.handleRuleEditClick,
         };
         var settingsHandlers={
             editButtonClick: this.handleSettingsEditClick,
@@ -157,11 +171,11 @@ var SettingsContainer = React.createClass({
         />;
         
         var snackbar = <Snackbar
-                        open={this.state.snackbar.open}
-                        message={this.state.snackbar.message}
-                        autoHideDuration={3000}
-                        onRequestClose={this.handleSnackbarClose}
-                    />;
+            open={this.state.snackbar.open}
+            message={this.state.snackbar.message}
+            autoHideDuration={3000}
+            onRequestClose={this.handleSnackbarClose}
+        />;
 
         if(this.state.action === 'view') {
             return (
@@ -183,7 +197,7 @@ var SettingsContainer = React.createClass({
                 </Container>
             );
         }
-        else if(this.state.action === 'edit') {
+        else if(this.state.action === 'settings-edit') {
             return (
                 <SettingsEdit
                     choice={this.props.choice}
@@ -195,7 +209,7 @@ var SettingsContainer = React.createClass({
                 />
             );
         }
-        else if(this.state.action === 'rule') {
+        else if(this.state.action === 'rule-edit') {
             return (
                 <RuleEdit
                     choice={this.props.choice}
@@ -208,6 +222,16 @@ var SettingsContainer = React.createClass({
                     ruleBeingEdited={this.state.ruleBeingEdited}
                     sections={this.props.sections} 
                     snackbar={snackbar}
+                />
+            );
+        }
+        else if(this.state.action === 'rule-view') {
+            return (
+                <RuleView
+                    handlers={ruleViewHandlers}
+                    ruleBeingViewed={this.state.ruleBeingViewed}
+                    ruleIndexesById={this.state.ruleIndexesById}
+                    rules={this.state.rules}
                 />
             );
         }

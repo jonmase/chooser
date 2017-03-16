@@ -12,8 +12,6 @@ import DeleteButton from '../elements/buttons/delete-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 
 import RuleDeleteDialog from './rule-delete-dialog.jsx';
-import RuleEditDialog from './rule-edit-dialog.jsx';
-import RuleViewDialog from './rule-view-dialog.jsx';
 
 import Loader from '../elements/loader.jsx';
 
@@ -40,24 +38,9 @@ var Rules = React.createClass({
             deleteButtonLabel: 'Delete',
             deleteDialogOpen: false,
             ruleBeingDeleted: null,
-            ruleBeingViewed: null,
-            viewDialogOpen: false,
         };
         
         return initialState;
-    },
-    
-    handleViewDialogOpen: function(ruleIndex) {
-        this.setState({
-            ruleBeingViewed: ruleIndex,
-            viewDialogOpen: true,    //Open the dialog
-        });
-    },
-    handleViewDialogClose: function() {
-        this.setState({
-            ruleBeingViewed: null,    //Clear the rule being viewed
-            viewDialogOpen: false,    //Close the dialog
-        });
     },
     
     handleDeleteDialogOpen: function(ruleIndex) {
@@ -115,10 +98,6 @@ var Rules = React.createClass({
     },
 
     render: function() {
-        var viewDialogHandlers = {
-            dialogOpen: this.handleViewDialogOpen,
-            dialogClose: this.handleViewDialogClose,
-        };
         var deleteDialogHandlers = {
             delete: this.handleDelete,
             dialogOpen: this.handleDeleteDialogOpen,
@@ -207,7 +186,7 @@ var Rules = React.createClass({
                                                     }</TableRowColumn>
                                                     <TableRowColumn style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
-                                                            handleMore={viewDialogHandlers.dialogOpen} 
+                                                            handleMore={this.props.handlers.viewButtonClick} 
                                                             id={index}
                                                             tooltip=""
                                                         />
@@ -236,12 +215,6 @@ var Rules = React.createClass({
                     deleteDialogOpen={this.state.deleteDialogOpen}
                     ruleBeingDeleted={this.state.ruleBeingDeleted}
                     rules={this.props.rules}
-                />
-                <RuleViewDialog
-                    handlers={viewDialogHandlers}
-                    ruleBeingViewed={this.state.ruleBeingViewed}
-                    rules={this.props.rules}
-                    viewDialogOpen={this.state.viewDialogOpen}
                 />
             </Card>
         );
