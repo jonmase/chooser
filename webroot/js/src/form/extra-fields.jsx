@@ -218,10 +218,10 @@ var ExtraFields = React.createClass({
                                         {field.rule_category?<CategoryIcon />:''}
                                     </div>
                                     <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        <IconButton tooltip={'Edit ' + field.label + ' Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.editDialogOpen} >
+                                        <IconButton tooltip={'Edit Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.editDialogOpen} >
                                             <FontIcon className="material-icons">edit</FontIcon>
                                         </IconButton>
-                                        <IconButton tooltip={'Delete ' + field.label + ' Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.deleteDialogOpen} >
+                                        <IconButton tooltip={'Delete Field'} id={'extra_field_' + field.id} onTouchTap={this.props.handlers.deleteDialogOpen} >
                                             <FontIcon className="material-icons">delete</FontIcon>
                                         </IconButton>
                                     </div>
