@@ -53,7 +53,12 @@ var ExtraFieldEditPage = React.createClass({
     
     //Submit the form
     handleSubmit: function (field) {
-        field.id = this.state.editExtraFieldId;
+        this.setState({
+            saveButtonEnabled: false,
+            saveButtonLabel: 'Saving',
+        });
+        
+        field.id = this.props.fieldBeingEditedId;
         console.log("Saving extra field: ", field);
         
         //Save the settings
@@ -66,32 +71,20 @@ var ExtraFieldEditPage = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                var stateData = {};
+                this.setState({
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Save',
+                });
                 
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                
-                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
-                stateData.extraFields.push(returnedData.field);   //Add the new field to current extraFields
-                
-                //Update the extraFieldIndexesById
-                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
-                
-                stateData.addExtraDialogOpen = false;   //Close the Dialog
-                
-                this.setState(stateData);
+                this.props.handlers.success(returnedData);
             }.bind(this),
             error: function(xhr, status, err) {
                 this.setState({
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
+                    saveButtonEnabled: true,
+                    saveButtonLabel: 'Resave',
                 });
                 console.error(url, status, err.toString());
+                this.props.handlers.snackbarOpen('Save error (' + err.toString() + ')');
             }.bind(this)
         }); 
     },

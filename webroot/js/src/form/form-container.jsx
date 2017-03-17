@@ -180,8 +180,22 @@ var FormContainer = React.createClass({
         });
     },
     
+    handleSuccess: function(returnedData) {
+        //stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
+        //TODO: update PHP functions to return full list of extra fields
+        
+        this.setState({
+            action: 'view',
+            //extraFields: returnedData.extraFields,
+            //extraFieldIndexesById: returnedData.extraFieldIndexesById,
+        });
+        
+        this.handleSnackbarOpen(returnedData.response);
+    },
+    
     getFieldAndTypeFromId: function(fieldId) {
         var field = this.props.deepCopyHelper(this.state.extraFields[this.state.extraFieldIndexesById[fieldId]]);
+        
         
         fieldTypes.some(function(type) {
             if(type.value === field.type) {
@@ -209,12 +223,14 @@ var FormContainer = React.createClass({
             editButtonClick: this.handleExtraEditClick,
             getField: this.getFieldAndTypeFromId,
             snackbarOpen: this.handleSnackbarOpen,
+            success: this.handleSuccess,
         };
         
         var extrasEditHandlers={
             backButtonClick: this.handleBackToView,
             getField: this.getFieldAndTypeFromId,
             snackbarOpen: this.handleSnackbarOpen,
+            success: this.handleSuccess,
         };
         
         var topbar = <TopBar 

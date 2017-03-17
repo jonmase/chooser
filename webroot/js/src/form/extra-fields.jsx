@@ -26,22 +26,9 @@ import DeleteButton from '../elements/buttons/delete-button.jsx';
 var ExtraFields = React.createClass({
     getInitialState: function () {
         return {
-            canSubmit: false,
             deleteExtraDialogOpen: false,
             deleteExtraFieldId: null,
         };
-    },
-
-    enableSubmitButton: function () {
-        this.setState({
-            canSubmit: true
-        });
-    },
-
-    disableSubmitButton: function () {
-        this.setState({
-            canSubmit: false
-        });
     },
 
     handleDeleteDialogOpen: function(fieldId) {
@@ -64,7 +51,7 @@ var ExtraFields = React.createClass({
             id: this.state.deleteExtraFieldId,
         }
     
-        console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + data.id);
+        console.log("Deleting extra field: " + data.id);
         
         //Save the settings
         var url = '../ExtraFields/delete';
@@ -76,33 +63,16 @@ var ExtraFields = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                var stateData = {};
+                this.setState({
+                    deleteExtraDialogOpen: false,    //Close the Dialog
+                    deleteExtraFieldId: null,
+                });
                 
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-
-                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
-                stateData.extraFields.splice(this.state.extraFieldIndexesById[returnedData.fieldId], 1);   //Remove the field from current extraFields
-                
-                //Update the extraFieldIndexesById
-                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
-                
-                stateData.deleteExtraDialogOpen = false;    //Close the Dialog
-                stateData.deleteExtraFieldId = null;
-
-                this.setState(stateData);
+                this.props.handlers.success(returnedData);
             }.bind(this),
             error: function(xhr, status, err) {
-                this.setState({
-                    snackbar: {
-                        open: true,
-                        message: 'Delete error (' + err.toString() + ')',
-                    }
-                });
                 console.error(url, status, err.toString());
+                this.props.handlers.snackbarOpen('Delete error (' + err.toString() + ')');
             }.bind(this)
         }); 
     },
@@ -134,7 +104,7 @@ var ExtraFields = React.createClass({
                     dialogOpen={this.state.deleteExtraDialogOpen}
                     dialogTitle="Delete Extra Field?"
                     formId="delete_extra_form"
-                    formOnValidSubmit={this.props.handlers.deleteSubmit}
+                    formOnValidSubmit={this.handleDeleteSubmit}
                 >
                     <p>You are about to delete the following field:</p>
                     <p><strong>Type:</strong> {field.type.label}</p>
