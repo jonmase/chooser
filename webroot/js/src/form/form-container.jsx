@@ -6,21 +6,59 @@ import Snackbar from 'material-ui/Snackbar';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
+import SortWrapper from '../elements/wrappers/sort.jsx';
 
-import DefaultFieldToggles from './default-field-toggles.jsx';
+import DefaultFields from './default-fields.jsx';
 import ExtraFields from './extra-fields.jsx';
+import ExtraFieldEdit from './extra-field-edit.jsx';
+
+var fieldTypes = [
+    {
+        value: 'text',
+        label: 'Simple Text',
+    },
+    {
+        value: 'wysiwyg',
+        label: 'Rich Text',
+    },
+    {
+        value: 'list',
+        label: 'Option List',
+    },
+    {
+        value: 'number',
+        label: 'Number',
+    },
+    {
+        value: 'email',
+        label: 'Email',
+    },
+    {
+        value: 'url',
+        label: 'URL',
+    },
+    {
+        value: 'date',
+        label: 'Date',
+    },
+    {
+        value: 'datetime',
+        label: 'Date & Time',
+    },
+    /*{
+        value: 'person',
+        label: 'Person',
+    },*/
+    /*{
+        value: 'file',
+        label: 'File Upload',
+    },*/
+];
 
 var FormContainer = React.createClass({
     getInitialState: function () {
         return {
-            addType: null,
-            addExtraDialogOpen: false,
-            deleteExtraDialogOpen: false,
-            deleteExtraFieldId: null,
-            editExtraDialogOpen: false,
-            editExtraFieldId: null,
-            extraFields: this.props.choice.extra_fields,
-            extraFieldIndexesById: this.props.choice.extra_field_ids,
+            action: 'view',
             defaults: {
                 code: this.props.choice.use_code,
                 title: this.props.choice.use_title,
@@ -33,11 +71,21 @@ var FormContainer = React.createClass({
                 disabled: true,
                 label: 'Saved',
             },
+            extraFields: this.props.choice.extra_fields,
+            extraFieldIndexesById: this.props.choice.extra_field_ids,
+            fieldBeingEditedId: null,
             snackbar: {
                 open: false,
                 message: '',
             },
         };
+    },
+    
+    handleBackToView: function() {
+        this.setState({
+            action: 'view',
+            fieldBeingEditedId: null,
+        });
     },
     
     //Handle a change to the default field settings - update defaults state and enable the save button
@@ -107,193 +155,20 @@ var FormContainer = React.createClass({
         }); 
     },
     
-    handleAddExtraTypeChange: function (event, value) {
-        console.log("Field type changed to " + value);
+    handleExtraEditClick: function(fieldId) {
         this.setState({
-            addType: value,
+            action: 'edit',
+            fieldBeingEditedId: (typeof(fieldId) !== "undefined"?fieldId:null),
         });
-    },
-
-    handleAddExtraDialogOpen: function() {
-        this.setState({
-            addExtraDialogOpen: true,
-            addType: null,
-        });
-    },
-
-    handleAddExtraDialogClose: function() {
-        this.setState({
-            addExtraDialogOpen: false,
-            addType: null,
-        });
-    },
-
-    //Submit the defaults form
-    handleAddExtraSubmit: function (field) {
-        console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
-        
-        //Save the settings
-        var url = '../ExtraFields/save/';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: field,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-                
-                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
-                stateData.extraFields.push(returnedData.field);   //Add the new field to current extraFields
-                
-                //Update the extraFieldIndexesById
-                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
-                
-                stateData.addExtraDialogOpen = false;   //Close the Dialog
-                
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.setState({
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-                console.error(url, status, err.toString());
-            }.bind(this)
-        }); 
     },
     
-    handleDeleteExtraDialogOpen: function(event) {
+    handleSnackbarOpen: function(message) {
         this.setState({
-            deleteExtraDialogOpen: true,
-            deleteExtraFieldId: event.currentTarget.id.substr(12),
+            snackbar: {
+                open: true,
+                message: message,
+            },
         });
-    },
-
-    handleDeleteExtraDialogClose: function() {
-        this.setState({
-            deleteExtraDialogOpen: false,
-            deleteExtraFieldId: null,
-        });
-    },
-
-    //Submit the delete extra field form
-    handleDeleteExtraSubmit: function () {
-        var data = {
-            id: this.state.deleteExtraFieldId,
-        }
-    
-        console.log("Deleting extra field for Choice " + this.props.choice.id + ": " + data.id);
-        
-        //Save the settings
-        var url = '../ExtraFields/delete';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: data,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-
-                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
-                stateData.extraFields.splice(this.state.extraFieldIndexesById[returnedData.fieldId], 1);   //Remove the field from current extraFields
-                
-                //Update the extraFieldIndexesById
-                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
-                
-                stateData.deleteExtraDialogOpen = false;    //Close the Dialog
-                stateData.deleteExtraFieldId = null;
-
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.setState({
-                    snackbar: {
-                        open: true,
-                        message: 'Delete error (' + err.toString() + ')',
-                    }
-                });
-                console.error(url, status, err.toString());
-            }.bind(this)
-        }); 
-    },
-    
-    handleEditExtraDialogOpen: function(event) {
-        this.setState({
-            editExtraDialogOpen: true,
-            editExtraFieldId: event.currentTarget.id.substr(12),
-        });
-    },
-
-    handleEditExtraDialogClose: function() {
-        this.setState({
-            editExtraDialogOpen: false,
-            editExtraFieldId: null,
-        });
-    },
-
-    //Submit the defaults form
-    handleEditExtraSubmit: function (field) {
-        field.id = this.state.editExtraFieldId;
-    
-        console.log("Saving extra field for Choice " + this.props.choice.id + ": ", field);
-        
-        //Save the settings
-        var url = '../ExtraFields/save';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: field,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                
-                var stateData = {};
-                
-                //Show the response message in the snackbar
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
-
-                stateData.extraFields = this.state.extraFields;    //Get the current extraFields
-                stateData.extraFields.splice(this.state.extraFieldIndexesById[returnedData.field.id], 1, returnedData.field);   //Replace the field in current extraFields
-                
-                //Update the extraFieldIndexesById (shouldn't really need to do this)
-                stateData.extraFieldIndexesById = this.updateExtraFieldIndexesById(stateData.extraFields);
-
-                stateData.editExtraDialogOpen = false;    //Close the Dialog
-                stateData.editExtraFieldId = null;
-
-                this.setState(stateData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                this.setState({
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
-                    }
-                });
-                console.error(url, status, err.toString());
-            }.bind(this)
-        }); 
     },
     
     handleSnackbarClose: function() {
@@ -303,6 +178,17 @@ var FormContainer = React.createClass({
                 message: '',
             },
         });
+    },
+    
+    getFieldAndTypeFromId: function(fieldId) {
+        var field = this.props.deepCopyHelper(this.state.extraFields[this.state.extraFieldIndexesById[fieldId]]);
+        
+        fieldTypes.some(function(type) {
+            if(type.value === field.type) {
+                field.type = type;
+            }
+        });
+        return field;
     },
     
     updateExtraFieldIndexesById: function(extraFields) {
@@ -320,16 +206,15 @@ var FormContainer = React.createClass({
         };
 
         var extrasHandlers={
-            typeChange: this.handleAddExtraTypeChange,
-            addDialogOpen: this.handleAddExtraDialogOpen,
-            addDialogClose: this.handleAddExtraDialogClose,
-            addSubmit: this.handleAddExtraSubmit,
-            deleteDialogOpen: this.handleDeleteExtraDialogOpen,
-            deleteDialogClose: this.handleDeleteExtraDialogClose,
-            deleteSubmit: this.handleDeleteExtraSubmit,
-            editDialogOpen: this.handleEditExtraDialogOpen,
-            editDialogClose: this.handleEditExtraDialogClose,
-            editSubmit: this.handleEditExtraSubmit,
+            editButtonClick: this.handleExtraEditClick,
+            getField: this.getFieldAndTypeFromId,
+            snackbarOpen: this.handleSnackbarOpen,
+        };
+        
+        var extrasEditHandlers={
+            backButtonClick: this.handleBackToView,
+            getField: this.getFieldAndTypeFromId,
+            snackbarOpen: this.handleSnackbarOpen,
         };
         
         var topbar = <TopBar 
@@ -339,29 +224,45 @@ var FormContainer = React.createClass({
             sections={this.props.sections} 
             title={<AppTitle subtitle={this.props.choice.name + ": Options Form"} />}
         />;
+        
+        var snackbar = <Snackbar
+            open={this.state.snackbar.open}
+            message={this.state.snackbar.message}
+            autoHideDuration={3000}
+            onRequestClose={this.handleSnackbarClose}
+        />
 
-        return (
-			<Container topbar={topbar}>
-                <div>
-                    <DefaultFieldToggles 
-                        choice={this.props.choice}
-                        state={this.state}
-                        handlers={defaultsHandlers}
-                    />
-                    <ExtraFields 
-                        state={this.state}
-                        handlers={extrasHandlers}
-                    />
-                    <Snackbar
-                        open={this.state.snackbar.open}
-                        message={this.state.snackbar.message}
-                        autoHideDuration={3000}
-                        onRequestClose={this.handleSnackbarClose}
-                    />
-                </div>
-			</Container>
-        );
+        if(this.state.action === 'view') {
+            return (
+                <Container topbar={topbar}>
+                    <div>
+                        <DefaultFields 
+                            choice={this.props.choice}
+                            defaults={this.state.defaults}
+                            defaultsButton={this.state.defaultsButton}
+                            handlers={defaultsHandlers}
+                        />
+                        <ExtraFields 
+                            extraFields={this.state.extraFields}
+                            fieldTypes={fieldTypes}
+                            handlers={extrasHandlers}
+                        />
+                        {snackbar}
+                    </div>
+                </Container>
+            );
+        }
+        else if(this.state.action === 'edit') {
+            return (
+                <ExtraFieldEdit 
+                    fieldBeingEditedId={this.state.fieldBeingEditedId}
+                    fieldTypes={fieldTypes}
+                    handlers={extrasEditHandlers}
+                    snackbar={snackbar}
+                />
+            );
+        }
     }
 });
 
-module.exports = FormContainer;
+module.exports = SortWrapper(FormContainer);
