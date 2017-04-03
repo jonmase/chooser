@@ -216,3 +216,5 @@ Configure::write('VLE.name','WebLearn');
 Configure::write('VLE.url','https://weblearn.ox.ac.uk');
 Configure::write('Support.team','MSD Learning Technologies');
 Configure::write('Support.email','msdlt@medsci.ox.ac.uk');
+
+Configure::write('Config.timezone', 'Europe/London');

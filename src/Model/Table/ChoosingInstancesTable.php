@@ -340,7 +340,6 @@ class ChoosingInstancesTable extends Table
             //$requestData[$field] = !empty($requestData[$field]) || filter_var($requestData[$field], FILTER_VALIDATE_BOOLEAN);
         }
 
-        //pr($requestData);
         return $requestData;
     }
     
@@ -375,7 +374,6 @@ class ChoosingInstancesTable extends Table
             }
         }
         
-        //exit;
         return $instance;
     }
 

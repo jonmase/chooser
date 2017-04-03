@@ -51,7 +51,6 @@ class ChoosingInstancesController extends AppController
         
         $choice = $this->ChoosingInstances->Choices->get($choiceId);
         $sections = $this->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
-        //pr($choice);
 
         $this->set(compact('choice', 'sections'));
     }
@@ -77,7 +76,6 @@ class ChoosingInstancesController extends AppController
         }
         
         $choosingInstance = $this->ChoosingInstances->findActive($choiceId, true, $this->Auth->user('id'));
-        //pr($choosingInstance);
         $this->set(compact('choosingInstance'));
         $serialize = ['choosingInstance'];
         
@@ -152,7 +150,6 @@ class ChoosingInstancesController extends AppController
         if(empty($isAdmin)) {
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
-        
         
         //Process the data
         $data = $this->ChoosingInstances->processForSave($this->request->data);

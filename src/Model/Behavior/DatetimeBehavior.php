@@ -24,7 +24,37 @@ class DatetimeBehavior extends Behavior {
         'dayFormat' => "dd",
         'hourFormat' => "HH",
         'minFormat' => "mm",
+        'db_timezone' => 'UTC',
+        'view_timezone' => 'Europe/London',
     ];
+    
+    public function createFromFormat($format = null, $value = null) {
+        if(!$format || !$value) {
+            return null;
+        }
+        
+        $config = $this->config();
+        
+        $datetime = Time::createFromFormat(
+            $format,
+            $value,
+            $config['view_timezone']
+        );
+        
+        return $datetime;
+    }
+
+    public function formatTimeObject($timeObject = null, $format = null) {
+        if(!$timeObject || !$format) {
+            return null;
+        }
+        
+        $config = $this->config();
+        
+        $formatted = $timeObject->i18nFormat($format, $config['view_timezone']);
+       
+        return $formatted;
+    }
 
     public function createDatetimeForSave($date = null, $time = null) {
         if(!$date) {
@@ -41,21 +71,18 @@ class DatetimeBehavior extends Behavior {
             $time = $this->formatTimeForSave($time);
         }
        
-        //pr($time);
-        //pr($date);
-        //exit;
         $datetime = $date . " " . $time;
         $format = $config['createSimpleDateFormat'] . ' ' . $config['createSimpleTimeFormat'];
-        //pr($datetime);
-        //pr($format);
-        //exit;
-        $datetimeObject = Time::createFromFormat(
+        
+        
+        $datetimeObject = $this->createFromFormat(
             $format,
-            $datetime,
-            'Europe/London'
+            $datetime
         );
-        //pr($datetimeObject);
-        //exit;
+        
+        //Change the timezone of the datetime object to the db timezone
+        $datetimeObject->timezone = $config['db_timezone'];
+        
         return $datetimeObject;
     }
         
@@ -63,19 +90,15 @@ class DatetimeBehavior extends Behavior {
         if(!$date) {
             return null;
         }
-        //pr($date);
+        
         $config = $this->config(); 
-       // $date = date_create_from_format($config['datepickerFormat'], $date);
-        $timeObject = Time::createFromFormat(
+        $timeObject = $this->createFromFormat(
             $config['datepickerFormat'],
             $date
         );
-        //pr($timeObject);
         
-        $date = $timeObject->i18nFormat($config['formatSimpleDateFormat']);
-        //pr($date);
-        //exit;
-        //return $date->format($config['simpleDateFormat']);
+        $date = $this->formatTimeObject($timeObject, $config['formatSimpleDateFormat']);
+
         return $date;
     }
         
@@ -83,20 +106,16 @@ class DatetimeBehavior extends Behavior {
         if(!$time) {
             return null;
         }
-        //pr($time);
         
         $config = $this->config(); 
-        //$date = date_create_from_format($config['datepickerFormat'], $time);
-        $timeObject = Time::createFromFormat(
+        
+        $timeObject = $this->createFromFormat(
             $config['datepickerFormat'],
             $time
         );
-        //pr($timeObject);
         
-        //return $date->format($config['simpleTimeFormat']);
-        $time = $timeObject->i18nFormat($config['formatSimpleTimeFormat']);
-        //pr($time);
-        //exit;
+        $time = $this->formatTimeObject($timeObject, $config['formatSimpleTimeFormat']);
+        
         return $time;
     }
 
@@ -109,20 +128,20 @@ class DatetimeBehavior extends Behavior {
 
         $config = $this->config(); 
         if($date && $time) {
-            $value['formatted'] = $timeObject->i18nFormat($config['viewDatetimeFormat']);
+            $value['formatted'] = $this->formatTimeObject($timeObject, $config['viewDatetimeFormat']);
         }
         else if($date) {
-            $value['formatted'] = $timeObject->i18nFormat($config['viewDateFormat']);
+            $value['formatted'] = $this->formatTimeObject($timeObject, $config['viewDateFormat']);
         }
         else if($time) {
-            $value['formatted'] = $timeObject->i18nFormat($config['viewTimeFormat']);
+            $value['formatted'] = $this->formatTimeObject($timeObject, $config['viewTimeFormat']);
         }
         
         if($date) {
             $value['date'] = [
-                'year' => $timeObject->i18nFormat($config['yearFormat']),
-                'month' => $timeObject->i18nFormat($config['monthFormat']),
-                'day' => $timeObject->i18nFormat($config['dayFormat']),
+                'year' => $this->formatTimeObject($timeObject, $config['yearFormat']),
+                'month' => $this->formatTimeObject($timeObject, $config['monthFormat']),
+                'day' => $this->formatTimeObject($timeObject, $config['dayFormat']),
             ];
         }
         
@@ -131,8 +150,8 @@ class DatetimeBehavior extends Behavior {
             $value['formatted'] = str_replace($midnightText, 'Midnight', $value['formatted']);
             
             $value['time'] = [
-                'hour' => $timeObject->i18nFormat($config['hourFormat']),
-                'minute' => $timeObject->i18nFormat($config['minFormat']),
+                'hour' => $this->formatTimeObject($timeObject, $config['hourFormat']),
+                'minute' => $this->formatTimeObject($timeObject, $config['minFormat']),
             ];
         }
         
@@ -158,36 +177,17 @@ class DatetimeBehavior extends Behavior {
 
         $config = $this->config(); 
         if($date && $time) {
-            //$datetime = date_create_from_format($config['simpleDateFormat'] . ' ' . $config['simpleTimeFormat'], $date . " " . $time);
-            $datetime = Time::createFromFormat(
+            $datetime = $this->createFromFormat(
                 $config['createSimpleDateFormat'] . ' ' . $config['createSimpleTimeFormat'],
                 $date . " " . $time
             );
-            //$value['formatted'] = $datetime->format($config['viewDatetimeFormat']);
         }
         else if($date) {
-            $datetime = Time::createFromFormat($config['createSimpleDateFormat'], $date);
-            //$value['formatted'] = $datetime->format($config['viewDateFormat']);
+            $datetime = $this->createFromFormat($config['createSimpleDateFormat'], $date);
         }
         else if($time) {
-            $datetime = Time::createFromFormat($config['createSimpleTimeFormat'], $time);
-            //$value['formatted'] = $datetime->format($config['viewTimeFormat']);
+            $datetime = $this->createFromFormat($config['createSimpleTimeFormat'], $time);
         }
-        
-        /*if($date) {
-            $value['date'] = [
-                'year' => $datetime->format('Y'),
-                'month' => $datetime->format('m'),
-                'day' => $datetime->format('d'),
-            ];
-        }
-        
-        if($time) {
-            $value['time'] = [
-                'hour' => $datetime->format('H'),
-                'minute' => $datetime->format('i'),
-            ];
-        }*/
         
         $value = $this->formatDatetimeForView($datetime, $date, $time);
 
