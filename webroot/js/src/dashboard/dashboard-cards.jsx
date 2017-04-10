@@ -14,13 +14,20 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ChooserTheme from '../elements/theme.jsx';
 
 var styles = {
+    card: {
+        display: 'inline-block',
+        width: '100%',
+    },
     cardContainer: {
         display: 'inline-block',
         paddingBottom: '1rem'
     },
-    card: {
-        display: 'inline-block',
-        width: '100%',
+    cardText: {
+        height: '51px', //17px per line
+        overflowY: 'hidden',
+        //Replace bottom padding with margin, so overflow is hidden
+        paddingBottom: '0px',
+        marginBottom: '15px',
     },
     cardTitle: {
         lineHeight: '30px !important',
@@ -35,13 +42,6 @@ var styles = {
         verticalAlign: '-25%',
         marginRight: '10px'
     },
-    cardText: {
-        height: '51px', //17px per line
-        overflowY: 'hidden',
-        //Replace bottom padding with margin, so overflow is hidden
-        paddingBottom: '0px',
-        marginBottom: '15px',
-    },
 };
 
 var SectionsCards = React.createClass({
@@ -54,7 +54,7 @@ var SectionsCards = React.createClass({
 
         return (
             <Container topbar={topbar}>
-                <div style={styles.root} className="row">
+                <div className="row">
                     {this.props.sections.map(function(card) {
                         return (
                             <div className="col-xs-12 col-sm-6 col-md-4" style={styles.cardContainer} key={card.title}>

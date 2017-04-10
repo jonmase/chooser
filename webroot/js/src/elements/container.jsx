@@ -26,8 +26,7 @@ function Container(props) {
                         </div>
                     }
                 </nav>
-                <div style={{paddingTop: '64px'}}>
-                    <h2 className="page-title">{props.title}</h2>
+                <div style={{paddingTop: '96px'}}>
                     {props.children}
                 </div>
             </div>
