@@ -132,6 +132,26 @@ class ExtraFieldsTable extends Table
         return strtolower(preg_replace('/[^\w]/', '_', $name));
     }
     
+    public function getExtraFields($choiceId = null) {
+        $extraFields = [];
+        $extraFieldIndexesById = [];
+        
+        if($choiceId) {
+            $extraFieldsQuery = $this->find('all', [
+                'conditions' => ['ExtraFields.choice_id' => $choiceId],
+                'contain' => ['ExtraFieldOptions'],
+            ]);
+            
+            foreach($extraFieldsQuery as $key => $field) {
+                $extraFields[] = $this->processExtraFieldsForView($field);
+                
+                $extraFieldIndexesById[$field['id']] = $key;
+            }
+        }
+        
+        return [$extraFields, $extraFieldIndexesById];
+    }
+    
     public function getListTypes() {
         return $this->_listTypes;
     }

@@ -13,10 +13,39 @@ use Cake\Network\Exception\InternalErrorException;
 class ExtraFieldsController extends AppController
 {
     /**
+     * get method
+     * Get the extra fields for a choice
+     * 
+     * @return \Cake\Network\Response|null Sends success reponse message.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When ExtraField record not found.
+     */
+    public function get() {
+        $this->viewBuilder()->layout('ajax');
+
+        //Make sure the user is an admin for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isAdmin = $this->ExtraFields->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to get extra fields for this Choice.'));
+        }
+        
+        list($extraFields, $extraFieldIndexesById) = $this->ExtraFields->getExtraFields($choiceId);
+
+        $this->set(compact('extraFields', 'extraFieldIndexesById'));
+        $this->set('_serialize', ['extraFields', 'extraFieldIndexesById']);
+    }
+     
+    
+    /**
      * save method
      * Save an extra field to the option form
      * 
-     * @param string|null $id Choice id.
      * @return \Cake\Network\Response|null Sends success reponse message.
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
      * @throws \Cake\Network\Exception\InternalErrorException When save fails.
@@ -130,8 +159,8 @@ class ExtraFieldsController extends AppController
         if($this->ExtraFields->save($extraField)) {
             $this->set('response', 'Extra field ' . ($updating?'updated':'added'));
             
-            $extraField = $this->ExtraFields->processExtraFieldsForView($extraField);
-            $this->set('field', $extraField);
+            list($extraFields, $extraFieldIndexesById) = $this->ExtraFields->getExtraFields($choiceId);
+            $this->set(compact('extraFields', 'extraFieldIndexesById'));
         } 
         else {
             throw new InternalErrorException(__('Problem with ' . ($updating?'updating':'adding') . ' extra field - save failed'));
@@ -167,7 +196,9 @@ class ExtraFieldsController extends AppController
 
         if ($this->ExtraFields->delete($extraField)) {
             $this->set('response', 'Extra field deleted');
-            $this->set('fieldId', $extraFieldId);
+            
+            list($extraFields, $extraFieldIndexesById) = $this->ExtraFields->getExtraFields($choiceId);
+            $this->set(compact('extraFields', 'extraFieldIndexesById'));
         } else {
             throw new InternalErrorException(__('Problem with deleting extra field'));
         }

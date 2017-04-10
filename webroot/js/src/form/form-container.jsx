@@ -186,8 +186,8 @@ var FormContainer = React.createClass({
         
         this.setState({
             action: 'view',
-            //extraFields: returnedData.extraFields,
-            //extraFieldIndexesById: returnedData.extraFieldIndexesById,
+            extraFields: returnedData.extraFields,
+            extraFieldIndexesById: returnedData.extraFieldIndexesById,
         });
         
         this.handleSnackbarOpen(returnedData.response);
