@@ -56,6 +56,25 @@ var fieldTypes = [
 ];
 
 var FormContainer = React.createClass({
+    loadExtraFieldsFromServer: function() {
+        var url = '../extra-fields/get.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    extraFields: data.extraFields,
+                    extraFieldIndexesById: data.extraFieldIndexesById,
+                    loaded: true,
+                });
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    
     getInitialState: function () {
         return {
             action: 'view',
@@ -71,14 +90,19 @@ var FormContainer = React.createClass({
                 disabled: true,
                 label: 'Saved',
             },
-            extraFields: this.props.choice.extra_fields,
-            extraFieldIndexesById: this.props.choice.extra_field_ids,
+            extraFields: [],
+            extraFieldIndexesById: [],
             fieldBeingEditedId: null,
+            loaded: false,
             snackbar: {
                 open: false,
                 message: '',
             },
         };
+    },
+    
+    componentWillMount: function() {
+        this.loadExtraFieldsFromServer();
     },
     
     handleBackToView: function() {
@@ -261,6 +285,7 @@ var FormContainer = React.createClass({
                         <ExtraFields 
                             extraFields={this.state.extraFields}
                             fieldTypes={fieldTypes}
+                            loaded={this.state.loaded}
                             handlers={extrasHandlers}
                         />
                         {snackbar}

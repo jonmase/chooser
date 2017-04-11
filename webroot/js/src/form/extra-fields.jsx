@@ -5,6 +5,7 @@ import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
+import Loader from '../elements/loader.jsx';
 
 import CommonFields from './extra-common-fields.jsx';
 import TypeSpecificFields from './extra-type-specific-fields.jsx';
@@ -130,45 +131,49 @@ var ExtraFields = React.createClass({
                     </div>
                 </CardHeader>
                 <CardText>
-                    <Formsy.Form
-                        //Keep this here, as we are displaying form elements inside it, but it's not a submittable form
-                        id="preview_extras_form"
-                        method="POST"
-                        //onValid={this.enableSubmitButton}
-                        //onInvalid={this.disableSubmitButton}
-                        //onValidSubmit={this.props.handlers.submit}
-                        noValidate
-                    >
-                        {this.props.extraFields.map(function(field) {
-                            return (
-                                <div className="row" key={field.label}>
-                                    <div className="col-xs-6 col-md-9 col-lg-10">
-                                        <ExtraField field={field} />
+                    {!this.props.loaded?
+                        <Loader />
+                    :
+                        <Formsy.Form
+                            //Keep this here, as we are displaying form elements inside it, but it's not a submittable form
+                            id="preview_extras_form"
+                            method="POST"
+                            //onValid={this.enableSubmitButton}
+                            //onInvalid={this.disableSubmitButton}
+                            //onValidSubmit={this.props.handlers.submit}
+                            noValidate
+                        >
+                            {this.props.extraFields.map(function(field) {
+                                return (
+                                    <div className="row" key={field.label}>
+                                        <div className="col-xs-6 col-md-9 col-lg-10">
+                                            <ExtraField field={field} />
+                                        </div>
+                                        <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
+                                            {field.required?<RequiredIcon />:''}
+                                            {field.show_to_students?<ShowToStudentsIcon />:''}
+                                            {field.in_user_defined_form?<UserDefinedFormIcon />:''}
+                                            {field.sortable?<SortableIcon />:''}
+                                            {field.filterable?<FilterableIcon />:''}
+                                            {field.rule_category?<CategoryIcon />:''}
+                                        </div>
+                                        <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
+                                            <EditButton
+                                                handleEdit={this.props.handlers.editButtonClick} 
+                                                id={field.id}
+                                                tooltip=""
+                                            />
+                                            <DeleteButton
+                                                handleDelete={this.handleDeleteDialogOpen} 
+                                                id={field.id}
+                                                tooltip=""
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        {field.required?<RequiredIcon />:''}
-                                        {field.show_to_students?<ShowToStudentsIcon />:''}
-                                        {field.in_user_defined_form?<UserDefinedFormIcon />:''}
-                                        {field.sortable?<SortableIcon />:''}
-                                        {field.filterable?<FilterableIcon />:''}
-                                        {field.rule_category?<CategoryIcon />:''}
-                                    </div>
-                                    <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                        <EditButton
-                                            handleEdit={this.props.handlers.editButtonClick} 
-                                            id={field.id}
-                                            tooltip=""
-                                        />
-                                        <DeleteButton
-                                            handleDelete={this.handleDeleteDialogOpen} 
-                                            id={field.id}
-                                            tooltip=""
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        }, this)}
-                    </Formsy.Form>
+                                );
+                            }, this)}
+                        </Formsy.Form>
+                    }
                 </CardText>
                 {deleteDialog}
             </Card>
