@@ -31,6 +31,32 @@ class ChoosingInstancesController extends AppController
     }*/
 
     /**
+     * Reset method
+     * Resets the choice settings, archives results etc
+     *
+     * @param string|null $id Choosing Instance id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function reset()
+    {
+        //Make sure the user is an admin for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->ChoosingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+        }
+        
+        $choice = $this->ChoosingInstances->Choices->get($choiceId);
+        $sections = $this->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+
+        $this->set(compact('choice', 'sections'));
+    }
+    
+    /**
      * View method
      *
      * @param string|null $id Choosing Instance id.

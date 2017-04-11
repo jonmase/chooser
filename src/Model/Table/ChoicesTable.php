@@ -247,12 +247,18 @@ class ChoicesTable extends Table
             
             if($activeChoosingInstance) {
                 $choosingSetupActions[] = [
+                    'icon' => 'schedule',
                     'label' => 'View/Edit',
                     'menuLabel' => 'Edit Settings',
-                    'description' => '',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
                 ];
-            }
+                 $choosingSetupActions[] = [
+                    'icon' => 'cached',
+                    'label' => 'Reset',
+                    'menuLabel' => 'Reset Choice',
+                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'reset']),
+                ];
+           }
             else {
                 $choosingSetupActions[] = [
                     'label' => 'Set Up',
