@@ -6,7 +6,7 @@ var SortableIcon = React.createClass({
         var icon = 'sort';
         
         return (
-            <FontIcon className="material-icons" title="Sortable">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Sortable" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });

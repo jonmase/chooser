@@ -9,7 +9,7 @@ var RequiredIcon = React.createClass({
         var icon = 'error_outline';
         
         return (
-            <FontIcon className="material-icons" title="Required">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Required" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });

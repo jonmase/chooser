@@ -3,6 +3,7 @@ import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
+import {grey300} from 'material-ui/styles/colors';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 import Loader from '../elements/loader.jsx';
@@ -120,16 +121,16 @@ var ExtraFields = React.createClass({
             <Card 
                 className="page-card"
             >
+                <div style={{float: 'right'}}>
+                    <AddButton
+                        handleAdd={this.props.handlers.editButtonClick}
+                        tooltip="Add Extra Field"
+                    />
+                </div>
                 <CardHeader
                     title="Extra Fields"
                     subtitle="Add custom fields to the options form for this Choice"
                 >
-                    <div style={{float: 'right'}}>
-                        <AddButton
-                            handleAdd={this.props.handlers.editButtonClick}
-                            tooltip="Add Extra Field"
-                        />
-                    </div>
                 </CardHeader>
                 <CardText>
                     {!this.props.loaded?
@@ -145,32 +146,44 @@ var ExtraFields = React.createClass({
                             noValidate
                         >
                             {this.props.extraFields.map(function(field) {
+                                if(field.type === 'list' && field.extra.list_type !== 'dropdown') {
+                                    var iconColStyle = {textAlign: 'right'};
+                                }
+                                else {
+                                    var iconColStyle = {margin: 'auto', textAlign: 'right'};
+                                }
+                                var iconStyle = {padding: '12px 6px'};
+                                var buttonStyle = {width: '36px', padding: '12px 6px'};
+                                
                                 return (
                                     <div className="row" key={field.label}>
-                                        <div className="col-xs-6 col-md-9 col-lg-10">
+                                        <div className="col-xs-7 col-md-8 col-lg-9">
                                             <ExtraField field={field} />
                                         </div>
-                                        <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
-                                            {field.required?<RequiredIcon />:''}
-                                            {/*field.show_to_students?<ShowToStudentsIcon />:<HideFromStudentsIcon />*/}
-                                            {!field.show_to_students?<HideFromStudentsIcon />:''}
-                                            {/*field.in_user_defined_form?<UserDefinedFormIcon />:''*/}
-                                            {field.sortable?<SortableIcon />:''}
-                                            {/*field.filterable?<FilterableIcon />:''*/}
-                                            {/*field.rule_category?<CategoryIcon />:''*/}
+                                        <div className="col-xs-3 col-md-2" style={iconColStyle}>
+                                            {field.required?<RequiredIcon style={iconStyle} />:''}
+                                            {/*field.show_to_students?<ShowToStudentsIcon style={iconStyle} />:<HideFromStudentsIcon style={iconStyle} />*/}
+                                            {!field.show_to_students?<HideFromStudentsIcon style={iconStyle} />:''}
+                                            {/*field.in_user_defined_form?<UserDefinedFormIcon style={iconStyle} />:''*/}
+                                            {field.sortable?<SortableIcon style={iconStyle} />:''}
+                                            {/*field.filterable?<FilterableIcon style={iconStyle} />:''*/}
+                                            {/*field.rule_category?<CategoryIcon style={iconStyle} />:''*/}
                                         </div>
-                                        <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
+                                        <div className="col-xs-2 col-md-2 col-lg-1" style={iconColStyle}>
                                             <EditButton
                                                 handleEdit={this.props.handlers.editButtonClick} 
                                                 id={field.id}
+                                                style={buttonStyle}
                                                 tooltip=""
                                             />
                                             <DeleteButton
                                                 handleDelete={this.handleDeleteDialogOpen} 
                                                 id={field.id}
+                                                style={buttonStyle}
                                                 tooltip=""
                                             />
                                         </div>
+                                        <hr style={{height: '0px', borderColor: grey300, width: '100%', borderWidth: '1px 0 0 0', borderStyle: 'dashed', marginBottom: '15px'}} />
                                     </div>
                                 );
                             }, this)}

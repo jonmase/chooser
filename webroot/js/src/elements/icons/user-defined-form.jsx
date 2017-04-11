@@ -7,7 +7,7 @@ var UserDefinedFormIcon = React.createClass({
         var icon = 'assignment';
         
         return (
-            <FontIcon className="material-icons" title="Include in User Defined Form">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Include in User Defined Form" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });

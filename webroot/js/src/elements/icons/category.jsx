@@ -10,7 +10,7 @@ var CategoryIcon = React.createClass({
         //var icon = 'style';
         
         return (
-            <FontIcon className="material-icons" title="Use as Categories">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Use as Categories" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });

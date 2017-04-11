@@ -6,7 +6,7 @@ var ShowToStudentsIcon = React.createClass({
         var icon = 'visibility';
         
         return (
-            <FontIcon className="material-icons" title="Show to Students">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Show to Students" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });

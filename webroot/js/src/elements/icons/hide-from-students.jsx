@@ -5,9 +5,10 @@ import {grey500} from 'material-ui/styles/colors';
 var HideFromStudentsIcon = React.createClass({
     render: function() {
         var icon = 'visibility_off';
+        var style = Object.assign({}, {color: grey500}, this.props.style);
         
         return (
-            <FontIcon className="material-icons" title="Hide from Students" style={{color: grey500}}>{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Hide from Students" style={style}>{icon}</FontIcon>
         );
     }
 });

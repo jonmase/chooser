@@ -6,7 +6,7 @@ var FilterableIcon = React.createClass({
         var icon = 'filter_list';
         
         return (
-            <FontIcon className="material-icons" title="Filterable">{icon}</FontIcon>
+            <FontIcon className="material-icons" title="Filterable" style={this.props.style}>{icon}</FontIcon>
         );
     }
 });
