@@ -142,11 +142,11 @@ var ExtraFieldEditPage = React.createClass({
                         </div>
                     }
                     <CommonFields
-                        type={edit?field.type:this.state.type}
+                        type={edit?field.type.value:this.state.type}
                         values={edit?field:{}}
                     />
                     <TypeSpecificFields
-                        type={edit?field.type:this.state.type}
+                        type={edit?field.type.value:this.state.type}
                         values={edit?field:{}}
                     />
                 </Formsy.Form>
