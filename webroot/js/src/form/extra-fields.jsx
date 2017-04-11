@@ -16,6 +16,7 @@ import CategoryIcon from '../elements/icons/category.jsx';
 import FilterableIcon from '../elements/icons/filterable.jsx';
 import RequiredIcon from '../elements/icons/required.jsx';
 import ShowToStudentsIcon from '../elements/icons/show-to-students.jsx';
+import HideFromStudentsIcon from '../elements/icons/hide-from-students.jsx';
 import SortableIcon from '../elements/icons/sortable.jsx';
 import UserDefinedFormIcon from '../elements/icons/user-defined-form.jsx';
 
@@ -151,11 +152,12 @@ var ExtraFields = React.createClass({
                                         </div>
                                         <div className="col-xs-3 col-md-2 col-lg-1" style={{margin: 'auto', textAlign: 'right'}}>
                                             {field.required?<RequiredIcon />:''}
-                                            {field.show_to_students?<ShowToStudentsIcon />:''}
-                                            {field.in_user_defined_form?<UserDefinedFormIcon />:''}
+                                            {/*field.show_to_students?<ShowToStudentsIcon />:<HideFromStudentsIcon />*/}
+                                            {!field.show_to_students?<HideFromStudentsIcon />:''}
+                                            {/*field.in_user_defined_form?<UserDefinedFormIcon />:''*/}
                                             {field.sortable?<SortableIcon />:''}
-                                            {field.filterable?<FilterableIcon />:''}
-                                            {field.rule_category?<CategoryIcon />:''}
+                                            {/*field.filterable?<FilterableIcon />:''*/}
+                                            {/*field.rule_category?<CategoryIcon />:''*/}
                                         </div>
                                         <div className="col-xs-3 col-md-1" style={{margin: 'auto', textAlign: 'right'}}>
                                             <EditButton

@@ -30,14 +30,14 @@ var CommonFields = React.createClass({
         />);
         toggleKeys.push("show_to_students");
         
-        toggles.push(<FormsyToggle
+        /*toggles.push(<FormsyToggle
             defaultToggled={(typeof(values.in_user_defined_form) !== 'undefined')?values.in_user_defined_form:true}
             key="in_user_defined_form"
             label="Include in form for student-defined options (where available)"
             labelPosition="right"
             name="in_user_defined_form"
         />);
-        toggleKeys.push("in_user_defined_form");
+        toggleKeys.push("in_user_defined_form");*/
         
         toggles.push(<FormsyToggle
             defaultToggled={(typeof(values.sortable) !== 'undefined')?values.sortable:true}
@@ -47,7 +47,7 @@ var CommonFields = React.createClass({
         />);
         toggleKeys.push("sortable");
 
-        var filterableFields = ['list', 'number', 'date', 'datetime', 'person'];
+        /*var filterableFields = ['list', 'number', 'date', 'datetime', 'person'];
         if(filterableFields.indexOf(this.props.type) > -1) {
             var defaultValue = false;
             if((typeof(values.filterable) !== 'undefined')) {
@@ -67,9 +67,9 @@ var CommonFields = React.createClass({
                 name="filterable"
             />);
             toggleKeys.push("filterable");
-        }
+        }*/
         
-        var categoryFields = ['list'];
+        /*var categoryFields = ['list'];
         if(categoryFields.indexOf(this.props.type) > -1) {
             toggles.push(<FormsyToggle
                 defaultToggled={(typeof(values.rule_category) !== 'undefined')?values.rule_category:false}
@@ -78,7 +78,7 @@ var CommonFields = React.createClass({
                 name="rule_category"
             />);
             toggleKeys.push("rule_category");
-        }
+        }*/
 
         return (
             <div style={{display: this.props.type?'block':'none'}}>
