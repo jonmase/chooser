@@ -121,7 +121,7 @@ var ExtraFields = React.createClass({
             <Card 
                 className="page-card"
             >
-                <div style={{float: 'right'}}>
+                <div style={{float: 'right', margin: '9.5px 4px 0 0'}}>
                     <AddButton
                         handleAdd={this.props.handlers.editButtonClick}
                         tooltip="Add Extra Field"
@@ -129,9 +129,9 @@ var ExtraFields = React.createClass({
                 </div>
                 <CardHeader
                     title="Extra Fields"
+                    style={{marginRight: '60px'}}
                     subtitle="Add custom fields to the options form for this Choice"
-                >
-                </CardHeader>
+                />
                 <CardText>
                     {!this.props.loaded?
                         <Loader />
