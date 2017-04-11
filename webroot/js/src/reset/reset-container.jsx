@@ -3,6 +3,8 @@ import React from 'react';
 import Formsy from 'formsy-react';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import Container from '../elements/container.jsx';
@@ -13,8 +15,12 @@ var ResetContainer = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            saveButtonEnabled: true,
-            saveButtonLabel: 'Reset',
+            confirmDialogOpen: false,
+            confirmButtonEnabled: true,
+            confirmButtonLabel: 'Confirm',
+            rules: true,
+            settings: true,
+            unpublish: false,
         };
     },
     componentDidMount: function() {
@@ -32,17 +38,68 @@ var ResetContainer = React.createClass({
         });
     },
 
-    handleResetClick: function() {
-    
+    handleConfirmDialogClose: function() {
+        this.setState({
+            confirmDialogOpen: false,
+        });
     },
     
+    handleResetClick: function() {
+        this.setState({
+            confirmDialogOpen: true,
+        });
+    },
+    
+    handleToggle: function(event, value) {
+        var stateData = {};
+        stateData[event.target.name] = value;
+        
+        this.setState(stateData);
+    },
+    
+    handleConfirm: function() {
+        this.refs.reset.submit();
+    },
+    
+    //Submit the form
+    handleSubmit: function (data) {
+        this.setState({
+            confirmButtonEnabled: false,
+            confirmButtonLabel: 'Resetting',
+        });
+        
+        //Save the settings
+        var url = 'reset';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                //Redirect back to the dashboard
+                window.location.href = this.props.dashboardUrl;
+            }.bind(this),
+            error: function(xhr, status, err) {
+                this.setState({
+                    confirmButtonEnabled: true,
+                    confirmButtonLabel: 'Retry',
+                });
+                console.error(url, status, err.toString());
+                
+                this.handleSnackbarOpen('Save error (' + err.toString() + ')');
+            }.bind(this)
+        }); 
+    },
+
     render: function() {
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
             iconLeft="menu"
             iconRight={<RaisedButton 
-                disabled={!this.state.canSubmit && this.state.saveButtonEnabled}
-                label={this.state.saveButtonLabel}
+                disabled={!this.state.canSubmit}
+                label="Reset"
                 onTouchTap={this.handleResetClick}
                 style={{marginTop: '6px'}}
             />}
@@ -50,9 +107,42 @@ var ResetContainer = React.createClass({
             title={<AppTitle subtitle={this.props.choice.name + ": Reset Choice"} />}
         />;
         
+        var confirmActions = [
+            <FlatButton
+                key="cancel"
+                label="Cancel"
+                secondary={true}
+                onTouchTap={this.handleConfirmDialogClose}
+            />,
+            <FlatButton
+                key="submit"
+                label={this.state.confirmButtonLabel}
+                onTouchTap={this.handleConfirm}
+                primary={true}
+                type="submit"
+            />,
+        ];
+        
+        var confirmDialog = 
+            <Dialog
+                actions={confirmActions}
+                onRequestClose={this.handleConfirmDialogClose}
+                open={this.state.confirmDialogOpen}
+                title="Confirm Reset"
+            >
+                <p>Are you sure you want to reset this Choice? When you click Confirm, the following will happen:</p>
+                <ul>
+                    <li>The current schedule and associated results will be archived. You will still be able to view these later.</li>
+                    <li>Options will {this.state.unpublish?'':'not '}be unpublished</li>
+                    <li>The Choice Settings will be {this.state.settings?'kept':'reset'}</li>
+                    <li>The Rules will be {this.state.rules?'kept':'reset'}</li>
+                </ul>
+                <p>After the Choice has been set, you will be redirected back to the Dashboard.</p>
+            </Dialog>
+
         return (
             <Container topbar={topbar} title={false}>
-                <p>Resetting the Choice will archive the current schedule and the associated results. You will still be able to view archived the schedule and results. Any additional permissions given to users, the options form and all options will be kept.</p>
+                <p style={{marginTop: '0px'}}>Resetting the Choice will archive the current schedule and the associated results. You will still be able to view archived the schedule and results. Any additional permissions given to users, the options form and all options will be kept.</p>
                 <p>You can also do some other 'tidying up' at this point, according to the settings you choose below. </p>
                 <Formsy.Form
                     id="reset_form"
@@ -64,24 +154,31 @@ var ResetContainer = React.createClass({
                     ref="reset"
                 >
                     <FormsyToggle
-                        defaultToggled={false}
+                        //defaultToggled={false}
                         label="Unpublish all Options? (Options will have to be published again before they are visible to viewers)"
                         labelPosition="right"
                         name="unpublish"
+                        onChange={this.handleToggle}
+                        value={this.state.unpublish}
                     />
                     <FormsyToggle
-                        defaultToggled={true}
+                        //defaultToggled={true}
                         label="Keep Choice Settings? (The Choice Settings, including instructions, preference settings, etc., will be kept, but the dates will be reset)"
                         labelPosition="right"
                         name="settings"
+                        onChange={this.handleToggle}
+                        value={this.state.settings}
                     />
                     <FormsyToggle
-                        defaultToggled={true}
+                        //defaultToggled={true}
                         label="Keep Rules?"
                         labelPosition="right"
                         name="rules"
+                        onChange={this.handleToggle}
+                        value={this.state.rules}
                     />
                 </Formsy.Form>
+                {confirmDialog}
             </Container>
         );
     }

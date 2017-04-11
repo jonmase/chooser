@@ -50,10 +50,27 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
-        $choice = $this->ChoosingInstances->Choices->get($choiceId);
-        $sections = $this->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+        if($this->request->is('post')) {
+            $this->viewBuilder()->layout('ajax');   //Use ajax layout
+            
+            //Archive the instance and associated results
+            
+            //If unpublish is set to true, unpublish all of the options
+            
+            //If settings is set to true, create a new instance, without dates, but with all of the same settings as current
+            
+            //If rules is true, save the rules against the new instance
+            //Or if settings was set to false, but rules is true, save the rules with a new empty instance
+            
+            $this->set('response', 'Choice reset');
+            
+        }
+        else {
+            $choice = $this->ChoosingInstances->Choices->get($choiceId);
+            $sections = $this->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
 
-        $this->set(compact('choice', 'sections'));
+            $this->set(compact('choice', 'sections'));
+        }
     }
     
     /**
