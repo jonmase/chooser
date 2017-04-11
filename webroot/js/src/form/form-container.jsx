@@ -151,29 +151,25 @@ var FormContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
 
-                var stateData = {};
-                stateData.defaultsButton = {
-                    disabled: true,
-                    label: 'Saved',
-                };
-                stateData.snackbar = {
-                    open: true,
-                    message: returnedData.response,
-                }
+                this.handleSnackbarOpen(returnedData.response);
                 
-                this.setState(stateData);
+                this.setState({
+                    defaultsButton: {
+                        disabled: true,
+                        label: 'Saved',
+                    }
+                });
             }.bind(this),
             error: function(xhr, status, err) {
                 this.setState({
                     defaultsButton: {
                         disabled: false,
                         label: 'Resave',
-                    },
-                    snackbar: {
-                        open: true,
-                        message: 'Save error (' + err.toString() + ')',
                     }
                 });
+                
+                this.handleSnackbarOpen('Save error (' + err.toString() + ')');
+                
                 console.error(url, status, err.toString());
             }.bind(this)
         }); 
