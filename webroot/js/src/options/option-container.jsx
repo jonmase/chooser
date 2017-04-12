@@ -428,7 +428,7 @@ var OptionContainer = React.createClass({
         //Otherwise, a new selection has been created for the edits
         else {
             //Archive the selection that is being edited, and return to review page
-            var url = '../selections/archive.json';
+            var url = '../selections/abandon.json';
             var data = {
                 selection_id: this.state.selection.selection.id,
                 instance_id: this.state.instance.instance.id,

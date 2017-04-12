@@ -35,11 +35,11 @@ class SelectionsController extends AppController
     }*/
     
     /**
-     * Archive method
-     * For archiving a single selection
+     * Abandon method
+     * For abandoning changes to a selection
      * requires selection id and instance id to be passed in the request data
      */
-    public function archive()
+    public function abandon()
     {
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
