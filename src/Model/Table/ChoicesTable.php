@@ -249,7 +249,7 @@ class ChoicesTable extends Table
                 $choosingSetupActions[] = [
                     'icon' => 'schedule',
                     'label' => 'View/Edit',
-                    'menuLabel' => 'Edit Settings',
+                    'menuLabel' => 'Choice Settings',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
                 ];
                  $choosingSetupActions[] = [
@@ -293,31 +293,26 @@ class ChoicesTable extends Table
                 'roles' => ['admin'],
             ],
             [
-                'title' => 'Options Form',
-                'description' => 'Define the fields that will appear on the form for creating/editing options.',
-                'icon' => 'playlist_add',   //'icon' => 'input',//'icon' => 'format_list_bulleted',//icon' => 'reorder',
+                'title' => 'Editing Setup',
+                'description' => 'Define the fields that will appear on the form for creating/editing options and setup the process and deadlines for creating and editing options.',
+                'icon' => 'build',
                 'actions' => [
                     [
-                        'label' => 'Edit',
+                        'icon' => 'playlist_add',   //'icon' => 'input',//'icon' => 'format_list_bulleted',//icon' => 'reorder',
+                        'label' => 'Options Form',
+                        'menuLabel' => 'Options Form',
                         'url' => Router::url(['controller' => 'choices', 'action' => 'form']),
-                    ]
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'icon' => 'build',
+                        'label' => 'Editing Setup',
+                        'url' => Router::url(['controller' => 'editing_instances', 'action' => 'view']),
+                        'roles' => ['admin'],
+                    ],
                 ],
                 'roles' => ['admin'],
             ],
-            /*[
-                'title' => 'Editing Setup',
-                'description' => '',
-                'icon' => 'mode_edit',
-                'actions' => [
-                    [
-                        'label' => 'Edit',
-                    ],
-                    [
-                        'label' => 'New',
-                    ]
-                ],
-                'roles' => ['admin'],
-            ],*/
             /*[
                 'title' => 'Notifications',
                 'description' => '',
