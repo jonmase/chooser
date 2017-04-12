@@ -55,7 +55,7 @@ class SelectionsController extends AppController
         }
         
         if(empty($this->request->data['selection_id']) || empty($this->request->data['instance_id'])) {
-            throw new InternalErrorException(__('Error archiving selection - missing instance or selection ID'));
+            throw new InternalErrorException(__('Error abandoning selection - missing instance or selection ID'));
         }
         
         //Get the selection
@@ -63,16 +63,15 @@ class SelectionsController extends AppController
         
         //Make sure that this user is the owner of this selection
         if($selection->user_id !== $currentUserId)   {
-            throw new InternalErrorException(__('Error archiving selection - user is not selection owner'));
+            throw new InternalErrorException(__('Error abandoning selection - user is not selection owner'));
         }
         //Make sure that this selection is not already archived
         if($selection->archived) {
-            throw new InternalErrorException(__('Error archiving selection - selection already archived'));
+            throw new InternalErrorException(__('Error abandoning selection - selection already archived'));
         }
         
         $selection->archived = true;
-        //pr($selection);
-        //exit;
+
         if ($this->Selections->save($selection)) {
             $this->set('response', 'Selection changes abandoned');
             
@@ -98,7 +97,7 @@ class SelectionsController extends AppController
             $this->set(compact('selection', 'optionsSelected', 'optionsSelectedIds', 'optionsSelectedIdsPreferenceOrder', 'allowSubmit', 'ruleWarnings'));
         } 
         else {
-            throw new InternalErrorException(__('Problem with saving selection'));
+            throw new InternalErrorException(__('Problem with abandoning selection'));
         }
     }
     
