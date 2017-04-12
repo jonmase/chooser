@@ -160,4 +160,44 @@ class ChoicesOptionsTable extends Table
         $rules->add($rules->existsIn(['option_id'], 'Options'));
         return $rules;
     }
+    
+    //TODO: unpublishOptions method NOT YET TESTED AS NO PUBLISH METHODS YET
+    public function unpublishOptions($choiceId = null) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        $optionsToSave = [];
+        //Find all the published options for this choice
+        $options = $this->find('all', [
+            'conditions' => [
+                'ChoicesOptions.choice_id' => $choiceId,
+                'published' => 1,
+                'revision_parent' => 0,
+            ],
+        ]);
+        
+        //Loop through the options
+        foreach($options as $option) {
+            //Create an old version of the option
+            //Note: not creating a version of the Options table record, just the ChoicesOptions one, as we know we haven't changed any of the details in the Options record
+            $originalOption = $option->toArray();   //Copy the option as an array
+            $originalOption['revision_parent'] = $originalOption['id']; //Set the revision parent 
+            unset($originalOption['id']);   //Unset the ID
+            $optionsToSave[] = $this->newEntity($originalOption);   //Create the old version as a new entity
+            
+            //Clear the published and approved settings for the option
+            $option->published = 0;
+            $option->published_date = null;
+            $option->publisher = null;
+            $option->approved = 0;
+            $option->approved_date = null;
+            $option->approver = null;
+            
+            //Add the option to the array of options to save
+            $optionsToSave[] = $option;
+        }
+        
+        return $optionsToSave;
+    }
 }

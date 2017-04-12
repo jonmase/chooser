@@ -50,20 +50,41 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
+        //Get the instance
+        $instanceQuery = $this->ChoosingInstances->findByChoiceId($choiceId, true);
+        //If there is no active instance, redirect to dashboard
+        if($instanceQuery->isEmpty()) {
+            $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
+        }
+    
         if($this->request->is('post')) {
             $this->viewBuilder()->layout('ajax');   //Use ajax layout
             
+            //Get the boolean values from the posted data
+            //pr($this->request->data);
+            //$unpublishOptions = filter_var($this->request->data['unpublish'], FILTER_VALIDATE_BOOLEAN);
+            $unpublishOptions = false;
+            $keepSettings = filter_var($this->request->data['settings'], FILTER_VALIDATE_BOOLEAN);
+            $keepRules = filter_var($this->request->data['rules'], FILTER_VALIDATE_BOOLEAN);
+            
             //Archive the instance and associated results
+            $oldInstance = $instanceQuery->first();  //Get the instance result
             
-            //If unpublish is set to true, unpublish all of the options
+            $instancesToSave = $this->ChoosingInstances->reset($choiceId, $oldInstance, $unpublishOptions, $keepSettings, $keepRules);
+            //list($instancesToSave, $optionsToSave) = $this->ChoosingInstances->reset($choiceId, $oldInstance, $unpublishOptions, $keepSettings, $keepRules);
             
-            //If settings is set to true, create a new instance, without dates, but with all of the same settings as current
-            
-            //If rules is true, save the rules against the new instance
-            //Or if settings was set to false, but rules is true, save the rules with a new empty instance
-            
-            $this->set('response', 'Choice reset');
-            
+            //TODO: Once publish methods are set up, also save options ($optionsToSave) in a transaction
+
+            //Save the instances
+            //pr($instancesToSave);
+            //pr($optionsToSave);
+            //exit;
+            if ($this->ChoosingInstances->saveMany($instancesToSave)) {
+                $this->set('response', 'Choice reset');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with resetting Choice'));
+            }
         }
         else {
             $choice = $this->ChoosingInstances->Choices->get($choiceId);

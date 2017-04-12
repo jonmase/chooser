@@ -138,10 +138,10 @@ class ChoosingInstancesTable extends Table
             ->integer('comments_per_option_limit')
             ->allowEmpty('comments_per_option_limit');
 
-        $validator
+        /*$validator
             ->boolean('editor_preferences')
             ->requirePresence('editor_preferences', 'create')
-            ->notEmpty('editor_preferences');
+            ->notEmpty('editor_preferences');*/
 
         $validator
             ->dateTime('editor_preferences_deadline')
@@ -377,4 +377,106 @@ class ChoosingInstancesTable extends Table
         return $instance;
     }
 
+    public function reset ($choiceId = null, $oldInstance = null, $unpublishOptions = false, $keepSettings = false, $keepRules = false) {
+        //If no old instance passed, return empty array
+        if(!$choiceId || !$oldInstance) {
+            return [];
+        }
+        
+        //Convert the existing instance into an array, that we can use for creating a new copy of the instance later, if needed
+        $oldInstanceArray = $oldInstance->toArray();
+        
+        $oldInstance->active = 0;    //Set the instance to inactive
+        
+        //Get the results
+        $results = $this->Selections->find('all', [
+            'conditions' => [
+                'Selections.choosing_instance_id' => $oldInstance->id,
+                'Selections.archived' => 0,
+            ]
+        ]);
+        
+        //Add each result to the instance selections array, setting each to archived
+        $oldInstance['selections'] = [];
+        foreach($results as $result) {
+            $oldInstance['selections'][] = $this->Selections->patchEntity($result, ['archived' => 1]);
+        }
+        $instancesToSave = [$oldInstance];
+
+        //If unpublish is set to true, unpublish all of the options
+        //Switch this off for now, as publish mechanism is not in place yet
+        //TODO: unpublishOptions method is untested
+        /*
+        if($unpublishOptions) {
+            $optionsToSave = $this->ChoicesOptions->unpublishOptions($choiceId)
+            pr($optionsToSave);
+        }
+        */
+        
+        //If settings is set to true, create a new instance, without dates, but with all of the same settings as current
+        if($keepSettings) {
+            $newInstanceArray = $oldInstanceArray;
+            unset($newInstanceArray['id']);
+            unset($newInstanceArray['created']);
+            unset($newInstanceArray['modified']);
+            
+            $newInstanceArray['opens'] = null;
+            $newInstanceArray['deadline'] = null;
+            $newInstanceArray['extension'] = null;
+            //$newInstanceArray['created'] = null;
+            //$newInstanceArray['modified'] = null;
+            $newInstance = $this->newEntity($newInstanceArray);
+        }
+        
+        //If rules is true, save the rules against the new instance
+        if($keepRules) {
+            //If there is not already a new instance (i.e. if settings was set to false), create a new empty instance for saving the rules
+            if(empty($newInstance)) {
+                $newInstanceArray = [
+                    'choice_id' => $choiceId,
+                    'active' => 1,
+                    'editable' => 1,
+                    'preference' => 0,
+                    'comments_overall' => 0,
+                    'comments_per_option' => 0,
+                ];
+                $newInstance = $this->newEntity($newInstanceArray);
+            }
+            
+            //Get the instance with all its rules (inc related)
+            //Setup an array with the table and Model names for the types of rules
+            //Values used for the query contain 
+            $ruleTypes = [
+                'rules' => 'Rules',
+                //Do not use related for now, as they have not been set up yet
+                //'rules_related_categories' => 'RulesRelatedCategories',
+                //'rules_related_options' => 'RulesRelatedOptions',
+            ];
+            
+            $rules = $this->get($oldInstance->id, [
+                'fields' => ['id'],
+                'contain' => array_values($ruleTypes)
+            ]);
+            
+            foreach($ruleTypes as $table => $model) {
+                $newInstance[$table] = [];
+                foreach($rules[$table] as $rule) {
+                    //Unset the rule id and choosing_instance_id, plus created/modified
+                    unset($rule->id);
+                    unset($rule->choosing_instance_id);
+                    unset($rule->created);
+                    unset($rule->modified);
+                    $rule->isNew(true); //Force it to be considered new
+                    $newInstance[$table][] = $rule; //Add it to the instance
+                }
+            }
+        }
+        
+        if(!empty($newInstance)) {
+            $instancesToSave[] = $newInstance;
+        }
+
+        return $instancesToSave;
+        //return [$instancesToSave, $optionsToSave];
+    }
 }

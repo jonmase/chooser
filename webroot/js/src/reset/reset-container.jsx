@@ -6,6 +6,7 @@ import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
+import Snackbar from 'material-ui/Snackbar';
 
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
@@ -20,6 +21,10 @@ var ResetContainer = React.createClass({
             confirmButtonLabel: 'Confirm',
             rules: true,
             settings: true,
+            snackbar: {
+                open: false,
+                message: '',
+            },
             unpublish: false,
         };
     },
@@ -78,8 +83,8 @@ var ResetContainer = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
                 
-                //Redirect back to the dashboard
-                window.location.href = this.props.dashboardUrl;
+                //Redirect back to the settings view page
+                window.location.href = 'view';
             }.bind(this),
             error: function(xhr, status, err) {
                 this.setState({
@@ -93,6 +98,24 @@ var ResetContainer = React.createClass({
         }); 
     },
 
+    handleSnackbarOpen: function(message) {
+        this.setState({
+            snackbar: {
+                open: true,
+                message: message,
+            },
+        });
+    },
+    
+    handleSnackbarClose: function() {
+        this.setState({
+            snackbar: {
+                open: false,
+                message: '',
+            },
+        });
+    },
+    
     render: function() {
         var topbar = <TopBar 
             dashboardUrl={this.props.dashboardUrl} 
@@ -137,8 +160,14 @@ var ResetContainer = React.createClass({
                     <li>The Choice Settings will be {this.state.settings?'kept':'reset'}</li>
                     <li>The Rules will be {this.state.rules?'kept':'reset'}</li>
                 </ul>
-                <p>After the Choice has been set, you will be redirected back to the Dashboard.</p>
             </Dialog>
+
+        var snackbar = <Snackbar
+            open={this.state.snackbar.open}
+            message={this.state.snackbar.message}
+            autoHideDuration={3000}
+            onRequestClose={this.handleSnackbarClose}
+        />
 
         return (
             <Container topbar={topbar} title={false}>
@@ -153,14 +182,14 @@ var ResetContainer = React.createClass({
                     noValidate={true}
                     ref="reset"
                 >
-                    <FormsyToggle
+                    {/*<FormsyToggle
                         //defaultToggled={false}
                         label="Unpublish all Options? (Options will have to be published again before they are visible to viewers)"
                         labelPosition="right"
                         name="unpublish"
                         onChange={this.handleToggle}
                         value={this.state.unpublish}
-                    />
+                    />*/}
                     <FormsyToggle
                         //defaultToggled={true}
                         label="Keep Choice Settings? (The Choice Settings, including instructions, preference settings, etc., will be kept, but the dates will be reset)"
@@ -179,6 +208,7 @@ var ResetContainer = React.createClass({
                     />
                 </Formsy.Form>
                 {confirmDialog}
+                {snackbar}
             </Container>
         );
     }
