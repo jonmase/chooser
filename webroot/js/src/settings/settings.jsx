@@ -28,6 +28,7 @@ var Settings = React.createClass({
             var editTooltip = "Set Up Choice";
         }
         
+        var noInstructionsMessage = "No instructions given";
     
         return (
             <Card 
@@ -81,8 +82,8 @@ var Settings = React.createClass({
                                         />
                                     </div>
                                 </div>
-                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions} />
-                                <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || "No instructions given"} />
+                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions || noInstructionsMessage} />
+                                <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || noInstructionsMessage} />
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
                                         <Toggle 
