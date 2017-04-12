@@ -306,7 +306,7 @@ class ChoicesTable extends Table
                     ],
                     [
                         'icon' => 'build',
-                        'label' => 'Editing Setup',
+                        'label' => 'Editing Settings',
                         'url' => Router::url(['controller' => 'editing_instances', 'action' => 'view']),
                         'roles' => ['admin'],
                     ],
