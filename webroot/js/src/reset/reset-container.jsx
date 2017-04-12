@@ -156,7 +156,7 @@ var ResetContainer = React.createClass({
                 <p>Are you sure you want to reset this Choice? When you click Confirm, the following will happen:</p>
                 <ul>
                     <li>The current schedule and associated results will be archived. You will still be able to view these later.</li>
-                    <li>Options will {this.state.unpublish?'':'not '}be unpublished</li>
+                    {/*<li>Options will {this.state.unpublish?'':'not '}be unpublished</li>*/}
                     <li>The Choice Settings will be {this.state.settings?'kept':'reset'}</li>
                     <li>The Rules will be {this.state.rules?'kept':'reset'}</li>
                 </ul>

@@ -406,8 +406,6 @@ class ChoosingInstancesTable extends Table
         if($keepSettings) {
             $newInstanceArray = $oldInstanceArray;
             unset($newInstanceArray['id']);
-            //unset($newInstanceArray['created']);
-            //unset($newInstanceArray['modified']);
             $newInstanceArray = $this->unsetCreatedModified($newInstanceArray);
             
             $newInstanceArray['opens'] = null;

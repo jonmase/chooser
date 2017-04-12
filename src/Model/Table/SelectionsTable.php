@@ -293,10 +293,10 @@ class SelectionsTable extends Table
     
     public function archive($selections = []) {
         if(!empty($selections)) {
-            $archivedSelections = $this->setArchived($selections);
-            $archivedSelections = $this->unsetCreatedModifiedMultiple($archivedSelections);
-            $archivedSelections = $this->unsetOptions($archivedSelections);
-            $this->saveMany($archivedSelections);
+            $selections = $this->setArchived($selections);
+            $selections = $this->unsetCreatedModifiedMultiple($selections);
+            $selections = $this->unsetOptions($selections);
+            $this->saveMany($selections);
         }
     }
     
