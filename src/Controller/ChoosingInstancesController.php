@@ -79,6 +79,7 @@ class ChoosingInstancesController extends AppController
             //pr($instancesToSave);
             //pr($optionsToSave);
             //exit;
+            
             if ($this->ChoosingInstances->saveMany($instancesToSave)) {
                 $this->set('response', 'Choice reset');
             } 
@@ -173,13 +174,14 @@ class ChoosingInstancesController extends AppController
                 if(!empty($selections)) {
                     //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
                     $selection = array_shift($selections);
-                    
+                    //pr($selection); exit;
                     //Archive the remaining selections (should only ever be one)
                     $this->ChoosingInstances->Selections->archive($selections);
                 }
                 else {
                     $selection = [];
                 }
+                
                 
                 list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
                 list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);

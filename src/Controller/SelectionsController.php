@@ -36,7 +36,8 @@ class SelectionsController extends AppController
     
     /**
      * Archive method
-     *
+     * For archiving a single selection
+     * requires selection id and instance id to be passed in the request data
      */
     public function archive()
     {
@@ -64,10 +65,7 @@ class SelectionsController extends AppController
         if($selection->user_id !== $currentUserId)   {
             throw new InternalErrorException(__('Error archiving selection - user is not selection owner'));
         }
-        
-        //Get the instance
-        $instance = $this->Selections->ChoosingInstances->get($this->request->data['instance_id']);
-        
+        //Make sure that this selection is not already archived
         if($selection->archived) {
             throw new InternalErrorException(__('Error archiving selection - selection already archived'));
         }
@@ -78,13 +76,17 @@ class SelectionsController extends AppController
         if ($this->Selections->save($selection)) {
             $this->set('response', 'Selection changes abandoned');
             
-            $selections = $this->Selections->findByInstanceAndUser($instance['id'], $this->Auth->user('id'));
+            //Get what is now the current selection for this user
+            $instance = $this->Selections->ChoosingInstances->get($this->request->data['instance_id']); //Get the instance
+            $selections = $this->Selections->findByInstanceAndUser($instance['id'], $this->Auth->user('id'));   //Get all of the unarchived selections for this user
             
             if(!empty($selections)) {
                 $selection = array_shift($selections);
                 
-                //Archive the remaining selections (should only ever be one)
-                $this->Selections->archive($selections);
+                //Archive the remaining selections (this should never be necessary, as there should only ever be one unarchived selection)
+                if(!empty($selections)) {
+                    $this->Selections->archive($selections);
+                }
             }
             else {
                 $selection = [];

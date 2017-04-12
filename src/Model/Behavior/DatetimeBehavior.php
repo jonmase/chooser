@@ -28,6 +28,25 @@ class DatetimeBehavior extends Behavior {
         'view_timezone' => 'Europe/London',
     ];
     
+    public function unsetCreatedModified($entity = []) {
+        //unset($entity->created);
+        //unset($entity->modified);
+        //Use array notation so works for arrays and entities
+        unset($entity['created']);
+        unset($entity['modified']);
+        
+        return $entity;
+    }
+    
+    public function unsetCreatedModifiedMultiple($entities = []) {
+        if(!empty($entities)) {
+            foreach($entities as &$entity) {
+                $entity = $this->unsetCreatedModified($entity);
+            }
+        }
+        return $entities;
+    }
+    
     public function createFromFormat($format = null, $value = null) {
         if(!$format || !$value) {
             return null;

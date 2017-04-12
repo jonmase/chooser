@@ -108,6 +108,22 @@ class SelectionsTable extends Table
         return $formattedDate;
     }
     
+    public function findByInstance($instanceId = null) {
+        if(!$instanceId) {
+            return [];
+        }
+        
+        //Get the selections
+        $selections = $this->find('all', [
+            'conditions' => [
+                'Selections.choosing_instance_id' => $instanceId,
+                'Selections.archived' => false,
+            ]
+        ]);
+        
+        return $selections->toArray();
+    }
+    
     public function findByInstanceAndUser($instanceId = null, $userId = null, $containSelectedOptions = true, $selectionIdsToOmit = []) {
         if(!$instanceId || !$userId) {
             return [];
@@ -277,13 +293,29 @@ class SelectionsTable extends Table
     
     public function archive($selections = []) {
         if(!empty($selections)) {
-            $selectionsToArchive = [];
-            foreach($selections as $selection) {
-                $selectionEntity = $this->get($selection['id']);
-                $selectionEntity->archived = true;
-                $this->save($selectionEntity);
+            $archivedSelections = $this->setArchived($selections);
+            $archivedSelections = $this->unsetCreatedModifiedMultiple($archivedSelections);
+            $archivedSelections = $this->unsetOptions($archivedSelections);
+            $this->saveMany($archivedSelections);
+        }
+    }
+    
+    public function unsetOptions($selections = []) {
+        if(!empty($selections)) {
+            foreach($selections as &$selection) {
+                unset($selection->options_selections);
             }
         }
+        return $selections;
+    }
+    
+    public function setArchived($selections = []) {
+        if(!empty($selections)) {
+            foreach($selections as &$selection) {
+                $selection->archived = true;
+            }
+        }
+        return $selections;
     }
     
     public function processForSave($requestData, $userId) {
@@ -317,6 +349,7 @@ class SelectionsTable extends Table
         else if($currentSelectionEntity->confirmed && !$requestData['selection']['confirmed']) {
             $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
             unset($selection->id);
+            $selection = $this->unsetCreatedModified($selection);
             $selection->isNew(true);
         }
         //Both Unconfirmed, i.e. Saving selected options to existing unconfirmed selection

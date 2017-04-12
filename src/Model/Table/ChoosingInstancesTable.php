@@ -386,21 +386,10 @@ class ChoosingInstancesTable extends Table
         //Convert the existing instance into an array, that we can use for creating a new copy of the instance later, if needed
         $oldInstanceArray = $oldInstance->toArray();
         
-        $oldInstance->active = 0;    //Set the instance to inactive
+        $oldInstance->active = false;    //Set the instance to inactive
         
-        //Get the results
-        $results = $this->Selections->find('all', [
-            'conditions' => [
-                'Selections.choosing_instance_id' => $oldInstance->id,
-                'Selections.archived' => 0,
-            ]
-        ]);
-        
-        //Add each result to the instance selections array, setting each to archived
-        $oldInstance['selections'] = [];
-        foreach($results as $result) {
-            $oldInstance['selections'][] = $this->Selections->patchEntity($result, ['archived' => 1]);
-        }
+        $selections = $this->Selections->findByInstance($oldInstance->id);
+        $oldInstance['selections'] = $this->Selections->setArchived($selections);
         $instancesToSave = [$oldInstance];
 
         //If unpublish is set to true, unpublish all of the options
@@ -417,14 +406,13 @@ class ChoosingInstancesTable extends Table
         if($keepSettings) {
             $newInstanceArray = $oldInstanceArray;
             unset($newInstanceArray['id']);
-            unset($newInstanceArray['created']);
-            unset($newInstanceArray['modified']);
+            //unset($newInstanceArray['created']);
+            //unset($newInstanceArray['modified']);
+            $newInstanceArray = $this->unsetCreatedModified($newInstanceArray);
             
             $newInstanceArray['opens'] = null;
             $newInstanceArray['deadline'] = null;
             $newInstanceArray['extension'] = null;
-            //$newInstanceArray['created'] = null;
-            //$newInstanceArray['modified'] = null;
             $newInstance = $this->newEntity($newInstanceArray);
         }
         
@@ -464,8 +452,7 @@ class ChoosingInstancesTable extends Table
                     //Unset the rule id and choosing_instance_id, plus created/modified
                     unset($rule->id);
                     unset($rule->choosing_instance_id);
-                    unset($rule->created);
-                    unset($rule->modified);
+                    $rule = $this->unsetCreatedModified($rule);
                     $rule->isNew(true); //Force it to be considered new
                     $newInstance[$table][] = $rule; //Add it to the instance
                 }

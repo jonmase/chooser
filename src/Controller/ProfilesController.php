@@ -64,7 +64,8 @@ class ProfilesController extends AppController
             $oldProfile['revision_parent'] = $profile->id;  //Set the profile ID as the revision_parent
             
             //Remove the record ID, created and modified date
-            unset($oldProfile['id'], $oldProfile['created'], $oldProfile['modified']); 
+            unset($oldProfile['id']); 
+            $oldProfile = unsetCreatedModified($oldProfile);
 
             $oldProfile = $this->Profiles->newEntity($oldProfile);  //Convert to entity
             //pr($oldProfile);
