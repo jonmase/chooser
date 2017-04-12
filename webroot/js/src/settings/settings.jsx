@@ -4,6 +4,7 @@ import {Card, CardHeader, CardText} from 'material-ui/Card';
 
 import EditButton from '../elements/buttons/edit-button.jsx';
 import EditButtonRaised from '../elements/buttons/edit-button-raised.jsx';
+import ResetButton from '../elements/buttons/reset-button.jsx';
 
 import Text from '../elements/display/text-labelled.jsx';
 import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
@@ -13,6 +14,10 @@ import Toggle from '../elements/display/toggle-labelled.jsx';
 import Loader from '../elements/loader.jsx';
 
 var Settings = React.createClass({
+    handleResetButtonClick: function() {
+        window.location.href = 'reset';
+    },
+
     render: function() {
         var instance = this.props.instance;
     
@@ -36,6 +41,10 @@ var Settings = React.createClass({
                     title="Settings"
                 >
                     <div style={{float: 'right'}}>
+                        <ResetButton
+                            handleReset={this.handleResetButtonClick}
+                            tooltip="Reset Choice"
+                        />
                         <EditButton
                             handleEdit={this.props.handlers.editButtonClick}
                             id={null}
