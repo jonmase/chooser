@@ -253,7 +253,7 @@ class ChoicesTable extends Table
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
                 ];
                  $choosingSetupActions[] = [
-                    'icon' => 'cached',
+                    'icon' => 'autorenew',
                     'label' => 'Reset',
                     'menuLabel' => 'Reset Choice',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'reset']),

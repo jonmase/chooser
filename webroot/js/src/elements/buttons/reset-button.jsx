@@ -23,7 +23,7 @@ var ResetButton = React.createClass({
                 style={this.props.style}
                 tooltip={tooltip}
             >
-                cached
+                autorenew
             </IconButton>         
         );
     }
