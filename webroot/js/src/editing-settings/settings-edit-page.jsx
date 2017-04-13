@@ -10,24 +10,17 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
-import FieldLabel from '../elements/fields/label.jsx';
-import Text from '../elements/fields/text.jsx';
-import Multiline from '../elements/fields/multiline-text.jsx';
-import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 import DateTime from '../elements/fields/datetime.jsx';
-import Dropdown from '../elements/fields/dropdown.jsx';
+import FieldLabel from '../elements/fields/label.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
+import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 
 var SettingsEditor = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            choosing_instructions: this.props.instance.choosing_instructions,
-            comments_overall: this.props.instance.comments_overall,
-            comments_per_option: this.props.instance.comments_per_option,
-            preferenceType: 'rank',
-            preference: this.props.instance.preference,
-            review_instructions: this.props.instance.review_instructions,
+            instructions: this.props.instance.instructions,
+            approval_required: this.props.instance.approval_required,
             saveButtonEnabled: true,
             saveButtonLabel: 'Save',
         };
@@ -57,13 +50,12 @@ var SettingsEditor = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        settings.choosing_instructions = this.state.choosing_instructions;
-        settings.review_instructions = this.state.review_instructions;
+        settings.instructions = this.state.instructions;
         
         console.log("Saving settings: ", settings);
         
         //Save the settings
-        var url = 'save';
+        /*var url = 'save';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -89,7 +81,7 @@ var SettingsEditor = React.createClass({
                 
                 this.props.handlers.snackbarOpen('Save error (' + err.toString() + ')');
             }.bind(this)
-        });
+        });*/
     },
     
     handleToggleChange: function(event, value) {
@@ -102,12 +94,6 @@ var SettingsEditor = React.createClass({
         var stateData = {};
         stateData[element] = value;
         this.setState(stateData);
-    },
-
-    handlePreferenceTypeChange: function(event, value) {
-        this.setState({
-            preferenceType: value
-        });
     },
 
     render: function() {
@@ -145,40 +131,33 @@ var SettingsEditor = React.createClass({
                         <CardHeader
                             actAsExpander={true}
                             showExpandableButton={true}
-                            subtitle="Set the dates and times when the Choice will open and close"
-                            title="Dates & Times"
+                            subtitle="Set the instructions for editing options"
+                            title="Instructions"
+                            //subtitle="Set the instructions for editing options, and other settings"
+                            //title="Instructions & Other Settings"
                         >
                         </CardHeader>
                         <CardText 
                             expandable={true}
                         >
-                            <DateTime field={{
-                                    label: "Opens",
-                                    instructions: "Set the date/time when the choice will become available",
-                                    name: "opens",
-                                    section: true,
-                                    value: instance.opens || null,
-                                }} 
-                                time={true}
-                            />
-                            <DateTime field={{
-                                    label: "Deadline",
-                                    instructions: "Set the date/time when choices must be submitted",
-                                    name: "deadline",
-                                    section: true,
-                                    value:  instance.deadline || null,
-                                }} 
-                                time={true}
-                            />
-                            <DateTime field={{
-                                    label: "Extension",
-                                    instructions: "Set an extension date/time. Up until this time it will still be possible to make choices, but they will be marked as late",
-                                    name: "extension",
-                                    section: true, 
-                                    value:  instance.extension || null,
-                                }} 
-                                time={true}
-                            />
+                            <Wysiwyg field={{
+                                label: "Instructions for Editing",
+                                instructions: "Provide instructions that will be shown on the option editing page.",
+                                name: "instructions",
+                                onChange: this.handleWysiwygChange,
+                                section: true,
+                                value: this.state.instructions,
+                            }} />
+                            {/*
+                            <div className="section" id="student_defined">
+                                <FormsyToggle
+                                    defaultToggled={(typeof(instance.student_defined) !== "undefined")?instance.student_defined:false}
+                                    label="Allow student-defined options? If switched on, students will be able to create their own options (that will not bee seen by other students), using the fields specified when creating the Options Form"
+                                    labelPosition="right"
+                                    name="student_defined"
+                                />
+                            </div>
+                            */}
                         </CardText>
                     </Card>
 
@@ -189,171 +168,58 @@ var SettingsEditor = React.createClass({
                         <CardHeader
                             actAsExpander={true}
                             showExpandableButton={true}
-                            subtitle="Set the instructions for choosing and reviewing options"
-                            title="Instructions"
+                            subtitle="Set up the process and dates for creating, and optionally approving, options"
+                            title="Process & Dates"
                         >
                         </CardHeader>
                         <CardText 
                             expandable={true}
                         >
-                            <Wysiwyg field={{
-                                label: "Instructions for Choosing",
-                                instructions: "Provide instructions that will be shown on the choosing page. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.",
-                                name: "choosing_instructions",
-                                onChange: this.handleWysiwygChange,
-                                section: true,
-                                value: this.state.choosing_instructions,
-                            }} />
-                            <Wysiwyg field={{
-                                label: "Instructions for Reviewing",
-                                instructions: "Provide instructions that will be shown on the review page.",
-                                name: "review_instructions",
-                                onChange: this.handleWysiwygChange,
-                                section: true,
-                                value: this.state.review_instructions,
-                            }} />
-                            {/*<Multiline field={{
-                                label: "Instructions for Reviewing",
-                                instructions: "Provide instructions that the students will see when reviewing their options.",
-                                name: "review_instructions",
-                                section: true,
-                                value: instance.review_instructions || null,
-                            }} />*/}
-                        </CardText>
-                    </Card>
-                    
-                    <Card 
-                        className="page-card"
-                        initiallyExpanded={true}
-                    >
-                        <CardHeader
-                            actAsExpander={true}
-                            showExpandableButton={true}
-                            subtitle="Set options for editing choices, expressing preferences and adding comments"
-                            title="Other Options"
-                        >
-                        </CardHeader>
-                        <CardText 
-                            expandable={true}
-                        >
-                            <div className="section" id="editable">
-                                <FormsyToggle
-                                    defaultToggled={(typeof(instance.editable) !== "undefined")?instance.editable:true}
-                                    label="Allow choices to be edited. If switched on, choosers can return and edit submitted choices until the deadline"
-                                    labelPosition="right"
-                                    name="editable"
-                                />
-                            </div>
-                            <div id="preferences">
-                                <div className={this.state.preference?"":"section"}>
-                                    <FormsyToggle
-                                        //defaultToggled={(typeof(instance.preference) !== "undefined")?instance.preference:false}
-                                        defaultToggled={this.state.preference}
-                                        label="Allow choosers to express preferences for chosen options, e.g. by ranking or assigning points?"
-                                        labelPosition="right"
-                                        name="preference"
-                                        onChange={this.handleToggleChange}
-                                        //toggled={false}
-                                    />
-                                </div>
-                                <div className={this.state.preference?"":"hidden"}>
-                                    <Dropdown field={{
-                                            label: "Preference Type",
-                                            name: "preference_type",
-                                            onChange: this.handlePreferenceTypeChange,
-                                            options: [
-                                                {
-                                                    label: "Ranking",
-                                                    value: "rank",
-                                                },
-                                                {   
-                                                    label: "Points",
-                                                    value: "points",
-                                                }
-                                            ],
-                                            section: (this.state.preferenceType === "points")?false:true, 
-                                            value:  this.state.preferenceType,
-                                        }} 
-                                    />
-                                    <div className={(this.state.preferenceType === "points")?"":"hidden"}>
-                                        <Text field={{
-                                            label: "Points Available",
-                                            instructions: "Points",
-                                            name: "preference_points",
-                                            section: true,
-                                            value: instance.preference_points || null,
-                                        }} />
-                                    </div>
-                                    {/*<Multiline field={{
-                                        label: "Preference Instructions",
-                                        instructions: "Provide instructions for expressing preferences.",
-                                        name: "preference_instructions",
-                                        section: true,
-                                        value: instance.preference_instructions || null,
-                                    }} />*/}
-                                </div>
-                            </div>
-                            <div id="comments_overall">
-                                <div className={this.state.comments_overall?"":"section"}>
-                                    <FormsyToggle
-                                        defaultToggled={this.state.comments_overall}
-                                        label="Allow comments about the choice as a whole"
-                                        labelPosition="right"
-                                        name="comments_overall"
-                                        onChange={this.handleToggleChange}
-                                    />
-                                </div>
-                                <div className={this.state.comments_overall?"section":"hidden"}>
-                                    <Multiline field={{
-                                        label: "Overall Comments Instructions",
-                                        instructions: "Instructions for adding comments about the choice as a whole",
-                                        name: "comments_overall_instructions",
-                                        section: false,
-                                        value: instance.comments_overall_instructions || null,
-                                    }} />
-                                    {/*<div>
-                                        <Text field={{
-                                            label: "Character Limit",
-                                            instructions: "Limit",
-                                            name: "comments_overall_limit",
-                                            section: true,
-                                            value: instance.comments_overall_limit || null,
-                                        }} />
-                                    </div>*/}
-                                </div>
-                            </div>
-                            <div id="comments_options">
+                            <p style={{marginTop: '0px'}}>All of the dates are optional. If unset, no restriction will be imposed. Date restrictions do not apply to Administrators.</p>
+                            <DateTime field={{
+                                    label: "Editing Opens (optional)",
+                                    instructions: "Set the date/time when editing will open for Editors to start creating/editing options.",
+                                    name: "opens",
+                                    section: true,
+                                    value: instance.opens || null,
+                                }} 
+                                time={true}
+                            />
+                            <DateTime field={{
+                                    label: "Editing Deadline (optional)",
+                                    instructions: "Set the date/time by which editing must be completed. This is a hard deadline, so Editors will not be able to create options after this point.",
+                                    name: "deadline",
+                                    section: true,
+                                    value:  instance.deadline || null,
+                                }} 
+                                time={true}
+                            />
+                            <div id="approval">
                                 <div className="section">
                                     <FormsyToggle
-                                        defaultToggled={this.state.comments_per_option}
-                                        label="Allow comments about each chosen option"
+                                        //defaultToggled={this.state.approval_required}
+                                        label="Do options need to be approved before they are shown to viewers?"
                                         labelPosition="right"
-                                        name="comments_per_option"
+                                        name="approval_required"
                                         onChange={this.handleToggleChange}
+                                        value={this.state.approval_required}
                                     />
                                 </div>
-                                {/*<div className={this.state.comments_per_option?"":"hidden"}>
-                                    <Multiline field={{
-                                        label: "Option Comments Instructions",
-                                        instructions: "Instructions for adding comments about each chosen option",
-                                        name: "comments_per_option_instructions",
-                                        //onChange: this.handleWysiwygChange,
-                                        section: false,
-                                        value: instance.comments_per_option_instructions || null,
-                                    }} />
-                                    <div>
-                                        <Text field={{
-                                            label: "Character Limit",
-                                            instructions: "Limit",
-                                            name: "comments_per_option_limit",
-                                            section: true,
-                                            value: instance.comments_per_option_limit || null,
-                                        }} />
-                                    </div>
-                                </div>*/}
+                                <div className={this.state.approval_required?"":"hidden"}>
+                                    <DateTime field={{
+                                            label: "Approval Deadline (optional)",
+                                            instructions: "Set the date/time by which approval should be completed. This is a soft/advisory deadline, Approvers will still be able to approve options after this point.",
+                                            name: "approval_deadline",
+                                            section: false,
+                                            value:  instance.approval_deadline || null,
+                                        }} 
+                                        time={true}
+                                    />
+                                </div>
                             </div>
                         </CardText>
                     </Card>
+
                 </Formsy.Form>
                 
                 {this.props.snackbar}
