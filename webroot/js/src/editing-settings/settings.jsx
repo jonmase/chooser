@@ -70,23 +70,22 @@ var Settings = React.createClass({
                             </div>
                         :
                             <div>
-                                <div className="row">
-                                    <div className="col-xs-12 col-sm-6">
-                                        <DateTime label="Opens" value={instance.opens} />
-                                        <DateTime label="Deadline" value={instance.deadline} />
-                                    </div>
-                                </div>
                                 <Wysiwyg label="Instructions" value={instance.instructions || noInstructionsMessage} />
-                                <Toggle 
+                                {/*<Toggle 
                                     label="Student Defined Options"
                                     value={instance.students_defined}
                                     explanation={""}
-                                />
+                                />*/}
+                                <DateTime label="Opens" value={instance.opens} />
+                                <DateTime label="Deadline" value={instance.deadline} />
                                 <Toggle
                                     label="Approval Required"
                                     value={instance.approval_required}
                                     explanation={""}
                                 />
+                                {instance.approval_required &&
+                                    <DateTime label="Approval Deadline" value={instance.approval_deadline} />
+                                }
                             </div>
                     }
                 </CardText>
