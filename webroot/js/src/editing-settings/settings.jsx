@@ -61,7 +61,7 @@ var Settings = React.createClass({
                     :
                         !instance.id?
                             <div>
-                                <p style={{marginTop: 0}}>This Choice has not been set up yet.</p>
+                                <p style={{marginTop: 0}}>This Choice has not been set up yet. Editors will not be able to create and edit options until editing is set up, although Administrators will still be able to do so.</p>
                                 <EditButtonRaised 
                                     handleEdit={this.props.handlers.editButtonClick} 
                                     id={null} 

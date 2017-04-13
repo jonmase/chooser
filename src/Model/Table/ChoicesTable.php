@@ -235,11 +235,21 @@ class ChoicesTable extends Table
         $activeEditingInstanceQuery = $this->EditingInstances->findByChoiceId($choiceId);
         $activeEditingInstance = !$activeEditingInstanceQuery->isEmpty();
 
-        //Set the label for the editing settings buttons
+        //Set the labels for the editing settings, the description for Options and whether the options buttons are disabled
+        $optionsDescription = 'View and/or edit the options that will be made available to students.';
+        $optionsButtonsDisabled = false;
         if($activeEditingInstance) {
             $editingSettingsViewLabel = 'Editing Settings';
         }
-        else {
+        else {  //No active instance
+            //Admins 
+            if(in_array('admin', $userRoles)) {
+                $optionsDescription .= ' Currently only Administrators (not Editors) can edit options, as editing has not been set up yet.';
+            }
+            else {
+                $optionsDescription = 'Option editing is currently unavailable, as the administrator has not set it up yet.';
+                $optionsButtonsDisabled = true;
+            }
             $editingSettingsViewLabel = 'Set Up Editing';
         }
                     
@@ -314,15 +324,17 @@ class ChoicesTable extends Table
             ],*/
             [
                 'title' => 'Options',
-                'description' => 'View and/or edit the options that will be made available to students.',
+                'description' => $optionsDescription,
                 'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
                 'actions' => [
                     [
+                        'disabled' => $optionsButtonsDisabled,
                         'label' => 'View All',
                         'menuLabel' => 'View All Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'view']),
                     ],
                     [
+                        'disabled' => $optionsButtonsDisabled,
                         'icon' => 'edit',
                         'label' => 'Edit',
                         'menuLabel' => 'Edit Options',
@@ -330,6 +342,7 @@ class ChoicesTable extends Table
                         'roles' => ['admin', 'editor'],
                     ],
                     /*[
+                        'disabled' => $optionsButtonsDisabled,
                         'icon' => 'check',
                         'label' => 'Approve',
                         'menuLabel' => 'Approve Options',

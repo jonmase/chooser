@@ -80,6 +80,7 @@ var SectionsCards = React.createClass({
                                         {card.actions.map(function(action) {
                                             return (
                                                 <FlatButton 
+                                                    disabled={action.disabled}
                                                     label={action.label} 
                                                     key={action.label} 
                                                     href={action.url} 

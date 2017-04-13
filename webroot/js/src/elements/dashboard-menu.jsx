@@ -44,10 +44,23 @@ var DashboardMenu = React.createClass({
                         else {
                             var label = section.title;
                         }
-                        
+                        if(action.disabled) {
+                            var disabled = action.disabled;
+                        }
+                        else {
+                            var disabled = false;
+                        }
+                       
                         
                         return (
-                            <MenuItem onTouchTap={this.handleSelect} key={id} id={id} data-section-index={sectionIndex} data-action-index={actionIndex}>
+                            <MenuItem 
+                                data-action-index={actionIndex}
+                                data-section-index={sectionIndex}
+                                disabled={disabled}
+                                id={id} 
+                                key={id} 
+                                onTouchTap={this.handleSelect} 
+                            >
                                 <FontIcon style={{top: '0.25em', marginRight: '5px'}} className="material-icons">{icon}</FontIcon>
                                 {label}
                             </MenuItem>
