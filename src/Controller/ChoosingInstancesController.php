@@ -121,7 +121,7 @@ class ChoosingInstancesController extends AppController
     }
     
     /**
-     * GetInstance method
+     * getActive method
      *
      * @param string|null $id Choosing Instance id.
      * @return \Cake\Network\Response|null

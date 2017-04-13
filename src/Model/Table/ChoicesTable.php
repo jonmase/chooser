@@ -375,7 +375,7 @@ class ChoicesTable extends Table
                 'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],
             [
-                'title' => 'Choosing Setup',
+                'title' => 'Choosing Settings',
                 'description' => 'Schedule the choice for students, set up rules and define other settings.',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => $choosingSetupActions,
