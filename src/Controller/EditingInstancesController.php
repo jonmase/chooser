@@ -11,6 +11,29 @@ use Cake\Network\Exception\ForbiddenException;
  */
 class EditingInstancesController extends AppController
 {
+    /**
+     * getActive method
+     *
+     * @param string|null $id Choosing Instance id.
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not a Viewer
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function getActive()
+    {
+        //Make sure the user is an Editor for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isEditor = $this->EditingInstances->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+        if(empty($isEditor)) {
+            throw new ForbiddenException(__('Not permitted to edit this Choice.'));
+        }
+        
+        $editingInstance = $this->EditingInstances->getActive($choiceId);
+        $this->set(compact('editingInstance'));
+        $serialize = ['editingInstance'];
+    }
 
     /**
      * View method

@@ -134,6 +134,13 @@ class EditingInstancesTable extends Table
         return $rules;
     }
     
+    public function getActive($choiceId) {
+        if($result = $this->findByChoiceId($choiceId, true)->first()) {
+            return $result;
+        }
+        return [];
+    }
+    
     public function findByChoiceId($choiceId = null, $active = true) {
         if(!$choiceId) {
             return [];

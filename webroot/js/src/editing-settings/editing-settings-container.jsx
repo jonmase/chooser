@@ -13,7 +13,7 @@ var update = require('react-addons-update');
 
 var EditSettingsContainer = React.createClass({
     loadInstanceFromServer: function() {
-        var url = 'get-active/settings.json';
+        var url = 'get-active.json';
         $.ajax({
             url: url,
             dataType: 'json',
