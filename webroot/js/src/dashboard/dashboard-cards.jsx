@@ -9,6 +9,7 @@ import FlatButton  from 'material-ui/FlatButton';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
+import HtmlDiv from '../elements/html-div.jsx';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import ChooserTheme from '../elements/theme.jsx';
@@ -74,7 +75,7 @@ var SectionsCards = React.createClass({
                                         style={styles.cardTitle}
                                     />
                                     <CardText style={styles.cardText}>
-                                        {card.description}
+                                        <HtmlDiv content={card.description} />
                                     </CardText>
                                     <CardActions>
                                         {card.actions.map(function(action) {

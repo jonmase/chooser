@@ -231,20 +231,43 @@ class ChoicesTable extends Table
             return [];
         }
         
-        //Work out if there is an active editing instance
-        $activeEditingInstanceQuery = $this->EditingInstances->findByChoiceId($choiceId);
-        $activeEditingInstance = !$activeEditingInstanceQuery->isEmpty();
+        $isAdmin = in_array('admin', $userRoles);
 
+        
+        //Work out if there is an active editing instance
+        $activeEditingInstance = $this->EditingInstances->getActive($choiceId);
+        //pr($activeEditingInstance);
         //Set the labels for the editing settings, the description for Options and whether the options buttons are disabled
-        $optionsDescription = 'View and/or edit the options that will be made available to students.';
+        //$optionsDescription = 'View and/or edit the options that will be made available to students.';
+        $optionsDescription = '';
         $optionsButtonsDisabled = false;
-        if($activeEditingInstance) {
+        if(!empty($activeEditingInstance)) {
             $editingSettingsViewLabel = 'Editing Settings';
+            //if($activeEditingInstance)
+            
+            //If the deadline has not passed yet...
+            if(!$activeEditingInstance->deadline['passed']) {
+                //If it has not opened yet, show the opening date
+                if(!$activeEditingInstance->opens['passed']) {
+                    $optionsDescription .= '<strong>Editing Opens: </strong> ' . $activeEditingInstance->opens['formatted'];
+                    if(!$isAdmin) {
+                        $optionsButtonsDisabled = true;
+                    }
+                }
+            
+                $optionsDescription .= '<br /><strong>Editing Closes: </strong> ' . $activeEditingInstance->deadline['formatted'];
+            }
+            else {
+                $optionsDescription .= 'Editing is not closed';
+                if(!$isAdmin) {
+                    $optionsButtonsDisabled = true;
+                }
+            }
         }
         else {  //No active instance
-            //Admins 
-            if(in_array('admin', $userRoles)) {
-                $optionsDescription .= ' Currently only Administrators (not Editors) can edit options, as editing has not been set up yet.';
+            //Only Admins can edit options until editing is set up
+            if($isAdmin) {
+                $optionsDescription .= '<br />Please set up editing to allow Editors to create/edit options.';
             }
             else {
                 $optionsDescription = 'Option editing is currently unavailable, as the administrator has not set it up yet.';
