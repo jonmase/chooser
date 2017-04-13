@@ -194,8 +194,9 @@ class SelectionsTable extends Table
     }
     
     public function getForResults($choosingInstance) {
+        $blankReturn = [[], [], [], [], []];
         if(!$choosingInstance) {
-            return [[],[]];
+            return $blankReturn;
         }
         
         $optionsSelectionsSort = [];
@@ -218,77 +219,83 @@ class SelectionsTable extends Table
             'contain' => ['OptionsSelections' => ['sort' => $optionsSelectionsSort], 'Users'],
             'order' => ['Selections.modified' => 'DESC']
         ]);
-        $selections = $selectionsQuery->toArray();
         
-        //Array for basic statistics on the results
-        $statistics = [
-            'selection_count' => count($selections),
-            'confirmed_count' => 0,
-        ];
-        
-        $optionsSelectedCounts = [];
-        $optionsSelectedBy = [];
-        
-        $selectionIndexesById = [];
-        foreach($selections as $key => &$selection) {
-            if($selection['confirmed']) {
-                $statistics['confirmed_count']++;
-            }
+        if(!$selectionsQuery->isEmpty()) {
+            $selections = $selectionsQuery->toArray();
             
-            $selectionIndexesById[$selection['id']] = $key;
+            //Array for basic statistics on the results
+            $statistics = [
+                'selection_count' => count($selections),
+                'confirmed_count' => 0,
+            ];
             
-            $selection['modified'] = $this->formatDatetimeObjectForView($selection['modified']);
-            $selection['option_count'] = count($selection['options_selections']);
+            $optionsSelectedCounts = [];
+            $optionsSelectedBy = [];
             
-            $optionsSelectedIdsOrdered = [];
-            $optionsSelectedById = [];
-            
-            foreach($selection['options_selections'] as $optionSelected) {
-                //Convert the selected options to the correct format for the option-list component
-                $optionsSelectedIdsOrdered[] = $optionSelected['choices_option_id'];
-                $optionsSelectedById[$optionSelected['choices_option_id']] = $optionSelected;
-                
-                //If the selection is confirmed, increment the counts for the chosen options, and record that the option is selected by this user
+            $selectionIndexesById = [];
+            foreach($selections as $key => &$selection) {
                 if($selection['confirmed']) {
-                    //If option ID does not already have a count
-                    if(!isset($optionsSelectedCounts[$optionSelected['choices_option_id']])) {
-                        $optionsSelectedCounts[$optionSelected['choices_option_id']] = 1;
-                    }
-                    else {
-                        $optionsSelectedCounts[$optionSelected['choices_option_id']]++;
-                    }
+                    $statistics['confirmed_count']++;
+                }
+                
+                $selectionIndexesById[$selection['id']] = $key;
+                
+                $selection['modified'] = $this->formatDatetimeObjectForView($selection['modified']);
+                $selection['option_count'] = count($selection['options_selections']);
+                
+                $optionsSelectedIdsOrdered = [];
+                $optionsSelectedById = [];
+                
+                foreach($selection['options_selections'] as $optionSelected) {
+                    //Convert the selected options to the correct format for the option-list component
+                    $optionsSelectedIdsOrdered[] = $optionSelected['choices_option_id'];
+                    $optionsSelectedById[$optionSelected['choices_option_id']] = $optionSelected;
                     
-                    if(!isset($optionsSelectedBy[$optionSelected['choices_option_id']])) {
-                        $optionsSelectedBy[$optionSelected['choices_option_id']] = [];
+                    //If the selection is confirmed, increment the counts for the chosen options, and record that the option is selected by this user
+                    if($selection['confirmed']) {
+                        //If option ID does not already have a count
+                        if(!isset($optionsSelectedCounts[$optionSelected['choices_option_id']])) {
+                            $optionsSelectedCounts[$optionSelected['choices_option_id']] = 1;
+                        }
+                        else {
+                            $optionsSelectedCounts[$optionSelected['choices_option_id']]++;
+                        }
+                        
+                        if(!isset($optionsSelectedBy[$optionSelected['choices_option_id']])) {
+                            $optionsSelectedBy[$optionSelected['choices_option_id']] = [];
+                        }
+                        $optionsSelectedBy[$optionSelected['choices_option_id']][] = $selection['id'];
                     }
-                    $optionsSelectedBy[$optionSelected['choices_option_id']][] = $selection['id'];
+                }
+                
+                $selection['options_selected_ids_ordered'] = $optionsSelectedIdsOrdered;
+                $selection['options_selected_by_id'] = $optionsSelectedById;
+                unset($selection['options_selections']);
+            }        
+            
+            $options = $this->OptionsSelections->ChoicesOptions->Options->getForView($choosingInstance->choice_id, true, true);
+            
+            $optionIndexesById = [];
+            foreach($options as $key => &$option) {
+                $optionIndexesById[$option['id']] = $key;
+                
+                //If option ID is set in optionsSelectedCounts, use the count from that, and add selected_by to the array
+                if(isset($optionsSelectedCounts[$option['id']])) {
+                    $option['count'] = $optionsSelectedCounts[$option['id']];
+                    $option['selected_by'] = $optionsSelectedBy[$option['id']];
+                }
+                //Otherwise, option hasn't been chosen, so set count to 0 and selected_by as empty array
+                else {
+                    $option['count'] = 0;
+                    $option['selected_by'] = [];
                 }
             }
             
-            $selection['options_selected_ids_ordered'] = $optionsSelectedIdsOrdered;
-            $selection['options_selected_by_id'] = $optionsSelectedById;
-            unset($selection['options_selections']);
-        }        
-        
-        $options = $this->OptionsSelections->ChoicesOptions->Options->getForView($choosingInstance->choice_id, true, true);
-        
-        $optionIndexesById = [];
-        foreach($options as $key => &$option) {
-            $optionIndexesById[$option['id']] = $key;
-            
-            //If option ID is set in optionsSelectedCounts, use the count from that, and add selected_by to the array
-            if(isset($optionsSelectedCounts[$option['id']])) {
-                $option['count'] = $optionsSelectedCounts[$option['id']];
-                $option['selected_by'] = $optionsSelectedBy[$option['id']];
-            }
-            //Otherwise, option hasn't been chosen, so set count to 0 and selected_by as empty array
-            else {
-                $option['count'] = 0;
-                $option['selected_by'] = [];
-            }
+            return [$options, $optionIndexesById, $selections, $selectionIndexesById, $statistics];
         }
-        
-        return [$options, $optionIndexesById, $selections, $selectionIndexesById, $statistics];
+        else {
+            return $blankReturn;
+        }
     }
     
     public function archive($selections = []) {

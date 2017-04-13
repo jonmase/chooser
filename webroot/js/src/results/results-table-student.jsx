@@ -49,7 +49,7 @@ var ResultsTable = React.createClass({
         return (
             <div>
                 {(this.props.selections.length == 0)?
-                    <p>There are no results to show.</p>
+                    <p style={{marginLeft: '1em'}}>There are no results to show.</p>
                 :
                     <Table 
                         selectable={false}
