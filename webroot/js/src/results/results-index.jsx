@@ -69,7 +69,6 @@ var ResultsIndex = React.createClass({
                         :
                             <ResultsTableByOption
                                 choice={this.props.choice}
-                                instance={this.props.instance}
                                 optionDefaultFields={this.props.optionDefaultFields}
                                 options={this.props.options}
                                 handlers={{

@@ -140,7 +140,7 @@ class ChoosingInstancesController extends AppController
             throw new ForbiddenException(__('Not permitted to view this Choice.'));
         }
         
-        $choosingInstance = $this->ChoosingInstances->findActive($choiceId, true, $this->Auth->user('id'));
+        $choosingInstance = $this->ChoosingInstances->getActive($choiceId, true, $this->Auth->user('id'));
         $this->set(compact('choosingInstance'));
         $serialize = ['choosingInstance'];
         

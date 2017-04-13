@@ -146,7 +146,6 @@ var ResultsContainer = React.createClass({
                 {(this.state.action === 'index') &&
                     <ResultsIndex
                         loaded={this.state.loaded}
-                        instance={this.state.instance}
                         optionDefaultFields={optionDefaultFields}
                         options={this.state.options}
                         resultsContainerHandlers={{

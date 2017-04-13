@@ -245,7 +245,7 @@ class ChoosingInstancesTable extends Table
         return $rules;
     }
     
-    public function findActive($choiceId, $getFavourites = false, $userId = null) {
+    public function getActive($choiceId, $getFavourites = false, $userId = null) {
         if($result = $this->findByChoiceId($choiceId, true, $getFavourites, $userId)->first()) {
             $result = $this->processForView($result);
             return $result;
