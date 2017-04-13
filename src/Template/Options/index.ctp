@@ -1,6 +1,8 @@
 <?php 
 $this->assign('title', $choice['name'] . ' - ' . ($action === 'edit'?'Edit ':'') . 'Options'); 
+//pr($sections);
 ?>
+
 
 <div id="index">
 </div>

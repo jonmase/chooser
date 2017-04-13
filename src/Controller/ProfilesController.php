@@ -36,7 +36,7 @@ class ProfilesController extends AppController
         }
 
         //Get the sections to show in the menu  bar
-        $sections = $this->Profiles->Users->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+        $sections = $this->Profiles->Users->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'), $tool);
 
         $this->set(compact('choice', 'profile', 'sections'));
     }

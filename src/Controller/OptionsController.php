@@ -80,7 +80,7 @@ class OptionsController extends AppController
         $isMoreThanViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $currentUserId, $tool);
         if($isMoreThanViewer) {
             //Get the sections to display in the Dashboard menu
-            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $currentUserId);
+            $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $currentUserId, $tool);
             $this->set(compact('sections'));
             
             $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);

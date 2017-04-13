@@ -231,63 +231,30 @@ class ChoicesTable extends Table
             return [];
         }
         
-        //If user is admin, find out whether there is an existing choosing schedule
-        $choosingSetupActions = [];
-        if(in_array('admin', $userRoles)) {
-            //TODO: Actually lookup the current situation
-            $currentChoosingInstance = false;
-            $previousChoosingInstances = false;
-            
-            $activeEditingInstanceQuery = $this->EditingInstances->findByChoiceId($choiceId);
-            $activeEditingInstance = !$activeEditingInstanceQuery->isEmpty();
+        //Work out if there is an active editing instance
+        $activeEditingInstanceQuery = $this->EditingInstances->findByChoiceId($choiceId);
+        $activeEditingInstance = !$activeEditingInstanceQuery->isEmpty();
 
-            if($activeEditingInstance) {
-                $editingSettingsViewLabel = 'Editing Settings';
-            }
-            else {
-                $editingSettingsViewLabel = 'Set Up Editing';
-            }
-                        
-            $activeChoosingInstanceQuery = $this->ChoosingInstances->findByChoiceId($choiceId);
-            $activeChoosingInstance = !$activeChoosingInstanceQuery->isEmpty();
-                        
-            if($activeChoosingInstance) {
-                $choiceSettingsViewLabel = 'View/Edit';
-                $choiceSettingsViewMenuLabel = 'Choosing Settings';
-            }
-            else {
-                $choiceSettingsViewLabel = 'Set Up';
-                $choiceSettingsViewMenuLabel = 'Set Up Choosing';
-            }
-            
-            $choosingSetupActions[] = [
-                'icon' => 'schedule',
-                'label' => $choiceSettingsViewLabel,
-                'menuLabel' => $choiceSettingsViewMenuLabel,
-                'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
-            ];
-            
-            if($activeChoosingInstance) {
-                $choosingSetupActions[] = [
-                    'icon' => 'autorenew',
-                    'label' => 'Reset',
-                    'menuLabel' => 'Reset Choosing',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'reset']),
-                ];
-            }
-            
-            //$archivedChoosingInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
-            //$archivedChoosingInstance = !empty($archivedChoosingInstancesQuery);
-            
-            /*if($archivedChoosingInstance) {
-                $choosingSetupActions[] = [
-                    'icon' => 'history',
-                    'label' => 'View Archive',
-                    'menuLabel' => 'View Archived Settings',
-                    'description' => '',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'archive']),
-                ];
-            }*/
+        //Set the label for the editing settings buttons
+        if($activeEditingInstance) {
+            $editingSettingsViewLabel = 'Editing Settings';
+        }
+        else {
+            $editingSettingsViewLabel = 'Set Up Editing';
+        }
+                    
+        //Work out if there is an active choosing instance
+        $activeChoosingInstanceQuery = $this->ChoosingInstances->findByChoiceId($choiceId);
+        $activeChoosingInstance = !$activeChoosingInstanceQuery->isEmpty();
+                    
+        //Set the labels for the choosing settings buttons
+        if($activeChoosingInstance) {
+            $choiceSettingsViewLabel = 'View/Edit';
+            $choiceSettingsViewMenuLabel = 'Choosing Settings';
+        }
+        else {
+            $choiceSettingsViewLabel = 'Set Up';
+            $choiceSettingsViewMenuLabel = 'Set Up Choosing';
         }
         
         $sections = [
@@ -313,13 +280,11 @@ class ChoicesTable extends Table
                         'label' => 'Options Form',
                         'menuLabel' => 'Options Form',
                         'url' => Router::url(['controller' => 'choices', 'action' => 'form']),
-                        'roles' => ['admin'],
                     ],
                     [
                         'label' => $editingSettingsViewLabel,
                         'menuLabel' => $editingSettingsViewLabel,
                         'url' => Router::url(['controller' => 'editing_instances', 'action' => 'view']),
-                        'roles' => ['admin'],
                     ],
                 ],
                 'roles' => ['admin'],
@@ -378,7 +343,14 @@ class ChoicesTable extends Table
                 'title' => 'Choosing Settings',
                 'description' => 'Schedule the choice for students, set up rules and define other settings.',
                 'icon' => 'schedule',   //'icon' => 'timer',
-                'actions' => $choosingSetupActions,
+                'actions' => [
+                    [
+                        'icon' => 'schedule',
+                        'label' => $choiceSettingsViewLabel,
+                        'menuLabel' => $choiceSettingsViewMenuLabel,
+                        'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
+                    ]
+                ],
                 'roles' => ['admin'],
             ],
             [
@@ -421,7 +393,7 @@ class ChoicesTable extends Table
             ],*/
             
             [
-                'title' => 'Reset Choice',
+                'title' => 'Reset & Archive',
                 'description' => 'Archive the results, reset the editing and choosing settings and optionally unpublish all of the options.',
                 'icon' => 'autorenew',
                 'actions' => [
@@ -430,7 +402,14 @@ class ChoicesTable extends Table
                         'label' => 'Reset',
                         'menuLabel' => 'Reset Choice',
                         'url' => Router::url(['controller' => 'Choices', 'action' => 'reset']),
-                    ]
+                    ],
+                    /*[
+                        'icon' => 'history',
+                        'label' => 'View Archive',
+                        'menuLabel' => 'Archived Choices',
+                        'description' => '',
+                        'url' => Router::url(['controller' => 'Choices', 'action' => 'archive']),
+                    ]*/
                 ],
                 'roles' => ['admin'],
             ],

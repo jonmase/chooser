@@ -161,7 +161,7 @@ class SelectionsController extends AppController
         }
 
         //Get the sections to display in the Dashboard menu
-        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $currentUserId);
+        $sections = $this->Selections->ChoosingInstances->Choices->getDashboardSectionsForUser($choiceId, $currentUserId, $tool);
 
         $choice = $this->Selections->ChoosingInstances->Choices->getChoiceWithProcessedExtraFields($choiceId);
 
