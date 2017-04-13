@@ -14,6 +14,8 @@ use Cake\Validation\Validator;
  */
 class EditingInstancesTable extends Table
 {
+    protected $_datetimeFields = ['opens', 'deadline', 'approval_deadline'];
+    protected $_boolFields = ['approval_required', 'student_defined', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_approval_needed', 'notify_approval_given', 'notify_approval_rejected'];
 
     /**
      * Initialize method
@@ -30,6 +32,8 @@ class EditingInstancesTable extends Table
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->addBehavior('Datetime');
+        $this->addBehavior('Instances');
 
         $this->belongsTo('Choices', [
             'foreignKey' => 'choice_id',
@@ -136,7 +140,7 @@ class EditingInstancesTable extends Table
     
     public function getActive($choiceId) {
         if($result = $this->findByChoiceId($choiceId, true)->first()) {
-            return $result;
+            return $this->processForView($result);
         }
         return [];
     }
@@ -156,5 +160,11 @@ class EditingInstancesTable extends Table
         return $editingInstanceQuery;
     }
     
-
+    public function processForSave($requestData) {
+        return $this->processInstanceForSave($requestData, $this->_datetimeFields, $this->_boolFields);
+    }
+    
+    public function processForView($instance) {
+        return $this->processInstanceForView($instance, $this->_datetimeFields);
+    }
 }

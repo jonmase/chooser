@@ -55,7 +55,7 @@ var SettingsEditor = React.createClass({
         console.log("Saving settings: ", settings);
         
         //Save the settings
-        /*var url = 'save';
+        var url = 'save';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -64,11 +64,6 @@ var SettingsEditor = React.createClass({
             success: function(returnedData) {
                 console.log(returnedData.response);
 
-                this.setState({
-                    saveButtonEnabled: true,
-                    saveButtonLabel: 'Save',
-                });
-                
                 this.props.handlers.success(returnedData);
             }.bind(this),
             error: function(xhr, status, err) {
@@ -81,7 +76,7 @@ var SettingsEditor = React.createClass({
                 
                 this.props.handlers.snackbarOpen('Save error (' + err.toString() + ')');
             }.bind(this)
-        });*/
+        });
     },
     
     handleToggleChange: function(event, value) {

@@ -45,7 +45,7 @@ var EditSettingsContainer = React.createClass({
     },
     
     //Handle going back to view screen
-    handleBackClick: function() {
+    handleBackToView: function() {
         this.setState({
             action: 'view',
         });
@@ -59,10 +59,10 @@ var EditSettingsContainer = React.createClass({
     
     handleSettingsSuccess: function(returnedData) {
         this.setState({
-            action: 'view',
             instance: returnedData.instance,
         });
         
+        this.handleBackToView();
         this.handleSnackbarOpen(returnedData.response);
     },
     
@@ -89,7 +89,7 @@ var EditSettingsContainer = React.createClass({
             editButtonClick: this.handleSettingsEditClick,
         };
         var settingsEditHandlers={
-            backButtonClick: this.handleBackClick,
+            backButtonClick: this.handleBackToView,
             snackbarOpen: this.handleSnackbarOpen,
             success: this.handleSettingsSuccess,
         };

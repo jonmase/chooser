@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
+use Cake\Network\Exception\InternalErrorException;
 
 /**
  * EditingInstances Controller
@@ -33,6 +34,56 @@ class EditingInstancesController extends AppController
         $editingInstance = $this->EditingInstances->getActive($choiceId);
         $this->set(compact('editingInstance'));
         $serialize = ['editingInstance'];
+    }
+
+    /**
+     * Save method
+     *
+     * @return \Cake\Network\Response|void Redirects on successful add, renders view otherwise.
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When instance record not found.
+     */
+    public function save()
+    {
+        $this->request->allowMethod(['post']);
+        $this->viewBuilder()->layout('ajax');
+
+        //Make sure the user is an admin for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->EditingInstances->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to change editing settings for this Choice.'));
+        }
+        
+        //Process the data
+        $data = $this->EditingInstances->processForSave($this->request->data);
+        $data['active'] = true;
+        $data['choice_id'] = $choiceId;
+        $data['student_defined'] = 0;
+
+        if(!empty($data['instance_id'])) {
+            //Get the instance and patch entity
+            $editingInstance = $this->EditingInstances->get($data['instance_id']);
+            $editingInstance = $this->EditingInstances->patchEntity($editingInstance, $data);
+        }
+        else {
+            $editingInstance = $this->EditingInstances->newEntity($data);
+        }
+        
+        //pr($editingInstance); exit;
+        
+        if ($this->EditingInstances->save($editingInstance)) {
+            $this->set('response', 'Editing settings saved');
+            $instanceForView = $this->EditingInstances->processForView($editingInstance);
+            $this->set('instance', $instanceForView);
+        } 
+        else {
+            throw new InternalErrorException(__('Problem with saving editing settings'));
+        }
     }
 
     /**
