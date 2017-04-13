@@ -1,4 +1,4 @@
-<?php $this->assign('title', $choice['name'] . ' - Settings'); ?>
+<?php $this->assign('title', $choice['name'] . ' - Choosing Setup'); ?>
 
 <div id="view"></div>
 

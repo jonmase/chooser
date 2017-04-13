@@ -133,4 +133,21 @@ class EditingInstancesTable extends Table
         $rules->add($rules->existsIn(['choice_id'], 'Choices'));
         return $rules;
     }
+    
+    public function findByChoiceId($choiceId = null, $active = true) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        $editingInstanceQuery = $this->find('all', [
+            'conditions' => [
+                'choice_id' => $choiceId,
+                'active' => $active,
+            ],
+        ]);
+
+        return $editingInstanceQuery;
+    }
+    
+
 }

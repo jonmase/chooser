@@ -238,35 +238,46 @@ class ChoicesTable extends Table
             $currentChoosingInstance = false;
             $previousChoosingInstances = false;
             
-            $activeInstanceQuery = $this->ChoosingInstances->findActive($choiceId);
-            $activeChoosingInstance = !empty($activeInstanceQuery);
+            $activeEditingInstanceQuery = $this->EditingInstances->findByChoiceId($choiceId);
+            $activeEditingInstance = !$activeEditingInstanceQuery->isEmpty();
+
+            if($activeEditingInstance) {
+                $editingSettingsViewLabel = 'Editing Settings';
+            }
+            else {
+                $editingSettingsViewLabel = 'Set Up Editing';
+            }
+                        
+            $activeChoosingInstanceQuery = $this->ChoosingInstances->findByChoiceId($choiceId);
+            $activeChoosingInstance = !$activeChoosingInstanceQuery->isEmpty();
+                        
+            if($activeChoosingInstance) {
+                $choiceSettingsViewLabel = 'View/Edit';
+                $choiceSettingsViewMenuLabel = 'Choosing Settings';
+            }
+            else {
+                $choiceSettingsViewLabel = 'Set Up';
+                $choiceSettingsViewMenuLabel = 'Set Up Choosing';
+            }
             
-            //$archivedInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
-            //$archivedChoosingInstance = !empty($archivedInstancesQuery);
-            
+            $choosingSetupActions[] = [
+                'icon' => 'schedule',
+                'label' => $choiceSettingsViewLabel,
+                'menuLabel' => $choiceSettingsViewMenuLabel,
+                'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
+            ];
             
             if($activeChoosingInstance) {
                 $choosingSetupActions[] = [
-                    'icon' => 'schedule',
-                    'label' => 'View/Edit',
-                    'menuLabel' => 'Choice Settings',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
-                ];
-                 $choosingSetupActions[] = [
                     'icon' => 'autorenew',
                     'label' => 'Reset',
-                    'menuLabel' => 'Reset Choice',
+                    'menuLabel' => 'Reset Choosing',
                     'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'reset']),
                 ];
-           }
-            else {
-                $choosingSetupActions[] = [
-                    'label' => 'Set Up',
-                    'menuLabel' => 'Set Up Choice',
-                    'description' => '',
-                    'url' => Router::url(['controller' => 'ChoosingInstances', 'action' => 'view']),
-                ];
             }
+            
+            //$archivedChoosingInstancesQuery = $this->ChoosingInstances->findInactive($choiceId);
+            //$archivedChoosingInstance = !empty($archivedChoosingInstancesQuery);
             
             /*if($archivedChoosingInstance) {
                 $choosingSetupActions[] = [
@@ -305,8 +316,8 @@ class ChoicesTable extends Table
                         'roles' => ['admin'],
                     ],
                     [
-                        'icon' => 'build',
-                        'label' => 'Editing Settings',
+                        'label' => $editingSettingsViewLabel,
+                        'menuLabel' => $editingSettingsViewLabel,
                         'url' => Router::url(['controller' => 'editing_instances', 'action' => 'view']),
                         'roles' => ['admin'],
                     ],
@@ -364,7 +375,7 @@ class ChoicesTable extends Table
                 'roles' => ['admin', 'editor', 'approver', 'allocator', 'reviewer'],
             ],
             [
-                'title' => 'Choice Settings',
+                'title' => 'Choosing Setup',
                 'description' => 'Schedule the choice for students, set up rules and define other settings.',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => $choosingSetupActions,
