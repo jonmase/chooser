@@ -231,4 +231,77 @@ class ChoicesController extends AppController
             $this->redirect(['controller' => 'choices', 'action' => 'add']);
         }
     }
+
+    /**
+     * Reset method
+     * Resets the editing and choosing settings, archives results, optionally unpublishes options
+     *
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Admin
+     * @throws \Cake\Datasource\Exception\InternalErrorException When save fails
+     */
+    public function reset()
+    {
+        //Make sure the user is an admin for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(empty($isAdmin)) {
+            throw new ForbiddenException(__('Not permitted to reset the editing settings for this Choice.'));
+        }
+    
+        //Get the Choice
+        $choice = $this->Choices->get($choiceId);
+        
+        if($this->request->is('post')) {
+            $this->viewBuilder()->layout('ajax');   //Use ajax layout
+            
+            //Get the boolean values from the posted data
+            //$unpublishOptions = filter_var($this->request->data['unpublish'], FILTER_VALIDATE_BOOLEAN);
+            $unpublishOptions = false;
+            $keepEditingSettings = filter_var($this->request->data['editing'], FILTER_VALIDATE_BOOLEAN);
+            $keepChoosingSettings = filter_var($this->request->data['choosing'], FILTER_VALIDATE_BOOLEAN);
+            $keepRules = filter_var($this->request->data['rules'], FILTER_VALIDATE_BOOLEAN);
+            
+            //Archive the editing instance
+            $editingInstancesToSave = $this->Choices->EditingInstances->reset($choiceId, $keepEditingSettings);
+            if(!empty($editingInstancesToSave)) {
+                $choice['editing_instances'] = $editingInstancesToSave;
+            }
+            
+            //Archive the choosing instance and associated results
+            $choosingInstancesToSave = $this->Choices->ChoosingInstances->reset($choiceId, $keepChoosingSettings, $keepRules);
+            if(!empty($choosingInstancesToSave)) {
+                $choice['choosing_instances'] = $choosingInstancesToSave;
+            }
+            
+            if($unpublishOptions) {
+                //Unpublish all of the options
+                //TODO: unpublishOptions method is untested
+                $optionsToSave = $this->Choices->ChoicesOptions->unpublishOptions($choiceId);
+                if(!empty($optionsToSave)) {
+                    $choice['choices_options'] = $choosingInstancesToSave;
+                }
+            }
+            
+            if(!empty($editingInstancesToSave)) {
+                $choice['editing_instances'] = $editingInstancesToSave;
+            }
+            
+            //pr($choice); exit;
+            //Save the archived/reset instances and unpublished options
+            if ($this->Choices->save($choice)) {
+                $this->set('response', 'Choice reset');
+            } 
+            else {
+                throw new InternalErrorException(__('Problem with resetting Choice'));
+            }
+        }
+        else {
+            $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $this->Auth->user('id'));
+
+            $this->set(compact('choice', 'sections'));
+        }
+    }
 }

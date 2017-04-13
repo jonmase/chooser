@@ -5,7 +5,11 @@ use Cake\ORM\Behavior;
 use Cake\I18n\Time;
 
 class InstancesBehavior extends Behavior {
-    public function processInstanceForSave($requestData, $datetimeFields, $boolFields) {
+    public function processInstanceForSave($requestData = null, $datetimeFields = [], $boolFields = []) {
+        if(!$requestData) {
+            return [];
+        }
+        
         foreach($datetimeFields as $field) {
             if(!empty($requestData[$field . '_date'])) {
                 if(!empty($requestData[$field . '_time'])) {
@@ -30,7 +34,11 @@ class InstancesBehavior extends Behavior {
         return $requestData;
     }
     
-    public function processInstanceForView($instance, $datetimeFields) {
+    public function processInstanceForView($instance = null, $datetimeFields = []) {
+        if(!$instance) {
+            return [];
+        }
+        
         $time = Time::now();
         foreach($datetimeFields as $field) {
             $datetimeField = [];
@@ -64,4 +72,22 @@ class InstancesBehavior extends Behavior {
         return $instance;
     }
 
+    public function copyInstanceWithoutDates($instanceArray = null, $datetimeFields = []) {
+        if(!$instanceArray) {
+            return null;
+        }
+        
+        unset($instanceArray['id']);    //unset the id
+        
+        $instanceArray = $this->_table->unsetCreatedModified($instanceArray);   //unset created/modified dates, so these are generated automatically
+        
+        //Set datetime fields to null
+        foreach($datetimeFields as $datetimeField) {
+            $instanceArray[$datetimeField] = null;
+        }
+        
+        $instance = $this->_table->newEntity($instanceArray);   //hydrate
+        
+        return $instance;
+    }
 }

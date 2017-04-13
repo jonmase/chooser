@@ -419,6 +419,21 @@ class ChoicesTable extends Table
                 ],
                 'roles' => ['admin', 'allocator'],
             ],*/
+            
+            [
+                'title' => 'Reset Choice',
+                'description' => 'Archive the results, reset the editing and choosing settings and optionally unpublish all of the options.',
+                'icon' => 'autorenew',
+                'actions' => [
+                    [
+                        'icon' => 'autorenew',
+                        'label' => 'Reset',
+                        'menuLabel' => 'Reset Choice',
+                        'url' => Router::url(['controller' => 'Choices', 'action' => 'reset']),
+                    ]
+                ],
+                'roles' => ['admin'],
+            ],
         ];
         
         

@@ -15,7 +15,7 @@ import Loader from '../elements/loader.jsx';
 
 var Settings = React.createClass({
     handleResetButtonClick: function() {
-        window.location.href = 'reset';
+        window.location.href = '../choices/reset';
     },
 
     render: function() {
@@ -44,7 +44,7 @@ var Settings = React.createClass({
                     <div style={{float: 'right'}}>
                         <ResetButton
                             handleReset={this.handleResetButtonClick}
-                            tooltip="Reset Choosing"
+                            tooltip="Reset Choice"
                         />
                         <EditButton
                             handleEdit={this.props.handlers.editButtonClick}

@@ -167,4 +167,34 @@ class EditingInstancesTable extends Table
     public function processForView($instance) {
         return $this->processInstanceForView($instance, $this->_datetimeFields);
     }
+
+    public function reset ($choiceId = null, $keepSettings = false) {
+        //If no choiceId passed, return empty array
+        if(!$choiceId) {
+            return [];
+        }
+        
+        //Get the editing instance
+        $oldInstance = $this->Choices->EditingInstances->findByChoiceId($choiceId, true)->first();  
+        
+        $instancesToSave = [];
+        if(!empty($oldInstance)) {
+            //Convert the existing instance into an array, that we can use for creating a new copy of the instance later, if needed
+            $oldInstanceArray = $oldInstance->toArray();
+            
+            //Set the instance to inactive
+            $oldInstance->active = false;
+            
+            //Add the old instance to an array of instances to save
+            $instancesToSave = [$oldInstance];
+
+            //If keepSettings is set to true, create a new instance, without dates, but with all of the same settings as current
+            if($keepSettings) {
+                $newInstance = $this->copyInstanceWithoutDates($oldInstanceArray, $this->_datetimeFields);
+                $instancesToSave[] = $newInstance;
+            }
+        }
+        
+        return $instancesToSave;
+    }
 }

@@ -323,91 +323,83 @@ class ChoosingInstancesTable extends Table
         return $this->processInstanceForView($instance, $this->_datetimeFields);
     }
 
-    public function reset ($choiceId = null, $oldInstance = null, $unpublishOptions = false, $keepSettings = false, $keepRules = false) {
-        //If no old instance passed, return empty array
-        if(!$choiceId || !$oldInstance) {
+    public function reset ($choiceId = null, $keepRules = false) {
+        //If no choiceId passed, return empty array
+        if(!$choiceId) {
             return [];
         }
         
-        //Convert the existing instance into an array, that we can use for creating a new copy of the instance later, if needed
-        $oldInstanceArray = $oldInstance->toArray();
-        
-        $oldInstance->active = false;    //Set the instance to inactive
-        
-        $selections = $this->Selections->findByInstance($oldInstance->id);
-        $oldInstance['selections'] = $this->Selections->setArchived($selections);
-        $instancesToSave = [$oldInstance];
+        //Get the choosing instance
+        $oldInstance = $this->Choices->ChoosingInstances->findByChoiceId($choiceId, true)->first();
 
-        //If unpublish is set to true, unpublish all of the options
-        //Switch this off for now, as publish mechanism is not in place yet
-        //TODO: unpublishOptions method is untested
-        /*
-        if($unpublishOptions) {
-            $optionsToSave = $this->ChoicesOptions->unpublishOptions($choiceId)
-            pr($optionsToSave);
-        }
-        */
-        
-        //If settings is set to true, create a new instance, without dates, but with all of the same settings as current
-        if($keepSettings) {
-            $newInstanceArray = $oldInstanceArray;
-            unset($newInstanceArray['id']);
-            $newInstanceArray = $this->unsetCreatedModified($newInstanceArray);
+        $instancesToSave = [];
+        if(!empty($oldInstance)) {
+            //Convert the existing instance into an array, that we can use for creating a new copy of the instance later, if needed
+            $oldInstanceArray = $oldInstance->toArray();
             
-            $newInstanceArray['opens'] = null;
-            $newInstanceArray['deadline'] = null;
-            $newInstanceArray['extension'] = null;
-            $newInstance = $this->newEntity($newInstanceArray);
-        }
-        
-        //If rules is true, save the rules against the new instance
-        if($keepRules) {
-            //If there is not already a new instance (i.e. if settings was set to false), create a new empty instance for saving the rules
-            if(empty($newInstance)) {
-                $newInstanceArray = [
-                    'choice_id' => $choiceId,
-                    'active' => 1,
-                    'editable' => 1,
-                    'preference' => 0,
-                    'comments_overall' => 0,
-                    'comments_per_option' => 0,
-                ];
-                $newInstance = $this->newEntity($newInstanceArray);
+            //Set the instance to inactive
+            $oldInstance->active = false;    
+            
+            //Find and archive all the selections
+            $selections = $this->Selections->findByInstance($oldInstance->id);
+            $oldInstance['selections'] = $this->Selections->setArchived($selections);
+            
+            //Add the old instance to the array of instances to save
+            $instancesToSave[] = $oldInstance;
+
+            //If settings is set to true, create a new instance, without dates, but with all of the same settings as current
+            if($keepSettings) {
+                $newInstance = $this->copyInstanceWithoutDates($oldInstanceArray, $this->_datetimeFields);
             }
             
-            //Get the instance with all its rules (inc related)
-            //Setup an array with the table and Model names for the types of rules
-            //Values used for the query contain 
-            $ruleTypes = [
-                'rules' => 'Rules',
-                //Do not use related for now, as they have not been set up yet
-                //'rules_related_categories' => 'RulesRelatedCategories',
-                //'rules_related_options' => 'RulesRelatedOptions',
-            ];
-            
-            $rules = $this->get($oldInstance->id, [
-                'fields' => ['id'],
-                'contain' => array_values($ruleTypes)
-            ]);
-            
-            foreach($ruleTypes as $table => $model) {
-                $newInstance[$table] = [];
-                foreach($rules[$table] as $rule) {
-                    //Unset the rule id and choosing_instance_id, plus created/modified
-                    unset($rule->id);
-                    unset($rule->choosing_instance_id);
-                    $rule = $this->unsetCreatedModified($rule);
-                    $rule->isNew(true); //Force it to be considered new
-                    $newInstance[$table][] = $rule; //Add it to the instance
+            //If rules is true, save the rules against the new instance
+            if($keepRules) {
+                //If there is not already a new instance (i.e. if settings was set to false), create a new empty instance for saving the rules
+                if(empty($newInstance)) {
+                    $newInstanceArray = [
+                        'choice_id' => $choiceId,
+                        'active' => 1,
+                        'editable' => 1,
+                        'preference' => 0,
+                        'comments_overall' => 0,
+                        'comments_per_option' => 0,
+                    ];
+                    $newInstance = $this->newEntity($newInstanceArray);
+                }
+                
+                //Get the instance with all its rules (inc related)
+                //Setup an array with the table and Model names for the types of rules
+                //Values used for the query contain 
+                $ruleTypes = [
+                    'rules' => 'Rules',
+                    //Do not use related for now, as they have not been set up yet
+                    //'rules_related_categories' => 'RulesRelatedCategories',
+                    //'rules_related_options' => 'RulesRelatedOptions',
+                ];
+                
+                $rules = $this->get($oldInstance->id, [
+                    'fields' => ['id'],
+                    'contain' => array_values($ruleTypes)
+                ]);
+                
+                foreach($ruleTypes as $table => $model) {
+                    $newInstance[$table] = [];
+                    foreach($rules[$table] as $rule) {
+                        //Unset the rule id and choosing_instance_id, plus created/modified
+                        unset($rule->id);
+                        unset($rule->choosing_instance_id);
+                        $rule = $this->unsetCreatedModified($rule);
+                        $rule->isNew(true); //Force it to be considered new
+                        $newInstance[$table][] = $rule; //Add it to the instance
+                    }
                 }
             }
+            
+            if(!empty($newInstance)) {
+                $instancesToSave[] = $newInstance;
+            }
         }
         
-        if(!empty($newInstance)) {
-            $instancesToSave[] = $newInstance;
-        }
-
         return $instancesToSave;
-        //return [$instancesToSave, $optionsToSave];
     }
 }
