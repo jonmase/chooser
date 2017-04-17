@@ -101,6 +101,14 @@ class OptionsController extends AppController
             if(!$isEditor) {
                 throw new ForbiddenException(__('Not an editor for this Choice.'));
             }
+            
+            if(!$isAdmin) {
+                //If not admin, check whether there is an editing instance and editing has opened. If not, redirect to dashboard
+                $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+                if(empty($editingInstance) || !$editingInstance['opens']['passed']) {
+                    $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
+                }
+            }
         }
         
         //If action is approve, make sure the user is an approver for this Choice
