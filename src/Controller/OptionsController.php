@@ -117,7 +117,7 @@ class OptionsController extends AppController
                 throw new ForbiddenException(__('Not a viewer for this Choice.'));
             }
             
-            $instanceQuery = $this->Options->ChoicesOptions->Choices->ChoosingInstances->find('all', [
+            $choosingInstanceQuery = $this->Options->ChoicesOptions->Choices->ChoosingInstances->find('all', [
                 'conditions' => ['choice_id' => $choiceId, 'active' => true],
                 'contain' => [
                     'Selections' => function ($q) use ($currentUserId) {
@@ -130,15 +130,23 @@ class OptionsController extends AppController
             ]);
             
             //If there is no instance set up, and user does not have any additional roles, they should not be allowed to view the options
-            if($instanceQuery->isEmpty()) {
-                //TODO: Should this be for all users with additional roles, or just for Admins? Or some other subset of additional roles?
+            if($choosingInstanceQuery->isEmpty()) {
                 if(!$isMoreThanViewer) {
                     $action = 'unavailable';
                 }
+                else {
+                    //If not admin, check whether there is an editing instance and editing has opened. If not, redirect to dashboard
+                    if(!$isAdmin) {
+                        $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+                        if(empty($editingInstance) || !$editingInstance['opens']['passed']) {
+                            $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
+                        }
+                    }
+                }
             }
             else {
-                //$instance = $instanceQuery->first()->toArray();
-                $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->processForView($instanceQuery->first());
+                //$instance = $choosingInstanceQuery->first()->toArray();
+                $instance = $this->Options->ChoicesOptions->Choices->ChoosingInstances->processForView($choosingInstanceQuery->first());
 
                 //If the user has confirmed a selection, show the confirmed page
                 //Or if the deadline and extension have both passed, show the confirmed page
