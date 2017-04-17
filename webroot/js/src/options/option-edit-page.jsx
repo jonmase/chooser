@@ -174,7 +174,7 @@ var OptionEditPage = React.createClass({
                 style={{marginTop: '6px'}}
                 type="submit"
             />}
-            title="Edit Option"
+            title={(this.props.optionEditing.optionBeingEdited?"Edit":"Add") + " Option"}
         />;
         
         return (
