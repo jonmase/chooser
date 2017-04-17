@@ -20,14 +20,18 @@ var ExpandButton = React.createClass({
             <span>
                 <IconButton
                     iconClassName="material-icons"
+                    iconStyle={this.props.iconStyle}
                     onTouchTap={this.handleMore}
+                    style={this.props.style}
                     tooltip={tooltip}
                 >
                     more_horiz
                 </IconButton>         
                 {/*<IconButton
-                    onTouchTap={this.handleLess}
                     iconClassName="material-icons"
+                    iconStyle={this.props.iconStyle}
+                    onTouchTap={this.handleLess}
+                style={this.props.style}
                 >
                     expand_less
                 </IconButton>

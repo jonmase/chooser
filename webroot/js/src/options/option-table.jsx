@@ -2,11 +2,14 @@ import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColumn} from 'material-ui/Table';
+import FontIcon from 'material-ui/FontIcon';
 
 import ExtraField from './extra-field.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
+import PublishButton from '../elements/buttons/publish-button.jsx';
+import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
 import UnselectableCell from '../elements/table/unselectable-cell.jsx';
@@ -28,11 +31,16 @@ var styles = {
         minWidth: '30%',
     },
     actionsTableRowColumn: {
-        paddingLeft: '12px',
+        paddingLeft: 0,
         paddingRight: 0,
         textAlign: 'right',
         whiteSpace: 'normal',
-        width: '48px',
+        width: '36px',
+    },
+    actionsButtons: {
+        width: '36px',
+        paddingLeft: '6px',
+        paddingRight: '6px',
     },
     favouriteTableRowColumn: {
         paddingLeft: '12px',
@@ -267,11 +275,11 @@ var OptionsTable = React.createClass({
                                             );
                                         }, this)}
                                         {(this.props.action === 'edit')?
-                                            <TableHeaderColumn style={styles.tableHeaderColumn}>Published</TableHeaderColumn>
+                                            <TableHeaderColumn style={Object.assign({}, styles.tableHeaderColumn, {width: '72px'})}>Published</TableHeaderColumn>
                                         :""}
                                         {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
                                         {this.props.action === 'edit'? 
-                                            <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
+                                            <TableHeaderColumn style={Object.assign({}, styles.actionsTableRowColumn, {width: '72px'})}></TableHeaderColumn>
                                         :""}
                                         {showExpandButton && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
@@ -320,24 +328,48 @@ var OptionsTable = React.createClass({
                                                 }, this)}
                                                 
                                                 {(this.props.action === 'edit')?
-                                                    <TableRowColumn style={styles.tableRowColumn}>{option.published?"Yes":""}</TableRowColumn>
+                                                    <TableRowColumn style={Object.assign({}, styles.tableRowColumn, {width: '72px'})}>
+                                                        {
+                                                            option.published?
+                                                                <FontIcon className="material-icons">check</FontIcon>
+                                                            :
+                                                                <FontIcon className="material-icons">close</FontIcon>
+                                                        }
+                                                    </TableRowColumn>
                                                 :""}
                                                 
                                                 {this.props.action === 'edit'? 
-                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                    <UnselectableCell style={Object.assign({}, styles.actionsTableRowColumn, {width: '72px'})}>
                                                         <EditButton
                                                             handleEdit={this.props.optionContainerHandlers.edit} 
                                                             id={option.id}
+                                                            style={styles.actionsButtons}
                                                             tooltip=""
                                                         />
+                                                        {option.published?
+                                                            <UnpublishButton
+                                                                handlePublish={this.props.optionContainerHandlers.unpublish} 
+                                                                id={option.id}
+                                                                style={styles.actionsButtons}
+                                                                tooltip=""
+                                                            />
+                                                        :
+                                                            <PublishButton
+                                                                handlePublish={this.props.optionContainerHandlers.publish} 
+                                                                id={option.id}
+                                                                style={styles.actionsButtons}
+                                                                tooltip=""
+                                                            />
+                                                        }
                                                     </UnselectableCell>
                                                 :""}
                                                 {showExpandButton && 
                                                     <UnselectableCell style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
                                                             handleMore={this.props.optionContainerHandlers.viewMore} 
-                                                            //handleMore={optionTableHandlers.dialogOpen} 
+                                                            //handleMore={optionTableHandlers.dialogOpen}
                                                             id={option.id}
+                                                            style={styles.actionsButtons}
                                                             tooltip=""
                                                         />
                                                     </UnselectableCell>
