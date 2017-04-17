@@ -240,40 +240,65 @@ class ChoicesTable extends Table
         //Set the labels for the editing settings, the description for Options and whether the options buttons are disabled
         //$optionsDescription = 'View and/or edit the options that will be made available to students.';
         $optionsDescription = '';
-        $optionsButtonsDisabled = false;
-        if(!empty($activeEditingInstance)) {
+        $optionsEditButtonEnabled = false;
+        $optionsViewButtonEnabled = false;
+        
+        //If editing instance has not been set up yet
+        if(empty($activeEditingInstance)) {
+            $editingSettingsViewLabel = 'Set Up Editing';
+            
+            //Only Admins can edit options until editing is set up
+            if($isAdmin) {
+                $optionsDescription .= 'Please set up editing to allow Editors to create/edit options';
+                $optionsEditButtonEnabled = true;
+                $optionsViewButtonEnabled = true;
+            }
+            else {
+                $optionsDescription = 'Option editing is currently unavailable, as an administrator has not set it up yet';
+            }
+        }
+        //Editing instance has been set up
+        else {
             $editingSettingsViewLabel = 'Editing Settings';
-            //if($activeEditingInstance)
             
             //If the deadline has not passed yet...
             if(!$activeEditingInstance->deadline['passed']) {
-                //If it has not opened yet, show the opening date
+                //If it has not opened yet...
                 if(!$activeEditingInstance->opens['passed']) {
-                    $optionsDescription .= '<strong>Editing Opens: </strong> ' . $activeEditingInstance->opens['formatted'];
-                    if(!$isAdmin) {
-                        $optionsButtonsDisabled = true;
+                    //Only Admins can edit options until editing opens
+                    if($isAdmin) {
+                        $optionsEditButtonEnabled = true;
+                        $optionsViewButtonEnabled = true;
+                        $optionsDescription .= 'Editors will not be able to create/edit options until editing opens<br />';
                     }
+                    
+                    //Show the opening date
+                    $optionsDescription .= '<strong>Editing Opens: </strong> ' . $activeEditingInstance->opens['formatted'] . '<br />';
                 }
-            
-                $optionsDescription .= '<br /><strong>Editing Closes: </strong> ' . $activeEditingInstance->deadline['formatted'];
+                //Editing has open, so enable both buttons
+                else {
+                    $optionsEditButtonEnabled = true;
+                    $optionsViewButtonEnabled = true;
+                }
+                
+                //Show the deadline
+                $optionsDescription .= '<strong>Editing Deadline: </strong> ' . $activeEditingInstance->deadline['formatted'];
             }
+            //If deadline has passed
             else {
-                $optionsDescription .= 'Editing is not closed';
+                $optionsDescription .= 'The deadline for editing options has now passed';
+                $optionsViewButtonEnabled = true;   //Options can still be viewed
+                
                 if(!$isAdmin) {
-                    $optionsButtonsDisabled = true;
+                    //If not admin, disable edit button, but still allow to view options
+                    $optionsEditButtonEnabled = false;
+                }
+                else {
+                    //Admins can still edit options
+                    $optionsEditButtonEnabled = true;
+                    $optionsDescription .= ', so Editors will no longer be able to create/edit options';
                 }
             }
-        }
-        else {  //No active instance
-            //Only Admins can edit options until editing is set up
-            if($isAdmin) {
-                $optionsDescription .= '<br />Please set up editing to allow Editors to create/edit options.';
-            }
-            else {
-                $optionsDescription = 'Option editing is currently unavailable, as the administrator has not set it up yet.';
-                $optionsButtonsDisabled = true;
-            }
-            $editingSettingsViewLabel = 'Set Up Editing';
         }
                     
         //Work out if there is an active choosing instance
@@ -293,7 +318,7 @@ class ChoicesTable extends Table
         $sections = [
             [
                 'title' => 'User Permissions',
-                'description' => 'Change the permission settings and give users additional permissions.',
+                'description' => 'Change the permission settings and give users additional permissions',
                 'icon' => 'lock_open',  //icon => 'verified_user',//icon => 'block',
                 'actions' => [
                     [
@@ -305,7 +330,7 @@ class ChoicesTable extends Table
             ],
             [
                 'title' => 'Editing Setup',
-                'description' => 'Define the fields that will appear on the form for creating/editing options and setup the process and deadlines for creating and editing options.',
+                'description' => 'Define the fields that will appear on the form for creating/editing options and setup the process and deadlines for creating and editing options',
                 'icon' => 'build',
                 'actions' => [
                     [
@@ -335,7 +360,7 @@ class ChoicesTable extends Table
             ],*/
             /*[
                 'title' => 'Profile',
-                'description' => 'Edit your profile, which is the information that will be shown to students. This will be the same across all Choices where you offer options.',
+                'description' => 'Edit your profile, which is the information that will be shown to students. This will be the same across all Choices where you offer options',
                 'icon' => 'perm_identity',  //'icon' => 'account_circle',
                 'actions' => [
                     [
@@ -351,13 +376,13 @@ class ChoicesTable extends Table
                 'icon' => 'list',   //'icon' => 'view_list',//'icon' => 'format_list_numbered',
                 'actions' => [
                     [
-                        'disabled' => $optionsButtonsDisabled,
+                        'disabled' => !$optionsViewButtonEnabled,
                         'label' => 'View All',
                         'menuLabel' => 'View All Options',
                         'url' => Router::url(['controller' => 'options', 'action' => 'view']),
                     ],
                     [
-                        'disabled' => $optionsButtonsDisabled,
+                        'disabled' => !$optionsEditButtonEnabled,
                         'icon' => 'edit',
                         'label' => 'Edit',
                         'menuLabel' => 'Edit Options',
@@ -377,7 +402,7 @@ class ChoicesTable extends Table
             ],
             [
                 'title' => 'Choosing Settings',
-                'description' => 'Schedule the choice for students, set up rules and define other settings.',
+                'description' => 'Schedule the choice for students, set up rules and define other settings',
                 'icon' => 'schedule',   //'icon' => 'timer',
                 'actions' => [
                     [
@@ -430,7 +455,7 @@ class ChoicesTable extends Table
             
             [
                 'title' => 'Reset & Archive',
-                'description' => 'Archive the results, reset the editing and choosing settings and optionally unpublish all of the options.',
+                'description' => 'Archive the results, reset the editing and choosing settings and optionally unpublish all of the options',
                 'icon' => 'autorenew',
                 'actions' => [
                     [
