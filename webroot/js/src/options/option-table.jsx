@@ -57,6 +57,42 @@ var OptionsTable = React.createClass({
         this.props.optionContainerHandlers.selectOption(selectedRows);
     },
     
+    handlePublish: function(optionId) {
+        this.changePublishStatus(optionId, true);
+    },
+    
+    handleUnpublish: function(optionId) {
+        this.changePublishStatus(optionId, false);
+    },
+    
+    changePublishStatus: function(optionId, publish) {
+        console.log(optionId + ': ' + (!publish && 'un') + 'publish');
+        
+        var data = {
+            choices_option_id: optionId,
+            publish: publish
+        };
+        
+        //Save the settings
+        var url = 'publish.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                this.props.optionContainerHandlers.handleReturnedData(returnedData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.props.optionContainerHandlers.handleError(err);
+            }.bind(this)
+        });
+    },
+    
     render: function() {
         var enableSelection = true;
         switch(this.props.action) {
@@ -313,14 +349,14 @@ var OptionsTable = React.createClass({
                                                         />
                                                         {option.published?
                                                             <UnpublishButton
-                                                                handleClick={this.props.optionContainerHandlers.unpublish} 
+                                                                handleClick={this.handleUnpublish} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
                                                                 tooltip=""
                                                             />
                                                         :
                                                             <PublishButton
-                                                                handleClick={this.props.optionContainerHandlers.publish} 
+                                                                handleClick={this.handlePublish} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
                                                                 tooltip=""

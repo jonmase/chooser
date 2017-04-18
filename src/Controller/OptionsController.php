@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Controller\AppController;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
+use Cake\I18n\Time;
 
 /**
  * Options Controller
@@ -172,12 +173,83 @@ class OptionsController extends AppController
 
         $this->set(compact('action', 'choice', 'role'));
     }
+    
+    /**
+     * publish method
+     *
+     * @return \Cake\Network\Response|null
+     * @throws \Cake\Network\Exception\ForbiddenException If user is not an Editor, or cannot edit this option
+	 * @throws \Cake\Network\Exception\InternalErrorException When save fails.
+     * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
+     */
+    public function publish() {
+        $this->request->allowMethod(['patch', 'post', 'put']);
+        $this->viewBuilder()->layout('ajax');
+        
+        //Make sure the user is an editor for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+        if(empty($isChoiceEditor)) {
+            throw new ForbiddenException(__('Not permitted to publish options for this Choice.'));
+        }
+        
+        //Make sure an option has been specified
+        if(!empty($this->request->data['choices_option_id']) && isset($this->request->data['publish'])) {
+            $publish = filter_var($this->request->data['publish'], FILTER_VALIDATE_BOOLEAN);
+            
+            $choicesOption = $this->Options->ChoicesOptions->get($this->request->data['choices_option_id']);    //Get the choices option
+            //pr($choicesOption);
+            
+            //Create copy of the option to save as the revision, removing ID, setting revision_parent and making it new
+            $originalChoicesOption = clone $choicesOption;
+            $originalChoicesOption->revision_parent = $choicesOption->id;
+            unset($originalChoicesOption->id);
+            $originalChoicesOption->isNew(true);
+            
+            //If publishing, update the choicesOption record with publisher and date
+            if($publish) {
+                if($choicesOption->published) {
+                    throw new InternalErrorException(__('Option is already published'));
+                }
+                $choicesOption->published = true;
+                $choicesOption->publisher = $this->Auth->user('id');
+                $choicesOption->published_date = Time::now();
+            }
+            //If unpublishing, clear publisher and date
+            else {
+                $choicesOption->published = false;
+                $choicesOption->publisher = null;
+                $choicesOption->published_date = null;
+            }
+
+            $choicesOptionsToSave = [
+                $originalChoicesOption,
+                $choicesOption,
+            ];
+
+            //pr($choicesOptionsToSave); exit;
+            if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
+                $this->set('response', 'Option ' . ($publish?'':'un') . 'published');
+                
+                $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
+                $optionIndexesById = $this->Options->getOptionIndexesById($options);
+
+                $this->set(compact('options', 'optionIndexesById'));
+            }
+        }
+        else {
+            throw new InternalErrorException(__('Missing option ID or publish status'));
+        }
+            
+    }
 
     /**
      * save method
      *
-     * @param string|null $id Profile id.
-     * @return \Cake\Network\Response|void Redirects on successful edit, renders view otherwise.
+     * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Editor, or cannot edit this option
 	 * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.

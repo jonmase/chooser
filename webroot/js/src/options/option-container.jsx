@@ -254,7 +254,6 @@ var OptionContainer = React.createClass({
                 });
             }.bind(this)
         });
-        
     },
     
     //Could move to option-view-index (which doesn't exist yet)
@@ -923,6 +922,8 @@ var OptionContainer = React.createClass({
                         instance={this.state.instance}
                         optionContainerHandlers={{
                             edit: this.handleOptionEditButtonClick,
+                            handleError: this.handleOptionEditError,
+                            handleReturnedData: this.handleOptionEditReturnedData,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
                             viewMore: this.handleOptionViewMoreFromEdit,
