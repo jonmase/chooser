@@ -4,12 +4,12 @@ import update from 'immutability-helper';
 import Formsy from 'formsy-react';
 
 import Snackbar from 'material-ui/Snackbar';
-import Badge from 'material-ui/Badge';
+//import Badge from 'material-ui/Badge';
 import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
+//import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import Checkbox from 'material-ui/Checkbox';
-//import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
+
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
@@ -1139,32 +1139,6 @@ var OptionContainer = React.createClass({
                 </Container>
             );
         }
-        
-        /*return (
-            <Container topbar={this.getTopbar(this.state.action)} title={(this.state.action === 'edit')?"Dashboard - Edit Options":((this.state.action === 'approve')?"Dashboard - Approve Options":"")}>
-                <div>
-                    {(this.state.action === 'unavailable')?
-                        <Unavailable
-                            instance={this.state.instance}
-                            rules={this.state.rules.rules}
-                        />
-                    :
-                        (!this.state.options.loaded || !this.state.instance.loaded)?
-                            <Loader />
-                        :
-                            <div>
-                                {this.getContent(this.state.action)}
-                            </div>
-                    }
-                    <Snackbar
-                        autoHideDuration={3000}
-                        message={this.state.snackbar.message}
-                        onRequestClose={this.handleSnackbarClose}
-                        open={this.state.snackbar.open}
-                    />
-                </div>
-            </Container>
-        );*/
     }
 });
 
