@@ -8,6 +8,7 @@ import ExtraField from './extra-field.jsx';
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
+import DeleteButton from '../elements/buttons/delete-button.jsx';
 import PublishButton from '../elements/buttons/publish-button.jsx';
 import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
@@ -35,13 +36,13 @@ var styles = {
         paddingRight: 0,
         textAlign: 'right',
         whiteSpace: 'normal',
-        width: '36px',
+        width: '48px',
     },
-    actionsButtons: {
-        width: '36px',
+    /*actionsButtons: {
+        width: '48px',
         paddingLeft: '6px',
         paddingRight: '6px',
-    },
+    },*/
     favouriteTableRowColumn: {
         paddingLeft: '12px',
         paddingRight: '12px',
@@ -52,6 +53,9 @@ var styles = {
         paddingTop: '0px',
     }
 };
+
+var publishedColWidth = '72px';
+var editorActionsColWidth = '144px';
     
 var OptionsTable = React.createClass({
     getInitialState: function () {
@@ -275,11 +279,11 @@ var OptionsTable = React.createClass({
                                             );
                                         }, this)}
                                         {(this.props.action === 'edit')?
-                                            <TableHeaderColumn style={Object.assign({}, styles.tableHeaderColumn, {width: '72px'})}>Published</TableHeaderColumn>
+                                            <TableHeaderColumn style={Object.assign({}, styles.tableHeaderColumn, {width: publishedColWidth})}>Published</TableHeaderColumn>
                                         :""}
                                         {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
                                         {this.props.action === 'edit'? 
-                                            <TableHeaderColumn style={Object.assign({}, styles.actionsTableRowColumn, {width: '72px'})}></TableHeaderColumn>
+                                            <TableHeaderColumn style={Object.assign({}, styles.actionsTableRowColumn, {width: editorActionsColWidth})}></TableHeaderColumn>
                                         :""}
                                         {showExpandButton && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
@@ -328,7 +332,7 @@ var OptionsTable = React.createClass({
                                                 }, this)}
                                                 
                                                 {(this.props.action === 'edit')?
-                                                    <TableRowColumn style={Object.assign({}, styles.tableRowColumn, {width: '72px'})}>
+                                                    <TableRowColumn style={Object.assign({}, styles.tableRowColumn, {width: publishedColWidth})}>
                                                         {
                                                             option.published?
                                                                 <FontIcon className="material-icons">check</FontIcon>
@@ -338,8 +342,19 @@ var OptionsTable = React.createClass({
                                                     </TableRowColumn>
                                                 :""}
                                                 
+                                                {showExpandButton && 
+                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
+                                                        <ExpandButton
+                                                            handleMore={this.props.optionContainerHandlers.viewMore} 
+                                                            //handleMore={optionTableHandlers.dialogOpen}
+                                                            id={option.id}
+                                                            style={styles.actionsButtons}
+                                                            tooltip=""
+                                                        />
+                                                    </UnselectableCell>
+                                                }
                                                 {this.props.action === 'edit'? 
-                                                    <UnselectableCell style={Object.assign({}, styles.actionsTableRowColumn, {width: '72px'})}>
+                                                    <UnselectableCell style={Object.assign({}, styles.actionsTableRowColumn, {width: editorActionsColWidth})}>
                                                         <EditButton
                                                             handleEdit={this.props.optionContainerHandlers.edit} 
                                                             id={option.id}
@@ -361,19 +376,14 @@ var OptionsTable = React.createClass({
                                                                 tooltip=""
                                                             />
                                                         }
-                                                    </UnselectableCell>
-                                                :""}
-                                                {showExpandButton && 
-                                                    <UnselectableCell style={styles.actionsTableRowColumn}>
-                                                        <ExpandButton
-                                                            handleMore={this.props.optionContainerHandlers.viewMore} 
-                                                            //handleMore={optionTableHandlers.dialogOpen}
+                                                        <DeleteButton
+                                                            handleClick={this.props.optionContainerHandlers.delete} 
                                                             id={option.id}
                                                             style={styles.actionsButtons}
                                                             tooltip=""
                                                         />
                                                     </UnselectableCell>
-                                                }
+                                                :""}
                                             </TableRow>
                                         );
                                     }, this)}
