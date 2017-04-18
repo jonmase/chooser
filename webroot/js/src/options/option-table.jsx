@@ -5,18 +5,18 @@ import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColu
 import FontIcon from 'material-ui/FontIcon';
 
 import ExtraField from './extra-field.jsx';
+
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
-import EditButton from '../elements/buttons/edit-button.jsx';
 import DeleteButton from '../elements/buttons/delete-button.jsx';
+import EditButton from '../elements/buttons/edit-button.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
+import FavouriteButton from './option-favourite-button.jsx';
 import PublishButton from '../elements/buttons/publish-button.jsx';
 import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
-import ExpandButton from '../elements/buttons/expand-button.jsx';
+
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
 import UnselectableCell from '../elements/table/unselectable-cell.jsx';
-import FavouriteOption from './option-favourite-button.jsx';
-import OptionEditDialog from './option-edit-dialog.jsx';
-import OptionViewDialog from './option-view-dialog.jsx';
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
@@ -24,12 +24,6 @@ var styles = {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap'
-    },
-    tableRowColumnTitle: {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        minWidth: '30%',
     },
     actionsTableRowColumn: {
         paddingLeft: 0,
@@ -54,53 +48,16 @@ var styles = {
     }
 };
 
-var publishedColWidth = '72px';
-var editorActionsColWidth = '144px';
+styles.tableRowColumnTitle = Object.assign({}, styles.tableRowColumn, {minWidth: '30%'});
+styles.publishedTableRowColumn = Object.assign({}, styles.tableRowColumn, {width: '72px', textAlign: 'center'});
+styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
     
 var OptionsTable = React.createClass({
-    getInitialState: function () {
-        var initialState = {
-            optionBeingViewed: null,
-            optionDialogOpen: false,
-        };
-        
-        return initialState;
-    },
-    
     _onRowSelection: function(selectedRows){
         this.props.optionContainerHandlers.selectOption(selectedRows);
     },
     
-    handleDialogOpen: function(optionId) {
-        this.setState({
-            optionBeingViewed: optionId,
-            optionDialogOpen: true,    //Open the dialog
-        });
-        return false;
-    },
-    
-    handleDialogClose: function() {
-        this.setState({
-            optionBeingViewed: null,    //Clear the option being viewed
-            optionDialogOpen: false,    //Close the dialog
-        });
-        return false;
-    },
-    
-    handleExpandMore: function(option) {
-        console.log(option);
-    },
-    handleExpandLess: function(option) {
-        console.log(option);
-    },
     render: function() {
-        /*if(this.props.action === 'view') {
-            styles.actionsTableRowColumn.width = '48px';
-        }
-        else {
-            styles.actionsTableRowColumn.width = '96px';
-        }*/
-        
         var enableSelection = true;
         switch(this.props.action) {
             case 'edit':
@@ -110,8 +67,8 @@ var OptionsTable = React.createClass({
                 break;
             case 'view':
                 var title = 'Choose Options';
-                //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the basket in the top right. ';
-                var subtitle = 'Choose options using the tick boxes';
+                //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
+                var subtitle = 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
                 enableSelection = this.props.instance.instance.id?true:false;
                 break;
             default:
@@ -165,13 +122,6 @@ var OptionsTable = React.createClass({
                 type: 'number',
                 rowStyle: styles.tableRowColumn,
             })
-        }
-        
-        var optionTableHandlers = {
-            dialogOpen: this.handleDialogOpen,
-            dialogClose: this.handleDialogClose,
-            expandMore: this.handleExpandMore,
-            expandLess: this.handleExpandLess,
         }
         
         var sortableExtraFields = [];
@@ -241,7 +191,7 @@ var OptionsTable = React.createClass({
                                 >
                                     <TableRow>
                                         {/*(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
-                                            <FavouriteOption
+                                            <FavouriteButton
                                                 handlers={this.props.optionContainerHandlers} 
                                                 option="all"
                                             />
@@ -279,15 +229,15 @@ var OptionsTable = React.createClass({
                                             );
                                         }, this)}
                                         {(this.props.action === 'edit')?
-                                            <TableHeaderColumn style={Object.assign({}, styles.tableHeaderColumn, {width: publishedColWidth})}>Published</TableHeaderColumn>
+                                            <TableHeaderColumn style={styles.publishedTableRowColumn}>Published</TableHeaderColumn>
                                         :""}
                                         {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
-                                        {this.props.action === 'edit'? 
-                                            <TableHeaderColumn style={Object.assign({}, styles.actionsTableRowColumn, {width: editorActionsColWidth})}></TableHeaderColumn>
-                                        :""}
                                         {showExpandButton && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         }
+                                        {this.props.action === 'edit'? 
+                                            <TableHeaderColumn style={styles.editorActionsTableRowColumn}></TableHeaderColumn>
+                                        :""}
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody 
@@ -302,7 +252,7 @@ var OptionsTable = React.createClass({
                                             >
                                                 {/*(this.props.action === 'view' && enableSelection)?
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
-                                                        <FavouriteOption
+                                                        <FavouriteButton
                                                             handler={this.props.optionContainerHandlers.favourite} 
                                                             optionId={option.id}
                                                             favourited={this.props.favourites.indexOf(option.id) > -1}
@@ -332,7 +282,7 @@ var OptionsTable = React.createClass({
                                                 }, this)}
                                                 
                                                 {(this.props.action === 'edit')?
-                                                    <TableRowColumn style={Object.assign({}, styles.tableRowColumn, {width: publishedColWidth})}>
+                                                    <TableRowColumn style={styles.publishedTableRowColumn}>
                                                         {
                                                             option.published?
                                                                 <FontIcon className="material-icons">check</FontIcon>
@@ -352,8 +302,9 @@ var OptionsTable = React.createClass({
                                                         />
                                                     </UnselectableCell>
                                                 }
+                                                
                                                 {this.props.action === 'edit'? 
-                                                    <UnselectableCell style={Object.assign({}, styles.actionsTableRowColumn, {width: editorActionsColWidth})}>
+                                                    <UnselectableCell style={styles.editorActionsTableRowColumn}>
                                                         <EditButton
                                                             handleClick={this.props.optionContainerHandlers.edit} 
                                                             id={option.id}
