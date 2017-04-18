@@ -25,7 +25,7 @@ var PublishButton = React.createClass({
                 style={this.props.style}
                 tooltip={tooltip}
             >
-                play
+                play_arrow
             </IconButton>         
         );
     }
