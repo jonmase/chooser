@@ -2,9 +2,9 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
 var ExpandButton = React.createClass({
-    handleMore: function() {
-        if(this.props.handleMore) {
-            this.props.handleMore(this.props.id);
+    handleClick: function() {
+        if(this.props.handleClick) {
+            this.props.handleClick(this.props.id);
         }
     },
     render: function() {
@@ -20,7 +20,7 @@ var ExpandButton = React.createClass({
                 disabled={disabled}
                 iconClassName="material-icons"
                 iconStyle={this.props.iconStyle}
-                onTouchTap={this.handleMore}
+                onTouchTap={this.handleClick}
                 style={this.props.style}
                 tooltip={tooltip}
             >

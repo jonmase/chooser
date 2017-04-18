@@ -123,7 +123,7 @@ var ExtraFields = React.createClass({
             >
                 <div style={{float: 'right', margin: '9.5px 4px 0 0'}}>
                     <AddButton
-                        handleAdd={this.props.handlers.editButtonClick}
+                        handleClick={this.props.handlers.editButtonClick}
                         tooltip="Add Extra Field"
                     />
                 </div>
@@ -171,13 +171,13 @@ var ExtraFields = React.createClass({
                                         </div>
                                         <div className="col-xs-2 col-md-2 col-lg-1" style={iconColStyle}>
                                             <EditButton
-                                                handleEdit={this.props.handlers.editButtonClick} 
+                                                handleClick={this.props.handlers.editButtonClick} 
                                                 id={field.id}
                                                 style={buttonStyle}
                                                 tooltip=""
                                             />
                                             <DeleteButton
-                                                handleDelete={this.handleDeleteDialogOpen} 
+                                                handleClick={this.handleDeleteDialogOpen} 
                                                 id={field.id}
                                                 style={buttonStyle}
                                                 tooltip=""

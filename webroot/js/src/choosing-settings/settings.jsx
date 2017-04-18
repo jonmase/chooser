@@ -43,11 +43,11 @@ var Settings = React.createClass({
                 >
                     <div style={{float: 'right'}}>
                         <ResetButton
-                            handleReset={this.handleResetButtonClick}
+                            handleClick={this.handleResetButtonClick}
                             tooltip="Reset Choice"
                         />
                         <EditButton
-                            handleEdit={this.props.handlers.editButtonClick}
+                            handleClick={this.props.handlers.editButtonClick}
                             id={null}
                             tooltip={editTooltip}
                         />
@@ -63,7 +63,7 @@ var Settings = React.createClass({
                             <div>
                                 <p style={{marginTop: 0}}>Choosing has not been set up yet.</p>
                                 <EditButtonRaised 
-                                    handleEdit={this.props.handlers.editButtonClick} 
+                                    handleClick={this.props.handlers.editButtonClick} 
                                     id={null} 
                                     label={editTooltip}
                                 />

@@ -2,10 +2,10 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
 var AddButton = React.createClass({
-    handleAdd: function() {
-        //Call the passed handleAdd method, without passing any arguments
+    handleClick: function() {
+        //Call the passed handleClick method, without passing any arguments
         //If call this directly from onTouchTap, event gets passed, which then makes it think it is getting an optionId
-        this.props.handleAdd();
+        this.props.handleClick();
     },
     
     render: function() {
@@ -16,7 +16,7 @@ var AddButton = React.createClass({
         return (
             <IconButton
                 iconClassName="material-icons"
-                onTouchTap={this.handleAdd}
+                onTouchTap={this.handleClick}
                 tooltip={tooltip}
             >
                 add

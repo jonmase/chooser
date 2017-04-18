@@ -3,8 +3,8 @@ import FontIcon from 'material-ui/FontIcon';
 import RaisedButton from 'material-ui/RaisedButton';
 
 var EditButtonRaised = React.createClass({
-    handleEdit: function() {
-        this.props.handleEdit(this.props.id);
+    handleClick: function() {
+        this.props.handleClick(this.props.id);
     },
     
     render: function() {
@@ -19,7 +19,7 @@ var EditButtonRaised = React.createClass({
                 </FontIcon>}
                 label={label}
                 labelPosition="before"
-                onTouchTap={this.handleEdit}
+                onTouchTap={this.handleClick}
                 primary={true}
             />
         );

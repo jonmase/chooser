@@ -208,7 +208,7 @@ var OptionsTable = React.createClass({
                         <div style={{float: 'right', marginTop: '-4px'}}>
                             {(this.props.action === 'edit')&&
                                 <AddButton 
-                                    handleAdd={this.props.optionContainerHandlers.edit} 
+                                    handleClick={this.props.optionContainerHandlers.edit} 
                                     tooltip="Add Option"
                                 />
                             }
@@ -223,7 +223,7 @@ var OptionsTable = React.createClass({
                                 <div>
                                     <p>You have not created any options yet.</p>
                                     <AddButtonRaised 
-                                        handleAdd={this.props.optionContainerHandlers.edit} 
+                                        handleClick={this.props.optionContainerHandlers.edit} 
                                         label="Add Option"
                                     />
                                 </div>
@@ -345,8 +345,7 @@ var OptionsTable = React.createClass({
                                                 {showExpandButton && 
                                                     <UnselectableCell style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
-                                                            handleMore={this.props.optionContainerHandlers.viewMore} 
-                                                            //handleMore={optionTableHandlers.dialogOpen}
+                                                            handleClick={this.props.optionContainerHandlers.viewMore} 
                                                             id={option.id}
                                                             style={styles.actionsButtons}
                                                             tooltip=""
@@ -356,21 +355,21 @@ var OptionsTable = React.createClass({
                                                 {this.props.action === 'edit'? 
                                                     <UnselectableCell style={Object.assign({}, styles.actionsTableRowColumn, {width: editorActionsColWidth})}>
                                                         <EditButton
-                                                            handleEdit={this.props.optionContainerHandlers.edit} 
+                                                            handleClick={this.props.optionContainerHandlers.edit} 
                                                             id={option.id}
                                                             style={styles.actionsButtons}
                                                             tooltip=""
                                                         />
                                                         {option.published?
                                                             <UnpublishButton
-                                                                handlePublish={this.props.optionContainerHandlers.unpublish} 
+                                                                handleClick={this.props.optionContainerHandlers.unpublish} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
                                                                 tooltip=""
                                                             />
                                                         :
                                                             <PublishButton
-                                                                handlePublish={this.props.optionContainerHandlers.publish} 
+                                                                handleClick={this.props.optionContainerHandlers.publish} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
                                                                 tooltip=""

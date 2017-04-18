@@ -118,7 +118,7 @@ var Rules = React.createClass({
                     <div style={{float: 'right'}}>
                         {(this.props.instance.id)?
                             <AddButton
-                                handleAdd={this.props.handlers.editButtonClick}
+                                handleClick={this.props.handlers.editButtonClick}
                                 tooltip="Add Rule"
                             />
                         :""}
@@ -135,7 +135,7 @@ var Rules = React.createClass({
                             <div>
                                 <p style={{marginTop: 0}}>You cannot create rules until choosing has been set up.</p>
                                 <EditButtonRaised 
-                                    handleEdit={this.props.handlers.settingsEditButtonClick} 
+                                    handleClick={this.props.handlers.settingsEditButtonClick} 
                                     id={null} 
                                     label="Set Up Choosing"
                                 />
@@ -144,7 +144,7 @@ var Rules = React.createClass({
                             (this.props.rules.length === 0)?
                                 <div>
                                     <p style={{marginTop: 0}}>There are no rules yet.</p>
-                                    <AddButtonRaised handleAdd={this.props.handlers.editButtonClick} label="Add Rule" />
+                                    <AddButtonRaised handleClick={this.props.handlers.editButtonClick} label="Add Rule" />
                                 </div>
                             :
                                 <Table 
@@ -186,17 +186,17 @@ var Rules = React.createClass({
                                                     }</TableRowColumn>
                                                     <TableRowColumn style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
-                                                            handleMore={this.props.handlers.viewButtonClick} 
+                                                            handleClick={this.props.handlers.viewButtonClick} 
                                                             id={index}
                                                             tooltip=""
                                                         />
                                                         <EditButton
-                                                            handleEdit={this.props.handlers.editButtonClick} 
+                                                            handleClick={this.props.handlers.editButtonClick} 
                                                             id={index}
                                                             tooltip=""
                                                         />
                                                         <DeleteButton
-                                                            handleDelete={this.handleDeleteDialogOpen} 
+                                                            handleClick={this.handleDeleteDialogOpen} 
                                                             id={index}
                                                             tooltip=""
                                                         />

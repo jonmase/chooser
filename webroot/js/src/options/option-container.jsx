@@ -884,7 +884,7 @@ var OptionContainer = React.createClass({
             }
             else if(action === 'more_edit') {
                 topbarIconRight = <EditButton
-                    handleEdit={this.handleOptionEditButtonClick} 
+                    handleClick={this.handleOptionEditButtonClick} 
                     iconStyle={{color: 'white'}}
                     id={this.state.optionBeingViewed}
                     tooltip=""

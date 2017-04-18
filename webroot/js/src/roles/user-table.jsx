@@ -77,18 +77,18 @@ var UsersTable = React.createClass({
                             />&nbsp;
                             <EditButton
                                 disabled={this.props.usersSelected.length===0?true:false}
-                                handleEdit={this.props.handlers.setButtonClick}
+                                handleClick={this.props.handlers.setButtonClick}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
                             />&nbsp;
                             <DeleteButton
                                 disabled={this.props.usersSelected.length===0?true:false}
-                                handleDelete={this.props.handlers.deleteButtonClick}
+                                handleClick={this.props.handlers.deleteButtonClick}
                                 id={this.props.usersSelected}
                                 tooltip={this.props.usersSelected.length===0?"":"Remove Selected Users"}
                             />&nbsp;
                             <AddButton
-                                handleAdd={this.props.handlers.setButtonClick}
+                                handleClick={this.props.handlers.setButtonClick}
                                 tooltip="Set Permissions"
                             />
                             {/*<UsersActionMenu
@@ -155,7 +155,7 @@ var UsersTable = React.createClass({
                                                 <UnselectableCell style={styles.actionsTableRowColumn}>
                                                     {!user.current?
                                                         <EditButton
-                                                            handleEdit={props.handlers.setButtonClick} 
+                                                            handleClick={props.handlers.setButtonClick} 
                                                             id={[userIndex]}
                                                             tooltip=""
                                                         />
@@ -164,7 +164,7 @@ var UsersTable = React.createClass({
                                                 <UnselectableCell style={styles.actionsTableRowColumn}>
                                                     {!user.current?
                                                         <DeleteButton
-                                                            handleDelete={props.handlers.deleteButtonClick} 
+                                                            handleClick={props.handlers.deleteButtonClick} 
                                                             id={[userIndex]}
                                                             tooltip=""
                                                         />

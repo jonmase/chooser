@@ -114,7 +114,7 @@ var ResultsTable = React.createClass({
                                         <TableRowColumn style={styles.tableRowColumn}>{selection.option_count}</TableRowColumn>
                                         <UnselectableCell style={styles.actionsTableRowColumn}>
                                             <ExpandButton
-                                                handleMore={this.props.handlers.view} 
+                                                handleClick={this.props.handlers.view} 
                                                 id={index}
                                                 tooltip=""
                                             />

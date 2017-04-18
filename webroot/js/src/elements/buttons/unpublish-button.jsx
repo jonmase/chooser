@@ -2,8 +2,8 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
 var PublishButton = React.createClass({
-    handleUnpublish: function() {
-        this.props.handleUnpublish(this.props.id);
+    handleClick: function() {
+        this.props.handleClick(this.props.id);
     },
     
     render: function() {
@@ -19,7 +19,7 @@ var PublishButton = React.createClass({
                 disabled={disabled}
                 iconClassName="material-icons"
                 iconStyle={this.props.iconStyle}
-                onTouchTap={this.handleUnpublish}
+                onTouchTap={this.handleClick}
                 style={this.props.style}
                 tooltip={tooltip}
             >

@@ -2,8 +2,8 @@ import React from 'react';
 import IconButton from 'material-ui/IconButton';
 
 var ResetButton = React.createClass({
-    handleReset: function() {
-        this.props.handleReset();
+    handleClick: function() {
+        this.props.handleClick();
     },
     
     render: function() {
@@ -19,7 +19,7 @@ var ResetButton = React.createClass({
                 disabled={disabled}
                 iconClassName="material-icons"
                 iconStyle={this.props.iconStyle}
-                onTouchTap={this.handleReset}
+                onTouchTap={this.handleClick}
                 style={this.props.style}
                 tooltip={tooltip}
             >
