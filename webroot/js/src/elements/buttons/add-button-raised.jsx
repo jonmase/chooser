@@ -6,7 +6,9 @@ var AddButtonRaised = React.createClass({
     handleClick: function() {
         //Call the passed handleClick method, without passing any arguments
         //If call this directly from onTouchTap, event gets passed, which then makes it think it is getting an optionId
-        this.props.handleClick();
+        if(this.props.handleClick) {
+            this.props.handleClick();
+        }
     },
     
     render: function() {

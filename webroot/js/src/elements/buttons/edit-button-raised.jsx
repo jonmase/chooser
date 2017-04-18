@@ -4,7 +4,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 var EditButtonRaised = React.createClass({
     handleClick: function() {
-        this.props.handleClick(this.props.id);
+        if(this.props.handleClick) {
+            this.props.handleClick(this.props.id);
+        }
     },
     
     render: function() {

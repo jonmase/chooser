@@ -3,7 +3,9 @@ import IconButton from 'material-ui/IconButton';
 
 var ResetButton = React.createClass({
     handleClick: function() {
-        this.props.handleClick();
+        if(this.props.handleClick) {
+            this.props.handleClick();
+        }
     },
     
     render: function() {
