@@ -175,14 +175,15 @@ class OptionsController extends AppController
     }
     
     /**
-     * publish method
+     * status method
+     * Change the status (publish, approve or delete) an option
      *
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user is not an Editor, or cannot edit this option
 	 * @throws \Cake\Network\Exception\InternalErrorException When save fails.
      * @throws \Cake\Network\Exception\MethodNotAllowedException When invalid method is used.
      */
-    public function publish() {
+    public function status() {
         $this->request->allowMethod(['patch', 'post', 'put']);
         $this->viewBuilder()->layout('ajax');
         
@@ -193,12 +194,14 @@ class OptionsController extends AppController
         
         $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
         if(empty($isChoiceEditor)) {
-            throw new ForbiddenException(__('Not permitted to publish options for this Choice.'));
+            throw new ForbiddenException(__('Not permitted to change option statuses for this Choice.'));
         }
         
         //Make sure an option has been specified
-        if(!empty($this->request->data['choices_option_id']) && isset($this->request->data['publish'])) {
-            $publish = filter_var($this->request->data['publish'], FILTER_VALIDATE_BOOLEAN);
+        if(!empty($this->request->data['action']) && !empty($this->request->data['choices_option_id']) && isset($this->request->data['status'])) {
+            $action = $this->request->data['action'];
+            
+            $status = filter_var($this->request->data['status'], FILTER_VALIDATE_BOOLEAN);
             
             $choicesOption = $this->Options->ChoicesOptions->get($this->request->data['choices_option_id']);    //Get the choices option
             //pr($choicesOption);
@@ -209,20 +212,32 @@ class OptionsController extends AppController
             unset($originalChoicesOption->id);
             $originalChoicesOption->isNew(true);
             
-            //If publishing, update the choicesOption record with publisher and date
-            if($publish) {
-                if($choicesOption->published) {
-                    throw new InternalErrorException(__('Option is already published'));
-                }
-                $choicesOption->published = true;
-                $choicesOption->publisher = $this->Auth->user('id');
-                $choicesOption->published_date = Time::now();
+            //Work out the DB field stem from the action
+            if($action === 'publish') {
+                $dbFieldStem = 'publishe';
             }
-            //If unpublishing, clear publisher and date
             else {
-                $choicesOption->published = false;
-                $choicesOption->publisher = null;
-                $choicesOption->published_date = null;
+                $dbFieldStem = $action;
+            }
+            
+            $statusField = $dbFieldStem . 'd';
+            $userField = $dbFieldStem . 'r';
+            $dateField = $statusField . '_date';
+            
+            //If changing status to true, update the choicesOption record with user and date
+            if($status) {
+                if($choicesOption[$statusField]) {
+                    throw new InternalErrorException(__('Option is already ' . $statusField));
+                }
+                $choicesOption[$statusField] = true;
+                $choicesOption[$userField] = $this->Auth->user('id');
+                $choicesOption[$dateField] = Time::now();
+            }
+            //If changing status to false, clear user and date
+            else {
+                $choicesOption[$statusField] = false;
+                $choicesOption[$userField] = null;
+                $choicesOption[$dateField] = null;
             }
 
             $choicesOptionsToSave = [
@@ -232,7 +247,14 @@ class OptionsController extends AppController
 
             //pr($choicesOptionsToSave); exit;
             if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
-                $this->set('response', 'Option ' . ($publish?'':'un') . 'published');
+                if($action === 'delete' && !$status) {
+                    $actionVerb = 'restored';
+                }
+                else {
+                    $actionVerb = ($status?'':'un') . $statusField;
+                }
+                
+                $this->set('response', 'Option ' . $actionVerb);
                 
                 $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
                 $optionIndexesById = $this->Options->getOptionIndexesById($options);
@@ -241,9 +263,8 @@ class OptionsController extends AppController
             }
         }
         else {
-            throw new InternalErrorException(__('Missing option ID or publish status'));
+            throw new InternalErrorException(__('Missing action, option ID or status'));
         }
-            
     }
 
     /**

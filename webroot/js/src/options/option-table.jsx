@@ -13,6 +13,7 @@ import EditButton from '../elements/buttons/edit-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 import FavouriteButton from './option-favourite-button.jsx';
 import PublishButton from '../elements/buttons/publish-button.jsx';
+import RestoreButton from '../elements/buttons/restore-button.jsx';
 import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
@@ -57,24 +58,33 @@ var OptionsTable = React.createClass({
         this.props.optionContainerHandlers.selectOption(selectedRows);
     },
     
+    handleDelete: function(optionId) {
+        this.changeStatus('delete', optionId, true);
+    },
+    
     handlePublish: function(optionId) {
-        this.changePublishStatus(optionId, true);
+        this.changeStatus('publish', optionId, true);
+    },
+    
+    handleRestore: function(optionId) {
+        this.changeStatus('delete', optionId, false);
     },
     
     handleUnpublish: function(optionId) {
-        this.changePublishStatus(optionId, false);
+        this.changeStatus('publish', optionId, false);
     },
     
-    changePublishStatus: function(optionId, publish) {
-        console.log(optionId + ': ' + (!publish && 'un') + 'publish');
+    changeStatus: function(action, optionId, status) {
+        console.log(optionId + ': ' + (!status && 'un') + action);
         
         var data = {
+            action: action,
             choices_option_id: optionId,
-            publish: publish
+            status: status
         };
         
         //Save the settings
-        var url = 'publish.json';
+        var url = 'status.json';
         $.ajax({
             url: url,
             dataType: 'json',
@@ -362,12 +372,21 @@ var OptionsTable = React.createClass({
                                                                 tooltip=""
                                                             />
                                                         }
-                                                        <DeleteButton
-                                                            handleClick={this.props.optionContainerHandlers.delete} 
-                                                            id={option.id}
-                                                            style={styles.actionsButtons}
-                                                            tooltip=""
-                                                        />
+                                                        {option.deleted?
+                                                            <RestoreButton
+                                                                handleClick={this.handleRestore} 
+                                                                id={option.id}
+                                                                style={styles.actionsButtons}
+                                                                tooltip=""
+                                                            />
+                                                        :
+                                                            <DeleteButton
+                                                                handleClick={this.handleDelete} 
+                                                                id={option.id}
+                                                                style={styles.actionsButtons}
+                                                                tooltip=""
+                                                            />
+                                                        }
                                                     </UnselectableCell>
                                                 :""}
                                             </TableRow>
