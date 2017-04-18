@@ -8,6 +8,7 @@ import ExtraField from './extra-field.jsx';
 
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
+import ApprovalButton from '../elements/buttons/approval-button.jsx';
 import DeleteButton from '../elements/buttons/delete-button.jsx';
 import EditButton from '../elements/buttons/edit-button.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
@@ -51,7 +52,7 @@ var styles = {
 
 styles.tableRowColumnTitle = Object.assign({}, styles.tableRowColumn, {minWidth: '30%'});
 styles.publishedTableRowColumn = Object.assign({}, styles.tableRowColumn, {width: '72px', textAlign: 'center'});
-styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
+styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
     
 var OptionsTable = React.createClass({
     _onRowSelection: function(selectedRows){
@@ -372,6 +373,12 @@ var OptionsTable = React.createClass({
                                                                 tooltip=""
                                                             />
                                                         }
+                                                        <ApprovalButton
+                                                            handleClick={this.props.optionContainerHandlers.approve} 
+                                                            id={option.id}
+                                                            style={styles.actionsButtons}
+                                                            tooltip=""
+                                                        />
                                                         {option.deleted?
                                                             <RestoreButton
                                                                 handleClick={this.handleRestore} 
