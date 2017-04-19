@@ -52,7 +52,9 @@ var styles = {
 
 styles.tableRowColumnTitle = Object.assign({}, styles.tableRowColumn, {minWidth: '30%'});
 styles.publishedTableRowColumn = Object.assign({}, styles.tableRowColumn, {width: '72px', textAlign: 'center'});
-styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
+styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
+styles.approverActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '48px'});
+styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
     
 var OptionsTable = React.createClass({
     _onRowSelection: function(selectedRows){
@@ -73,6 +75,39 @@ var OptionsTable = React.createClass({
     
     handleUnpublish: function(optionId) {
         this.changeStatus('publish', optionId, false);
+    },
+    
+    isAdmin: function() {
+        if(this.props.roles.indexOf('admin') > -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    isApprover: function() {
+        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approve') > -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    isEditor: function() {
+        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('edit') > -1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    isEditorAndApprover: function() {
+        if(this.props.roles.indexOf('admin') > -1 || (this.props.roles.indexOf('edit') > -1 && this.props.roles.indexOf('approve') > -1)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     },
     
     changeStatus: function(action, optionId, status) {
@@ -109,7 +144,22 @@ var OptionsTable = React.createClass({
         switch(this.props.action) {
             case 'edit':
                 var title = 'Options';
-                var subtitle = 'Create, edit and manage options';
+                if(this.isEditor()) {
+                    var subtitle = 'Create, edit';
+                    if(this.isApprover()) {
+                        subtitle += ', manage and approve';
+                        var actionsColStyles = styles.adminActionsTableRowColumn;
+                    }
+                    else {
+                        subtitle += ' and manage';
+                        var actionsColStyles = styles.editActionsTableRowColumn;
+                    }
+                    subtitle += ' options';
+                }
+                else if(this.isApprover()) {
+                    var subtitle = 'View and approve options';
+                    var actionsColStyles = styles.approveActionsTableRowColumn;
+                }
                 enableSelection = false;
                 break;
             case 'view':
@@ -283,7 +333,7 @@ var OptionsTable = React.createClass({
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         }
                                         {this.props.action === 'edit'? 
-                                            <TableHeaderColumn style={styles.editorActionsTableRowColumn}></TableHeaderColumn>
+                                            <TableHeaderColumn style={actionsColStyles}></TableHeaderColumn>
                                         :""}
                                     </TableRow>
                                 </TableHeader>
@@ -351,44 +401,50 @@ var OptionsTable = React.createClass({
                                                 }
                                                 
                                                 {this.props.action === 'edit'? 
-                                                    <UnselectableCell style={styles.editorActionsTableRowColumn}>
-                                                        <EditButton
-                                                            handleClick={this.props.optionContainerHandlers.edit} 
-                                                            id={option.id}
-                                                            style={styles.actionsButtons}
-                                                            tooltip=""
-                                                        />
-                                                        {option.published?
-                                                            <UnpublishButton
-                                                                handleClick={this.handleUnpublish} 
-                                                                id={option.id}
-                                                                style={styles.actionsButtons}
-                                                                tooltip=""
-                                                            />
-                                                        :
-                                                            <PublishButton
-                                                                handleClick={this.handlePublish} 
-                                                                id={option.id}
-                                                                style={styles.actionsButtons}
-                                                                tooltip=""
-                                                            />
+                                                    <UnselectableCell style={actionsColStyles}>
+                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('edit') > -1) &&
+                                                            <span>
+                                                                <EditButton
+                                                                    handleClick={this.props.optionContainerHandlers.edit} 
+                                                                    id={option.id}
+                                                                    style={styles.actionsButtons}
+                                                                    tooltip=""
+                                                                />
+                                                                {option.published?
+                                                                    <UnpublishButton
+                                                                        handleClick={this.handleUnpublish} 
+                                                                        id={option.id}
+                                                                        style={styles.actionsButtons}
+                                                                        tooltip=""
+                                                                    />
+                                                                :
+                                                                    <PublishButton
+                                                                        handleClick={this.handlePublish} 
+                                                                        id={option.id}
+                                                                        style={styles.actionsButtons}
+                                                                        tooltip=""
+                                                                    />
+                                                                }
+                                                                {option.deleted?
+                                                                    <RestoreButton
+                                                                        handleClick={this.handleRestore} 
+                                                                        id={option.id}
+                                                                        style={styles.actionsButtons}
+                                                                        tooltip=""
+                                                                    />
+                                                                :
+                                                                    <DeleteButton
+                                                                        handleClick={this.handleDelete} 
+                                                                        id={option.id}
+                                                                        style={styles.actionsButtons}
+                                                                        tooltip=""
+                                                                    />
+                                                                }
+                                                            </span>
                                                         }
-                                                        <ApprovalButton
-                                                            handleClick={this.props.optionContainerHandlers.approve} 
-                                                            id={option.id}
-                                                            style={styles.actionsButtons}
-                                                            tooltip=""
-                                                        />
-                                                        {option.deleted?
-                                                            <RestoreButton
-                                                                handleClick={this.handleRestore} 
-                                                                id={option.id}
-                                                                style={styles.actionsButtons}
-                                                                tooltip=""
-                                                            />
-                                                        :
-                                                            <DeleteButton
-                                                                handleClick={this.handleDelete} 
+                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approve') > -1) &&
+                                                            <ApprovalButton
+                                                                handleClick={this.props.optionContainerHandlers.approve} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
                                                                 tooltip=""

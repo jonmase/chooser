@@ -19,13 +19,13 @@ class OptionsController extends AppController
      * @return \Cake\Network\Response|null
      * @throws \Cake\Network\Exception\ForbiddenException If user does not have correct permissions for the action
      */
-    public function getOptions($action = 'view')
+    public function getOptions($action = 'view', $role = null)
     {
         $choiceId = $this->SessionData->getChoiceId();
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //If action is edit, make sure the user is an editor for this Choice
+        //If action is edit, could be 
         if($action === 'edit') {
             $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
             if(!$isEditor) {
@@ -79,28 +79,33 @@ class OptionsController extends AppController
         
         //Does the user have additional roles? I.e., should the dashboard menu be shown?
         $isMoreThanViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $currentUserId, $tool);
+        $roles = [];
         if($isMoreThanViewer) {
             //Get the sections to display in the Dashboard menu
             $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $currentUserId, $tool);
             $this->set(compact('sections'));
             
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
             $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+
             if($isAdmin) {
-                $role = 'admin';
+                $roles[] = 'admin';
             }
             else {
-                $role = 'extra';    //User has some sort of extra permissions
+                if($isEditor) {
+                    $roles[] = 'edit';
+                }
+                if($isApprover) {
+                    $roles[] = 'approve';
+                }
             }
-        }
-        else {
-            $role = 'view';
         }
         
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
-            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
-            if(!$isEditor) {
-                throw new ForbiddenException(__('Not an editor for this Choice.'));
+            if(!$isEditor && !$isApprover) {
+                throw new ForbiddenException(__('Not allowed to view the edit/approve options page for this Choice.'));
             }
             
             if(!$isAdmin) {
@@ -109,14 +114,6 @@ class OptionsController extends AppController
                 if(empty($editingInstance) || !$editingInstance['opens']['passed']) {
                     $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
                 }
-            }
-        }
-        
-        //If action is approve, make sure the user is an approver for this Choice
-        else if($action === 'approve') {
-            $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
-            if(!$isApprover) {
-                throw new ForbiddenException(__('Not an approver for this Choice.'));
             }
         }
         //Otherwise view action, but need to work out whether it should be initial view or review
@@ -171,7 +168,7 @@ class OptionsController extends AppController
         $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
         //pr($choice);
 
-        $this->set(compact('action', 'choice', 'role'));
+        $this->set(compact('action', 'choice', 'roles'));
     }
     
     /**

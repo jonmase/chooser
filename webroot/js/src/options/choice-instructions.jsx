@@ -38,12 +38,12 @@ var ChoiceInstructions = React.createClass({
                             {(!instance.opens.passed)?
                                 <div>
                                     This Choice will open at <strong><DateTime value={instance.opens} /></strong>.&nbsp; 
-                                    {(this.props.role === 'admin')?
+                                    {(this.props.roles.indexOf('admin') > -1)?
                                         <span>
                                             As an Administrator, you can view the available options and test the choosing process, but students are not able to see them yet. 
                                         </span>
                                     :
-                                        (this.props.role === 'extra') &&
+                                        (this.props.roles.length > 0) &&
                                             <span>
                                                 You can view the available options below, but students are not able to see them yet. 
                                             </span>
@@ -81,7 +81,7 @@ var ChoiceInstructions = React.createClass({
                             }
                             
                             {/*Show the instructions, deadline and rules*/}
-                            {(instance.opens.passed || this.props.role === 'admin' || this.props.role === 'extra')&&
+                            {(instance.opens.passed || this.props.roles.length > 0)&&
                                 <div className="row">
                                     <div className="col-xs-12 col-md-6">
                                         <div style={{marginRight: '20px'}}>
@@ -108,7 +108,7 @@ var ChoiceInstructions = React.createClass({
                     :
                         <div>
                             This Choice is in 'read-only' mode, as it has not yet been fully configured. You can browse the available options below. Students will not be able to see the options yet.
-                            {/*(this.props.role === 'admin')&&
+                            {/*(this.props.roles.indexOf('admin') > -1)&&
                                 //TODO: Button for admins to go to settings page
                             */}
                         </div>

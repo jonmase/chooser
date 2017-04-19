@@ -11,7 +11,7 @@ $this->assign('title', $choice['name'] . ' - ' . ($action === 'edit'?'Edit ':'')
     var data = {};
     data.action = "<?= $action; ?>";
     data.choice = <?= json_encode($choice); ?>;
-    data.role = "<?= $role; ?>";
+    data.roles = <?= json_encode($roles); ?>;
     <?php if(!empty($sections)): ?>
         data.dashboard = "<?= $this->Url->build(['controller' => 'choices', 'action' => 'dashboard']); ?>";
         data.sections = <?= json_encode($sections); ?>;

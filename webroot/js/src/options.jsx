@@ -23,7 +23,7 @@ ReactDOM.render(
         action={data.action} 
         choice={data.choice} 
         dashboardUrl={data.dashboard?data.dashboard:null} 
-        role={data.role} 
+        roles={data.roles} 
         sections={data.sections?data.sections:null} 
     />, 
     document.getElementById('index')

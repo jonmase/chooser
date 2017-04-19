@@ -804,7 +804,7 @@ var OptionContainer = React.createClass({
         
             if(action === 'view' || action === 'confirmed'){
                 //If instance created and open or user is administrator, show selection basket or change selection buttons
-                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.role === 'admin'))) {
+                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.roles.indexOf('admin') > -1))) {
                     if(action === 'view') {
                         topbarIconRight=
                             <div style={{paddingRight: '10px'}}>
@@ -931,6 +931,7 @@ var OptionContainer = React.createClass({
                         options={this.state.options}
                         optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                         optionsSort={this.state.optionsSort}
+                        roles={this.props.roles}
                     />
                 );
             case 'edit_option': //Edit option page
@@ -957,10 +958,10 @@ var OptionContainer = React.createClass({
                             expanded={this.state.showInstructions}
                             expandChangeHandler={this.handleInstructionsExpandChange}
                             instance={this.state.instance}
-                            role={this.props.role}
+                            roles={this.props.roles}
                             rules={this.state.rules.rules}
                         />
-                        {(this.props.role === 'admin' || this.props.role === 'extra' || this.state.instance.instance.opens.passed) &&
+                        {(this.props.roles.length > 0 || this.state.instance.instance.opens.passed) &&
                             <OptionsTable
                                 action={this.state.action}
                                 choice={this.props.choice}
