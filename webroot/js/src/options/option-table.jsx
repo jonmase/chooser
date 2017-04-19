@@ -86,7 +86,7 @@ var OptionsTable = React.createClass({
         }
     },
     isApprover: function() {
-        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approve') > -1) {
+        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1) {
             return true;
         }
         else {
@@ -94,7 +94,7 @@ var OptionsTable = React.createClass({
         }
     },
     isEditor: function() {
-        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('edit') > -1) {
+        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('editor') > -1) {
             return true;
         }
         else {
@@ -102,7 +102,7 @@ var OptionsTable = React.createClass({
         }
     },
     isEditorAndApprover: function() {
-        if(this.props.roles.indexOf('admin') > -1 || (this.props.roles.indexOf('edit') > -1 && this.props.roles.indexOf('approve') > -1)) {
+        if(this.props.roles.indexOf('admin') > -1 || (this.props.roles.indexOf('editor') > -1 && this.props.roles.indexOf('approver') > -1)) {
             return true;
         }
         else {
@@ -402,7 +402,7 @@ var OptionsTable = React.createClass({
                                                 
                                                 {this.props.action === 'edit'? 
                                                     <UnselectableCell style={actionsColStyles}>
-                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('edit') > -1) &&
+                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('editor') > -1) &&
                                                             <span>
                                                                 <EditButton
                                                                     handleClick={this.props.optionContainerHandlers.edit} 
@@ -442,7 +442,7 @@ var OptionsTable = React.createClass({
                                                                 }
                                                             </span>
                                                         }
-                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approve') > -1) &&
+                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1) &&
                                                             <ApprovalButton
                                                                 handleClick={this.props.optionContainerHandlers.approve} 
                                                                 id={option.id}
