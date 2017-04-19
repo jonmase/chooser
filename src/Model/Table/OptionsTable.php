@@ -92,40 +92,28 @@ class OptionsTable extends Table
         }
     }
     
-    public function getForView($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
-        $conditions = [
-            'ChoicesOptions.choice_id' => $choiceId,
-            'ChoicesOptions.revision_parent' => 0,
-        ];
-        if($publishedOnly) {
-            $conditions['ChoicesOptions.published'] = 1;
+    //public function getOptions($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
+    //public function getOptions($choiceId = null, $viewable = true, $editable = false, $approvable = false, $userId = null) {
+    public function getOptions($choiceId = null, $conditions = []) {
+        //If no choice ID, or all types are specified as false, return empty array
+        if(!$choiceId) {
+            return [];
         }
-        if($approvedOnly) {
-            $conditions['ChoicesOptions.approved'] = 1;
-        }
+        
+        //Add basic conditions - options for this choice that aren't revisions
+        $conditions['ChoicesOptions.choice_id'] = $choiceId;
+        $conditions['ChoicesOptions.revision_parent'] = 0;
+        
+        //pr($conditions); exit;
         
         $optionsQuery = $this->ChoicesOptions->find('all', [
             'conditions' => $conditions,
             'contain' => ['Options'],
             'order' => $this->getSortOrder($choiceId),
         ]);
-                
-        //If $userId is specified and user is not admin, only let them see options they are associated, optionally only those that they can edit
-        $isAdmin = $this->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $userId);
-        if($userId && !$isAdmin) {
-            $optionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId, $editableOnly) {
-                $conditions = ['ChoicesOptionsUsers.user_id' => $userId];
-                if($editableOnly) {
-                    $conditions['ChoicesOptionsUsers.editor'] = true;
-                }
-                
-                return $q->where($conditions);
-            });
-        }
         
         $options = $optionsQuery->toArray();
-        //pr($options); 
-        //exit;
+        
         $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
         foreach($options as &$option) {
             $option = $this->processForView($option, $extraTypes);
@@ -134,9 +122,88 @@ class OptionsTable extends Table
         return $options;
     }
     
+    public function getOptionsConditionsForEditor($choiceId = null, $userId = null) {
+        if(!$choiceId || !$userId) {
+            return false;
+        }
+        
+        //Only let them see options they are editors of
+        $optionsQuery = $this->ChoicesOptions->find('list', [
+            'conditions' => ['ChoicesOptions.choice_id' => $choiceId],
+            'keyField' => 'id',
+            'valueField' => 'id',
+        ]);
+        
+        $optionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($userId) {
+            $conditions = [
+                'ChoicesOptionsUsers.user_id' => $userId,
+                'ChoicesOptionsUsers.editor' => true,
+            ];
+            
+            return $q->where($conditions);
+        });
+        
+        $optionsIds = $optionsQuery->toArray();
+        
+        $optionConditions = [
+            'ChoicesOptions.id IN' => $optionsIds,
+        ];
+        
+        return $optionConditions;
+    }
+    
+    public function getOptionsForEdit($choiceId = null, $currentUserId = null, $isAdmin = false, $isApprover = false, $isEditor = false) {
+        if(!$choiceId || (!$isAdmin && $isApprover && $isEditor)) {
+            return [];
+        }
+        
+        //Admins can always view all of the options
+        if($isAdmin) {
+            $conditions = [];
+        }
+        //Get the appropriate conditions for the user's roles
+        else {
+            $conditions['OR'] = [];
+            if($isApprover) {
+                //Approvable options must be published and not deleted
+                $conditions['OR'][] = [
+                    'ChoicesOptions.published' => 1,
+                    'ChoicesOptions.deleted' => 0,
+                ];
+            }
+            if($isEditor) {
+                if($editorConditions = $this->getOptionsConditionsForEditor($choiceId, $currentUserId)) {
+                    $conditions['OR'][] = $editorConditions;
+                }
+            }
+        }
+            
+        $options = $this->getOptions($choiceId, $conditions);
+        
+        return $options;
+    }
+    
+    public function getOptionsForView($choiceId = null) {
+        if(!$choiceId) {
+            return [];
+        }
+        
+        //Viewable options must be published and approved, and not deleted
+        $conditions = [
+            'ChoicesOptions.published' => 1,
+            'ChoicesOptions.approved' => 1,
+            'ChoicesOptions.deleted' => 0,
+        ];
+        
+        $options = $this->getOptions($choiceId, $conditions);
+        
+        return $options;
+    }
+        
     public function getChoicesOptionsTableProperties() {
         return $this->_choicesOptionsTableProperties;
     }
+
     public function getOptionsTableProperties() {
         return $this->_optionsTableProperties;
     }

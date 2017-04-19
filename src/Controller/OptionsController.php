@@ -25,36 +25,26 @@ class OptionsController extends AppController
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        //If action is edit, could be 
+        //If action is edit...
         if($action === 'edit') {
-            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
-            if(!$isEditor) {
-                throw new ForbiddenException(__('Not an editor for this Choice.'));
-            }
-            
-            //Get the options for which this user is an editor
-            $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
-        }
-        
-        //If action is approve, make sure the user is an approver for this Choice
-        /*else if($action === 'approve') {
+            $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
             $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
-            if(!$isApprover) {
-                throw new ForbiddenException(__('Not an approver for this Choice.'));
+            $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+            
+            if(!$isAdmin && !$isApprover && !$isEditor) {
+                throw new ForbiddenException(__('Not an editor/approver for this Choice.'));
             }
             
-            //Get the options for which this user is an approver
-            $options = $this->Options->getForView($choiceId, true, false);
-        }*/
-        
+            $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
+        }
         else {
             $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
             if(!$isViewer) {
                 throw new ForbiddenException(__('Not allowed to view this Choice.'));
             }
 
-            //Get all of the published and approved options
-            $options = $this->Options->getForView($choiceId, true, true);
+            //Get all of the viewable options
+            $options = $this->Options->getOptionsForView($choiceId);
         }
         
         $optionIndexesById = $this->Options->getOptionIndexesById($options);
@@ -93,7 +83,7 @@ class OptionsController extends AppController
 
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
-            if(!$isEditor && !$isApprover) {
+            if(!$isAdmin && !$isApprover && !$isEditor) {
                 throw new ForbiddenException(__('Not allowed to view the edit/approve options page for this Choice.'));
             }
             
@@ -178,9 +168,11 @@ class OptionsController extends AppController
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
-        if(empty($isChoiceEditor)) {
-            throw new ForbiddenException(__('Not permitted to change option statuses for this Choice.'));
+        $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+        $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
+        $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        if(!$isAdmin && !$isApprover && !$isEditor) {
+            throw new ForbiddenException(__('Not allowed to change option statuses for this Choice.'));
         }
         
         //Make sure an option has been specified
@@ -242,7 +234,7 @@ class OptionsController extends AppController
                 
                 $this->set('response', 'Option ' . $actionVerb);
                 
-                $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
+                $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
                 $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
                 $this->set(compact('options', 'optionIndexesById'));
@@ -270,8 +262,9 @@ class OptionsController extends AppController
         $currentUserId = $this->Auth->user('id');
         $tool = $this->SessionData->getLtiTool();
         
-        $isChoiceEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
-        if(empty($isChoiceEditor)) {
+        $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
+        if(empty($isEditor)) {
             throw new ForbiddenException(__('Not permitted to create/edit options for this Choice.'));
         }
 
@@ -289,8 +282,7 @@ class OptionsController extends AppController
             unset($this->request->data['choices_option_id']);
             
             //If user is not an admin, they must be an editor on the choicesOption
-            $isChoiceAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
-            if(!$isChoiceAdmin) {
+            if(!$isAdmin) {
                 $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($currentUserId) {
                     return $q->where([
                         'ChoicesOptionsUsers.user_id' => $currentUserId,
@@ -324,7 +316,7 @@ class OptionsController extends AppController
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');
             
-            $options = $this->Options->getForView($choiceId, false, false, true, $currentUserId);
+            $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, false, $isEditor);
             $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
             $this->set(compact('options', 'optionIndexesById'));
