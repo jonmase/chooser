@@ -78,8 +78,9 @@ class OptionsController extends AppController
         $tool = $this->SessionData->getLtiTool();
         
         //Does the user have additional roles? I.e., should the dashboard menu be shown?
-        $isMoreThanViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isMoreThanViewer($choiceId, $currentUserId, $tool);
-        $roles = [];
+        $roles = $this->Options->ChoicesOptions->Choices->ChoicesUsers->getUserRoles($choiceId, $currentUserId, $tool);
+        
+        $isMoreThanViewer = !empty($roles);
         if($isMoreThanViewer) {
             //Get the sections to display in the Dashboard menu
             $sections = $this->Options->ChoicesOptions->Choices->getDashboardSectionsForUser($choiceId, $currentUserId, $tool);
@@ -88,20 +89,8 @@ class OptionsController extends AppController
             $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
             $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
             $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
-
-            if($isAdmin) {
-                $roles[] = 'admin';
-            }
-            else {
-                if($isEditor) {
-                    $roles[] = 'edit';
-                }
-                if($isApprover) {
-                    $roles[] = 'approve';
-                }
-            }
         }
-        
+
         //If action is edit, make sure the user is an editor for this Choice
         if($action === 'edit') {
             if(!$isEditor && !$isApprover) {

@@ -443,7 +443,7 @@ class ChoicesUsersTable extends Table
         
         $userRoles = $this->getUserRoles($choiceId, $userId, $ltiTool);
 
-        //If user is admin then they have that role
+        //If user is admin then they have the necessary role
         if(in_array('admin', $userRoles)) {
             return true;
         }
