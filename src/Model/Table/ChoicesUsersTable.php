@@ -22,11 +22,11 @@ class ChoicesUsersTable extends Table
             'description' => 'can create and edit their own options, and edit their profile',
             //'description' => 'can create and edit their own options, edit their profile and see who has chosen their options',
         ],
-        /*[
+        [
             'id' => 'approver', 
             'title' => 'Approver', 
             'description' => 'only relevant in Choices that include an approval step, Approvers can view and approve or reject options that have been published by editors',
-        ],*/
+        ],
         [
             'id' => 'reviewer', 
             'title' => 'Reviewer', 

@@ -153,7 +153,7 @@ class OptionsTable extends Table
     }
     
     public function getOptionsForEdit($choiceId = null, $currentUserId = null, $isAdmin = false, $isApprover = false, $isEditor = false) {
-        if(!$choiceId || (!$isAdmin && $isApprover && $isEditor)) {
+        if(!$choiceId || (!$isAdmin && !$isApprover && !$isEditor)) {
             return [];
         }
         
