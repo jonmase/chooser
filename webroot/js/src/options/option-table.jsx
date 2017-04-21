@@ -109,6 +109,14 @@ var OptionsTable = React.createClass({
             return false;
         }
     },
+    isEditorOrApprover: function() {
+        if(this.isEditor() || this.isApprover()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
     
     changeStatus: function(action, optionId, status) {
         console.log(optionId + ': ' + (!status && 'un') + action);
@@ -148,7 +156,14 @@ var OptionsTable = React.createClass({
                     var subtitle = 'Create, edit';
                     if(this.isApprover()) {
                         subtitle += ', manage and approve';
-                        var actionsColStyles = styles.adminActionsTableRowColumn;
+                        //If this user has one or more editable options, make the actions column wide enough for edit and approve actions
+                        if(this.props.options.editableOptionsCount > 0 || this.isAdmin()) {
+                            var actionsColStyles = styles.adminActionsTableRowColumn;
+                        }
+                        //Otherwise, actions column only need to be wide enough for approve action
+                        else {
+                            var actionsColStyles = styles.approverActionsTableRowColumn;
+                        }
                     }
                     else {
                         subtitle += ' and manage';
@@ -158,7 +173,7 @@ var OptionsTable = React.createClass({
                 }
                 else if(this.isApprover()) {
                     var subtitle = 'View and approve options';
-                    var actionsColStyles = styles.approveActionsTableRowColumn;
+                    var actionsColStyles = styles.approverActionsTableRowColumn;
                 }
                 enableSelection = false;
                 break;
@@ -325,10 +340,12 @@ var OptionsTable = React.createClass({
                                                 />
                                             );
                                         }, this)}
-                                        {(this.props.action === 'edit')?
+                                        {this.props.action === 'edit' &&
                                             <TableHeaderColumn style={styles.publishedTableRowColumn}>Published</TableHeaderColumn>
-                                        :""}
-                                        {/*(this.props.action === 'approve' || this.props.action === 'edit')?<TableHeaderColumn style={styles.tableHeaderColumn}>Approved</TableHeaderColumn>:""*/}
+                                        }
+                                        {this.props.action === 'edit' &&
+                                            <TableHeaderColumn style={styles.publishedTableRowColumn}>Approved</TableHeaderColumn>
+                                        }
                                         {showExpandButton && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         }
@@ -378,7 +395,7 @@ var OptionsTable = React.createClass({
                                                     );
                                                 }, this)}
                                                 
-                                                {(this.props.action === 'edit')?
+                                                {this.props.action === 'edit' &&
                                                     <TableRowColumn style={styles.publishedTableRowColumn}>
                                                         {
                                                             option.published?
@@ -387,7 +404,21 @@ var OptionsTable = React.createClass({
                                                                 <FontIcon className="material-icons">close</FontIcon>
                                                         }
                                                     </TableRowColumn>
-                                                :""}
+                                                }
+                                                
+                                                {this.props.action === 'edit' &&
+                                                    <TableRowColumn style={styles.publishedTableRowColumn}>
+                                                        {
+                                                            option.approved?
+                                                                <FontIcon className="material-icons">check</FontIcon>
+                                                            :
+                                                                (option.approved === null)?
+                                                                    <FontIcon className="material-icons">hourglass_empty</FontIcon>
+                                                                :
+                                                                    <FontIcon className="material-icons">close</FontIcon>
+                                                        }
+                                                    </TableRowColumn>
+                                                }
                                                 
                                                 {showExpandButton && 
                                                     <UnselectableCell style={styles.actionsTableRowColumn}>
@@ -402,7 +433,7 @@ var OptionsTable = React.createClass({
                                                 
                                                 {this.props.action === 'edit'? 
                                                     <UnselectableCell style={actionsColStyles}>
-                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('editor') > -1) &&
+                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit)) &&
                                                             <span>
                                                                 <EditButton
                                                                     handleClick={this.props.optionContainerHandlers.edit} 
@@ -442,7 +473,7 @@ var OptionsTable = React.createClass({
                                                                 }
                                                             </span>
                                                         }
-                                                        {(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1) &&
+                                                        {this.isApprover() &&
                                                             <ApprovalButton
                                                                 handleClick={this.props.optionContainerHandlers.approve} 
                                                                 id={option.id}

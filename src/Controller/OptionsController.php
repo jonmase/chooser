@@ -35,7 +35,7 @@ class OptionsController extends AppController
                 throw new ForbiddenException(__('Not an editor/approver for this Choice.'));
             }
             
-            $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
+            list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
         }
         else {
             $isViewer = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
@@ -49,8 +49,8 @@ class OptionsController extends AppController
         
         $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
-        $this->set(compact('options', 'optionIndexesById'));
-        $this->set('_serialize', ['options', 'optionIndexesById']);
+        $this->set(compact('options', 'optionIndexesById', 'editableOptionsCount'));
+        $this->set('_serialize', ['options', 'optionIndexesById', 'editableOptionsCount']);
     }
     
 
@@ -234,10 +234,10 @@ class OptionsController extends AppController
                 
                 $this->set('response', 'Option ' . $actionVerb);
                 
-                $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
+                list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
                 $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
-                $this->set(compact('options', 'optionIndexesById'));
+                $this->set(compact('options', 'optionIndexesById', 'editableOptionsCount'));
             }
         }
         else {
@@ -316,10 +316,10 @@ class OptionsController extends AppController
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');
             
-            $options = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, false, $isEditor);
+            list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, false, $isEditor);
             $optionIndexesById = $this->Options->getOptionIndexesById($options);
 
-            $this->set(compact('options', 'optionIndexesById'));
+            $this->set(compact('options', 'optionIndexesById', 'editableOptionsCount'));
         } 
         else {
             throw new InternalErrorException(__('Problem with saving option'));

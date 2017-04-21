@@ -94,7 +94,7 @@ class OptionsTable extends Table
     
     //public function getOptions($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
     //public function getOptions($choiceId = null, $viewable = true, $editable = false, $approvable = false, $userId = null) {
-    public function getOptions($choiceId = null, $conditions = []) {
+    public function getOptions($choiceId = null, $conditions = [], $editableOptions = false) {
         //If no choice ID, or all types are specified as false, return empty array
         if(!$choiceId) {
             return [];
@@ -115,14 +115,21 @@ class OptionsTable extends Table
         $options = $optionsQuery->toArray();
         
         $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        $editableOptionsCount = 0;
         foreach($options as &$option) {
             $option = $this->processForView($option, $extraTypes);
+            if($editableOptions) {
+                if(in_array($option['id'], $editableOptions)) {
+                    $option['can_edit'] = true;
+                    $editableOptionsCount++;
+                }
+            }
         }
         
-        return $options;
+        return [$options, $editableOptionsCount];
     }
     
-    public function getOptionsConditionsForEditor($choiceId = null, $userId = null) {
+    public function getEditableOptions($choiceId = null, $userId = null) {
         if(!$choiceId || !$userId) {
             return false;
         }
@@ -145,17 +152,15 @@ class OptionsTable extends Table
         
         $optionsIds = $optionsQuery->toArray();
         
-        $optionConditions = [
-            'ChoicesOptions.id IN' => $optionsIds,
-        ];
-        
-        return $optionConditions;
+        return $optionsIds;
     }
     
     public function getOptionsForEdit($choiceId = null, $currentUserId = null, $isAdmin = false, $isApprover = false, $isEditor = false) {
         if(!$choiceId || (!$isAdmin && !$isApprover && !$isEditor)) {
             return [];
         }
+        
+        $editableOptions = null;
         
         //Admins can always view all of the options
         if($isAdmin) {
@@ -172,15 +177,16 @@ class OptionsTable extends Table
                 ];
             }
             if($isEditor) {
-                if($editorConditions = $this->getOptionsConditionsForEditor($choiceId, $currentUserId)) {
-                    $conditions['OR'][] = $editorConditions;
+                $editableOptions = $this->getEditableOptions($choiceId, $currentUserId);
+                if(!empty($editableOptions)) {
+                    $conditions['OR']['ChoicesOptions.id IN'] = $editableOptions;
                 }
             }
         }
             
-        $options = $this->getOptions($choiceId, $conditions);
+        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions, $editableOptions);
         
-        return $options;
+        return [$options, $editableOptionsCount];
     }
     
     public function getOptionsForView($choiceId = null) {
@@ -195,7 +201,7 @@ class OptionsTable extends Table
             'ChoicesOptions.deleted' => 0,
         ];
         
-        $options = $this->getOptions($choiceId, $conditions);
+        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions);
         
         return $options;
     }

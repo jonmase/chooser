@@ -105,9 +105,10 @@ var OptionContainer = React.createClass({
                 this.setState({
                     initialOptionIndexesById: data.optionIndexesById,
                     options: {
-                        options: data.options,
+                        editableOptionsCount: data.editableOptionsCount,
                         indexesById: data.optionIndexesById,
                         loaded: true,
+                        options: data.options,
                     },
                 });
             }.bind(this),
