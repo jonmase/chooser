@@ -152,12 +152,15 @@ var OptionsTable = React.createClass({
         switch(this.props.action) {
             case 'edit':
                 var title = 'Options';
-                if(this.isEditor()) {
+                var isAdmin = this.isAdmin();
+                var isApprover = this.isApprover();
+                var isEditor = this.isEditor();
+                if(isEditor) {
                     var subtitle = 'Create, edit';
-                    if(this.isApprover()) {
+                    if(isApprover) {
                         subtitle += ', manage and approve';
-                        //If this user has one or more editable options, make the actions column wide enough for edit and approve actions
-                        if(this.props.options.editableOptionsCount > 0 || this.isAdmin()) {
+                        //If this user has one or more editable options and editing is open, make the actions column wide enough for edit and approve actions
+                        if(isAdmin || (this.props.options.editableOptionsCount > 0 && !this.props.instance.editingInstance.deadline.passed)) {
                             var actionsColStyles = styles.adminActionsTableRowColumn;
                         }
                         //Otherwise, actions column only need to be wide enough for approve action
@@ -170,8 +173,12 @@ var OptionsTable = React.createClass({
                         var actionsColStyles = styles.editorActionsTableRowColumn;
                     }
                     subtitle += ' options';
+                    
+                    if(isApprover && !isAdmin && this.props.instance.editingInstance.deadline.passed) {
+                        subtitle += ' (Note that the editing deadline has passed, so you can only approve options)';
+                    }
                 }
-                else if(this.isApprover()) {
+                else if(isApprover) {
                     var subtitle = 'View and approve options';
                     var actionsColStyles = styles.approverActionsTableRowColumn;
                 }
@@ -435,7 +442,7 @@ var OptionsTable = React.createClass({
                                                 
                                                 {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
                                                     <UnselectableCell style={actionsColStyles}>
-                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit)) &&
+                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit && !this.props.instance.editingInstance.deadline.passed)) &&
                                                             <span>
                                                                 <EditButton
                                                                     handleClick={this.props.optionContainerHandlers.edit} 

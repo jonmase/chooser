@@ -39,26 +39,26 @@ var optionEditingDefaults = {
 var OptionContainer = React.createClass({
     loadInstanceFromServer: function() {
         if(this.props.action === 'edit') {
-            this.setState({
-                instance: {
-                    loaded: true,
-                }
-            });
+            var url = '../editing-instances/get-active.json';
         }
         else {
             var url = '../choosing-instances/get-active.json';
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                cache: false,
-                success: function(data) {
-                    var stateData = {
-                        instance: {
-                            instance: data.choosingInstance,
-                            loaded: true,
-                        }
-                    };
+        }
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                var stateData = {};
                 
+                if(this.props.action === 'edit') {
+                    var choosingInstance = [];
+                    var editingInstance = data.editingInstance;
+                }
+                else {
+                    var choosingInstance = data.choosingInstance;
+                    var editingInstance = [];
+                    
                     if(data.choosingInstance.id) {
                         stateData.favourites = data.favourites;
                         stateData.optionsSelected = data.optionsSelected;
@@ -74,7 +74,6 @@ var OptionContainer = React.createClass({
                             selection: data.selection,
                         };
                         
-                        
                         //If the user has selected some options, do not show the instructions
                         if(data.selection.id && !data.choosingInstance.deadline.passed) {
                             stateData.showInstructions = false;
@@ -85,14 +84,20 @@ var OptionContainer = React.createClass({
                             stateData.confirmedSelection = data.selection;
                         }
                     }
-                    
-                    this.setState(stateData);
-                }.bind(this),
-                    error: function(xhr, status, err) {
-                    console.error(url, status, err.toString());
-                }.bind(this)
-            });
-        }
+                }
+                
+                stateData.instance = {
+                    editingInstance: editingInstance,
+                    instance: choosingInstance,
+                    loaded: true,
+                };
+            
+                this.setState(stateData);
+            }.bind(this),
+                error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+            }.bind(this)
+        });
     },
     loadOptionsFromServer: function() {
         var url = 'get-options/' + this.props.action;
@@ -126,9 +131,14 @@ var OptionContainer = React.createClass({
             canConfirm: true,
             confirmDialogOpen: false,
             confirmedSelection: [],
+            editingInstance: {
+                instance: [],
+                loaded: false,
+            },
             favourites: [],
             initialOptionIndexesById: [],
             instance: {
+                editingInstance: [],
                 instance: [],
                 loaded: false,
             },
