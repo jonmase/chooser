@@ -156,8 +156,9 @@ class OptionsTable extends Table
     }
     
     public function getOptionsForEdit($choiceId = null, $currentUserId = null, $isAdmin = false, $isApprover = false, $isEditor = false) {
+        $blankReturn = [[],0];
         if(!$choiceId || (!$isAdmin && !$isApprover && !$isEditor)) {
-            return [];
+            return $blankReturn;
         }
         
         $editableOptions = null;
@@ -178,8 +179,13 @@ class OptionsTable extends Table
             }
             if($isEditor) {
                 $editableOptions = $this->getEditableOptions($choiceId, $currentUserId);
+                //If there are editable options, add the ids to the OR condition
                 if(!empty($editableOptions)) {
                     $conditions['OR']['ChoicesOptions.id IN'] = $editableOptions;
+                }
+                //Otherwise, if user is not an approver, they shouldn't be able to see any options on the edit page
+                else if(!$isApprover) {
+                    return $blankReturn;
                 }
             }
         }
