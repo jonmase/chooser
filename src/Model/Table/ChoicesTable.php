@@ -323,6 +323,12 @@ class ChoicesTable extends Table
                         $optionsEditButtonEnabled = true;
                     }
                     
+                    //Change the button label to just 'Approve' if editing is closed
+                    if(!$isAdmin && $activeEditingInstance->deadline['passed']) {
+                        $optionsEditButtonLabel = 'Approve';
+                        $optionsEditButtonMenuLabel = 'Approve Options';
+                    }
+                    
                     //Show the deadline, if there is one
                     if(isset($activeEditingInstance->approval_deadline['formatted'])) {
                         $optionsDescription .= '<br /><strong>Approval Deadline: </strong> ' . $activeEditingInstance->approval_deadline['formatted'];

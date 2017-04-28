@@ -88,9 +88,9 @@ class OptionsController extends AppController
             }
             
             if(!$isAdmin) {
-                //If not admin, check whether there is an editing instance and editing has opened. If not, redirect to dashboard
+                //If not admin, check whether there is an editing instance and editing (or approving, for approvers) is open. If not, redirect to dashboard
                 $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
-                if(empty($editingInstance) || !$editingInstance['opens']['passed']) {
+                if(empty($editingInstance) || !$editingInstance['opens']['passed'] || ($editingInstance['deadline']['passed'] && (!$isApprover || $editingInstance['approval_deadline']['passed']))) {
                     $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
                 }
             }
