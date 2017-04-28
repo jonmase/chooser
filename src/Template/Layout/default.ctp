@@ -37,6 +37,7 @@
         <script src="js/node_modules/html5shiv/dist/html5shiv.min.js"></script>
     <![endif]-->
     <?php echo $this->Html->script('node_modules/jquery/dist/jquery.min'); ?>
+    <?php echo $this->Html->script('polyfills'); ?>
     <script>
       window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
       window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';

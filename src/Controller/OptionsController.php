@@ -235,9 +235,9 @@ class OptionsController extends AppController
                 $this->set('response', 'Option ' . $actionVerb);
                 
                 list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
-                $optionIndexesById = $this->Options->getOptionIndexesById($options);
+                //$optionIndexesById = $this->Options->getOptionIndexesById($options);
 
-                $this->set(compact('options', 'optionIndexesById', 'editableOptionsCount'));
+                $this->set(compact('options', 'editableOptionsCount'));
             }
         }
         else {
@@ -317,9 +317,9 @@ class OptionsController extends AppController
             $this->set('response', 'Option saved');
             
             list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, false, $isEditor);
-            $optionIndexesById = $this->Options->getOptionIndexesById($options);
+            //$optionIndexesById = $this->Options->getOptionIndexesById($options);
 
-            $this->set(compact('options', 'optionIndexesById', 'editableOptionsCount'));
+            $this->set(compact('options', 'editableOptionsCount'));
         } 
         else {
             throw new InternalErrorException(__('Problem with saving option'));

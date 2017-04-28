@@ -167,7 +167,7 @@ var OptionsTable = React.createClass({
                     }
                     else {
                         subtitle += ' and manage';
-                        var actionsColStyles = styles.editActionsTableRowColumn;
+                        var actionsColStyles = styles.editorActionsTableRowColumn;
                     }
                     subtitle += ' options';
                 }
@@ -302,12 +302,14 @@ var OptionsTable = React.createClass({
                                     displaySelectAll={enableSelection}
                                 >
                                     <TableRow>
-                                        {/*(this.props.action === 'view' && enableSelection)?<TableHeaderColumn style={styles.favouriteTableRowColumn}>
-                                            <FavouriteButton
-                                                handlers={this.props.optionContainerHandlers} 
-                                                option="all"
-                                            />
-                                        </TableHeaderColumn>:""*/}
+                                        {/*(this.props.action === 'view' && enableSelection) &&
+                                            <TableHeaderColumn style={styles.favouriteTableRowColumn}>
+                                                <FavouriteButton
+                                                    handlers={this.props.optionContainerHandlers} 
+                                                    option="all"
+                                                />
+                                            </TableHeaderColumn>
+                                        */}
                                         {defaultFields.map(function(field) {
                                             return (
                                                 <SortableTableHeaderColumn
@@ -349,9 +351,9 @@ var OptionsTable = React.createClass({
                                         {showExpandButton && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         }
-                                        {this.props.action === 'edit'? 
+                                        {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
                                             <TableHeaderColumn style={actionsColStyles}></TableHeaderColumn>
-                                        :""}
+                                        }
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody 
@@ -364,7 +366,7 @@ var OptionsTable = React.createClass({
                                                 key={option.id} 
                                                 selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
                                             >
-                                                {/*(this.props.action === 'view' && enableSelection)?
+                                                {/*(this.props.action === 'view' && enableSelection) &&
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteButton
                                                             handler={this.props.optionContainerHandlers.favourite} 
@@ -372,7 +374,7 @@ var OptionsTable = React.createClass({
                                                             favourited={this.props.favourites.indexOf(option.id) > -1}
                                                         />
                                                     </UnselectableCell>
-                                                :""*/}
+                                                */}
                                                 
                                                 {defaultFields.map(function(field) {
                                                     return (
@@ -431,7 +433,7 @@ var OptionsTable = React.createClass({
                                                     </UnselectableCell>
                                                 }
                                                 
-                                                {this.props.action === 'edit'? 
+                                                {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
                                                     <UnselectableCell style={actionsColStyles}>
                                                         {(this.isAdmin() || (this.isEditor() && option.can_edit)) &&
                                                             <span>
@@ -482,7 +484,7 @@ var OptionsTable = React.createClass({
                                                             />
                                                         }
                                                     </UnselectableCell>
-                                                :""}
+                                                }
                                             </TableRow>
                                         );
                                     }, this)}

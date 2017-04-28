@@ -323,6 +323,7 @@ var OptionContainer = React.createClass({
             action: 'edit',
             optionEditing: optionEditingDefaults,
             options: {
+                editableOptionsCount: returnedData.editableOptionsCount,
                 options: sortedOptions,
                 indexesById: this.props.updateIndexesByIdHelper(sortedOptions),
                 loaded: true,

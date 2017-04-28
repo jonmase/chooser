@@ -232,6 +232,7 @@ class ChoicesTable extends Table
         }
         
         $isAdmin = in_array('admin', $userRoles);
+        $isApprover = $isAdmin || in_array('approver', $userRoles);
 
         
         //Work out if there is an active editing instance
@@ -240,8 +241,10 @@ class ChoicesTable extends Table
         //Set the labels for the editing settings, the description for Options and whether the options buttons are disabled
         //$optionsDescription = 'View and/or edit the options that will be made available to students.';
         $optionsDescription = '';
-        $optionsEditButtonEnabled = false;
         $optionsViewButtonEnabled = false;
+        $optionsEditButtonEnabled = false;
+        $optionsEditButtonLabel = 'Edit';
+        $optionsEditButtonMenuLabel = 'Edit Options';
         
         //If editing instance has not been set up yet
         if(empty($activeEditingInstance)) {
@@ -254,14 +257,26 @@ class ChoicesTable extends Table
                 $optionsViewButtonEnabled = true;
             }
             else {
-                $optionsDescription = 'Option editing is currently unavailable, as an administrator has not set it up yet';
+                $optionsDescription = 'Option editing';
+                if($isApprover) {
+                    $optionsDescription .= '/approving';
+                }
+                $optionsDescription .= ' is currently unavailable, as an administrator has not set it up yet';
             }
         }
         //Editing instance has been set up
         else {
             $editingSettingsViewLabel = 'Editing Settings';
             
-            //If the deadline has not passed yet...
+            //If approval required and user is admin or approver, change button labels
+            if($activeEditingInstance->approval_required) {
+                if($isApprover) {
+                    $optionsEditButtonLabel = 'Edit/Approve';
+                    $optionsEditButtonMenuLabel = 'Edit/Approve Options';
+                }
+            }
+            
+            //If the editing deadline has not passed yet...
             if(!$activeEditingInstance->deadline['passed']) {
                 //If it has not opened yet...
                 if(!$activeEditingInstance->opens['passed']) {
@@ -284,9 +299,9 @@ class ChoicesTable extends Table
                 //Show the deadline
                 $optionsDescription .= '<strong>Editing Deadline: </strong> ' . $activeEditingInstance->deadline['formatted'];
             }
-            //If deadline has passed
+            //If editing deadline has passed
             else {
-                $optionsDescription .= 'The deadline for editing options has now passed';
+                $optionsDescription .= 'The editing deadline has passed';
                 $optionsViewButtonEnabled = true;   //Options can still be viewed
                 
                 if(!$isAdmin) {
@@ -297,6 +312,35 @@ class ChoicesTable extends Table
                     //Admins can still edit options
                     $optionsEditButtonEnabled = true;
                     $optionsDescription .= ', so Editors will no longer be able to create/edit options';
+                }
+            }
+            
+            //If the approval deadline has not passed yet...
+            if($isApprover) {
+                if(!$activeEditingInstance->approval_deadline['passed']) {
+                    //Ensure edit/approve button is enabled if admin, or if editing is open
+                    if($isAdmin || $activeEditingInstance->opens['passed']) {
+                        $optionsEditButtonEnabled = true;
+                    }
+                    
+                    //Show the deadline, if there is one
+                    if(isset($activeEditingInstance->approval_deadline['formatted'])) {
+                        $optionsDescription .= '<br /><strong>Approval Deadline: </strong> ' . $activeEditingInstance->approval_deadline['formatted'];
+                    }
+                }
+                //If approval deadline has passed
+                else {
+                    $optionsDescription .= '<br />The approval deadline has passed';
+                    
+                    if(!$isAdmin) {
+                        //If not admin, disable edit/approve button, but still allow to view options
+                        $optionsEditButtonEnabled = false;
+                    }
+                    else {
+                        //Admins can still edit/approve options
+                        $optionsEditButtonEnabled = true;
+                        $optionsDescription .= ', so Approvers will no longer be able to approve options';
+                    }
                 }
             }
         }
@@ -384,8 +428,8 @@ class ChoicesTable extends Table
                     [
                         'disabled' => !$optionsEditButtonEnabled,
                         'icon' => 'edit',
-                        'label' => 'Edit',
-                        'menuLabel' => 'Edit Options',
+                        'label' => $optionsEditButtonLabel,
+                        'menuLabel' => $optionsEditButtonMenuLabel,
                         'url' => Router::url(['controller' => 'options', 'action' => 'edit']),
                         'roles' => ['admin', 'editor'],
                     ],
