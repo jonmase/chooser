@@ -315,13 +315,8 @@ class OptionsTable extends Table
 
     public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null) {
         //Set up the basic choicesOption data
-        //TODO: should we only add bits of this when editing? 
         $choicesOptionData = [
             'choice_id' => $choiceId,
-            'published' => 1,  //Publish everything for now. TODO: sort this out
-            'published_date' => Time::now(),
-            'publisher' => $userId,
-            'approved' => 1,  //Approve everything for now. TODO: sort this out
             'allocations_flag' => 0,
             'allocations_hidden' => 0,
             'revision_parent' => 0,
@@ -383,6 +378,25 @@ class OptionsTable extends Table
         }
 
         return $choicesOption;
+    }
+    
+    public function processOriginalForSave($originalChoicesOption = null) {
+        if(!$originalChoicesOption) {
+            return null;
+        }
+        
+        unset($originalChoicesOption->_matchingData);   //Unset the matching data, this was only for checking user permissions
+        
+        $originalChoicesOption = $originalChoicesOption->toArray(); //Convert the data to an array 
+        
+        //Set the revision parents for the choicesOption and option records
+        $originalChoicesOption['revision_parent'] = $originalChoicesOption['id'];
+        $originalChoicesOption['option']['revision_parent'] = $originalChoicesOption['option']['id'];
+        
+        //Unset the IDs for the choicesOption and option records
+        unset($originalChoicesOption['id'], $originalChoicesOption['option']['id']);
+        
+        return $this->ChoicesOptions->newEntity($originalChoicesOption);
     }
     
     public function processForView($option, $extraTypes = null, $choiceId = null) {

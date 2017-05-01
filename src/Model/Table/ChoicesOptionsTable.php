@@ -113,10 +113,12 @@ class ChoicesOptionsTable extends Table
             ->integer('publisher')
             ->allowEmpty('publisher');
 
+        /*
+        //Do not require approved, as will be null when no approval decision has been made
         $validator
             ->boolean('approved')
             ->requirePresence('approved', 'create')
-            ->notEmpty('approved');
+            ->notEmpty('approved');*/
 
         $validator
             ->dateTime('approved_date')

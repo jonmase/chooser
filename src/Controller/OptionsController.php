@@ -299,11 +299,15 @@ class OptionsController extends AppController
         }
             
         //pr($this->request->data);
-        $originalChoicesOption = null;
+        $choicesOptionsToSave = [];
+        
+        //If a choices_option_id has been specified, find the option that is being edited
         if(!empty($this->request->data['choices_option_id'])) {
+            //Get the option from its choices_option_id,  ensuring the choicesOption record is for this choice
             $choicesOptionsQuery = $this->Options->ChoicesOptions->find('all', [
                 'conditions' => [
                     'ChoicesOptions.id' => $this->request->data['choices_option_id'],
+                    'ChoicesOptions.choice_id' => $choiceId,
                 ],
                 'contain' => [
                     'Options',
@@ -311,8 +315,14 @@ class OptionsController extends AppController
             ]);
             unset($this->request->data['choices_option_id']);
             
+            //If there is no result at this point, there is no matching choicesOption record
+            if($choicesOptionsQuery->isEmpty()) {
+                throw new ForbiddenException(__('No option for this Choice matching this ID.'));
+            }
+            
             //If user is not an admin, they must be an editor on the choicesOption
             if(!$isAdmin) {
+                //Only get records with a choicesOptionsUsers record for this user, with editor permissions
                 $choicesOptionsQuery->matching('ChoicesOptionsUsers', function ($q) use ($currentUserId) {
                     return $q->where([
                         'ChoicesOptionsUsers.user_id' => $currentUserId,
@@ -320,34 +330,27 @@ class OptionsController extends AppController
                     ]);
                 });
                 
-                unset($originalChoicesOption->_matchingData);
-                //pr($originalChoicesOption);
             }
             
-            $originalChoicesOption = $choicesOptionsQuery->first();
-            if(empty($originalChoicesOption)) {
+            //If there is no result at this point, the user does not have edit rights
+            if($choicesOptionsQuery->isEmpty()) {
                 throw new ForbiddenException(__('Not permitted to edit this option.'));
             }
+            else {
+                $originalChoicesOption = $choicesOptionsQuery->first(); //Get the first result - will only ever be one
+                $choicesOptionsToSave[] = $this->Options->processOriginalForSave($originalChoicesOption);
+            }
         }
-        $updatedChoicesOption = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption);
-        $choicesOptions = [$updatedChoicesOption];
         
-        if($originalChoicesOption) {
-            $originalChoicesOption = $originalChoicesOption->toArray();
-            $originalChoicesOption['revision_parent'] = $originalChoicesOption['id'];
-            $originalChoicesOption['option']['revision_parent'] = $originalChoicesOption['option']['id'];
-            unset($originalChoicesOption['id'], $originalChoicesOption['option']['id']);
-            $choicesOptions[] = $this->Options->ChoicesOptions->newEntity($originalChoicesOption);
-        }
+        $choicesOptionsToSave[] = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption);
 
-        pr($choicesOptions);
+        pr($choicesOptionsToSave);
         exit;
    
-        if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
+        if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
             $this->set('response', 'Option saved');
             
             list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, false, $isEditor);
-            //$optionIndexesById = $this->Options->getOptionIndexesById($options);
 
             $this->set(compact('options', 'editableOptionsCount'));
         } 
