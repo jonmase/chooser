@@ -90,7 +90,10 @@ class OptionsController extends AppController
             if(!$isAdmin) {
                 //If not admin, check whether there is an editing instance and editing (or approving, for approvers) is open. If not, redirect to dashboard
                 $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
-                if(empty($editingInstance) || !$editingInstance['opens']['passed'] || ($editingInstance['deadline']['passed'] && (!$isApprover || $editingInstance['approval_deadline']['passed']))) {
+                //Redirect if:
+                //No instance
+                //Editing closed and either approval closed or not an approver
+                if(empty($editingInstance) || (!$editingInstance['editing_open'] && (!$isApprover || !$editingInstance['approval_open']))) {
                     $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
                 }
             }
@@ -171,13 +174,31 @@ class OptionsController extends AppController
         $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
         $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
         $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
-        if(!$isAdmin && !$isApprover && !$isEditor) {
-            throw new ForbiddenException(__('Not allowed to change option statuses for this Choice.'));
-        }
         
         //Make sure an option has been specified
         if(!empty($this->request->data['action']) && !empty($this->request->data['choices_option_id']) && isset($this->request->data['status'])) {
             $action = $this->request->data['action'];
+            
+            //Make sure user has correct permissions for action, and editing/approving is open
+            if(!$isAdmin) { //Admins can do anything at any time
+                $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+                if($action === 'approve') {
+                    if(!$isApprover) {
+                        throw new ForbiddenException(__('Not allowed to approve options for this Choice.'));
+                    }
+                    else if(!$editingInstance['approval_open']) {
+                        throw new ForbiddenException(__('Approval is not currently open for this Choice.'));
+                    }
+                }
+                else {  //Publish or delete
+                    if(!$isEditor) {
+                        throw new ForbiddenException(__('Not allowed to ' . $action . ' options for this Choice.'));
+                    }
+                    else if(!$editingInstance['editing_open']) {
+                        throw new ForbiddenException(__('Editing is not currently open for this Choice.'));
+                    }
+                }
+            }
             
             $status = filter_var($this->request->data['status'], FILTER_VALIDATE_BOOLEAN);
             
@@ -264,10 +285,19 @@ class OptionsController extends AppController
         
         $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
         $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
-        if(empty($isEditor)) {
-            throw new ForbiddenException(__('Not permitted to create/edit options for this Choice.'));
+        //Make sure user has is an editor, and editing is open
+        if(!$isAdmin) { //Admins can do anything at any time
+            if(!$isEditor) {
+                throw new ForbiddenException(__('Not allowed to create/edit options for this Choice.'));
+            }
+            else {
+                $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+                if(!$editingInstance['editing_open']) {
+                    throw new ForbiddenException(__('Editing is not currently open for this Choice.'));
+                }
+            }
         }
-
+            
         //pr($this->request->data);
         $originalChoicesOption = null;
         if(!empty($this->request->data['choices_option_id'])) {
@@ -310,8 +340,8 @@ class OptionsController extends AppController
             $choicesOptions[] = $this->Options->ChoicesOptions->newEntity($originalChoicesOption);
         }
 
-        //pr($choicesOptions);
-        //exit;
+        pr($choicesOptions);
+        exit;
    
         if($this->Options->ChoicesOptions->saveMany($choicesOptions)) {
             $this->set('response', 'Option saved');

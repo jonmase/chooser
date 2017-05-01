@@ -229,6 +229,7 @@ var OptionEditPage = React.createClass({
                     }}
                     open={this.state.cancelDialogOpen}
                 />
+                {this.props.snackbar}
             </Container>
         );
     }

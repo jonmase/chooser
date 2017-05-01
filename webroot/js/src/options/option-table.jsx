@@ -160,7 +160,7 @@ var OptionsTable = React.createClass({
                     if(isApprover) {
                         subtitle += ', manage and approve';
                         //If this user has one or more editable options and editing is open, make the actions column wide enough for edit and approve actions
-                        if(isAdmin || (this.props.options.editableOptionsCount > 0 && !this.props.instance.editingInstance.deadline.passed)) {
+                        if(isAdmin || (this.props.options.editableOptionsCount > 0 && this.props.instance.editingInstance.editing_open)) {
                             var actionsColStyles = styles.adminActionsTableRowColumn;
                         }
                         //Otherwise, actions column only need to be wide enough for approve action
@@ -174,7 +174,7 @@ var OptionsTable = React.createClass({
                     }
                     subtitle += ' options';
                     
-                    if(isApprover && !isAdmin && this.props.instance.editingInstance.deadline.passed) {
+                    if(isApprover && !isAdmin && !this.props.instance.editingInstance.editing_open) {
                         subtitle += ' (Note that the editing deadline has passed, so you can only approve options)';
                     }
                 }
@@ -442,7 +442,7 @@ var OptionsTable = React.createClass({
                                                 
                                                 {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
                                                     <UnselectableCell style={actionsColStyles}>
-                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit && !this.props.instance.editingInstance.deadline.passed)) &&
+                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit && this.props.instance.editingInstance.editing_open)) &&
                                                             <span>
                                                                 <EditButton
                                                                     handleClick={this.props.optionContainerHandlers.edit} 

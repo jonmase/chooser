@@ -297,7 +297,9 @@ class ChoicesTable extends Table
                 }
                 
                 //Show the deadline
-                $optionsDescription .= '<strong>Editing Deadline: </strong> ' . $activeEditingInstance->deadline['formatted'];
+                if(isset($activeEditingInstance->deadline['formatted'])) {
+                    $optionsDescription .= '<strong>Editing Deadline: </strong> ' . $activeEditingInstance->deadline['formatted'];
+                }
             }
             //If editing deadline has passed
             else {

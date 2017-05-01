@@ -257,12 +257,8 @@ var OptionContainer = React.createClass({
                 
                 this.setState({
                     favourites: favourites, //Revert to the previous favourites
-                    //Show error in snackbar
-                    snackbar: {
-                        open: true,
-                        message: 'Error adding favourite (' + err.toString() + ')',
-                    }
                 });
+                this.handleSnackbarOpen('Error adding favourite (' + err.toString() + ')'); //Show error in snackbar
             }.bind(this)
         });
     },
@@ -338,20 +334,13 @@ var OptionContainer = React.createClass({
                 indexesById: this.props.updateIndexesByIdHelper(sortedOptions),
                 loaded: true,
             },
-            snackbar: {
-                open: true,
-                message: returnedData.response,
-            },
         });
+        
+        this.handleSnackbarOpen(returnedData.response);
     },
     
     handleOptionEditError: function(err) {
-        this.setState({
-            snackbar: {
-                open: true,
-                message: 'Save error (' + err.toString() + ')',
-            }
-        });
+        this.handleSnackbarOpen('Save error (' + err.toString() + ')');
     },
 
     //Could move to option-edit-page, but would need to sort out where wysiwyg values live
@@ -480,13 +469,8 @@ var OptionContainer = React.createClass({
                 error: function(xhr, status, err) {
                     console.error(url, status, err.toString());
                     
-                    this.setState({
-                        //Show error in snackbar
-                        snackbar: {
-                            open: true,
-                            message: 'Error archiving selection (' + err.toString() + ')',
-                        }
-                    });
+                    //Show error in snackbar
+                    this.handleSnackbarOpen('Error archiving selection (' + err.toString() + ')');
                 }.bind(this)
             });
         }
@@ -623,6 +607,15 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleSnackbarOpen: function(message) {
+        this.setState({
+            snackbar: {
+                open: true,
+                message: message,
+            },
+        });
+    },
+    
     handleSort: function(field, fieldType) {
         var direction = 'asc';
         if(field === this.state.optionsSort.field) {
@@ -748,12 +741,9 @@ var OptionContainer = React.createClass({
                     //Update state with optionsSelectedIds sorted by table order
                     basketDisabled: false,    //Re-enable basket (in case it was disabled for optimistic updates to be confirmed)
                     optionsSelectedTableOrder: this.sortIdsByTableOrder(optionsSelectedIds),
-                    //Show error in snackbar
-                    snackbar: {
-                        open: true,
-                        message:  errorMessage + ' (' + err.toString() + ')',
-                    }
                 });
+                //Show error in snackbar
+                this.handleSnackbarOpen(errorMessage + ' (' + err.toString() + ')');
             }.bind(this)
         });
     },
@@ -954,11 +944,14 @@ var OptionContainer = React.createClass({
                             backToEdit: this.handleBackToEdit,
                             handleError: this.handleOptionEditError,
                             handleReturnedData: this.handleOptionEditReturnedData,
+                            snackbarClose: this.handleSnackbarClose,
+                            snackbarOpen: this.handleSnackbarOpen,
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
                         options={this.state.options}
                         optionValues={this.state.optionValues}
+                        snackbar={this.getSnackbar()}
                     />
                 );
             case 'view': //View
@@ -1119,6 +1112,16 @@ var OptionContainer = React.createClass({
         }
     },
     
+    getSnackbar: function() {
+        var snackbar = <Snackbar
+                        autoHideDuration={3000}
+                        message={this.state.snackbar.message}
+                        onRequestClose={this.handleSnackbarClose}
+                        open={this.state.snackbar.open}
+                    />;
+        return snackbar;
+    },
+    
     render: function() {
         var defaultAppTitle = <AppTitle subtitle={this.props.choice.name} />;
     
@@ -1143,12 +1146,7 @@ var OptionContainer = React.createClass({
                                 {this.getContent(this.state.action)}
                             </div>
                         }
-                        <Snackbar
-                            autoHideDuration={3000}
-                            message={this.state.snackbar.message}
-                            onRequestClose={this.handleSnackbarClose}
-                            open={this.state.snackbar.open}
-                        />
+                        {this.getSnackbar()}
                     </div>
                 </Container>
             );

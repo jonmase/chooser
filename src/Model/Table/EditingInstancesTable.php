@@ -165,7 +165,10 @@ class EditingInstancesTable extends Table
     }
     
     public function processForView($instance) {
-        return $this->processInstanceForView($instance, $this->_datetimeFields);
+        $processedInstance = $this->processInstanceForView($instance, $this->_datetimeFields);
+        $processedInstance->editing_open = ($processedInstance->opens['passed'] && !$processedInstance->deadline['passed']);
+        $processedInstance->approval_open = ($processedInstance->opens['passed'] && !$processedInstance->approval_deadline['passed']);
+        return $processedInstance;
     }
 
     public function reset ($choiceId = null, $keepSettings = false) {
