@@ -419,12 +419,15 @@ var OptionsTable = React.createClass({
                                                     <TableRowColumn style={styles.publishedTableRowColumn}>
                                                         {
                                                             option.approved?
-                                                                <FontIcon className="material-icons">check</FontIcon>
+                                                                <FontIcon className="material-icons" title="approved">check</FontIcon>
                                                             :
                                                                 (option.approved === null)?
-                                                                    <FontIcon className="material-icons">hourglass_empty</FontIcon>
+                                                                    option.published?
+                                                                        <FontIcon className="material-icons" title="awaiting approval">hourglass_empty</FontIcon>
+                                                                    :
+                                                                        <FontIcon className="material-icons" title="not published">remove</FontIcon>
                                                                 :
-                                                                    <FontIcon className="material-icons">close</FontIcon>
+                                                                    <FontIcon className="material-icons" title="rejected">close</FontIcon>
                                                         }
                                                     </TableRowColumn>
                                                 }
