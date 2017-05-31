@@ -206,6 +206,10 @@ class OptionsController extends AppController
             //pr($choicesOption);
             
             //Create copy of the option to save as the revision, removing ID, setting revision_parent and making it new
+            //TODO: Do we actually need to create a new version here? 
+            //      - could just have a 'content_edited' DATETIME field, as modified will also get changed on publish/approve/delete
+            //      - but is it useful to have a full record of what has been done when (e.g. if an option is published then unpublished, deleted then restored, etc)
+            //      - perhaps should split 'extra' field away into another table as this doesn't change on status change, but is being repeated unnecessarily with multiple versions
             $originalChoicesOption = clone $choicesOption;
             $originalChoicesOption->revision_parent = $choicesOption->id;
             unset($originalChoicesOption->id);
@@ -338,6 +342,7 @@ class OptionsController extends AppController
             }
             else {
                 $originalChoicesOption = $choicesOptionsQuery->first(); //Get the first result - will only ever be one
+                unset($originalChoicesOption->_matchingData);   //Unset the matching data, this was only for checking user permissions
                 $choicesOptionsToSave[] = $this->Options->processOriginalForSave($originalChoicesOption);
             }
         }

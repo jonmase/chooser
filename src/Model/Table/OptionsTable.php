@@ -113,7 +113,7 @@ class OptionsTable extends Table
         ]);
         
         $options = $optionsQuery->toArray();
-        
+
         $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
         $editableOptionsCount = 0;
         foreach($options as &$option) {
@@ -125,7 +125,8 @@ class OptionsTable extends Table
                 }
             }
         }
-        
+        //pr($options);
+       
         return [$options, $editableOptionsCount];
     }
     
@@ -314,6 +315,9 @@ class OptionsTable extends Table
     }
 
     public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null) {
+        //pr($requestData);
+        //pr($existingChoicesOption);
+        
         //Set up the basic choicesOption data
         $choicesOptionData = [
             'choice_id' => $choiceId,
@@ -321,8 +325,17 @@ class OptionsTable extends Table
             'allocations_hidden' => 0,
             'revision_parent' => 0,
         ];
+        
+        //If editing an existing option, add the existing ID to the data
         if($existingChoicesOption) {
             $choicesOptionData['id'] = $existingChoicesOption['id'];
+        }
+        
+        //If saving and publishing, and the option is not already published, add the published field values
+        if(isset($requestData['published']) && filter_var($requestData['published'], FILTER_VALIDATE_BOOLEAN) && !$existingChoicesOption['published']) {
+            $choicesOptionData['published'] = true;
+            $choicesOptionData['published_date'] = Time::now();
+            $choicesOptionData['publisher'] = $userId;
         }
         
         //Add the choicesOption fields from the form
@@ -380,12 +393,11 @@ class OptionsTable extends Table
         return $choicesOption;
     }
     
+    //Set an existing option as a revision
     public function processOriginalForSave($originalChoicesOption = null) {
         if(!$originalChoicesOption) {
             return null;
         }
-        
-        unset($originalChoicesOption->_matchingData);   //Unset the matching data, this was only for checking user permissions
         
         $originalChoicesOption = $originalChoicesOption->toArray(); //Convert the data to an array 
         
@@ -410,6 +422,7 @@ class OptionsTable extends Table
             }
         }
         unset($option->option);
+        //pr($option);
        
         //Process the extra fields for displaying
         if($extraTypes === null) {

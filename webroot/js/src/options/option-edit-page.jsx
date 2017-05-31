@@ -15,6 +15,7 @@ import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 var saveButtonDefaults = {
     enabled: true,
     label: 'Save',
+    savePublishLabel: 'Save & Publish',
 };
 
 var OptionEditPage = React.createClass({
@@ -24,6 +25,7 @@ var OptionEditPage = React.createClass({
             canSaveOption: false,
             dirty: false,
             saveButton: saveButtonDefaults,
+            saveAndPublish: false,
         };
         
         return initialState;
@@ -89,16 +91,39 @@ var OptionEditPage = React.createClass({
     
     //When Save button is clicked, submit the edit form
     handleSaveButtonClick: function() {
+        this.setState({
+            saveAndPublish: false,
+        });
+        this.refs.edit.submit();
+    },
+    
+    handleSavePublishButtonClick: function() {
+        this.setState({
+            saveAndPublish: true,
+        });
         this.refs.edit.submit();
     },
     
     //Submit the edit option form
     handleSubmit: function (option) {
-        this.setState({
-            saveButton: {
+        if(this.state.saveAndPublish) {
+            option.published = true;
+            var saveButtonState = {
+                enabled: false,
+                label: saveButtonDefaults.label,
+                savePublishLabel: 'Saving & Publishing',
+            };
+        }
+        else {
+            var saveButtonState = {
                 enabled: false,
                 label: 'Saving',
-            },
+                savePublishLabel: saveButtonDefaults.savePublishLabel,
+            };
+        }
+    
+        this.setState({
+            saveButton: saveButtonState,
         });
 
         //Get the alloy editor data
@@ -115,6 +140,7 @@ var OptionEditPage = React.createClass({
         if(this.props.optionEditing.optionBeingEdited) {
             option.choices_option_id = this.props.optionEditing.optionBeingEdited;
         }
+        
         
         //Save the settings
         var url = 'save';
@@ -140,6 +166,7 @@ var OptionEditPage = React.createClass({
                     saveButton: {
                         enabled: true,
                         label: 'Resave',
+                        savePublishLabel: 'Resave & Publish',
                     },
                 });
                 
@@ -165,15 +192,29 @@ var OptionEditPage = React.createClass({
 
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
-            iconRight={<RaisedButton 
-                disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
-                //disabled={!this.state.saveButton.enabled}
-                label={this.state.saveButton.label}
-                onTouchTap={this.handleSaveButtonClick}
-                //primary={true}
-                style={{marginTop: '6px'}}
-                type="submit"
-            />}
+            iconRight={
+                <span>
+                    <RaisedButton 
+                        disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
+                        //disabled={!this.state.saveButton.enabled}
+                        label={this.state.saveButton.label}
+                        onTouchTap={this.handleSaveButtonClick}
+                        //primary={true}
+                        style={{marginTop: '6px', marginRight: '12px'}}
+                        type="submit"
+                    />
+                    {!option.published && 
+                        <RaisedButton 
+                            disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
+                            label={this.state.saveButton.savePublishLabel}
+                            onTouchTap={this.handleSavePublishButtonClick}
+                            //primary={true}
+                            style={{marginTop: '6px'}}
+                            type="submit"
+                        />
+                    }
+                </span>
+            }
             title={(this.props.optionEditing.optionBeingEdited?"Edit":"Add") + " Option"}
         />;
         
