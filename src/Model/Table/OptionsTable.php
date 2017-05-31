@@ -337,6 +337,9 @@ class OptionsTable extends Table
             $choicesOptionData['published_date'] = Time::now();
             $choicesOptionData['publisher'] = $userId;
         }
+        else {
+            $choicesOptionData['published'] = false;
+        }
         
         //Add the choicesOption fields from the form
         foreach($this->_choicesOptionsTableProperties as $property) {

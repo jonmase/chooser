@@ -14,7 +14,7 @@ import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
 var saveButtonDefaults = {
     enabled: true,
-    label: 'Save',
+    label: 'Save Draft',
     savePublishLabel: 'Save & Publish',
 };
 
@@ -165,7 +165,7 @@ var OptionEditPage = React.createClass({
                 this.setState({
                     saveButton: {
                         enabled: true,
-                        label: 'Resave',
+                        label: 'Resave Draft',
                         savePublishLabel: 'Resave & Publish',
                     },
                 });

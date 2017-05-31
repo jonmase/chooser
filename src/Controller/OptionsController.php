@@ -346,11 +346,14 @@ class OptionsController extends AppController
                 $choicesOptionsToSave[] = $this->Options->processOriginalForSave($originalChoicesOption);
             }
         }
+        else {
+            $originalChoicesOption = null;
+        }
         
         $choicesOptionsToSave[] = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption);
 
-        pr($choicesOptionsToSave);
-        exit;
+        //pr($choicesOptionsToSave);
+        //exit;
    
         if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
             $this->set('response', 'Option saved');
