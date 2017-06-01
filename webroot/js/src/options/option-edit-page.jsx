@@ -93,15 +93,13 @@ var OptionEditPage = React.createClass({
     handleSaveButtonClick: function() {
         this.setState({
             saveAndPublish: false,
-        });
-        this.refs.edit.submit();
+        }, this.refs.edit.submit);
     },
     
     handleSavePublishButtonClick: function() {
         this.setState({
             saveAndPublish: true,
-        });
-        this.refs.edit.submit();
+        }, this.refs.edit.submit);
     },
     
     //Submit the edit option form
