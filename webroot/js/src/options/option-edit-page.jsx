@@ -164,7 +164,7 @@ var OptionEditPage = React.createClass({
                 this.setState({
                     saveButton: {
                         enabled: true,
-                        label: 'Resave Draft',
+                        label: 'Resave',
                         savePublishLabel: 'Resave & Publish',
                     },
                 });

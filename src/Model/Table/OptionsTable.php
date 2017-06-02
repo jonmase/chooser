@@ -338,7 +338,9 @@ class OptionsTable extends Table
             $choicesOptionData['publisher'] = $userId;
         }
         else {
-            $choicesOptionData['published'] = false;
+            if(empty($existingChoicesOption['published'])) {
+                $choicesOptionData['published'] = false;
+            }
         }
         
         //Add the choicesOption fields from the form
