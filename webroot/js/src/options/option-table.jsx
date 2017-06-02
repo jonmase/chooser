@@ -62,19 +62,19 @@ var OptionsTable = React.createClass({
     },
     
     handleDelete: function(optionId) {
-        this.changeStatus('delete', optionId, true);
+        this.props.optionContainerHandlers.changeStatus('delete', optionId, true);
     },
     
     handlePublish: function(optionId) {
-        this.changeStatus('publish', optionId, true);
+        this.props.optionContainerHandlers.changeStatus('publish', optionId, true);
     },
     
     handleRestore: function(optionId) {
-        this.changeStatus('delete', optionId, false);
+        this.props.optionContainerHandlers.changeStatus('delete', optionId, false);
     },
     
     handleUnpublish: function(optionId) {
-        this.changeStatus('publish', optionId, false);
+        this.props.optionContainerHandlers.changeStatus('publish', optionId, false);
     },
     
     isAdmin: function() {
@@ -108,35 +108,6 @@ var OptionsTable = React.createClass({
         else {
             return false;
         }
-    },
-    
-    changeStatus: function(action, optionId, status) {
-        console.log(optionId + ': ' + (!status && 'un') + action);
-        
-        var data = {
-            action: action,
-            choices_option_id: optionId,
-            status: status
-        };
-        
-        //Save the settings
-        var url = 'status.json';
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            type: 'POST',
-            data: data,
-            success: function(returnedData) {
-                console.log(returnedData.response);
-                
-                this.props.optionContainerHandlers.handleReturnedData(returnedData);
-            }.bind(this),
-            error: function(xhr, status, err) {
-                console.error(url, status, err.toString());
-                
-                this.props.optionContainerHandlers.handleError(err);
-            }.bind(this)
-        });
     },
     
     render: function() {
@@ -482,6 +453,7 @@ var OptionsTable = React.createClass({
                                                         }
                                                         {this.isApprover() &&
                                                             <ApprovalButton
+                                                                disabled={!option.published}
                                                                 handleClick={this.props.optionContainerHandlers.approve} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}

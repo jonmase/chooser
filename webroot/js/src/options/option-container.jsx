@@ -272,6 +272,52 @@ var OptionContainer = React.createClass({
     },
     
     /* OPTION EDITING METHODS */
+    handleOptionApproveActionButtonClick: function(optionId) {
+        this.setState({
+            action: 'approve',
+            optionBeingViewed: optionId,
+        });
+    },
+    
+    handleOptionApproveSubmitButtonClick: function() {
+        var optionId = this.state.optionBeingViewed;
+        console.log('approve option: ' + optionId);
+        this.handleOptionChangeStatus('approve', optionId, true);
+    },
+    
+    handleOptionChangeStatus: function(action, optionId, status) {
+        console.log(optionId + ': ' + (!status && 'un') + action);
+        
+        var data = {
+            action: action,
+            choices_option_id: optionId,
+            status: status
+        };
+        
+        //Save the settings
+        var url = 'status.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'POST',
+            data: data,
+            success: function(returnedData) {
+                console.log(returnedData.response);
+                
+                this.handleOptionEditReturnedData(returnedData);
+                
+                if(this.state.action !== 'edit') {
+                    this.handleBackToEdit();
+                }
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                this.handleOptionEditError(err);
+            }.bind(this)
+        });
+    },
+   
     //Keep in container
     //But possibly move wysiwyg value state to option-edit-page - would need to set this in one of the lifecycle methods
     handleOptionEditButtonClick: function(optionId) {
@@ -355,20 +401,10 @@ var OptionContainer = React.createClass({
         this.setState({optionValues: newOptionValuesState});
     },
     
-    handleOptionViewMoreFromEdit: function(optionId) {
-        this.setState({
-            action: 'more_edit',
-            optionBeingViewed: optionId,
-        });
+    handleOptionRejectButtonClick: function() {
+        console.log('reject option');
     },
-
-    handleOptionViewMoreFromView: function(optionId) {
-        this.setState({
-            action: 'more_view',
-            optionBeingViewed: optionId,
-        });
-    },
-
+    
     handleOptionSelectFromDetails(event, checked) {
         var optionId = this.state.optionBeingViewed;
         
@@ -411,6 +447,21 @@ var OptionContainer = React.createClass({
         this.saveSelectedOptions(optionsSelectedIds);
     },
     
+    handleOptionViewMoreFromEdit: function(optionId) {
+        this.setState({
+            action: 'more_edit',
+            optionBeingViewed: optionId,
+        });
+    },
+
+    handleOptionViewMoreFromView: function(optionId) {
+        this.setState({
+            action: 'more_view',
+            optionBeingViewed: optionId,
+        });
+    },
+
+    /*SELECTION METHODS*/
     handleSelectionAbandonChanges: function() {
         console.log('abandon changes');
         
@@ -864,12 +915,15 @@ var OptionContainer = React.createClass({
             else if(action === 'more_view' || action === 'more_edit') {
                 var title = 'Option Details';
             }
+            else if(action === 'approve') {
+                var title = 'Approve or Reject Option';
+            }
             else {
                 var title = <AppTitle subtitle={this.props.choice.name} />;
             }
             
             var backAction = this.handleBackToView;
-            if(action === 'more_edit') {
+            if(action === 'more_edit' || action === 'approve') {
                 var backAction = this.handleBackToEdit;
             }
            
@@ -890,6 +944,24 @@ var OptionContainer = React.createClass({
                     id={this.state.optionBeingViewed}
                     tooltip=""
                 />;
+            }
+            else if(action === 'approve') {
+                topbarIconRight = <span>
+                    <RaisedButton 
+                        label="Reject"
+                        onTouchTap={this.handleOptionRejectButtonClick}
+                        //primary={true}
+                        style={{marginTop: '6px', marginRight: '12px'}}
+                        type="submit"
+                    />
+                    <RaisedButton 
+                        label="Approve"
+                        onTouchTap={this.handleOptionApproveSubmitButtonClick}
+                        //primary={true}
+                        style={{marginTop: '6px'}}
+                        type="submit"
+                    />
+                </span>;
             }
             
             //Unless action is unavailable...
@@ -923,9 +995,9 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         instance={this.state.instance}
                         optionContainerHandlers={{
+                            approve: this.handleOptionApproveActionButtonClick,
+                            changeStatus: this.handleOptionChangeStatus,
                             edit: this.handleOptionEditButtonClick,
-                            handleError: this.handleOptionEditError,
-                            handleReturnedData: this.handleOptionEditReturnedData,
                             selectOption: this.handleOptionEditSelect,
                             sort: this.handleSort,
                             viewMore: this.handleOptionViewMoreFromEdit,
@@ -988,9 +1060,8 @@ var OptionContainer = React.createClass({
                 );
             case 'more_view': //More
             case 'more_edit': //More
+            case 'approve': //Approval
                 var defaults = {
-                    //code: this.props.choice.use_code,
-                    //title: this.props.choice.use_title,
                     code: false,    //Don't use code or title, as these are shown at the top of the page
                     title: false,
                     description: this.props.choice.use_description,
