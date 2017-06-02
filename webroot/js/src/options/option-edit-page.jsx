@@ -8,13 +8,14 @@ import CancelDialog from './option-edit-cancel-dialog.jsx';
 import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
+import Alert from '../elements/alert.jsx';
 
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
 var saveButtonDefaults = {
     enabled: true,
-    label: 'Save Draft',
+    label: 'Save',
     savePublishLabel: 'Save & Publish',
 };
 
@@ -227,6 +228,11 @@ var OptionEditPage = React.createClass({
                     onValidSubmit={this.handleSubmit}
                     ref="edit"
                 >
+                    {option.published && !this.props.instance.editingInstance.approval_required && 
+                        <Alert>
+                            This option has already been published and is visible to students. Any changes you make will also be visible to students as soon as you save.
+                        </Alert>
+                    }
                     <div className="section">
                         <DefaultFields
                             defaults={defaults}

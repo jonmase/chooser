@@ -940,6 +940,7 @@ var OptionContainer = React.createClass({
                 return (
                     <OptionEditPage
                         choice={this.props.choice}
+                        instance={this.state.instance}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
                             handleError: this.handleOptionEditError,

@@ -1,12 +1,12 @@
 import React from 'react';
 import FontIcon from 'material-ui/FontIcon';
-import {red500, orange500} from 'material-ui/styles/colors';
+import {red500, orange500, indigo500} from 'material-ui/styles/colors';
 
 var WarningIcon = React.createClass({
     render: function() {
         var icon = 'warning';
         
-        var style = {};
+        var style = {verticalAlign: 'middle'};
         
         
         if(this.props.colour === "red") {
@@ -14,6 +14,9 @@ var WarningIcon = React.createClass({
         }
         else if(this.props.colour === "orange") {
             style.color = orange500;
+        }
+        else if(this.props.colour === "indigo") {
+            style.color = indigo500;
         }
         
         if(this.props.large) {
@@ -23,10 +26,6 @@ var WarningIcon = React.createClass({
             style.fontSize = 20;
         }
         
-        if(this.props.top) {
-            style.top = this.props.top;
-        }
-
         return (
             <FontIcon className="material-icons" title="Warning" style={style}>{icon}</FontIcon>
         );
