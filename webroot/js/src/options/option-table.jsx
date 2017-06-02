@@ -86,7 +86,7 @@ var OptionsTable = React.createClass({
         }
     },
     isApprover: function() {
-        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1) {
+        if(this.props.instance.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
             return true;
         }
         else {
@@ -95,14 +95,6 @@ var OptionsTable = React.createClass({
     },
     isEditor: function() {
         if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('editor') > -1) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    },
-    isEditorAndApprover: function() {
-        if(this.props.roles.indexOf('admin') > -1 || (this.props.roles.indexOf('editor') > -1 && this.props.roles.indexOf('approver') > -1)) {
             return true;
         }
         else {
@@ -196,10 +188,13 @@ var OptionsTable = React.createClass({
                 break;
         }
         
-        var showExpandButton = false;
-        if(this.props.choice.use_description) {
-            showExpandButton = true;
-        }
+        //Set visibility of favouritese, published, approved, expand and actions columns
+        //var showFavouritesColumn = this.props.action === 'view' && enableSelection;
+        var showFavouritesColumn = false;
+        var showPublishedColumn = this.props.action === 'edit';
+        var showApprovedColumn = this.props.action === 'edit' && this.props.instance.editingInstance.approval_required;
+        var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
+        var showActionsColumn = this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0 || this.isAdmin());
         
         var defaultFields = [];
         if(this.props.choice.use_code) {
@@ -252,8 +247,8 @@ var OptionsTable = React.createClass({
                 sortableExtraFields.push(index);
             }
             //Otherwise, field will not be shown, so need to show expand button, if not already doing so
-            else if(!showExpandButton) {
-                showExpandButton = true;
+            else if(!showExpandColumn) {
+                showExpandColumn = true;
             }
             if(field.filterable) {
                 filterableExtraFields.push(index);
@@ -309,14 +304,14 @@ var OptionsTable = React.createClass({
                                     displaySelectAll={enableSelection}
                                 >
                                     <TableRow>
-                                        {/*(this.props.action === 'view' && enableSelection) &&
+                                        {showFavouritesColumn &&
                                             <TableHeaderColumn style={styles.favouriteTableRowColumn}>
                                                 <FavouriteButton
                                                     handlers={this.props.optionContainerHandlers} 
                                                     option="all"
                                                 />
                                             </TableHeaderColumn>
-                                        */}
+                                        }
                                         {defaultFields.map(function(field) {
                                             return (
                                                 <SortableTableHeaderColumn
@@ -349,16 +344,16 @@ var OptionsTable = React.createClass({
                                                 />
                                             );
                                         }, this)}
-                                        {this.props.action === 'edit' &&
+                                        {showPublishedColumn &&
                                             <TableHeaderColumn style={styles.publishedTableRowColumn}>Published</TableHeaderColumn>
                                         }
-                                        {this.props.action === 'edit' &&
+                                        {showApprovedColumn &&
                                             <TableHeaderColumn style={styles.publishedTableRowColumn}>Approved</TableHeaderColumn>
                                         }
-                                        {showExpandButton && 
+                                        {showExpandColumn && 
                                             <TableHeaderColumn style={styles.actionsTableRowColumn}></TableHeaderColumn>
                                         }
-                                        {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
+                                        {showActionsColumn && 
                                             <TableHeaderColumn style={actionsColStyles}></TableHeaderColumn>
                                         }
                                     </TableRow>
@@ -373,7 +368,7 @@ var OptionsTable = React.createClass({
                                                 key={option.id} 
                                                 selected={enableSelection && this.props.optionsSelectedTableOrder.indexOf(option.id) !== -1}
                                             >
-                                                {/*(this.props.action === 'view' && enableSelection) &&
+                                                {showFavouritesColumn &&
                                                     <UnselectableCell style={styles.favouriteTableRowColumn}>
                                                         <FavouriteButton
                                                             handler={this.props.optionContainerHandlers.favourite} 
@@ -381,7 +376,7 @@ var OptionsTable = React.createClass({
                                                             favourited={this.props.favourites.indexOf(option.id) > -1}
                                                         />
                                                     </UnselectableCell>
-                                                */}
+                                                }
                                                 
                                                 {defaultFields.map(function(field) {
                                                     return (
@@ -404,7 +399,7 @@ var OptionsTable = React.createClass({
                                                     );
                                                 }, this)}
                                                 
-                                                {this.props.action === 'edit' &&
+                                                {showPublishedColumn &&
                                                     <TableRowColumn style={styles.publishedTableRowColumn}>
                                                         {
                                                             option.published?
@@ -415,7 +410,7 @@ var OptionsTable = React.createClass({
                                                     </TableRowColumn>
                                                 }
                                                 
-                                                {this.props.action === 'edit' &&
+                                                {showApprovedColumn && 
                                                     <TableRowColumn style={styles.publishedTableRowColumn}>
                                                         {
                                                             option.approved?
@@ -432,7 +427,7 @@ var OptionsTable = React.createClass({
                                                     </TableRowColumn>
                                                 }
                                                 
-                                                {showExpandButton && 
+                                                {showExpandColumn && 
                                                     <UnselectableCell style={styles.actionsTableRowColumn}>
                                                         <ExpandButton
                                                             handleClick={this.props.optionContainerHandlers.viewMore} 
@@ -443,7 +438,7 @@ var OptionsTable = React.createClass({
                                                     </UnselectableCell>
                                                 }
                                                 
-                                                {(this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0)) && 
+                                                {showActionsColumn && 
                                                     <UnselectableCell style={actionsColStyles}>
                                                         {(this.isAdmin() || (this.isEditor() && option.can_edit && this.props.instance.editingInstance.editing_open)) &&
                                                             <span>
