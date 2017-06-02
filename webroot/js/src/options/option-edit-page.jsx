@@ -92,6 +92,8 @@ var OptionEditPage = React.createClass({
     
     //When Save button is clicked, submit the edit form
     handleSaveButtonClick: function() {
+        //if(this.)
+        
         this.setState({
             saveAndPublish: false,
         }, this.refs.edit.submit);
@@ -193,8 +195,17 @@ var OptionEditPage = React.createClass({
             iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
             iconRight={
                 <span>
+                    <span style={{color: 'white', marginRight: '10px'}}>
+                        {
+                            this.state.canSaveOption?
+                                (!this.state.dirty&&<span>No changes</span>)
+                            :
+                                <span >Errors on form</span>
+                        }
+                    </span>
+                    
                     <RaisedButton 
-                        disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
+                        disabled={!this.state.canSaveOption || !this.state.saveButton.enabled || !this.state.dirty}
                         //disabled={!this.state.saveButton.enabled}
                         label={this.state.saveButton.label}
                         onTouchTap={this.handleSaveButtonClick}
@@ -230,12 +241,17 @@ var OptionEditPage = React.createClass({
                 >
                     {option.published && !this.props.instance.editingInstance.approval_required && 
                         <Alert>
-                            This option has already been published and is visible to students. Any changes you make will also be visible to students as soon as you save.
+                            This option has already been published and will be visible to students if/when the Choice is open. Any changes you make will also be visible to students after you save.
                         </Alert>
                     }
                     {this.props.instance.editingInstance.approval_required && option.approved === false && option.approver_comments &&
                         <Alert>
                             This option has been rejected, with the following comments: {option.approver_comments}
+                        </Alert>
+                    }
+                    {this.props.instance.editingInstance.approval_required && option.approved &&
+                        <Alert>
+                            This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
                         </Alert>
                     }
                     <div className="section">
