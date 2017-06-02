@@ -228,19 +228,29 @@ class OptionsController extends AppController
             $dateField = $statusField . '_date';
             
             //If changing status to true, update the choicesOption record with user and date
-            if($status) {
+            $choicesOption[$statusField] = $status;
+            if($status || $action === 'approve') {
                 if($choicesOption[$statusField]) {
                     throw new InternalErrorException(__('Option is already ' . $statusField));
                 }
-                $choicesOption[$statusField] = true;
                 $choicesOption[$userField] = $this->Auth->user('id');
                 $choicesOption[$dateField] = Time::now();
+                
+                //If option is being rejected, also unpublish it
+                if($action === 'approve' && !$status) {
+                    $choicesOption['published'] = false;
+                    $choicesOption['publisher'] = null;
+                    $choicesOption['published_date'] = null;
+                }
             }
             //If changing status to false, clear user and date
             else {
-                $choicesOption[$statusField] = false;
                 $choicesOption[$userField] = null;
                 $choicesOption[$dateField] = null;
+            }
+
+            if($action === 'approve' && !empty($this->request->data['comments'])) {
+                $choicesOption['approver_comments'] = $this->request->data['comments'];
             }
 
             $choicesOptionsToSave = [

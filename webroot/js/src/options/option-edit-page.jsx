@@ -233,6 +233,11 @@ var OptionEditPage = React.createClass({
                             This option has already been published and is visible to students. Any changes you make will also be visible to students as soon as you save.
                         </Alert>
                     }
+                    {this.props.instance.editingInstance.approval_required && option.approved === false && option.approver_comments &&
+                        <Alert>
+                            This option has been rejected, with the following comments: {option.approver_comments}
+                        </Alert>
+                    }
                     <div className="section">
                         <DefaultFields
                             defaults={defaults}

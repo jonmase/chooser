@@ -3,7 +3,7 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
-var SelectionConfirmDialog = React.createClass({
+var OptionEditCancelDialog = React.createClass({
     render: function() {
         var actions = [
             <FlatButton
@@ -38,4 +38,4 @@ var SelectionConfirmDialog = React.createClass({
     }
 });
 
-module.exports = SelectionConfirmDialog;
+module.exports = OptionEditCancelDialog;
