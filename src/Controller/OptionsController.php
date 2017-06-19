@@ -227,10 +227,11 @@ class OptionsController extends AppController
             $userField = $dbFieldStem . 'r';
             $dateField = $statusField . '_date';
             
-            //If changing status to true, update the choicesOption record with user and date
+            //If changing status to true (or action is approve, in which case we record details of decision either way), update the choicesOption record with user and date
             $choicesOption[$statusField] = $status;
             if($status || $action === 'approve') {
-                if($choicesOption[$statusField]) {
+                //If action is not approve (i.e. publish or delete), and status is already true, do not allow resaving of same status
+                if($action !== 'approve' && $originalChoicesOption[$statusField]) {
                     throw new InternalErrorException(__('Option is already ' . $statusField));
                 }
                 $choicesOption[$userField] = $this->Auth->user('id');
