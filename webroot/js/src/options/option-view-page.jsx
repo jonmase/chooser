@@ -54,6 +54,9 @@ var OptionViewPage = React.createClass({
             title = 'Approve or Reject Option';
         }
 
+        var option = this.props.option;
+        var alert = null;
+
         var backAction = this.props.optionContainerHandlers.backToView;
         if(this.props.action === 'more_edit' || this.props.action === 'approve') {
             var backAction = this.props.optionContainerHandlers.backToEdit;
@@ -78,22 +81,41 @@ var OptionViewPage = React.createClass({
             />;
         }
         else if(this.props.action === 'approve') {
+            
+            
             var topbarIconRight = <span>
                 <RaisedButton 
-                    label="Reject"
+                    disabled={option.approved === false}
+                    label={"Reject" + (option.approved === false?"ed":"")}
                     onTouchTap={this.handleRejectButtonClick}
                     //primary={true}
                     style={{marginTop: '6px', marginRight: '12px'}}
                     type="submit"
                 />
                 <RaisedButton 
-                    label="Approve"
+                    disabled={option.approved === true}
+                    label={"Approve" + (option.approved === true?"d":"")}
                     onTouchTap={this.handleApproveButtonClick}
                     //primary={true}
                     style={{marginTop: '6px'}}
                     type="submit"
                 />
             </span>;
+            
+            switch(option.approved) {
+                case true:
+                    alert = <Alert>
+                        This option has already been approved, but you can change this decision and reject it.
+                    </Alert>;
+                    break;
+                case false:
+                    alert = <Alert>
+                        This option has already been rejected, but you can change this decision and approve it.
+                    </Alert>;
+                    break;
+                default:
+                    break;
+            }
         }
             
         var topbar = <TopBar 
@@ -111,13 +133,10 @@ var OptionViewPage = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var option = this.props.option;
-
         return (
             <Container topbar={topbar} title={null}>
-                <Alert>
-                    Alert message
-                </Alert>
+                {alert}
+                
                 <OptionTitle 
                     code={this.props.choice.use_code && option.code}
                     title={option.title}

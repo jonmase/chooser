@@ -261,8 +261,13 @@ class OptionsController extends AppController
 
             //pr($choicesOptionsToSave); exit;
             if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
-                if($action === 'delete' && !$status) {
-                    $actionVerb = 'restored';
+                if(!$status) {
+                    if($action === 'delete') {
+                        $actionVerb = 'restored';
+                    }
+                    if($action === 'approve') {
+                        $actionVerb = 'rejected';
+                    }
                 }
                 else {
                     $actionVerb = ($status?'':'un') . $statusField;
