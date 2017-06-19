@@ -119,7 +119,7 @@ var OptionEditPage = React.createClass({
         if(this.state.dirty) {
             var option = this.getOption();
             //If approval is required, editing an approved option and not an approver, show the warning dialog
-            if(!this.isApprover && option.approved === true) {
+            if(!this.isApprover() && option.approved === true) {
                 this.setState({
                     approvedWarningDialogOpen: true,
                 });
@@ -296,7 +296,7 @@ var OptionEditPage = React.createClass({
                             This option has been rejected by an Approver, with the following comments: {option.approver_comments}
                         </Alert>
                     }
-                    {this.props.instance.editingInstance.approval_required && option.approved &&
+                    {!this.isApprover() && option.approved === true &&
                         <Alert>
                             This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
                         </Alert>
