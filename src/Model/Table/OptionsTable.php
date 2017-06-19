@@ -314,7 +314,7 @@ class OptionsTable extends Table
         return $extraValues;
     }
 
-    public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null) {
+    public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null, $isApprover = false) {
         //pr($requestData);
         //pr($existingChoicesOption);
         
@@ -326,13 +326,24 @@ class OptionsTable extends Table
             'revision_parent' => 0,
         ];
         
+        $published = isset($requestData['published']) && filter_var($requestData['published'], FILTER_VALIDATE_BOOLEAN);
+        
         //If editing an existing option, add the existing ID to the data
         if($existingChoicesOption) {
             $choicesOptionData['id'] = $existingChoicesOption['id'];
+            
+            //If approval is required, the existing option was approved, and this user is not an approver, unapprove it, so will need reapproval
+            $editingInstance = $this->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+            $approvalRequired = filter_var($editingInstance['approval_required'], FILTER_VALIDATE_BOOLEAN);
+            if($approvalRequired && $existingChoicesOption['approved'] && !$isApprover) {
+                $choicesOptionData['approved'] = false;
+                $choicesOptionData['approver'] = null;
+                $choicesOptionData['approved_date'] = null;
+            }
         }
         
         //If saving and publishing, and the option is not already published, add the published field values
-        if(isset($requestData['published']) && filter_var($requestData['published'], FILTER_VALIDATE_BOOLEAN) && !$existingChoicesOption['published']) {
+        if($published && !$existingChoicesOption['published']) {
             $choicesOptionData['published'] = true;
             $choicesOptionData['published_date'] = Time::now();
             $choicesOptionData['publisher'] = $userId;

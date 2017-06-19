@@ -3,6 +3,7 @@ import React from 'react';
 import Formsy from 'formsy-react';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import ApprovedWarningDialog from './option-edit-approved-warning-dialog.jsx';
 import CancelDialog from './option-edit-cancel-dialog.jsx';
 
 import Container from '../elements/container.jsx';
@@ -22,6 +23,7 @@ var saveButtonDefaults = {
 var OptionEditPage = React.createClass({
     getInitialState: function () {
         var initialState = {
+            approvedWarningDialogOpen: false,
             cancelDialogOpen: false,
             canSaveOption: false,
             dirty: false,
@@ -50,6 +52,27 @@ var OptionEditPage = React.createClass({
         this.setState({
             canSaveOption: true,
         });
+    },
+
+    getOption: function() {
+        var option = {};
+        if(this.props.optionEditing.optionBeingEdited) {
+            option = this.props.options.options[this.props.options.indexesById[this.props.optionEditing.optionBeingEdited]];
+        }
+
+        return option;
+    },
+
+    handleApprovedWarningDialogClose: function() {
+        this.setState({
+            approvedWarningDialogOpen: false,
+        });
+    },
+
+    handleApprovedWarningDialogSubmit: function() {
+        this.setState({
+            approvedWarningDialogOpen: false,
+        }, this.submitForm);
     },
 
     //Handle click on the back button - warn if form is dirty
@@ -92,11 +115,23 @@ var OptionEditPage = React.createClass({
     
     //When Save button is clicked, submit the edit form
     handleSaveButtonClick: function() {
-        //if(this.)
-        
-        this.setState({
-            saveAndPublish: false,
-        }, this.refs.edit.submit);
+        //Check that form is dirty
+        if(this.state.dirty) {
+            var option = this.getOption();
+            //If approval is required, editing an approved option and not an approver, show the warning dialog
+            if(!this.isApprover && option.approved === true) {
+                this.setState({
+                    approvedWarningDialogOpen: true,
+                });
+            }
+            else {
+                this.submitForm();
+            }
+        }
+        //If form is not dirty, do nothing except show snackbar message
+        else {
+            this.props.optionContainerHandlers.snackbarOpen("Can't save, no changes made")
+        }
     },
     
     handleSavePublishButtonClick: function() {
@@ -175,7 +210,22 @@ var OptionEditPage = React.createClass({
             }.bind(this)
         });
     },
-
+    
+    isApprover: function() {
+        if(this.props.instance.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    
+    submitForm: function() {
+        this.setState({
+            saveAndPublish: false,
+        }, this.refs.edit.submit);
+    },
+    
     render: function() {
         var defaults = {
             code: this.props.choice.use_code,
@@ -186,10 +236,7 @@ var OptionEditPage = React.createClass({
             points: this.props.choice.use_points,
         };
         
-        var option = {};
-        if(this.props.optionEditing.optionBeingEdited) {
-            option = this.props.options.options[this.props.options.indexesById[this.props.optionEditing.optionBeingEdited]];
-        }
+        var option = this.getOption();
 
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
@@ -246,7 +293,7 @@ var OptionEditPage = React.createClass({
                     }
                     {this.props.instance.editingInstance.approval_required && option.approved === false && option.approver_comments &&
                         <Alert>
-                            This option has been rejected, with the following comments: {option.approver_comments}
+                            This option has been rejected by an Approver, with the following comments: {option.approver_comments}
                         </Alert>
                     }
                     {this.props.instance.editingInstance.approval_required && option.approved &&
@@ -288,6 +335,13 @@ var OptionEditPage = React.createClass({
                         }, this)}
                     </div>
                 </Formsy.Form>
+                <ApprovedWarningDialog 
+                    handlers={{
+                        close: this.handleApprovedWarningDialogClose,
+                        submit: this.handleApprovedWarningDialogSubmit,
+                    }}
+                    open={this.state.approvedWarningDialogOpen}
+                />
                 <CancelDialog 
                     handlers={{
                         close: this.handleCancelDialogClose,

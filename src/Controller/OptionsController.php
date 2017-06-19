@@ -298,6 +298,7 @@ class OptionsController extends AppController
         $tool = $this->SessionData->getLtiTool();
         
         $isAdmin = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isAdmin($choiceId, $currentUserId, $tool);
+        $isApprover = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isApprover($choiceId, $currentUserId, $tool);
         $isEditor = $this->Options->ChoicesOptions->Choices->ChoicesUsers->isEditor($choiceId, $currentUserId, $tool);
         //Make sure user has is an editor, and editing is open
         if(!$isAdmin) { //Admins can do anything at any time
@@ -360,7 +361,7 @@ class OptionsController extends AppController
             $originalChoicesOption = null;
         }
         
-        $choicesOptionsToSave[] = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption);
+        $choicesOptionsToSave[] = $this->Options->processForSave($choiceId, $currentUserId, $this->request->data, $originalChoicesOption, $isApprover);
 
         //pr($choicesOptionsToSave);
         //exit;

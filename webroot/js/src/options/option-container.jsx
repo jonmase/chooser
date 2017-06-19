@@ -276,7 +276,7 @@ var OptionContainer = React.createClass({
     },
     
     handleOptionChangeStatus: function(action, optionId, status, comments) {
-        console.log(optionId + ': ' + (!status && 'un') + action);
+        console.log(optionId + ': ' + (status ? '' : 'un') + action);
         
         var data = {
             action: action,
@@ -966,6 +966,7 @@ var OptionContainer = React.createClass({
                         optionEditing={this.state.optionEditing}
                         options={this.state.options}
                         optionValues={this.state.optionValues}
+                        roles={this.props.roles}
                         snackbar={this.getSnackbar()}
                     />
                 );
