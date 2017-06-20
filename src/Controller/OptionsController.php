@@ -238,11 +238,12 @@ class OptionsController extends AppController
                 $choicesOption[$dateField] = Time::now();
                 
                 //If option is being rejected, also unpublish it
-                if($action === 'approve' && !$status) {
+                //Don't do this, as it means that the approver cannot reverse their decision
+                /*if($action === 'approve' && !$status) {
                     $choicesOption['published'] = false;
                     $choicesOption['publisher'] = null;
                     $choicesOption['published_date'] = null;
-                }
+                }*/
             }
             //If changing status to false, clear user and date
             else {
