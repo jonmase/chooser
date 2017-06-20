@@ -453,7 +453,7 @@ var OptionsTable = React.createClass({
                                                         }
                                                         {this.isApprover() &&
                                                             <ApprovalButton
-                                                                disabled={!option.published}
+                                                                disabled={!option.published && option.approved === null}
                                                                 handleClick={this.props.optionContainerHandlers.approve} 
                                                                 id={option.id}
                                                                 style={styles.actionsButtons}
