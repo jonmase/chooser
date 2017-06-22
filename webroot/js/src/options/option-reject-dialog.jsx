@@ -51,7 +51,8 @@ var OptionRejectDialog = React.createClass({
                 >
                     <MultilineTextField
                         field={{
-                            defaultValue: this.props.option.approver_comments,
+                            //defaultValue: this.props.option.approver_comments,
+                            defaultValue: null,
                             label: "Comments",
                             instructions: "",
                             name: "comments",

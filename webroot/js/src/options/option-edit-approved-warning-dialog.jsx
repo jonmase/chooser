@@ -31,7 +31,7 @@ var OptionEditApprovedWarningDialog = React.createClass({
                 title="Confirm Save"
             >
                 <p style={{marginBottom: 0}}>
-                    If you save your changes to this option, it will need to be re-approved before it is visible to students. Are you sure you want to Save these changes?
+                    If you save your changes to this option, it will need to be re-approved before it is visible to students. Are you sure you want to save these changes and submit this option for re-approval?
                 </p>
             </Dialog>
         );

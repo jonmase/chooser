@@ -113,7 +113,8 @@ class OptionsTable extends Table
         ]);
         
         $options = $optionsQuery->toArray();
-
+        //pr($options);
+        
         $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
         $editableOptionsCount = 0;
         foreach($options as &$option) {
@@ -235,6 +236,34 @@ class OptionsTable extends Table
         return $optionIndexesById;
     }
     
+     public function nullifyApproval($choicesOption = null, $includingDetails = false) {
+        if(!$choicesOption) {
+             return null;
+        }
+        
+        $choicesOption['approved'] = null;
+        
+        if($includingDetails) {
+            $choicesOption['approver'] = null;
+            $choicesOption['approved_date'] = null;
+            $choicesOption['approver_comments'] = null;
+        }
+        
+        return $choicesOption;
+    }
+
+     public function nullifyPublished($choicesOption = null) {
+        if(!$choicesOption) {
+             return null;
+        }
+        
+        $choicesOption['published'] = false;
+        $choicesOption['publisher'] = null;
+        $choicesOption['published_date'] = null;
+
+        return $choicesOption;
+    }
+
     public function processExtrasForSave($choiceId, $extraValues, $extraTypes) {
         foreach($extraTypes as $name => $type) {
             if($type === 'checkbox' && !empty($extraValues[$name])) {
@@ -314,7 +343,11 @@ class OptionsTable extends Table
         return $extraValues;
     }
 
-    public function processForSave($choiceId, $userId, $requestData, $existingChoicesOption = null, $isApprover = false) {
+    public function processForSave($choiceId = null, $userId = null, $requestData = null, $existingChoicesOption = null, $isApprover = false) {
+        if(!$choiceId || !$userId || !$requestData) {
+            return null;
+        }
+        
         //pr($requestData);
         //pr($existingChoicesOption);
         
@@ -326,32 +359,53 @@ class OptionsTable extends Table
             'revision_parent' => 0,
         ];
         
-        $published = isset($requestData['published']) && filter_var($requestData['published'], FILTER_VALIDATE_BOOLEAN);
+        $publishing = isset($requestData['published']) && filter_var($requestData['published'], FILTER_VALIDATE_BOOLEAN);
+        unset($requestData['published']);   //Unset published otherwise it gets included in extras
         
         //If editing an existing option, add the existing ID to the data
         if($existingChoicesOption) {
             $choicesOptionData['id'] = $existingChoicesOption['id'];
             
-            //If approval is required, the existing option was approved, and this user is not an approver, unapprove it, so will need reapproval
+            //If approval is required, and an approval decision has already been made...
             $editingInstance = $this->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
             $approvalRequired = filter_var($editingInstance['approval_required'], FILTER_VALIDATE_BOOLEAN);
-            if($approvalRequired && $existingChoicesOption['approved'] && !$isApprover) {
-                $choicesOptionData['approved'] = false;
-                $choicesOptionData['approver'] = null;
-                $choicesOptionData['approved_date'] = null;
+            if($approvalRequired && $existingChoicesOption['approved'] !== null) {
+                //If user is not an approver...
+                if(!$isApprover) {
+                    //If option was approved, nullify the approval, so will need reapproval, and republish
+                    if($existingChoicesOption['approved']) {
+                        $choicesOptionData = $this->nullifyApproval($choicesOptionData, true);  //nullify approval, including details
+                        $publishing = true;
+                    }
+                    else {
+                        $choicesOptionData = $this->nullifyApproval($choicesOptionData, false);  //nullify approval, not including details
+                        //Will have been unpublished when rejected, so will be published or not depending on which button was clicked
+                    }
+                }
+                //If user is an approver...
+                else {
+                    //If saving edits to an already approved choice, update approving details
+                    if($existingChoicesOption['approved'] || $publishing) {
+                        $this->setApproved($choicesOptionData, $userId); //Update approval details
+                        $publishing = true;
+                    }
+                    else {  //just saving a rejected (and therefore unpublished) option, so no further action needed
+                    }
+                }
             }
         }
+        //pr('approval required: ' . $approvalRequired);
+        //pr('approval required: ' . ($existingChoicesOption['approved'] !== null));
+        //pr('approval required: ' . $isApprover);
+        //pr($choicesOptionData); exit;
         
-        //If saving and publishing, and the option is not already published, add the published field values
-        if($published && !$existingChoicesOption['published']) {
-            $choicesOptionData['published'] = true;
-            $choicesOptionData['published_date'] = Time::now();
-            $choicesOptionData['publisher'] = $userId;
+        //If publishing, add the published field values
+        if($publishing) {
+            $choicesOptionData = $this->setPublished($choicesOptionData, $userId);
         }
+        //Otherwise, set published to false and nullify other fields
         else {
-            if(empty($existingChoicesOption['published'])) {
-                $choicesOptionData['published'] = false;
-            }
+            $choicesOptionData = $this->nullifyPublished($choicesOptionData);
         }
         
         //Add the choicesOption fields from the form
@@ -444,7 +498,9 @@ class OptionsTable extends Table
         if($extraTypes === null) {
             $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
         }
+        
         $extras = $this->processExtrasForView($option->extra, $extraTypes);
+        
         foreach($extras as $key => $value) {
             $option[$key] = $value;
         }
@@ -452,5 +508,30 @@ class OptionsTable extends Table
         
         //pr($option);
         return $option;
+    }
+    
+    public function setApproved($choicesOptionData = null, $userId = null) {
+        if(!$choicesOptionData || !$userId) {
+            return null;
+        }
+        
+        $choicesOptionData['approved'] = true;
+        $choicesOptionData['approved_date'] = Time::now();
+        $choicesOptionData['approver'] = $userId;
+        $choicesOptionData['approver_comments'] = null;
+        
+        return $choicesOptionData;
+    }
+    
+    public function setPublished($choicesOptionData = null, $userId = null) {
+        if(!$choicesOptionData || !$userId) {
+            return null;
+        }
+        
+        $choicesOptionData['published'] = true;
+        $choicesOptionData['published_date'] = Time::now();
+        $choicesOptionData['publisher'] = $userId;
+        
+        return $choicesOptionData;
     }
 }

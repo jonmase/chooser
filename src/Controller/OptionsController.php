@@ -203,7 +203,7 @@ class OptionsController extends AppController
             $status = filter_var($this->request->data['status'], FILTER_VALIDATE_BOOLEAN);
             
             $choicesOption = $this->Options->ChoicesOptions->get($this->request->data['choices_option_id']);    //Get the choices option
-            //pr($choicesOption);
+            //pr($choicesOption); exit;
             
             //Create copy of the option to save as the revision, removing ID, setting revision_parent and making it new
             //TODO: Do we actually need to create a new version here? 
@@ -223,25 +223,41 @@ class OptionsController extends AppController
                 $dbFieldStem = $action;
             }
             
+            //Work out the DB fields
             $statusField = $dbFieldStem . 'd';
             $userField = $dbFieldStem . 'r';
             $dateField = $statusField . '_date';
             
+            //Work out the action verb
+            if($action === 'delete' && !$status) {
+                $actionVerb = 'restored';
+            }
+            else if($action === 'approve' && !$status) {
+                $actionVerb = 'rejected';
+            }
+            else {
+                $actionVerb = ($status?'':'un') . $statusField;
+            }
+                
+            //If action is not approve (i.e. publish or delete), and status is already true, do not allow resaving of same status
+            if($status === $originalChoicesOption[$statusField]) {
+                throw new InternalErrorException(__('Option is already ' . $actionVerb));
+            }
+
             //If changing status to true (or action is approve, in which case we record details of decision either way), update the choicesOption record with user and date
             $choicesOption[$statusField] = $status;
             if($status || $action === 'approve') {
-                //If action is not approve (i.e. publish or delete), and status is already true, do not allow resaving of same status
-                if($action !== 'approve' && $originalChoicesOption[$statusField]) {
-                    throw new InternalErrorException(__('Option is already ' . $statusField));
-                }
                 $choicesOption[$userField] = $this->Auth->user('id');
                 $choicesOption[$dateField] = Time::now();
                 
                 //If option is being rejected, also unpublish it
                 if($action === 'approve' && !$status) {
-                    $choicesOption['published'] = false;
-                    $choicesOption['publisher'] = null;
-                    $choicesOption['published_date'] = null;
+                    $choicesOption = $this->Options->nullifyPublished($choicesOption);
+                }
+                
+                //If action is publish and approval decision has been made, nullify approval, but leave approver and any comment 
+                if($action === 'publish' && $originalChoicesOption['approved'] === false) {
+                    $choicesOption = $this->Options->nullifyApproval($choicesOption);
                 }
             }
             //If changing status to false, clear user and date
@@ -250,8 +266,15 @@ class OptionsController extends AppController
                 $choicesOption[$dateField] = null;
             }
 
-            if($action === 'approve' && !empty($this->request->data['comments'])) {
-                $choicesOption['approver_comments'] = $this->request->data['comments'];
+            if($action === 'approve') {
+                //If rejecting, add comments to the choicesOption (if blank, will save empty string, to indicate rejection without comments, as opposed to null, which indicates no rejection)
+                if(!$status) {
+                    $choicesOption['approver_comments'] = $this->request->data['comments'];
+                }
+                //Otherwise, if approving, set comments to null
+                else {
+                    $choicesOption['approver_comments'] = null;
+                }
             }
 
             $choicesOptionsToSave = [
@@ -261,18 +284,6 @@ class OptionsController extends AppController
 
             //pr($choicesOptionsToSave); exit;
             if($this->Options->ChoicesOptions->saveMany($choicesOptionsToSave)) {
-                if(!$status) {
-                    if($action === 'delete') {
-                        $actionVerb = 'restored';
-                    }
-                    if($action === 'approve') {
-                        $actionVerb = 'rejected';
-                    }
-                }
-                else {
-                    $actionVerb = ($status?'':'un') . $statusField;
-                }
-                
                 $this->set('response', 'Option ' . $actionVerb);
                 
                 list($options, $editableOptionsCount) = $this->Options->getOptionsForEdit($choiceId, $currentUserId, $isAdmin, $isApprover, $isEditor);
