@@ -14,11 +14,28 @@ import Alert from '../elements/alert.jsx';
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
 
-var saveButtonDefaults = {
-    enabled: true,
-    label: 'Save',
-    savePublishLabel: 'Save & Publish',
-};
+var buttonLabels = {
+    save: {
+        default: 'Save',
+        retry: 'Retry Save',
+        working: 'Saving',
+    },
+    publish: {
+        default: 'Save & Publish',
+        retry: 'Retry Save & Publish',
+        working: 'Saving & Publishing',
+    },
+    reapprove: {
+        default: 'Save & Reapprove',
+        retry: 'Retry Save & Reapprove',
+        working: 'Saving & Reapproving',
+    },
+    republish: {
+        default: 'Save & Republish',
+        retry: 'Retry Save & Republish',
+        working: 'Saving & Republishing',
+    },
+}
 
 var OptionEditPage = React.createClass({
     getInitialState: function () {
@@ -27,9 +44,23 @@ var OptionEditPage = React.createClass({
             cancelDialogOpen: false,
             canSaveOption: false,
             dirty: false,
-            saveButton: saveButtonDefaults,
+            saveButtonEnabled: true,
+            saveButtonLabel: buttonLabels.save.default,
             saveAndPublish: false,
+            savePublishButtonType: 'publish',
         };
+        
+        var option = this.getOption();
+        if(option.published) {
+            if(option.approved && this.isApprover()) {
+                initialState.savePublishButtonType = 'reapprove';
+            }
+            else {
+                initialState.savePublishButtonType = 'republish';
+            }
+        }
+        
+        initialState.savePublishButtonLabel = buttonLabels[initialState.savePublishButtonType].default;
         
         return initialState;
     },
@@ -52,6 +83,20 @@ var OptionEditPage = React.createClass({
         this.setState({
             canSaveOption: true,
         });
+    },
+
+
+    getDefaults: function() {
+        var defaults = {
+            code: this.props.choice.use_code,
+            title: this.props.choice.use_title,
+            description: this.props.choice.use_description,
+            min_places: this.props.choice.use_min_places,
+            max_places: this.props.choice.use_max_places,
+            points: this.props.choice.use_points,
+        };
+        
+        return defaults;
     },
 
     getOption: function() {
@@ -142,25 +187,20 @@ var OptionEditPage = React.createClass({
     
     //Submit the edit option form
     handleSubmit: function (option) {
+        var newState = {
+            saveButtonEnabled: false,
+        };
         if(this.state.saveAndPublish) {
             option.published = true;
-            var saveButtonState = {
-                enabled: false,
-                label: saveButtonDefaults.label,
-                savePublishLabel: 'Saving & Publishing',
-            };
+            newState.saveButtonLabel = buttonLabels.save.default;
+            newState.savePublishButtonLabel = buttonLabels[this.state.savePublishButtonType].working;
         }
         else {
-            var saveButtonState = {
-                enabled: false,
-                label: 'Saving',
-                savePublishLabel: saveButtonDefaults.savePublishLabel,
-            };
+            newState.saveButtonLabel = buttonLabels.save.working;
+            newState.savePublishButtonLabel = buttonLabels[this.state.savePublishButtonType].default;
         }
     
-        this.setState({
-            saveButton: saveButtonState,
-        });
+        this.setState(newState);
 
         //Get the alloy editor data
         if(this.props.choice.use_description) {
@@ -190,7 +230,9 @@ var OptionEditPage = React.createClass({
 
                 this.setState({
                     dirty: false,
-                    saveButton: saveButtonDefaults,
+                    saveButtonEnabled: true,
+                    saveButtonLabel: buttonLabels.save.default,
+                    savePublishButtonLabel: buttonLabels[this.state.savePublishButtonType].default,
                 });
                 
                 this.props.optionContainerHandlers.handleReturnedData(returnedData);
@@ -199,11 +241,9 @@ var OptionEditPage = React.createClass({
                 console.error(url, status, err.toString());
                 
                 this.setState({
-                    saveButton: {
-                        enabled: true,
-                        label: 'Resave',
-                        savePublishLabel: 'Resave & Publish',
-                    },
+                    saveButtonEnabled: true,
+                    saveButtonLabel: buttonLabels.save.retry,
+                    savePublishButtonLabel: buttonLabels[this.state.savePublishButtonType].retry,
                 });
                 
                 this.props.optionContainerHandlers.handleError(err);
@@ -227,17 +267,10 @@ var OptionEditPage = React.createClass({
     },
     
     render: function() {
-        var defaults = {
-            code: this.props.choice.use_code,
-            title: this.props.choice.use_title,
-            description: this.props.choice.use_description,
-            min_places: this.props.choice.use_min_places,
-            max_places: this.props.choice.use_max_places,
-            points: this.props.choice.use_points,
-        };
-        
+        var defaults = this.getDefaults();
         var option = this.getOption();
 
+        var buttonsDisabled = !this.state.canSaveOption || !this.state.saveButtonEnabled || !this.state.dirty;
         var topbar = <TopBar 
             iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
             iconRight={
@@ -247,29 +280,29 @@ var OptionEditPage = React.createClass({
                             this.state.canSaveOption?
                                 (!this.state.dirty&&<span>No changes</span>)
                             :
-                                <span >Errors on form</span>
+                                <span>Incomplete form</span>
                         }
                     </span>
                     
-                    <RaisedButton 
-                        disabled={!this.state.canSaveOption || !this.state.saveButton.enabled || !this.state.dirty}
-                        //disabled={!this.state.saveButton.enabled}
-                        label={this.state.saveButton.label}
-                        onTouchTap={this.handleSaveButtonClick}
-                        //primary={true}
-                        style={{marginTop: '6px', marginRight: '12px'}}
-                        type="submit"
-                    />
                     {!option.published && 
                         <RaisedButton 
-                            disabled={!this.state.canSaveOption || !this.state.saveButton.enabled}
-                            label={this.state.saveButton.savePublishLabel}
-                            onTouchTap={this.handleSavePublishButtonClick}
+                            disabled={buttonsDisabled}
+                            //disabled={!this.state.saveButtonEnabled}
+                            label={this.state.saveButtonLabel}
+                            onTouchTap={this.handleSaveButtonClick}
                             //primary={true}
-                            style={{marginTop: '6px'}}
+                            style={{marginTop: '6px', marginRight: '12px'}}
                             type="submit"
                         />
                     }
+                    <RaisedButton 
+                        disabled={buttonsDisabled}
+                        label={this.state.savePublishButtonLabel}
+                        onTouchTap={this.handleSavePublishButtonClick}
+                        //primary={true}
+                        style={{marginTop: '6px'}}
+                        type="submit"
+                    />
                 </span>
             }
             title={(this.props.optionEditing.optionBeingEdited?"Edit":"Add") + " Option"}
