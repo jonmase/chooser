@@ -157,8 +157,7 @@ var OptionEditPage = React.createClass({
         this.props.optionContainerHandlers.wysiwygChange(element, value);
     },
     
-    //When Save button is clicked, submit the edit form
-    handleSaveButtonClick: function(publishing) {
+    handleSave: function(publishing) {
         if(typeof(publishing) === "undefined") {
             publishing = false;
         }
@@ -181,8 +180,12 @@ var OptionEditPage = React.createClass({
         }
     },
     
+    handleSaveButtonClick: function() {
+        this.handleSave(false);
+    },
+    
     handleSavePublishButtonClick: function() {
-        this.handleSaveButtonClick(true);
+        this.handleSave(true);
     },
     
     //Submit the edit option form
@@ -308,6 +311,15 @@ var OptionEditPage = React.createClass({
             title={(this.props.optionEditing.optionBeingEdited?"Edit":"Add") + " Option"}
         />;
         
+        if(option.approver_comments !== null) {
+            if(option.approver_comments) {
+                var approverComments = ", with the following comments: " + option.approver_comments;
+            }
+            else {
+                var approverComments = ", without any comments";
+            }
+        }
+        
         return (
             <Container topbar={topbar} title={null}>
                 <Formsy.Form 
@@ -319,21 +331,29 @@ var OptionEditPage = React.createClass({
                     onValidSubmit={this.handleSubmit}
                     ref="edit"
                 >
-                    {option.published && !this.props.instance.editingInstance.approval_required && 
-                        <Alert>
-                            This option has already been published and will be visible to students if/when the Choice is open. Any changes you make will also be visible to students after you save.
-                        </Alert>
+                    {
+                        this.props.instance.editingInstance.approval_required?
+                            option.approved === false?
+                                <Alert>
+                                    This option has been rejected by an Approver{approverComments}
+                                </Alert>
+                            :
+                                (option.approved === null && option.approver_comments !== null)?
+                                    <Alert>
+                                        A previous version of this option was rejected by an Approver{approverComments}
+                                    </Alert>
+                                :
+                                    option.approved === true && !this.isApprover() &&
+                                        <Alert>
+                                            This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
+                                        </Alert>
+                        :
+                            option.published && 
+                                <Alert>
+                                    This option has already been published and will be visible to students if/when the Choice is open. Any changes you make will also be visible to students after you save.
+                                </Alert>
                     }
-                    {this.props.instance.editingInstance.approval_required && option.approved === false && option.approver_comments &&
-                        <Alert>
-                            This option has been rejected by an Approver, with the following comments: {option.approver_comments}
-                        </Alert>
-                    }
-                    {!this.isApprover() && option.approved === true &&
-                        <Alert>
-                            This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
-                        </Alert>
-                    }
+                    
                     <div className="section">
                         <DefaultFields
                             defaults={defaults}
