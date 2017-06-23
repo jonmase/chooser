@@ -81,8 +81,6 @@ var OptionViewPage = React.createClass({
             />;
         }
         else if(this.props.action === 'approve') {
-            
-            
             var topbarIconRight = <span>
                 <RaisedButton 
                     disabled={option.approved === false}
@@ -114,6 +112,24 @@ var OptionViewPage = React.createClass({
                     </Alert>;
                     break;
                 default:
+                    if(option.approver_comments !== null) {
+                        if(option.approver_comments) {
+                            var approverComments = " the following comments: " + option.approver_comments;
+                        }
+                        else {
+                            var approverComments = "out any comments";
+                        }
+                        alert = <Alert>
+                            This option has previously been rejected, with{approverComments}.
+                        </Alert>;
+                    }
+                    else {
+                        if(option.approver !== null) {
+                            alert = <Alert>
+                                This option has previously been approved.
+                            </Alert>;
+                        }
+                    }
                     break;
             }
         }
