@@ -338,15 +338,26 @@ var OptionEditPage = React.createClass({
                                     This option has been rejected by an Approver{approverComments}
                                 </Alert>
                             :
-                                (option.approved === null && option.approver_comments !== null)?
-                                    <Alert>
-                                        A previous version of this option was rejected by an Approver{approverComments}
-                                    </Alert>
-                                :
-                                    option.approved === true && !this.isApprover() &&
+                                option.approved === null?
+                                    option.approver_comments !== null?
                                         <Alert>
-                                            This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
+                                            A previous version of this option was rejected by an Approver{approverComments}
                                         </Alert>
+                                    :
+                                        option.approver !== null &&
+                                            <Alert>
+                                                A previous version of this option was approved by an Approver
+                                            </Alert>
+                                :
+                                    option.approved === true&&
+                                        this.isApprover()?
+                                            <Alert>
+                                                This option has already been approved and will be visible to students if/when the Choice is open. As you are an Approver, changes you make will be approved and visible to students after you save.
+                                            </Alert>
+                                        :
+                                            <Alert>
+                                                This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
+                                            </Alert>
                         :
                             option.published && 
                                 <Alert>
