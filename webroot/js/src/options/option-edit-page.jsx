@@ -85,7 +85,6 @@ var OptionEditPage = React.createClass({
         });
     },
 
-
     getDefaults: function() {
         var defaults = {
             code: this.props.choice.use_code,
@@ -117,7 +116,7 @@ var OptionEditPage = React.createClass({
     handleApprovedWarningDialogSubmit: function() {
         this.setState({
             approvedWarningDialogOpen: false,
-        }, this.submitForm);
+        }, this.submitForm(true));  //Submit form, republishing option
     },
 
     //Handle click on the back button - warn if form is dirty
@@ -159,18 +158,21 @@ var OptionEditPage = React.createClass({
     },
     
     //When Save button is clicked, submit the edit form
-    handleSaveButtonClick: function() {
+    handleSaveButtonClick: function(publishing) {
+        if(typeof(publishing) === "undefined") {
+            publishing = false;
+        }
         //Check that form is dirty
         if(this.state.dirty) {
             var option = this.getOption();
-            //If approval is required, editing an approved option and not an approver, show the warning dialog
-            if(!this.isApprover() && option.approved === true) {
+            //If publishing, editing an approved option and not an approver, show the warning dialog
+            if(publishing && !this.isApprover() && option.approved === true) {
                 this.setState({
                     approvedWarningDialogOpen: true,
                 });
             }
             else {
-                this.submitForm();
+                this.submitForm(publishing); //Submit form
             }
         }
         //If form is not dirty, do nothing except show snackbar message
@@ -180,9 +182,7 @@ var OptionEditPage = React.createClass({
     },
     
     handleSavePublishButtonClick: function() {
-        this.setState({
-            saveAndPublish: true,
-        }, this.refs.edit.submit);
+        this.handleSaveButtonClick(true);
     },
     
     //Submit the edit option form
@@ -260,9 +260,9 @@ var OptionEditPage = React.createClass({
         }
     },
     
-    submitForm: function() {
+    submitForm: function(saveAndPublish) {
         this.setState({
-            saveAndPublish: false,
+            saveAndPublish: saveAndPublish,
         }, this.refs.edit.submit);
     },
     
