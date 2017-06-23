@@ -5,6 +5,7 @@ import {Table, TableHeader, TableHeaderColumn, TableBody, TableRow, TableRowColu
 import FontIcon from 'material-ui/FontIcon';
 
 import ExtraField from './extra-field.jsx';
+import WarningDialog from './option-unpublish-approved-warning-dialog.jsx';
 
 import AddButton from '../elements/buttons/add-button.jsx';
 import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
@@ -57,6 +58,15 @@ styles.approverActionsTableRowColumn = Object.assign({}, styles.actionsTableRowC
 styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
     
 var OptionsTable = React.createClass({
+    getInitialState: function () {
+        var initialState = {
+            optionId: null,
+            warningDialogOpen: false,
+        };
+        
+        return initialState;
+    },
+    
     _onRowSelection: function(selectedRows){
         this.props.optionContainerHandlers.selectOption(selectedRows);
     },
@@ -74,9 +84,32 @@ var OptionsTable = React.createClass({
     },
     
     handleUnpublish: function(optionId) {
-        this.props.optionContainerHandlers.changeStatus('publish', optionId, false);
+        //If option has already been approved, warn that it will need reapproval
+        var option = this.props.options.options[this.props.options.indexesById[optionId]];
+        if(option.approved) {
+            this.setState({
+                optionId: optionId,
+                warningDialogOpen: true,
+            });
+        }
+        else {
+            this.unpublishOption(optionId);
+        }
+        
     },
     
+    handleWarningDialogClose: function() {
+        this.setState({
+            warningDialogOpen: false,
+        });
+    },
+
+    handleWarningDialogSubmit: function() {
+        this.setState({
+            warningDialogOpen: false,
+        }, this.unpublishOption(this.state.optionId));
+    },
+
     isAdmin: function() {
         if(this.props.roles.indexOf('admin') > -1) {
             return true;
@@ -108,6 +141,10 @@ var OptionsTable = React.createClass({
         else {
             return false;
         }
+    },
+    
+    unpublishOption: function(optionId) {
+        this.props.optionContainerHandlers.changeStatus('publish', optionId, false);
     },
     
     render: function() {
@@ -470,6 +507,13 @@ var OptionsTable = React.createClass({
                         }
                     </CardText>
                 </Card>
+                <WarningDialog 
+                    handlers={{
+                        close: this.handleWarningDialogClose,
+                        submit: this.handleWarningDialogSubmit,
+                    }}
+                    open={this.state.warningDialogOpen}
+                />
             </div>
         );
     }

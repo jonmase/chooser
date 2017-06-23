@@ -244,8 +244,8 @@ class OptionsTable extends Table
         $choicesOption['approved'] = null;
         
         if($includingDetails) {
-            $choicesOption['approver'] = null;
-            $choicesOption['approved_date'] = null;
+            //$choicesOption['approver'] = null;
+            //$choicesOption['approved_date'] = null;
             $choicesOption['approver_comments'] = null;
         }
         

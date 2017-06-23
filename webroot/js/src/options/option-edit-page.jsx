@@ -3,7 +3,7 @@ import React from 'react';
 import Formsy from 'formsy-react';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import ApprovedWarningDialog from './option-edit-approved-warning-dialog.jsx';
+import WarningDialog from './option-edit-approved-warning-dialog.jsx';
 import CancelDialog from './option-edit-cancel-dialog.jsx';
 
 import Container from '../elements/container.jsx';
@@ -40,7 +40,6 @@ var buttonLabels = {
 var OptionEditPage = React.createClass({
     getInitialState: function () {
         var initialState = {
-            approvedWarningDialogOpen: false,
             cancelDialogOpen: false,
             canSaveOption: false,
             dirty: false,
@@ -48,6 +47,7 @@ var OptionEditPage = React.createClass({
             saveButtonLabel: buttonLabels.save.default,
             saveAndPublish: false,
             savePublishButtonType: 'publish',
+            warningDialogOpen: false,
         };
         
         var option = this.getOption();
@@ -107,18 +107,6 @@ var OptionEditPage = React.createClass({
         return option;
     },
 
-    handleApprovedWarningDialogClose: function() {
-        this.setState({
-            approvedWarningDialogOpen: false,
-        });
-    },
-
-    handleApprovedWarningDialogSubmit: function() {
-        this.setState({
-            approvedWarningDialogOpen: false,
-        }, this.submitForm(true));  //Submit form, republishing option
-    },
-
     //Handle click on the back button - warn if form is dirty
     handleBackButtonClick: function() {
         //If the form is dirty...
@@ -167,7 +155,7 @@ var OptionEditPage = React.createClass({
             //If publishing, editing an approved option and not an approver, show the warning dialog
             if(publishing && !this.isApprover() && option.approved === true) {
                 this.setState({
-                    approvedWarningDialogOpen: true,
+                    warningDialogOpen: true,
                 });
             }
             else {
@@ -254,6 +242,18 @@ var OptionEditPage = React.createClass({
         });
     },
     
+    handleWarningDialogClose: function() {
+        this.setState({
+            warningDialogOpen: false,
+        });
+    },
+
+    handleWarningDialogSubmit: function() {
+        this.setState({
+            warningDialogOpen: false,
+        }, this.submitForm(true));  //Submit form, republishing option
+    },
+
     isApprover: function() {
         if(this.props.instance.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
             return true;
@@ -399,12 +399,12 @@ var OptionEditPage = React.createClass({
                         }, this)}
                     </div>
                 </Formsy.Form>
-                <ApprovedWarningDialog 
+                <WarningDialog 
                     handlers={{
-                        close: this.handleApprovedWarningDialogClose,
-                        submit: this.handleApprovedWarningDialogSubmit,
+                        close: this.handleWarningDialogClose,
+                        submit: this.handleWarningDialogSubmit,
                     }}
-                    open={this.state.approvedWarningDialogOpen}
+                    open={this.state.warningDialogOpen}
                 />
                 <CancelDialog 
                     handlers={{

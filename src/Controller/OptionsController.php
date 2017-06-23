@@ -255,8 +255,8 @@ class OptionsController extends AppController
                     $choicesOption = $this->Options->nullifyPublished($choicesOption);
                 }
                 
-                //If action is publish and approval decision has been made, nullify approval, but leave approver and any comment 
-                if($action === 'publish' && $originalChoicesOption['approved'] === false) {
+                //If action is publish and approval decision has been made, nullify approval decision, but leave details 
+                if($action === 'publish' && $originalChoicesOption['approved'] !== null) {
                     $choicesOption = $this->Options->nullifyApproval($choicesOption);
                 }
             }
@@ -264,6 +264,11 @@ class OptionsController extends AppController
             else {
                 $choicesOption[$userField] = null;
                 $choicesOption[$dateField] = null;
+                
+                //If action is publish (i.e. unpublishing) and approval decision has been made, nullify approval, but leave details
+                if($action === 'publish' && $originalChoicesOption['approved'] !== null) {
+                    $choicesOption = $this->Options->nullifyApproval($choicesOption);
+                }
             }
 
             if($action === 'approve') {
