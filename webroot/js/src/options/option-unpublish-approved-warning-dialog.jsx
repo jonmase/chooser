@@ -31,7 +31,7 @@ var OptionUnpublishApprovedWarningDialog = React.createClass({
                 title="Confirm Unpublish"
             >
                 <p style={{marginBottom: 0}}>
-                    This option has already been approved. If you unpublish it, it will need to be republished and then re-approved before it is visible to students. Are you sure you want to unpublish this option?
+                    This option has already been approved. If you unpublish it, it will need to be republished and then reapproved before it is visible to students. Are you sure you want to unpublish this option?
                 </p>
             </Dialog>
         );

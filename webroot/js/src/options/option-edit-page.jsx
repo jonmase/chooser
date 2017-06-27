@@ -356,7 +356,7 @@ var OptionEditPage = React.createClass({
                                             </Alert>
                                         :
                                             <Alert>
-                                                This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be re-approved before it is visible again. 
+                                                This option has been approved and will be visible to students if/when the Choice is open. If you make changes, the option will need to be reapproved before it is visible again. 
                                             </Alert>
                         :
                             option.published && 
