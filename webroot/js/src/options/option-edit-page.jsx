@@ -335,18 +335,18 @@ var OptionEditPage = React.createClass({
                         this.props.instance.editingInstance.approval_required?
                             option.approved === false?
                                 <Alert>
-                                    This option has been rejected by an Approver{approverComments}
+                                    This option has been rejected{approverComments}.
                                 </Alert>
                             :
                                 option.approved === null?
                                     option.approver_comments !== null?
                                         <Alert>
-                                            A previous version of this option was rejected by an Approver{approverComments}
+                                            A previous version of this option was rejected{approverComments}.
                                         </Alert>
                                     :
                                         option.approver !== null &&
                                             <Alert>
-                                                A previous version of this option was approved by an Approver
+                                                A previous version of this option was approved.
                                             </Alert>
                                 :
                                     option.approved === true&&
