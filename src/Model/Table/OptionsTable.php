@@ -205,10 +205,16 @@ class OptionsTable extends Table
         //Viewable options must be published and approved, and not deleted
         $conditions = [
             'ChoicesOptions.published' => 1,
-            'ChoicesOptions.approved' => 1,
             'ChoicesOptions.deleted' => 0,
         ];
         
+        //Check whether there is an editing instance, and if so, is approval required
+        $editingInstance = $this->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
+        if(!empty($editingInstance) && $editingInstance['approval_required']) {
+            //Approval is required, so options must be approved
+            $conditions['ChoicesOptions.approved'] = 1;
+        }
+
         list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions);
         
         return $options;
