@@ -83,8 +83,8 @@ var OptionContainer = React.createClass({
                 }
                 
                 stateData.instance = {
-                    editingInstance: editingInstance,
-                    instance: choosingInstance,
+                    editing: editingInstance,
+                    choosing: choosingInstance,
                     loaded: true,
                 };
             
@@ -127,15 +127,11 @@ var OptionContainer = React.createClass({
             canConfirm: true,
             confirmDialogOpen: false,
             confirmedSelection: [],
-            editingInstance: {
-                instance: [],
-                loaded: false,
-            },
             favourites: [],
             initialOptionIndexesById: [],
             instance: {
-                editingInstance: [],
-                instance: [],
+                editing: [],
+                choosing: [],
                 loaded: false,
             },
             options: {
@@ -237,7 +233,7 @@ var OptionContainer = React.createClass({
         });
         
         //Save the settings
-        var url = '../shortlisted-options/favourite/' + action + '/' + this.state.instance.instance.id + '/' + choicesOptionId;
+        var url = '../shortlisted-options/favourite/' + action + '/' + this.state.instance.choosing.id + '/' + choicesOptionId;
         $.ajax({
             url: url,
             dataType: 'json',
@@ -473,7 +469,7 @@ var OptionContainer = React.createClass({
             var url = '../selections/abandon.json';
             var data = {
                 selection_id: this.state.selection.selection.id,
-                instance_id: this.state.instance.instance.id,
+                instance_id: this.state.instance.choosing.id,
             }
             
             $.ajax({
@@ -595,7 +591,7 @@ var OptionContainer = React.createClass({
     
     handleSelectionConfirmButtonClick: function(event, fromDialog) {
         //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
-        if(!fromDialog && (!this.state.instance.instance.editable || this.state.selection.ruleWarnings)) {
+        if(!fromDialog && (!this.state.instance.choosing.editable || this.state.selection.ruleWarnings)) {
             this.handleSelectionConfirmDialogOpen();
         }
         //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
@@ -718,7 +714,7 @@ var OptionContainer = React.createClass({
             action = "select";
         }
     
-        data.selection.choosing_instance_id = this.state.instance.instance.id;
+        data.selection.choosing_instance_id = this.state.instance.choosing.id;
         data.selection.id = this.state.selection.selection.id || null;
        
         var url = '../selections/save.json';
@@ -847,7 +843,7 @@ var OptionContainer = React.createClass({
         
             if(action === 'view' || action === 'confirmed'){
                 //If instance created and open or user is administrator, show selection basket or change selection buttons
-                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && (this.state.instance.instance.open || this.props.roles.indexOf('admin') > -1))) {
+                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.choosing.id && (this.state.instance.choosing.open || this.props.roles.indexOf('admin') > -1))) {
                     if(action === 'view') {
                         topbarIconRight=
                             <div style={{paddingRight: '10px'}}>
@@ -954,7 +950,7 @@ var OptionContainer = React.createClass({
                 return (
                     <OptionEditPage
                         choice={this.props.choice}
-                        instance={this.state.instance}
+                        editingInstance={this.state.instance.editing}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
                             handleError: this.handleOptionEditError,
@@ -978,11 +974,11 @@ var OptionContainer = React.createClass({
                             confirmedSelection={this.state.confirmedSelection}
                             expanded={this.state.showInstructions}
                             expandChangeHandler={this.handleInstructionsExpandChange}
-                            instance={this.state.instance}
+                            choosingInstance={this.state.instance.choosing}
                             roles={this.props.roles}
                             rules={this.state.rules.rules}
                         />
-                        {(this.props.roles.length > 0 || this.state.instance.instance.opens.passed) &&
+                        {(this.props.roles.length > 0 || this.state.instance.choosing.opens.passed) &&
                             <OptionsTable
                                 action={this.state.action}
                                 choice={this.props.choice}
@@ -1008,7 +1004,7 @@ var OptionContainer = React.createClass({
                     <OptionViewPage
                         action={action}
                         choice={this.props.choice}
-                        choosingInstance={this.state.instance.instance}
+                        choosingInstance={this.state.instance.choosing}
                         option={this.state.options.options[this.state.options.indexesById[this.state.optionBeingViewed]]}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
@@ -1051,7 +1047,7 @@ var OptionContainer = React.createClass({
                         >
                             <Review
                                 choice={this.props.choice}
-                                instance={this.state.instance}
+                                choosingInstance={this.state.instance.choosing}
                                 optionContainerHandlers={{
                                     change: this.handleBackToView,
                                     confirm: this.handleSelectionConfirmButtonClick,
@@ -1084,7 +1080,7 @@ var OptionContainer = React.createClass({
                 return (
                     <Confirmed
                         choice={this.props.choice}
-                        instance={this.state.instance}
+                        choosingInstance={this.state.instance.choosing}
                         optionContainerHandlers={{
                             change: this.handleBackToView,
                         }}

@@ -21,7 +21,7 @@ var SelectionConfirmed = React.createClass({
         var headerTitle = '';
         if(!this.props.selection.selection.confirmed) {
             headerTitle = 'Choices Not Submitted';
-            if(this.props.instance.instance.deadline.passed || this.props.instance.instance.extension.passed) {
+            if(this.props.choosingInstance.deadline.passed || this.props.choosingInstance.extension.passed) {
                 submissionMessage = 'You did not submit your choices and the deadline has now passed.';
             }
             else {
@@ -42,20 +42,20 @@ var SelectionConfirmed = React.createClass({
                             {submissionMessage}
                         </p>
                         <div>
-                            {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
+                            {(this.props.choosingInstance.editable && (!this.props.choosingInstance.deadline.passed || !this.props.choosingInstance.extension.passed))&&
                                 <div>
                                     <span>You can change your choices until the deadline at&nbsp;<strong>
-                                        {(!this.props.instance.instance.deadline.passed)?
-                                            <DateTime value={this.props.instance.instance.deadline} />
+                                        {(!this.props.choosingInstance.deadline.passed)?
+                                            <DateTime value={this.props.choosingInstance.deadline} />
                                         :
-                                            <DateTime value={this.props.instance.instance.extension} />
+                                            <DateTime value={this.props.choosingInstance.extension} />
                                         }
                                     </strong>.</span>
                                 </div>
                             }
                         </div>
                     </CardText>
-                    {(this.props.instance.instance.editable && (!this.props.instance.instance.deadline.passed || !this.props.instance.instance.extension.passed))&&
+                    {(this.props.choosingInstance.editable && (!this.props.choosingInstance.deadline.passed || !this.props.choosingInstance.extension.passed))&&
                         <CardActions>
                             <RaisedButton 
                                 label="Change Choices" 
@@ -78,9 +78,9 @@ var SelectionConfirmed = React.createClass({
                                             options={this.props.options.options}
                                             optionsSelectedById={this.props.optionsSelected}
                                             optionsSelectedIdsOrdered={this.props.optionsSelectedPreferenceOrder}
-                                            preferenceType={this.props.instance.instance.preference_type}
-                                            showCommentsTextPerOption={this.props.instance.instance.comments_per_option}
-                                            showPreferenceValues={this.props.instance.instance.preference}
+                                            preferenceType={this.props.choosingInstance.preference_type}
+                                            showCommentsTextPerOption={this.props.choosingInstance.comments_per_option}
+                                            showPreferenceValues={this.props.choosingInstance.preference}
                                             style={{paddingTop: 0}}
                                             useCode={this.props.choice.use_code}
                                         />
@@ -90,7 +90,7 @@ var SelectionConfirmed = React.createClass({
                                 }
                             </div>
                             <div>
-                                {(this.props.instance.instance.comments_overall && this.props.selection.selection.comments)?
+                                {(this.props.choosingInstance.comments_overall && this.props.selection.selection.comments)?
                                     <Text 
                                         value={this.props.selection.selection.comments}
                                         label="Comments"

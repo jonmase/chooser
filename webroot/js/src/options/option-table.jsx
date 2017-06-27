@@ -119,7 +119,7 @@ var OptionsTable = React.createClass({
         }
     },
     isApprover: function() {
-        if(this.props.instance.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
+        if(this.props.instance.editing.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
             return true;
         }
         else {
@@ -160,7 +160,7 @@ var OptionsTable = React.createClass({
                     if(isApprover) {
                         subtitle += ', manage and approve';
                         //If this user has one or more editable options and editing is open, make the actions column wide enough for edit and approve actions
-                        if(isAdmin || (this.props.options.editableOptionsCount > 0 && this.props.instance.editingInstance.editing_open)) {
+                        if(isAdmin || (this.props.options.editableOptionsCount > 0 && this.props.instance.editing.editing_open)) {
                             var actionsColStyles = styles.adminActionsTableRowColumn;
                         }
                         //Otherwise, actions column only need to be wide enough for approve action
@@ -174,7 +174,7 @@ var OptionsTable = React.createClass({
                     }
                     subtitle += ' options';
                     
-                    if(isApprover && !isAdmin && !this.props.instance.editingInstance.editing_open) {
+                    if(isApprover && !isAdmin && !this.props.instance.editing.editing_open) {
                         subtitle += ' (Note that the editing deadline has passed, so you can only approve options)';
                     }
                 }
@@ -188,7 +188,7 @@ var OptionsTable = React.createClass({
                 var title = 'Choose Options';
                 //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
                 var subtitle = 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
-                enableSelection = this.props.instance.instance.id?true:false;
+                enableSelection = this.props.instance.choosing.id?true:false;
                 break;
             default:
                 var title = false;
@@ -200,7 +200,7 @@ var OptionsTable = React.createClass({
         //var showFavouritesColumn = this.props.action === 'view' && enableSelection;
         var showFavouritesColumn = false;
         var showPublishedColumn = this.props.action === 'edit';
-        var showApprovedColumn = this.props.action === 'edit' && this.props.instance.editingInstance.approval_required;
+        var showApprovedColumn = this.props.action === 'edit' && this.props.instance.editing.approval_required;
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         var showActionsColumn = this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0 || this.isAdmin());
         
@@ -448,7 +448,7 @@ var OptionsTable = React.createClass({
                                                 
                                                 {showActionsColumn && 
                                                     <UnselectableCell style={actionsColStyles}>
-                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit && this.props.instance.editingInstance.editing_open)) &&
+                                                        {(this.isAdmin() || (this.isEditor() && option.can_edit && this.props.instance.editing.editing_open)) &&
                                                             <span>
                                                                 <EditButton
                                                                     handleClick={this.props.optionContainerHandlers.edit} 

@@ -15,12 +15,12 @@ var SelectionEditableWarning = React.createClass({
         return (
             <p style={style}>
                 <strong>Please Note: </strong>
-                {(this.props.instance.editable)?
+                {(this.props.choosingInstance.editable)?
                     <span>You will be able to return and change your choices until the deadline at&nbsp;
-                        {!this.props.instance.deadline.passed?
-                            <DateTime value={this.props.instance.deadline} />
+                        {!this.props.choosingInstance.deadline.passed?
+                            <DateTime value={this.props.choosingInstance.deadline} />
                         :
-                            <DateTime value={this.props.instance.extension} />
+                            <DateTime value={this.props.choosingInstance.extension} />
                         }
                     </span>
                 :

@@ -16,7 +16,7 @@ var styles = {
     
 var ChoiceInstructions = React.createClass({
     render: function() {
-        var instance = this.props.instance.instance;
+        var instance = this.props.choosingInstance;
         
         return (
             <Card 

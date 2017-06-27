@@ -19,20 +19,20 @@ var SelectionReview = React.createClass({
     render: function() {
         var content = <div>
             <p style={{marginTop: 0}}>
-                {(this.props.instance.instance.review_instructions)&&
-                    <span>{this.props.instance.instance.review_instructions}</span>
+                {(this.props.choosingInstance.review_instructions)&&
+                    <span>{this.props.choosingInstance.review_instructions}</span>
                 }
             </p>
                     
             {/*<p style={{marginTop: 0}}>
-                {(this.props.instance.instance.preference_instructions)&&
-                    <span>{this.props.instance.instance.preference_instructions}</span>
+                {(this.props.choosingInstance.preference_instructions)&&
+                    <span>{this.props.choosingInstance.preference_instructions}</span>
                 }
             </p>
                     
             <p style={{marginTop: 0}}>
-                {(this.props.instance.instance.comments_per_option && this.props.instance.instance.comments_per_option_instructions)&&
-                    <span>{this.props.instance.instance.comments_per_option_instructions}</span>
+                {(this.props.choosingInstance.comments_per_option && this.props.choosingInstance.comments_per_option_instructions)&&
+                    <span>{this.props.choosingInstance.comments_per_option_instructions}</span>
                 }
             </p>*/}
             
@@ -48,10 +48,10 @@ var SelectionReview = React.createClass({
                             options={this.props.options.options}
                             optionsSelectedById={this.props.optionsSelected}
                             optionsSelectedIdsOrdered={this.props.optionsSelectedPreferenceOrder}
-                            preferenceType={this.props.instance.instance.preference_type}
+                            preferenceType={this.props.choosingInstance.preference_type}
                             rankSelectsDisabled={this.props.rankSelectsDisabled}
-                            showCommentsFieldPerOption={this.props.instance.instance.comments_per_option}
-                            showPreferenceInputs={this.props.instance.instance.preference}
+                            showCommentsFieldPerOption={this.props.choosingInstance.comments_per_option}
+                            showPreferenceInputs={this.props.choosingInstance.preference}
                             useCode={this.props.choice.use_code}
                         />
                     </div>
@@ -60,10 +60,10 @@ var SelectionReview = React.createClass({
                 }
             </div>
             
-            {(this.props.instance.instance.comments_overall)?
+            {(this.props.choosingInstance.comments_overall)?
                 <MultilineField field={{
                     label: "Comments",
-                    instructions: this.props.instance.instance.comments_overall_instructions,
+                    instructions: this.props.choosingInstance.comments_overall_instructions,
                     name: "selection.comments",
                     onChange: this.props.optionContainerHandlers.overallCommentsChange,
                     section: true,
@@ -72,7 +72,7 @@ var SelectionReview = React.createClass({
             :""}
             
             <EditableWarning
-                instance={this.props.instance.instance}
+                choosingInstance={this.props.choosingInstance}
             />
         </div>;
     

@@ -66,7 +66,7 @@ var SelectionConfirmDialog = React.createClass({
 
                 <div style={{marginTop: '2em'}}>
                     <EditableWarning
-                        instance={this.props.instance.instance}
+                        choosingInstance={this.props.instance.choosing}
                     />
                 </div>
             </Dialog>

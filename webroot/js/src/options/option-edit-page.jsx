@@ -255,7 +255,7 @@ var OptionEditPage = React.createClass({
     },
 
     isApprover: function() {
-        if(this.props.instance.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
+        if(this.props.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
             return true;
         }
         else {
@@ -332,7 +332,7 @@ var OptionEditPage = React.createClass({
                     ref="edit"
                 >
                     {
-                        this.props.instance.editingInstance.approval_required?
+                        this.props.editingInstance.approval_required?
                             option.approved === false?
                                 <Alert>
                                     This option has been rejected{approverComments}.
