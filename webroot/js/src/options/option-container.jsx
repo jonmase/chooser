@@ -847,7 +847,7 @@ var OptionContainer = React.createClass({
         
             if(action === 'view' || action === 'confirmed'){
                 //If instance created and open or user is administrator, show selection basket or change selection buttons
-                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && ((this.state.instance.instance.opens.passed && (!this.state.instance.instance.deadline.passed || !this.state.instance.instance.extension.passed)) || this.props.roles.indexOf('admin') > -1))) {
+                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.instance.id && (this.state.instance.instance.open || this.props.roles.indexOf('admin') > -1))) {
                     if(action === 'view') {
                         topbarIconRight=
                             <div style={{paddingRight: '10px'}}>
@@ -1008,14 +1008,17 @@ var OptionContainer = React.createClass({
                     <OptionViewPage
                         action={action}
                         choice={this.props.choice}
+                        choosingInstance={this.state.instance.instance}
                         option={this.state.options.options[this.state.options.indexesById[this.state.optionBeingViewed]]}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
                             backToView: this.handleBackToView,
                             changeStatus: this.handleOptionChangeStatus,
                             edit: this.handleOptionEditButtonClick,
-                            selectOption: this.handleOptionEditSelect,
+                            selectOption: this.handleOptionSelectFromDetails,
                         }}
+                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                        roles={this.props.roles}
                     />
                 );
             case 'basket': //Basket

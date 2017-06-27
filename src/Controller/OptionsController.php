@@ -123,7 +123,7 @@ class OptionsController extends AppController
                     $action = 'unavailable';
                 }
                 else {
-                    //If not admin, check whether there is an editing instance and editing has opened. If not, redirect to dashboard
+                    //If not admin, check whether there is an editing instance and editing has opened, in which case they can view options (even if editing is now closed). If not, redirect to dashboard
                     if(!$isAdmin) {
                         $editingInstance = $this->Options->ChoicesOptions->Choices->EditingInstances->getActive($choiceId);
                         if(empty($editingInstance) || !$editingInstance['opens']['passed']) {

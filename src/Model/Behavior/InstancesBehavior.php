@@ -69,6 +69,11 @@ class InstancesBehavior extends Behavior {
             }
         }
         
+        //Work out if the instance is open
+        if($instance['opens']['passed'] && (!$instance['deadline']['passed'] || $instance['extension']['passed'])) {
+            $instance['open'] = true;
+        }
+        
         return $instance;
     }
 

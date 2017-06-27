@@ -290,7 +290,7 @@ class ChoicesTable extends Table
                     //Show the opening date
                     $optionsDescription .= '<strong>Editing Opens: </strong> ' . $activeEditingInstance->opens['formatted'] . '<br />';
                 }
-                //Editing has open, so enable both buttons
+                //Editing is open, so enable both buttons
                 else {
                     $optionsEditButtonEnabled = true;
                     $optionsViewButtonEnabled = true;

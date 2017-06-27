@@ -62,14 +62,13 @@ var OptionViewPage = React.createClass({
             var backAction = this.props.optionContainerHandlers.backToEdit;
         }
             
-        if(this.props.action === 'more_view') {
+        if(this.props.action === 'more_view' && (this.props.choosingInstance.open || this.props.roles.indexOf('admin') > -1)) {
             var topbarIconRight=<Checkbox 
                 disableTouchRipple={true}
                 iconStyle={{color: 'white', fill: 'white', height: '48px', width: '48px'}}
                 label={false} 
-                onCheck={this.handleOptionSelectFromDetails}
-                //checked={typeof(this.state.optionsSelected[this.state.optionBeingViewed]) !== "undefined"}
-                checked={this.state.optionsSelectedTableOrder.indexOf(this.state.optionBeingViewed) > -1}
+                onCheck={this.props.optionContainerHandlers.selectOption}
+                checked={this.props.optionsSelectedTableOrder.indexOf(this.props.option.id) > -1}
             />;
         }
         else if(this.props.action === 'more_edit') {
