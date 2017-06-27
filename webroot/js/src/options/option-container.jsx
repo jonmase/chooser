@@ -312,7 +312,6 @@ var OptionContainer = React.createClass({
     //Keep in container
     //But possibly move wysiwyg value state to option-edit-page - would need to set this in one of the lifecycle methods
     handleOptionEditButtonClick: function(optionId) {
-        //If no option is specified, a new option is being added so set optionBeingEdited to null
         if(optionId) {
             var optionEditingState = {
                 optionBeingEdited: optionId,
@@ -341,6 +340,7 @@ var OptionContainer = React.createClass({
             }
             this.setState({optionValues: newOptionValuesState});
         }
+        //If no option is specified, a new option is being added so set optionBeingEdited to null
         else {
             var optionEditingState = {
                 optionBeingEdited: null,

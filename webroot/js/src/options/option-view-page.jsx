@@ -73,9 +73,9 @@ var OptionViewPage = React.createClass({
         }
         else if(this.props.action === 'more_edit') {
             var topbarIconRight = <EditButton
-                handleClick={this.handleOptionEditButtonClick} 
+                handleClick={this.props.optionContainerHandlers.edit} 
                 iconStyle={{color: 'white'}}
-                id={this.state.optionBeingViewed}
+                id={this.props.option.id}
                 tooltip=""
             />;
         }
