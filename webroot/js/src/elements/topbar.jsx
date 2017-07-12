@@ -1,12 +1,8 @@
 import React from 'react';
 
 import AppBar from 'material-ui/AppBar';
-//import {Tabs, Tab} from 'material-ui/Tabs';
 
 import DashboardMenu from './dashboard-menu.jsx';
-
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import ChooserTheme from './theme.jsx';
 
 var TopBar = React.createClass({
     getInitialState: function () {
@@ -55,39 +51,6 @@ var TopBar = React.createClass({
                         sections={this.props.sections}
                     />
                 }
-                {/*this.props.showStepTabs &&
-                    <div style={{position: 'fixed', paddingTop: '64px', width: '100%'}}>
-                        <Tabs> 
-                            <Tab label="Item One" >
-                                <div>
-                                    <h2>Tab One</h2>
-                                    <p>
-                                        This is an example tab.
-                                    </p>
-                                    <p>
-                                        You can put any sort of HTML or react component in here. It even keeps the component state!
-                                    </p>
-                                </div>
-                            </Tab>
-                            <Tab label="Item Two" >
-                                <div>
-                                    <h2>Tab Two</h2>
-                                    <p>
-                                        This is another example tab.
-                                    </p>
-                                </div>
-                            </Tab>
-                            <Tab label="onActive" disabled={true}>
-                                <div>
-                                    <h2>Tab Three</h2>
-                                    <p>
-                                        This is a third example tab.
-                                    </p>
-                                </div>
-                            </Tab>
-                        </Tabs>                    
-                    </div>
-                */}
             </div>
         );
     }
