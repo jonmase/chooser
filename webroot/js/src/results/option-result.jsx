@@ -6,7 +6,7 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
-import NumberLabelled from '../elements/display/number-labelled.jsx';
+import TextLabelled from '../elements/display/text-labelled.jsx';
 import OptionTitle from '../options/option-title.jsx';
 import DefaultFields from '../options/default-fields.jsx';
 
@@ -43,7 +43,7 @@ var ResultsIndex = React.createClass({
                     option={option}
                 />
                 
-                <NumberLabelled 
+                <TextLabelled 
                     label="Times Chosen"
                     value={option.count}
                 />

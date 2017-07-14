@@ -2,12 +2,9 @@ import React from 'react';
 
 import Text from '../elements/display/text-labelled.jsx';
 import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
-import Number from '../elements/display/number-labelled.jsx';
 import Email from '../elements/display/email-labelled.jsx';
 import Url from '../elements/display/url-labelled.jsx';
-import Radio from '../elements/display/radio-labelled.jsx';
 import Checkbox from '../elements/display/checkbox-labelled.jsx';
-import Dropdown from '../elements/display/dropdown-labelled.jsx';
 import DateTime from '../elements/display/datetime-labelled.jsx';
 //import Person from '../elements/display/person-labelled.jsx';
 //import File from '../elements/display/file-labelled.jsx';
@@ -32,7 +29,7 @@ var ExtraField = React.createClass({
                 ComponentClass = Wysiwyg;
                 break;
             case 'number': 
-                ComponentClass = Number;
+                ComponentClass = Text;
                 break;
             case 'email': 
                 ComponentClass = Email;
@@ -42,8 +39,9 @@ var ExtraField = React.createClass({
                 break;
             case 'list':
                 switch(this.props.extra.list_type) {
+                    case 'dropdown': 
                     case 'radio': 
-                        ComponentClass = Radio;
+                        ComponentClass = Text;
                         for(var i in this.props.options) {
                             if(displayProps.value === this.props.options[i].value) {
                                 displayProps.value = this.props.options[i].label;
@@ -54,15 +52,6 @@ var ExtraField = React.createClass({
                     case 'checkbox': 
                         ComponentClass = Checkbox;
                         displayProps.options = this.props.options;
-                        break;
-                    case 'dropdown': 
-                        ComponentClass = Dropdown;
-                        for(var i in this.props.options) {
-                            if(displayProps.value === this.props.options[i].value) {
-                                displayProps.value = this.props.options[i].label;
-                                break;
-                            }
-                        }
                         break;
                     default:
                         ComponentClass = null;
@@ -86,16 +75,14 @@ var ExtraField = React.createClass({
         }
 
         return (
-            <div>
-                {(ComponentClass)?
-                    <ComponentClass {...displayProps} />
+            (ComponentClass)?
+                <ComponentClass {...displayProps} />
+            :
+                (this.props.type === 'list')?
+                    <div>Could not display list field ({this.props.extra.list_type}: {this.props.label})</div>
                 :
-                    (this.props.type === 'list')?
-                        <div>Could not display list field ({this.props.extra.list_type}: {this.props.label})</div>
-                    :
-                        <div>Could not display field ({this.props.type}: {this.props.label})</div>
-                }
-            </div>
+                    <div>Could not display field ({this.props.type}: {this.props.label})</div>
+            
         );
     }
 });

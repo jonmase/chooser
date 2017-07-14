@@ -176,6 +176,7 @@ var OptionViewPage = React.createClass({
                             key={field.id}
                             label={field.label}
                             options={field.options}
+                            paragraph={true}
                             type={field.type}
                             value={value}
                         />

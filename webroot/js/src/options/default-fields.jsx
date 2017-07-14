@@ -2,8 +2,6 @@ import React from 'react';
 
 import Text from '../elements/display/text-labelled.jsx';
 import Wysiwyg from '../elements/display/wysiwyg-labelled.jsx';
-import Number from '../elements/display/number-labelled.jsx';
-
 
 var DefaultFields = React.createClass({
     render: function() {
@@ -65,7 +63,7 @@ var DefaultFields = React.createClass({
         }
         if(defaults.points) {
             defaultsFields.push(
-                <Number
+                <Text
                     key="points" 
                     label="Points"
                     value={option.points}

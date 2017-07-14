@@ -6,7 +6,6 @@ import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import Text from '../elements/display/text.jsx';
 import TextLabelled from '../elements/display/text-labelled.jsx';
-import NumberLabelled from '../elements/display/number-labelled.jsx';
 import DateTimeLabelled from '../elements/display/datetime-labelled.jsx';
 import OptionList from '../options/option-list.jsx';
 
@@ -46,7 +45,7 @@ var ResultsIndex = React.createClass({
                     label="Comments"
                     value={selection.comments}
                 />
-                <NumberLabelled 
+                <TextLabelled 
                     label="Options Selected"
                     value={selection.option_count}
                 />

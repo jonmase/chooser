@@ -4,12 +4,20 @@ import Url from './url.jsx';
 
 var UrlLabelled = React.createClass({
     render: function() {
-        return (
-            <p>
+        var content = 
+            <span>
                 <strong>{this.props.label}: </strong>
                 <Url {...this.props} />
-            </p>
-        );
+            </span>;
+    
+        if(this.props.paragraph) {
+            return (
+                <p>content</p>
+            );
+        }
+        else {
+            return content;
+        }
     }
 });
 

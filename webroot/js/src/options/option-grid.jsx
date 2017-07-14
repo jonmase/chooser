@@ -6,7 +6,7 @@ import Divider from 'material-ui/Divider';
 import FontIcon from 'material-ui/FontIcon';
 import Checkbox from 'material-ui/Checkbox';
 
-import ExtraField from './extra-field.jsx';
+import ExtraField from './extra-field-labelled.jsx';
 import WarningDialog from './option-unpublish-approved-warning-dialog.jsx';
 
 import AddButton from '../elements/buttons/add-button.jsx';
@@ -59,9 +59,6 @@ var OptionsGrid = React.createClass({
         //var showFavouritesColumn = this.props.action === 'view' && enableSelection;
         var showFavouritesColumn = false;
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
-        
-        //var defaultFields = [];
-        
         
         var placesType = false;
         if(this.props.choice.use_min_places && this.props.choice.use_max_places) {

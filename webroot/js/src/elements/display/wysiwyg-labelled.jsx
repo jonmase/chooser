@@ -4,12 +4,20 @@ import Wysiwyg from './wysiwyg.jsx';
 
 var WysiwygLabelled = React.createClass({
     render: function() {
-        return (
-            <div style={{marginTop: '1em'}}>
+        var content = 
+            <span>
                 <strong>{this.props.label}: </strong><br />
                 <Wysiwyg {...this.props} />
-            </div>
-        );
+            </span>;
+    
+        if(this.props.paragraph) {
+            return (
+                <div style={{marginTop: '1em'}}>content</div>
+            );
+        }
+        else {
+            return content;
+        }
     }
 });
 

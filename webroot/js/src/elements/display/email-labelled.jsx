@@ -4,12 +4,20 @@ import Email from './email.jsx';
 
 var EmailLabelled = React.createClass({
     render: function() {
-        return (
-            <p>
+        var content = 
+            <span>
                 <strong>{this.props.label}: </strong>
                 <Email {...this.props} />
-            </p>
-        );
+            </span>;
+    
+        if(this.props.paragraph) {
+            return (
+                <p>content</p>
+            );
+        }
+        else {
+            return content;
+        }
     }
 });
 
