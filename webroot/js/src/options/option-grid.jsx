@@ -39,7 +39,7 @@ styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColu
 var OptionsGrid = React.createClass({
     getInitialState: function () {
         var initialState = {
-            optionId: null,
+            optionsSelectedIds: [],
         };
         
         return initialState;
@@ -47,6 +47,24 @@ var OptionsGrid = React.createClass({
     
     _onRowSelection: function(selectedRows){
         this.props.optionContainerHandlers.selectOption(selectedRows);
+    },
+    
+    handleSelectOption: function(optionId, checked) {
+        var optionsSelectedIds = this.state.optionsSelectedIds.slice();
+        
+        var indexOfSelectedOption = optionsSelectedIds.indexOf(optionId);
+        //If checkbox is checked and optionId is not already in the array, add it
+        if(checked && indexOfSelectedOption === -1) {
+            optionsSelectedIds.push(optionId);
+        }
+        //If checkbox is unchecked and optionId is in the array, remove it
+        else if(!checked && indexOfSelectedOption > -1) {
+            optionsSelectedIds.splice(indexOfSelectedOption, 1);
+        }
+    
+        this.setState({
+            optionsSelectedIds: optionsSelectedIds,
+        }, this.props.optionContainerHandlers.selectOption(optionsSelectedIds));
     },
 
     render: function() {
@@ -141,7 +159,7 @@ var OptionsGrid = React.createClass({
                                         <div key={option.id}>
                                             {index>0&&<Divider />}
                                             <ListItem
-                                                leftCheckbox={enableSelection&&<Checkbox />}
+                                                leftCheckbox={enableSelection&&<Checkbox onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />}
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
@@ -151,6 +169,7 @@ var OptionsGrid = React.createClass({
                                                            return (
                                                                 <ExtraField 
                                                                     extra={this.props.choice.extra_fields[fieldIndex].extra}
+                                                                    key={fieldIndex}
                                                                     label={this.props.choice.extra_fields[fieldIndex].label}
                                                                     options={this.props.choice.extra_fields[fieldIndex].options}
                                                                     //field={this.props.choice.extra_fields[fieldIndex]}

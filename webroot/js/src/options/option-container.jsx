@@ -407,6 +407,11 @@ var OptionContainer = React.createClass({
         }
     },
     
+    handleOptionSelectFromGrid: function(optionsSelectedIds) {
+        console.log(optionsSelectedIds);
+        this.saveSelectedOptions(optionsSelectedIds);
+    },
+        
     handleOptionSelectFromTable: function(rowsSelected) {
         var optionsSelectedIds = [];
         if(rowsSelected === 'all') {
@@ -988,7 +993,7 @@ var OptionContainer = React.createClass({
                                 instance={this.state.instance}
                                 optionContainerHandlers={{
                                     favourite: this.handleFavourite,
-                                    selectOption: this.handleOptionSelectFromTable,
+                                    selectOption: this.handleOptionSelectFromGrid,
                                     sort: this.handleSort,
                                     viewMore: this.handleOptionViewMoreFromView,
                                 }}
