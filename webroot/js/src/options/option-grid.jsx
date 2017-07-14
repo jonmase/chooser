@@ -127,24 +127,26 @@ var OptionsGrid = React.createClass({
                                 {this.props.options.options.map(function(option, index) {
                                     var primaryText = 
                                         <div style={{marginBottom: '5px'}}>
-                                            {(this.props.choice.useCode?(option.code + ": "):"") + option.title}
+                                            <strong>{(this.props.choice.useCode?(option.code + ": "):"")}</strong>
+                                            {option.title}
                                         </div>;
                                     
-                                    var defaultsText = "";
+                                    var placesText = "";
                                     if(placesType) {
                                         if(placesType = 'min') {
-                                            defaultsText += "Min. Places: " + option.min_places;
+                                            placesText = <span><strong>Min. Places: </strong>{option.min_places} | </span>;
                                         }
                                         else if(placesType = 'max') {
-                                            defaultsText += "Max. Places: " + option.max_places;
+                                            placesText = <span><strong>Max. Places: </strong>{option.max_places} | </span>;
                                         }
                                         else if(placesType = 'both') {
-                                            defaultsText += "Places: " + option.min_places + " - " + option.max_places;
+                                            placesText = <span><strong>Places: </strong>{option.min_places} - {option.max_places} | </span>;
                                         }
-                                        defaultsText += "; ";
                                     }
+                                    
+                                    var pointsText = "";
                                     if(this.props.choice.use_points) {
-                                        defaultsText += "Points: " + option.points + "; "
+                                        pointsText = <span><strong>Points: </strong>{option.points} | </span>;
                                     }
                                     
                                     var rightIconButton = 
@@ -163,23 +165,28 @@ var OptionsGrid = React.createClass({
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
-                                                    <span>
-                                                        <span>{defaultsText}</span>
-                                                        {sortableExtraFields.map(function(fieldIndex) {
+                                                    <div>
+                                                        {placesText}
+                                                        {pointsText}
+                                                        {sortableExtraFields.map(function(fieldIndex, index) {
                                                            return (
-                                                                <ExtraField 
-                                                                    extra={this.props.choice.extra_fields[fieldIndex].extra}
-                                                                    key={fieldIndex}
-                                                                    label={this.props.choice.extra_fields[fieldIndex].label}
-                                                                    options={this.props.choice.extra_fields[fieldIndex].options}
-                                                                    //field={this.props.choice.extra_fields[fieldIndex]}
-                                                                    type={this.props.choice.extra_fields[fieldIndex].type}
-                                                                    value={option[this.props.choice.extra_fields[fieldIndex].name]}
-                                                                />
+                                                                <span>
+                                                                    {index > 0 && " | "}
+                                                                    <ExtraField 
+                                                                        extra={this.props.choice.extra_fields[fieldIndex].extra}
+                                                                        key={fieldIndex}
+                                                                        label={this.props.choice.extra_fields[fieldIndex].label}
+                                                                        options={this.props.choice.extra_fields[fieldIndex].options}
+                                                                        //field={this.props.choice.extra_fields[fieldIndex]}
+                                                                        type={this.props.choice.extra_fields[fieldIndex].type}
+                                                                        value={option[this.props.choice.extra_fields[fieldIndex].name]}
+                                                                    />
+                                                                </span>
                                                            );
                                                         }, this)}
-                                                    </span>
+                                                    </div>
                                                 }
+                                                secondaryTextLines={1}
                                             />
                                         </div>
                                     );                                
