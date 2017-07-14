@@ -23,6 +23,8 @@ import Review from './selection-review.jsx';
 import Confirmed from './selection-confirmed.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
 import OptionsTable from './option-table.jsx';
+import OptionsGrid from './option-grid.jsx';
+import OptionsList from './option-list.jsx';
 import OptionEditPage from './option-edit-page.jsx';
 import OptionViewPage from './option-view-page.jsx';
 
@@ -979,7 +981,7 @@ var OptionContainer = React.createClass({
                             rules={this.state.rules.rules}
                         />
                         {(this.props.roles.length > 0 || this.state.instance.choosing.opens.passed) &&
-                            <OptionsTable
+                            <OptionsGrid
                                 action={this.state.action}
                                 choice={this.props.choice}
                                 favourites={this.state.favourites}
