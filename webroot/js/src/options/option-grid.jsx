@@ -107,7 +107,10 @@ var OptionsGrid = React.createClass({
                         :
                             <List>
                                 {this.props.options.options.map(function(option, index) {
-                                    var primaryText = (this.props.choice.useCode?(option.code + ": "):"") + option.title;
+                                    var primaryText = 
+                                        <div style={{marginBottom: '5px'}}>
+                                            {(this.props.choice.useCode?(option.code + ": "):"") + option.title}
+                                        </div>;
                                     
                                     var defaultsText = "";
                                     if(placesType) {
