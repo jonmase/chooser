@@ -12,7 +12,7 @@ var WysiwygLabelled = React.createClass({
     
         if(this.props.paragraph) {
             return (
-                <div style={{marginTop: '1em'}}>content</div>
+                <div style={{marginTop: '1em'}}>{content}</div>
             );
         }
         else {

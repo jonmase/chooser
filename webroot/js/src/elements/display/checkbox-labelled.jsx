@@ -12,7 +12,7 @@ var CheckboxLabelled = React.createClass({
     
         if(this.props.paragraph) {
             return (
-                <p>content</p>
+                <p>{content}</p>
             );
         }
         else {

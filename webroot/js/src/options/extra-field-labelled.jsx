@@ -13,6 +13,7 @@ var ExtraField = React.createClass({
     render: function() {
         var displayProps = {
             label: this.props.label,
+            paragraph: this.props.paragraph,
             time: false,
         };
     
