@@ -39,7 +39,7 @@ styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColu
 var OptionsGrid = React.createClass({
     getInitialState: function () {
         var initialState = {
-            optionsSelectedIds: [],
+            optionsSelectedIds: this.props.optionsSelectedTableOrder,
         };
         
         return initialState;
@@ -159,7 +159,7 @@ var OptionsGrid = React.createClass({
                                         <div key={option.id}>
                                             {index>0&&<Divider />}
                                             <ListItem
-                                                leftCheckbox={enableSelection&&<Checkbox onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />}
+                                                leftCheckbox={enableSelection&&<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />}
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
