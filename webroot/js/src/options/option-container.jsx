@@ -661,14 +661,17 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleSort: function(field, fieldType) {
-        var direction = 'asc';
-        if(field === this.state.optionsSort.field) {
-            if(this.state.optionsSort.direction.toLowerCase() === 'asc') {
-                direction = 'desc';
+    handleSort: function(field, fieldType, direction) {
+        //Work out direction if it's not defined
+        if(typeof(direction) === "undefined") {
+            var direction = 'asc';
+            if(field === this.state.optionsSort.field) {
+                if(this.state.optionsSort.direction.toLowerCase() === 'asc') {
+                    direction = 'desc';
+                }
             }
         }
-    
+        
         var optionsState = this.props.sortHelper(this.props.deepCopyHelper(this.state.options.options), field, fieldType, direction);
         
         var optionsSelectedTableOrder = this.sortIdsByTableOrder(this.state.optionsSelectedTableOrder.slice(), optionsState);

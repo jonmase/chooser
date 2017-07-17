@@ -18,6 +18,7 @@ import ExpandButton from '../elements/buttons/expand-button.jsx';
 import FavouriteButton from './option-favourite-button.jsx';
 import PublishButton from '../elements/buttons/publish-button.jsx';
 import RestoreButton from '../elements/buttons/restore-button.jsx';
+import SortMenu from '../elements/buttons/sort-menu.jsx';
 import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
@@ -36,6 +37,8 @@ styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowCol
 styles.approverActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '48px'});
 styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
     
+var sortSeparator = '_#';
+
 var OptionsGrid = React.createClass({
     getInitialState: function () {
         var initialState = {
@@ -66,6 +69,11 @@ var OptionsGrid = React.createClass({
             optionsSelectedIds: optionsSelectedIds,
         }, this.props.optionContainerHandlers.selectOption(optionsSelectedIds));
     },
+    
+    handleSort: function(fieldValue) {
+        var fieldValueSplit = fieldValue.split(sortSeparator);
+        this.props.optionContainerHandlers.sort(fieldValueSplit[0], fieldValueSplit[1], fieldValueSplit[2]);
+    },
 
     render: function() {
         var title = 'Choose Options';
@@ -78,16 +86,58 @@ var OptionsGrid = React.createClass({
         var showFavouritesColumn = false;
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         
+        var sortableFields = [];
+        if(this.props.choice.use_code) {
+            sortableFields.push(
+                {
+                    label: 'Code',
+                    type: 'text',
+                    name: 'code',
+                }
+            );
+        }
+        sortableFields.push(
+            {
+                label: 'Title',
+                type: 'text',
+                name: 'title',
+            }
+        );
+        var minPlacesSortableField = {
+            label: 'Min. Places',
+            type: 'number',
+            name: 'min_places',
+        };
+        var maxPlacesSortableField = {
+            label: 'Max. Places',
+            type: 'number',
+            name: 'max_places',
+        };
+        
         var placesType = false;
         if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
             placesType = 'both';
+            sortableFields.push(minPlacesSortableField);
+            sortableFields.push(maxPlacesSortableField);
         }
         else if(this.props.choice.use_min_places) {
             placesType = 'min';
+            sortableFields.push(minPlacesSortableField);
         }
         else if(this.props.choice.use_max_places) {
             placesType = 'max';
+            sortableFields.push(maxPlacesSortableField);
         }
+        
+        if(this.props.choice.use_points) {
+            sortableFields.push(
+                {
+                    label: 'Points',
+                    type: 'number',
+                    name: 'points',
+                }
+            );
+        }        
         
         var sortableExtraFields = [];
         var filterableExtraFields = [];
@@ -96,6 +146,13 @@ var OptionsGrid = React.createClass({
             //If field is sortable, add it to the array of sortable fields
             if(field.sortable) {
                 sortableExtraFields.push(index);
+                sortableFields.push(
+                    {
+                        label: field.label,
+                        type: field.type,
+                        name: field.name,
+                    }
+                );
             }
             //Otherwise, field will not be shown, so need to show expand button, if not already doing so
             else if(!showExpandColumn) {
@@ -106,17 +163,42 @@ var OptionsGrid = React.createClass({
             }
         });
         
+        var sortMenuItems = [];
+        sortableFields.forEach(function(field) {
+            var sortValueBase = field.name + sortSeparator + field.type + sortSeparator;
+            sortMenuItems.push({
+                value: sortValueBase + 'asc',
+                label: field.label + ' ASC',
+            });
+            sortMenuItems.push({
+                value: sortValueBase + 'desc',
+                label: field.label + ' DESC',
+            });
+        });
+
+        
         return (
             <div>
                 <Card 
                     className="page-card"
                 >
+                    <div style={{float: 'right', margin: '12px'}}>
+                        <SortMenu 
+                            handleChange={this.handleSort} 
+                            items={sortMenuItems}
+                            sortValue={(this.props.optionsSort.field + sortSeparator + this.props.optionsSort.fieldType + sortSeparator + this.props.optionsSort.direction)}
+                            sortDirection={this.props.optionsSort.direction}
+                            tooltip="Sort Options"
+                        />
+                    </div>
                     <CardHeader
                         title={title}
                         subtitle={subtitle}
-                        textStyle={{float: 'left'}}
-                        style={{height: '72px'}}
-                    />
+                        textStyle={{paddingRight: 0}}
+                        style={{marginRight: '72px'}}
+                    >
+                    </CardHeader>
+                    <div style={{clear: 'both'}}></div>
                     <CardText 
                         style={styles.cardText}
                     >
@@ -170,11 +252,10 @@ var OptionsGrid = React.createClass({
                                                         {pointsText}
                                                         {sortableExtraFields.map(function(fieldIndex, index) {
                                                            return (
-                                                                <span>
+                                                                <span key={fieldIndex}>
                                                                     {index > 0 && " | "}
                                                                     <ExtraField 
                                                                         extra={this.props.choice.extra_fields[fieldIndex].extra}
-                                                                        key={fieldIndex}
                                                                         label={this.props.choice.extra_fields[fieldIndex].label}
                                                                         options={this.props.choice.extra_fields[fieldIndex].options}
                                                                         //field={this.props.choice.extra_fields[fieldIndex]}
