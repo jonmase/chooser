@@ -3,8 +3,8 @@ import React from 'react';
 import {Card, CardHeader, CardText} from 'material-ui/Card';
 import {List, ListItem} from 'material-ui/List';
 import Divider from 'material-ui/Divider';
-import FontIcon from 'material-ui/FontIcon';
 import Checkbox from 'material-ui/Checkbox';
+import FontIcon from 'material-ui/FontIcon';
 
 import ExtraField from './extra-field-labelled.jsx';
 import WarningDialog from './option-unpublish-approved-warning-dialog.jsx';
@@ -168,11 +168,11 @@ var OptionsGrid = React.createClass({
             var sortValueBase = field.name + sortSeparator + field.type + sortSeparator;
             sortMenuItems.push({
                 value: sortValueBase + 'asc',
-                label: field.label + ' ASC',
+                label: <div>{field.label} <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_upward</FontIcon></div>,
             });
             sortMenuItems.push({
                 value: sortValueBase + 'desc',
-                label: field.label + ' DESC',
+                label: <div>{field.label} <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_downward</FontIcon></div>,
             });
         });
 
