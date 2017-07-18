@@ -166,13 +166,32 @@ var OptionsGrid = React.createClass({
         var sortMenuItems = [];
         sortableFields.forEach(function(field) {
             var sortValueBase = field.name + sortSeparator + field.type + sortSeparator;
+            
+            var ascText = 'a...z';
+            var descText = 'z...a';
+            switch(field.type) {
+                case 'date':
+                case 'datetime':
+                    ascText = 'old...new';
+                    descText = 'new...old';
+                    break;
+                case 'number': 
+                    ascText = 'low...high';
+                    descText = 'high...low';
+                    break;
+                default:
+                    break;
+            }
+            //var ascText = <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_upward</FontIcon>;
+            //var descText = <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_downward</FontIcon>;
+            
             sortMenuItems.push({
                 value: sortValueBase + 'asc',
-                label: <div>{field.label} <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_upward</FontIcon></div>,
+                label: <div>{field.label} - {ascText}</div>,
             });
             sortMenuItems.push({
                 value: sortValueBase + 'desc',
-                label: <div>{field.label} <FontIcon className="material-icons" style={{verticalAlign: 'text-bottom'}}>arrow_downward</FontIcon></div>,
+                label: <div>{field.label} - {descText}</div>,
             });
         });
 
