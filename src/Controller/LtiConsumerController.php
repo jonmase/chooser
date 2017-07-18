@@ -100,7 +100,7 @@ class LtiConsumerController extends AppController
                         $this->Redirection->goToDashboardOrView($choiceId, $tool);
                     }
                     //If there is no linked Choice, and user is Staff (i.e. Instructor) or Admin, allow them to create/link a Choice
-                    else if($staffOrAdmin ) {
+                    else if($this->LtiConsumer->LtiContext->ChoicesLtiContext->Choices->ChoicesUsers->isLTIStaffOrAdmin($tool)) {
                         $this->redirect(['controller' => 'choices', 'action' => 'add']);
                     }
                     //Otherwise, there is no linked Choice, and user is Learner, so throw error, as Context has not been configured

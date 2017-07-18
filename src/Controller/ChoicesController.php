@@ -38,6 +38,8 @@ class ChoicesController extends AppController
      */
     public function add()
     {
+        $session = $this->request->session();
+        
         // Get the tool from the session
         $tool = $this->SessionData->getLtiTool();
         
