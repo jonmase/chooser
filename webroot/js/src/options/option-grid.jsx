@@ -228,26 +228,26 @@ var OptionsGrid = React.createClass({
                                 {this.props.options.options.map(function(option, index) {
                                     var primaryText = 
                                         <div style={{marginBottom: '5px'}}>
-                                            <strong>{(this.props.choice.useCode?(option.code + ": "):"")}</strong>
+                                            <strong>{(this.props.choice.use_code?(option.code + ": "):"")}</strong>
                                             {option.title}
                                         </div>;
                                     
                                     var placesText = "";
                                     if(placesType) {
-                                        if(placesType = 'min') {
-                                            placesText = <span><strong>Min. Places: </strong>{option.min_places} | </span>;
+                                        if(placesType === 'min') {
+                                            placesText = <span><strong>Min. Places: </strong>{option.min_places}</span>;
                                         }
-                                        else if(placesType = 'max') {
-                                            placesText = <span><strong>Max. Places: </strong>{option.max_places} | </span>;
+                                        else if(placesType === 'max') {
+                                            placesText = <span><strong>Max. Places: </strong>{option.max_places}</span>;
                                         }
-                                        else if(placesType = 'both') {
-                                            placesText = <span><strong>Places: </strong>{option.min_places} - {option.max_places} | </span>;
+                                        else if(placesType === 'both') {
+                                            placesText = <span><strong>Places: </strong>{option.min_places} - {option.max_places}</span>;
                                         }
                                     }
                                     
                                     var pointsText = "";
                                     if(this.props.choice.use_points) {
-                                        pointsText = <span><strong>Points: </strong>{option.points} | </span>;
+                                        pointsText = <span>{placesType&&" | "}<strong>Points: </strong>{option.points}</span>;
                                     }
                                     
                                     var rightIconButton = 
@@ -262,7 +262,7 @@ var OptionsGrid = React.createClass({
                                         <div key={option.id}>
                                             {index>0&&<Divider />}
                                             <ListItem
-                                                leftCheckbox={enableSelection&&<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />}
+                                                leftCheckbox={enableSelection?<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />:null}
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
@@ -272,7 +272,7 @@ var OptionsGrid = React.createClass({
                                                         {sortableExtraFields.map(function(fieldIndex, index) {
                                                            return (
                                                                 <span key={fieldIndex}>
-                                                                    {index > 0 && " | "}
+                                                                    {(placesType || this.props.choice.use_points || index > 0) && " | "}
                                                                     <ExtraField 
                                                                         extra={this.props.choice.extra_fields[fieldIndex].extra}
                                                                         label={this.props.choice.extra_fields[fieldIndex].label}
