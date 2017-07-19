@@ -72,25 +72,39 @@ var Settings = React.createClass({
                             <div>
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
-                                        <DateTime label="Opens" value={instance.opens} />
-                                        <DateTime label="Deadline" value={instance.deadline} />
-                                        <DateTime label="Extension" value={instance.extension} />
-                                        <Toggle
-                                            label="Editable"
-                                            value={instance.editable}
-                                            explanation={"Students can" + (instance.editable?" edit choices up until the deadline":"not edit choices after submission")}
-                                        />
+                                        <p>
+                                            <DateTime label="Opens" value={instance.opens} />
+                                        </p>
+                                        <p>
+                                            <DateTime label="Deadline" value={instance.deadline} />
+                                        </p>
+                                        <p>
+                                            <DateTime label="Extension" value={instance.extension} />
+                                        </p>
+                                        <p>
+                                            <Toggle
+                                                label="Editable"
+                                                value={instance.editable}
+                                                explanation={"Students can" + (instance.editable?" edit choices up until the deadline":"not edit choices after submission")}
+                                            />
+                                        </p>
                                     </div>
                                 </div>
-                                <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions || noInstructionsMessage} />
-                                <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || noInstructionsMessage} />
+                                <p>
+                                    <Wysiwyg label="Instructions for Choosing" value={instance.choosing_instructions || noInstructionsMessage} />
+                                </p>
+                                <p>
+                                    <Wysiwyg label="Instructions for Reviewing" value={instance.review_instructions || noInstructionsMessage} />
+                                </p>
                                 <div className="row">
                                     <div className="col-xs-12 col-sm-6">
-                                        <Toggle 
-                                            label="Preferences"
-                                            value={instance.preference}
-                                            explanation={"Students can" + (instance.preference?((instance.preference_type === 'rank')?" rank":((instance.preference_type === 'points')?" assign points to":"")):"not express preferences for") + " options"}
-                                        />
+                                        <p>
+                                            <Toggle 
+                                                label="Preferences"
+                                                value={instance.preference}
+                                                explanation={"Students can" + (instance.preference?((instance.preference_type === 'rank')?" rank":((instance.preference_type === 'points')?" assign points to":"")):"not express preferences for") + " options"}
+                                            />
+                                        </p>
                                         {instance.preference?
                                             <div>
                                                 {(instance.preference_type === 'points')?
@@ -99,11 +113,13 @@ var Settings = React.createClass({
                                                 {/*<Wysiwyg label="Instructions" value={instance.preference_instructions} />*/}
                                             </div>
                                         :""}
-                                        <Toggle
-                                            label="Comments Per Option"
-                                            value={instance.comments_per_option}
-                                            explanation={"Students can" + (instance.comments_per_option?"":"not") + " make separate comments about each option they have chosen"}
-                                        />
+                                        <p>
+                                            <Toggle
+                                                label="Comments Per Option"
+                                                value={instance.comments_per_option}
+                                                explanation={"Students can" + (instance.comments_per_option?"":"not") + " make separate comments about each option they have chosen"}
+                                            />
+                                        </p>
                                         {/*instance.comments_per_option?
                                             <div>
                                                 {instance.comments_per_option_limit?
@@ -114,11 +130,13 @@ var Settings = React.createClass({
                                         :""*/}
                                     </div>
                                     <div className="col-xs-12 col-sm-6">
-                                        <Toggle 
-                                            label="Overall Comments" 
-                                            value={instance.comments_overall}
-                                            explanation={"Students can" + (instance.comments_overall?"":"not") + " make comments about their choice as a whole"}
-                                        />
+                                        <p>
+                                            <Toggle 
+                                                label="Overall Comments" 
+                                                value={instance.comments_overall}
+                                                explanation={"Students can" + (instance.comments_overall?"":"not") + " make comments about their choice as a whole"}
+                                            />
+                                        </p>
                                         {instance.comments_overall?
                                             <div>
                                                 {/*instance.comments_overall_limit?

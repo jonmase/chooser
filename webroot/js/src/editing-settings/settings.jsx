@@ -76,15 +76,23 @@ var Settings = React.createClass({
                                     value={instance.students_defined}
                                     explanation={""}
                                 />*/}
-                                <DateTime label="Opens" value={instance.opens} />
-                                <DateTime label="Deadline" value={instance.deadline} />
-                                <Toggle
-                                    label="Approval Required"
-                                    value={instance.approval_required}
-                                    explanation={""}
-                                />
+                                <p>
+                                    <DateTime label="Opens" value={instance.opens} />
+                                </p>
+                                <p>
+                                    <DateTime label="Deadline" value={instance.deadline} />
+                                </p>
+                                <p>
+                                    <Toggle
+                                        label="Approval Required"
+                                        value={instance.approval_required}
+                                        explanation={""}
+                                    />
+                                </p>
                                 {instance.approval_required &&
-                                    <DateTime label="Approval Deadline" value={instance.approval_deadline} />
+                                    <p>
+                                        <DateTime label="Approval Deadline" value={instance.approval_deadline} />
+                                    </p>
                                 }
                             </div>
                     }
