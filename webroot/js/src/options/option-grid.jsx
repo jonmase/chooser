@@ -79,10 +79,9 @@ var OptionsGrid = React.createClass({
         var title = 'Choose Options';
         //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
         var subtitle = 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
-        var enableSelection = this.props.instance.choosing.id?true:false;
         
         //Set visibility of favouritese, published, approved, expand and actions columns
-        //var showFavouritesColumn = this.props.action === 'view' && enableSelection;
+        //var showFavouritesColumn = this.props.action === 'view' && this.props.selectionEnabled;
         var showFavouritesColumn = false;
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         
@@ -262,7 +261,7 @@ var OptionsGrid = React.createClass({
                                         <div key={option.id}>
                                             {index>0&&<Divider />}
                                             <ListItem
-                                                leftCheckbox={enableSelection?<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />:null}
+                                                leftCheckbox={this.props.selectionEnabled?<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />:null}
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={

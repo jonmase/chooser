@@ -691,6 +691,16 @@ var OptionContainer = React.createClass({
         });
     },
     
+    //Option grid is shown if choosing has opened (even if it has closed), or if user has additional roles
+    isOptionGridShown: function() {
+        return (this.state.instance.choosing.id && this.state.instance.choosing.opens.passed) || this.props.roles.length > 0;
+    },
+    
+    //Selection is enabled if choosing is open, or if user is admin and instance is set up
+    isOptionSelectionEnabled: function() {
+        return this.state.instance.choosing.open || (this.state.instance.choosing.id && this.props.roles.indexOf('admin') > -1);
+    },
+    
     saveSelectedOptions: function(optionsSelectedIds) {
         //Optimistically update the selected options
         //Disable basket until options have been properly saved
@@ -988,7 +998,7 @@ var OptionContainer = React.createClass({
                             roles={this.props.roles}
                             rules={this.state.rules.rules}
                         />
-                        {(this.props.roles.length > 0 || this.state.instance.choosing.opens.passed) &&
+                        {this.isOptionGridShown() &&
                             <OptionsGrid
                                 action={this.state.action}
                                 choice={this.props.choice}
@@ -1003,6 +1013,7 @@ var OptionContainer = React.createClass({
                                 options={this.state.options}
                                 optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                                 optionsSort={this.state.optionsSort}
+                                selectionEnabled={this.isOptionSelectionEnabled()}
                             />
                         }
                     </div>
@@ -1025,6 +1036,7 @@ var OptionContainer = React.createClass({
                         }}
                         optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
                         roles={this.props.roles}
+                        selectionEnabled={this.isOptionSelectionEnabled()}
                     />
                 );
             case 'basket': //Basket
