@@ -1,28 +1,17 @@
 import React from 'react';
 
 import {Card, CardHeader, CardText} from 'material-ui/Card';
-import {List, ListItem} from 'material-ui/List';
-import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
+import Divider from 'material-ui/Divider';
 import FontIcon from 'material-ui/FontIcon';
+import {List, ListItem} from 'material-ui/List';
 
 import ExtraField from './extra-field-labelled.jsx';
-import WarningDialog from './option-unpublish-approved-warning-dialog.jsx';
-
-import AddButton from '../elements/buttons/add-button.jsx';
-import AddButtonRaised from '../elements/buttons/add-button-raised.jsx';
-import ApprovalButton from '../elements/buttons/approval-button.jsx';
-import DeleteButton from '../elements/buttons/delete-button.jsx';
-import EditButton from '../elements/buttons/edit-button.jsx';
-import ExpandButton from '../elements/buttons/expand-button.jsx';
 import FavouriteButton from './option-favourite-button.jsx';
-import PublishButton from '../elements/buttons/publish-button.jsx';
-import RestoreButton from '../elements/buttons/restore-button.jsx';
-import SortMenu from '../elements/buttons/sort-menu.jsx';
-import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 
-import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
-import UnselectableCell from '../elements/table/unselectable-cell.jsx';
+import ExpandButton from '../elements/buttons/expand-button.jsx';
+import SortMenu from '../elements/buttons/sort-menu.jsx';
+
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
@@ -31,12 +20,6 @@ var styles = {
     }
 };
 
-styles.tableRowColumnTitle = Object.assign({}, styles.tableRowColumn, {minWidth: '30%'});
-styles.publishedTableRowColumn = Object.assign({}, styles.tableRowColumn, {width: '72px', textAlign: 'center'});
-styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
-styles.approverActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '48px'});
-styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
-    
 var sortSeparator = '_#';
 
 var OptionsGrid = React.createClass({
@@ -48,43 +31,35 @@ var OptionsGrid = React.createClass({
         return initialState;
     },
     
-    _onRowSelection: function(selectedRows){
-        this.props.optionContainerHandlers.selectOption(selectedRows);
+    //Expand button shown if using description or not all extra fields are sortable
+    getExpandButtonShown: function() {
+        return this.props.choice.use_description || !this.props.choice.extra_fields.every(function(field, index) {
+                return field.sortable;
+            });
     },
     
-    handleSelectOption: function(optionId, checked) {
-        var optionsSelectedIds = this.state.optionsSelectedIds.slice();
-        
-        var indexOfSelectedOption = optionsSelectedIds.indexOf(optionId);
-        //If checkbox is checked and optionId is not already in the array, add it
-        if(checked && indexOfSelectedOption === -1) {
-            optionsSelectedIds.push(optionId);
+    //Favourite button shown if selection is enabled
+    getFavouriteButtonShown: function() {
+        //return this.props.selectionEnabled;
+        return false;
+    },
+    
+    getPlacesType: function() {
+        var placesType = false;
+        if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
+            placesType = 'both';
         }
-        //If checkbox is unchecked and optionId is in the array, remove it
-        else if(!checked && indexOfSelectedOption > -1) {
-            optionsSelectedIds.splice(indexOfSelectedOption, 1);
+        else if(this.props.choice.use_min_places) {
+            placesType = 'min';
         }
-    
-        this.setState({
-            optionsSelectedIds: optionsSelectedIds,
-        }, this.props.optionContainerHandlers.selectOption(optionsSelectedIds));
+        else if(this.props.choice.use_max_places) {
+            placesType = 'max';
+        }
+        
+        return placesType;
     },
     
-    handleSort: function(fieldValue) {
-        var fieldValueSplit = fieldValue.split(sortSeparator);
-        this.props.optionContainerHandlers.sort(fieldValueSplit[0], fieldValueSplit[1], fieldValueSplit[2]);
-    },
-
-    render: function() {
-        var title = 'Choose Options';
-        //var subtitle = 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
-        var subtitle = 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
-        
-        //Set visibility of favouritese, published, approved, expand and actions columns
-        //var showFavouritesColumn = this.props.action === 'view' && this.props.selectionEnabled;
-        var showFavouritesColumn = false;
-        var showExpandButton = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
-        
+    getSortableFields: function(placesType) {
         var sortableFields = [];
         if(this.props.choice.use_code) {
             sortableFields.push(
@@ -102,6 +77,7 @@ var OptionsGrid = React.createClass({
                 name: 'title',
             }
         );
+        
         var minPlacesSortableField = {
             label: 'Min. Places',
             type: 'number',
@@ -113,18 +89,17 @@ var OptionsGrid = React.createClass({
             name: 'max_places',
         };
         
-        var placesType = false;
-        if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
-            placesType = 'both';
+        if(placesType === 'both') {
+            //placesType = 'both';
             sortableFields.push(minPlacesSortableField);
             sortableFields.push(maxPlacesSortableField);
         }
-        else if(this.props.choice.use_min_places) {
-            placesType = 'min';
+        else if(placesType === 'min') {
+            //placesType = 'min';
             sortableFields.push(minPlacesSortableField);
         }
-        else if(this.props.choice.use_max_places) {
-            placesType = 'max';
+        else if(placesType === 'max') {
+            //placesType = 'max';
             sortableFields.push(maxPlacesSortableField);
         }
         
@@ -138,13 +113,9 @@ var OptionsGrid = React.createClass({
             );
         }        
         
-        var sortableExtraFields = [];
-        var filterableExtraFields = [];
-        
         this.props.choice.extra_fields.forEach(function(field, index) {
             //If field is sortable, add it to the array of sortable fields
             if(field.sortable) {
-                sortableExtraFields.push(index);
                 sortableFields.push(
                     {
                         label: field.label,
@@ -153,14 +124,25 @@ var OptionsGrid = React.createClass({
                     }
                 );
             }
-            //Otherwise, field will not be shown, so need to show expand button, if not already doing so
-            else if(!showExpandButton) {
-                showExpandButton = true;
-            }
-            if(field.filterable) {
-                filterableExtraFields.push(index);
+        });
+        
+        return sortableFields;
+    },
+    
+    getSortableExtraFields: function() {
+        var sortableExtraFields = [];
+        this.props.choice.extra_fields.forEach(function(field, index) {
+            //If field is sortable, add it to the array of sortable extra fields
+            if(field.sortable) {
+                sortableExtraFields.push(index);
             }
         });
+        
+        return sortableExtraFields;
+    },
+    
+    getSortMenuItems: function(placesType) {
+        var sortableFields = this.getSortableFields(placesType);
         
         var sortMenuItems = [];
         sortableFields.forEach(function(field) {
@@ -193,7 +175,44 @@ var OptionsGrid = React.createClass({
                 label: <div>{field.label} - {descText}</div>,
             });
         });
+        
+        return sortMenuItems;
+    },
+    
+    getSubtitle: function() {
+        //return 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
+        return 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
+    },
+    
+    getTitle: function() {
+        return 'Choose Options';
+    },
+    
+    handleSelectOption: function(optionId, checked) {
+        var optionsSelectedIds = this.state.optionsSelectedIds.slice();
+        
+        var indexOfSelectedOption = optionsSelectedIds.indexOf(optionId);
+        //If checkbox is checked and optionId is not already in the array, add it
+        if(checked && indexOfSelectedOption === -1) {
+            optionsSelectedIds.push(optionId);
+        }
+        //If checkbox is unchecked and optionId is in the array, remove it
+        else if(!checked && indexOfSelectedOption > -1) {
+            optionsSelectedIds.splice(indexOfSelectedOption, 1);
+        }
+    
+        this.setState({
+            optionsSelectedIds: optionsSelectedIds,
+        }, this.props.optionContainerHandlers.selectOption(optionsSelectedIds));
+    },
+    
+    handleSort: function(fieldValue) {
+        var fieldValueSplit = fieldValue.split(sortSeparator);
+        this.props.optionContainerHandlers.sort(fieldValueSplit[0], fieldValueSplit[1], fieldValueSplit[2]);
+    },
 
+    render: function() {
+        var placesType = this.getPlacesType();
         
         return (
             <div>
@@ -203,15 +222,15 @@ var OptionsGrid = React.createClass({
                     <div style={{float: 'right', margin: '12px'}}>
                         <SortMenu 
                             handleChange={this.handleSort} 
-                            items={sortMenuItems}
+                            items={this.getSortMenuItems(placesType)}
                             sortValue={(this.props.optionsSort.field + sortSeparator + this.props.optionsSort.fieldType + sortSeparator + this.props.optionsSort.direction)}
                             sortDirection={this.props.optionsSort.direction}
                             tooltip="Sort Options"
                         />
                     </div>
                     <CardHeader
-                        title={title}
-                        subtitle={subtitle}
+                        title={this.getTitle()}
+                        subtitle={this.getSubtitle()}
                         textStyle={{paddingRight: 0}}
                         style={{marginRight: '72px'}}
                     >
@@ -249,7 +268,7 @@ var OptionsGrid = React.createClass({
                                         pointsText = <span>{placesType&&" | "}<strong>Points: </strong>{option.points}</span>;
                                     }
                                     
-                                    if(showExpandButton) {
+                                    if(this.getExpandButtonShown()) {
                                         var rightIconButton = 
                                             <ExpandButton
                                                 handleClick={this.props.optionContainerHandlers.viewMore} 
@@ -270,7 +289,7 @@ var OptionsGrid = React.createClass({
                                                     <div>
                                                         {placesText}
                                                         {pointsText}
-                                                        {sortableExtraFields.map(function(fieldIndex, index) {
+                                                        {this.getSortableExtraFields().map(function(fieldIndex, index) {
                                                            return (
                                                                 <span key={fieldIndex}>
                                                                     {(placesType || this.props.choice.use_points || index > 0) && " | "}
