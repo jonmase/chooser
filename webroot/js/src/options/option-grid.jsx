@@ -83,7 +83,7 @@ var OptionsGrid = React.createClass({
         //Set visibility of favouritese, published, approved, expand and actions columns
         //var showFavouritesColumn = this.props.action === 'view' && this.props.selectionEnabled;
         var showFavouritesColumn = false;
-        var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
+        var showExpandButton = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         
         var sortableFields = [];
         if(this.props.choice.use_code) {
@@ -154,8 +154,8 @@ var OptionsGrid = React.createClass({
                 );
             }
             //Otherwise, field will not be shown, so need to show expand button, if not already doing so
-            else if(!showExpandColumn) {
-                showExpandColumn = true;
+            else if(!showExpandButton) {
+                showExpandButton = true;
             }
             if(field.filterable) {
                 filterableExtraFields.push(index);
@@ -249,13 +249,15 @@ var OptionsGrid = React.createClass({
                                         pointsText = <span>{placesType&&" | "}<strong>Points: </strong>{option.points}</span>;
                                     }
                                     
-                                    var rightIconButton = 
-                                        <ExpandButton
-                                            handleClick={this.props.optionContainerHandlers.viewMore} 
-                                            id={option.id}
-                                            style={styles.actionsButtons}
-                                            tooltip=""
-                                        />;
+                                    if(showExpandButton) {
+                                        var rightIconButton = 
+                                            <ExpandButton
+                                                handleClick={this.props.optionContainerHandlers.viewMore} 
+                                                id={option.id}
+                                                style={styles.actionsButtons}
+                                                tooltip=""
+                                            />;
+                                    }
                                 
                                     return (
                                         <div key={option.id}>
