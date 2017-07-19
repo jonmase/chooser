@@ -28,6 +28,10 @@ var OptionFilterDialog = React.createClass({
             canSubmit: false
         });
     },
+    
+    handleClear: function() {
+        console.log("Clear all filter");
+    }
 
     render: function() {
         var actions = [
@@ -41,7 +45,7 @@ var OptionFilterDialog = React.createClass({
                 key="clear"
                 label="Clear"
                 secondary={true}
-                onTouchTap={this.props.handlers.clear}
+                onTouchTap={this.handleClear}
             />,
             <FlatButton
                 key="submit"

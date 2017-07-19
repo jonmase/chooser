@@ -202,6 +202,11 @@ var OptionsGrid = React.createClass({
         });
     },
     
+    handleFilterSubmit(filters) {
+        console.log("Filter the options:");
+        console.log(filters);
+    },
+    
     handleSelectOption: function(optionId, checked) {
         var optionsSelectedIds = this.state.optionsSelectedIds.slice();
         
@@ -336,9 +341,8 @@ var OptionsGrid = React.createClass({
                 <FilterDialog
                     dialogOpen={this.state.filterDialogOpen}
                     handlers={{
-                        clear: this.handleFilterDialogClose,
                         dialogClose: this.handleFilterDialogClose,
-                        submit: this.handleFilterDialogClose,
+                        submit: this.handleFilterSubmit,
                     }}
                 />
             </div>
