@@ -14,29 +14,35 @@ var DefaultFields = React.createClass({
         var defaultsFields = [];
         if(defaults.code) {
             defaultsFields.push(
-                <Text 
-                    key="code" 
-                    label="Code"
-                    value={option.code}
-                />
+                {
+                    key: "code",
+                    element: <Text 
+                        label="Code"
+                        value={option.code}
+                    />,
+                }
             );
         }
         if(defaults.title) {
             defaultsFields.push(
-                <Text 
-                    key="title" 
-                    label="Title"
-                    value={option.title}
-                />
+                {
+                    key: "title",
+                    element: <Text 
+                        label="Title"
+                        value={option.title}
+                    />,
+                }
             );
         }
         if(defaults.description) {
             defaultsFields.push(
-                <Wysiwyg 
-                    key="description" 
-                    label="Description"
-                    value={option.description}
-                />
+                {
+                    key: "description",
+                    element: <Wysiwyg 
+                        label="Description"
+                        value={option.description}
+                    />,
+                }
             );
         }
         if(defaults.min_places || defaults.max_places) {
@@ -54,20 +60,24 @@ var DefaultFields = React.createClass({
             }
             
             defaultsFields.push(
-                <Text 
-                    key="places" 
-                    label="Places"
-                    value={content}
-                />
+                {
+                    key: "places",
+                    element: <Text 
+                        label="Places"
+                        value={content}
+                    />,
+                }
             );
         }
         if(defaults.points) {
             defaultsFields.push(
-                <Text
-                    key="points" 
-                    label="Points"
-                    value={option.points}
-                />
+                {
+                    key: "points",
+                    element: <Text 
+                        label="Points"
+                        value={option.points}
+                    />,
+                }
             );
         }
     
@@ -75,7 +85,7 @@ var DefaultFields = React.createClass({
             <div>
                 {defaultsFields.map(function(field) {
                     return(
-                        <div>{field}</div>
+                        <div key={field.key}>{field.element}</div>
                     );
                 })}
             </div>
