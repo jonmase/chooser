@@ -75,7 +75,7 @@ var DefaultFields = React.createClass({
             <div>
                 {defaultsFields.map(function(field) {
                     return(
-                        field
+                        <div>{field}</div>
                     );
                 })}
             </div>
