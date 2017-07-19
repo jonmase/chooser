@@ -8,10 +8,11 @@ import {List, ListItem} from 'material-ui/List';
 
 import ExtraField from './extra-field-labelled.jsx';
 import FavouriteButton from './option-favourite-button.jsx';
+import FilterDialog from './option-filter-dialog.jsx';
 
 import ExpandButton from '../elements/buttons/expand-button.jsx';
+import FilterButton from '../elements/buttons/filter-button.jsx';
 import SortMenu from '../elements/buttons/sort-menu.jsx';
-
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
@@ -25,6 +26,7 @@ var sortSeparator = '_#';
 var OptionsGrid = React.createClass({
     getInitialState: function () {
         var initialState = {
+            filterDialogOpen: false,
             optionsSelectedIds: this.props.optionsSelectedTableOrder,
         };
         
@@ -188,6 +190,18 @@ var OptionsGrid = React.createClass({
         return 'Choose Options';
     },
     
+    handleFilterDialogOpen() {
+        this.setState({
+            filterDialogOpen: true,
+        });
+    },
+    
+    handleFilterDialogClose() {
+        this.setState({
+            filterDialogOpen: false,
+        });
+    },
+    
     handleSelectOption: function(optionId, checked) {
         var optionsSelectedIds = this.state.optionsSelectedIds.slice();
         
@@ -220,6 +234,10 @@ var OptionsGrid = React.createClass({
                     className="page-card"
                 >
                     <div style={{float: 'right', margin: '12px'}}>
+                        <FilterButton
+                            handleClick={this.handleFilterDialogOpen} 
+                            tooltip="Filter Options"
+                        />
                         <SortMenu 
                             handleChange={this.handleSort} 
                             items={this.getSortMenuItems(placesType)}
@@ -232,7 +250,7 @@ var OptionsGrid = React.createClass({
                         title={this.getTitle()}
                         subtitle={this.getSubtitle()}
                         textStyle={{paddingRight: 0}}
-                        style={{marginRight: '72px'}}
+                        style={{marginRight: '120px'}}
                     >
                     </CardHeader>
                     <div style={{clear: 'both'}}></div>
@@ -315,6 +333,14 @@ var OptionsGrid = React.createClass({
                         }
                     </CardText>
                 </Card>
+                <FilterDialog
+                    dialogOpen={this.state.filterDialogOpen}
+                    handlers={{
+                        clear: this.handleFilterDialogClose,
+                        dialogClose: this.handleFilterDialogClose,
+                        submit: this.handleFilterDialogClose,
+                    }}
+                />
             </div>
         );
     }
