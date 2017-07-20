@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
+import Radio from '../elements/fields/radio.jsx';
 
 var customDialogStyle = {
     width: '95%',
@@ -31,7 +32,7 @@ var OptionFilterDialog = React.createClass({
     
     handleClear: function() {
         console.log("Clear all filter");
-    }
+    },
 
     render: function() {
         var actions = [
@@ -68,12 +69,55 @@ var OptionFilterDialog = React.createClass({
                 formOnInvalid={this.disableSubmitButton}
                 formOnValidSubmit={this.props.handlers.submit}
             >
-                <FormsyToggle
-                    defaultToggled={false}
-                    label="Selected"
-                    labelPosition="right"
-                    name="selected"
+                <Radio 
+                    field={{
+                        instructions: "",
+                        label: "Selected",
+                        name: "selected",
+                        options: [
+                            {
+                                label: "All",
+                                value: "all",
+                            },
+                            {
+                                label: "Selected only",
+                                value: "selected",
+                            },
+                            {
+                                label: "Unselected only",
+                                value: "unselected",
+                            },
+                        ],
+                        section: true,
+                        value: "all",
+                    }}
                 />
+                
+                {/*<Radio 
+                    field={{
+                        instructions: "",
+                        label: "Favourites",
+                        name: "favourites",
+                        options: [
+                            {
+                                label: "All",
+                                value: "all",
+                            },
+                            {
+                                label: "Favourites only",
+                                value: "favourites",
+                            },
+                            {
+                                label: "Non Favourites only",
+                                value: "nonfavourites",
+                            },
+                        ],
+                        section: true,
+                        value: "all",
+                    }}
+                />*/}
+                
+                //All filterable field types - numerical, lists, date ranges
             </FormsyDialog>
         );
     }
