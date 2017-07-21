@@ -47,12 +47,33 @@ var OptionsGrid = React.createClass({
     },
     
     getFilterValues: function() {
-        return {
-            points: {
-                min: 0,
-                max: 5,
+        var filterValues = {};
+        
+        if(this.props.choice.use_points) {
+            //Set defaults to null
+            var pointsMin = null;
+            var pointsMax = null;
+        
+            this.props.options.options.forEach(function(option) {
+                //Does this option have a points value
+                if(option.points !== undefined && option.points !== null) {
+                    if(pointsMin === null || option.points < pointsMin) {
+                        pointsMin = option.points * 10;
+                    }
+                    if(pointsMax === null || option.points > pointsMax) {
+                        pointsMax = option.points * 10;
+                    }
+                }
+            });
+            
+            filterValues.points = {
+                min: pointsMin,
+                max: pointsMax,
             }
-        };
+        
+        }
+    
+        return filterValues;
     },
     
     getPlacesType: function() {
