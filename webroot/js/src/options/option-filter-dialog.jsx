@@ -13,6 +13,8 @@ var customDialogStyle = {
     maxWidth: 'none',
 };
 
+var minDiff = null;
+
 var OptionFilterDialog = React.createClass({
     getInitialState: function () {
         var initialState = {
@@ -42,6 +44,11 @@ var OptionFilterDialog = React.createClass({
         var min = this.props.filterValues[field].min;
         var max = this.props.filterValues[field].max;
         var diff = max - min;
+        
+        if(minDiff === null || diff < minDiff) {
+            minDiff = diff;
+        }
+        
         var step = 1;
         
         if(diff > 10) {
@@ -94,6 +101,11 @@ var OptionFilterDialog = React.createClass({
                 disabled={!this.state.canSubmit}
             />,
         ];
+        
+        //Adjust right padding on slider to allow for overshoot of final label, which caused a horizontal scroll bar on the dialog
+        //Base this on the minimum difference between min and max for all the sliders
+        //Extra padding needs to be 100% divided by half the min difference, minus 5 as the slider allows a 5% gap either side
+        var sliderRightPaddingAdjustment = (100/(minDiff*2) - 5) + '%';
         
         return (
             <FormsyDialog
@@ -155,26 +167,10 @@ var OptionFilterDialog = React.createClass({
                     }}
                 />*/}
                 
-                {/*this.props.choice.use_points &&
-                    <div className="section" style={{paddingRight: '10%'}}>
-                        <label>Points: <span>{this.state.points[0]} to {this.state.points[1]}</span></label>
-                        <Range 
-                            allowCross={true}
-                            marks={this.getSliderMarks('points')}
-                            max={this.props.filterValues.points.max}
-                            min={this.props.filterValues.points.min}
-                            onChange={(value) => { this.handleSliderChange('points', value)}} 
-                            trackStyle={[{backgroundColor: indigo500}]}
-                            handleStyle={[{borderColor: indigo500}, {borderColor: indigo500}]}
-                            activeDotStyle={{borderColor: indigo500}}
-                            value={this.state.points}
-                        />
-                    </div>
-                */}
                 {this.props.numericalFields.map(function(field) {
                     if(this.props.filterValues[field.name].min !== null && this.props.filterValues[field.name].max !== null) {
                         return (
-                            <div className="section" style={{paddingRight: '10%'}} key={field.name}>
+                            <div className="section" style={{paddingRight: sliderRightPaddingAdjustment}} key={field.name}>
                                 <label>{field.label}: <span>{this.state[field.name][0]} to {this.state[field.name][1]}</span></label>
                                 <Range 
                                     allowCross={true}
