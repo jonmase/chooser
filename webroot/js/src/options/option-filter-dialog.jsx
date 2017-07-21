@@ -15,10 +15,15 @@ var customDialogStyle = {
 
 var OptionFilterDialog = React.createClass({
     getInitialState: function () {
-        return {
+        var initialState = {
             canSubmit: false,
-            points: [this.props.filterValues.points.min, this.props.filterValues.points.max],
         };
+    
+        this.props.numericalFields.map(function(field) {
+            initialState[field.name] = [this.props.filterValues[field.name].min, this.props.filterValues[field.name].max];
+        }, this);
+        
+        return initialState;
     },
 
     enableSubmitButton: function () {
@@ -63,8 +68,8 @@ var OptionFilterDialog = React.createClass({
         console.log("Clear all filter");
     },
     
-    handlePointsChange: function(value) {
-        this.setState({points: value});
+    handleSliderChange: function(field, value) {
+        this.setState({[field]: value});
     },
 
     render: function() {
@@ -150,7 +155,7 @@ var OptionFilterDialog = React.createClass({
                     }}
                 />*/}
                 
-                {this.props.choice.use_points &&
+                {/*this.props.choice.use_points &&
                     <div className="section" style={{paddingRight: '10%'}}>
                         <label>Points: <span>{this.state.points[0]} to {this.state.points[1]}</span></label>
                         <Range 
@@ -158,14 +163,34 @@ var OptionFilterDialog = React.createClass({
                             marks={this.getSliderMarks('points')}
                             max={this.props.filterValues.points.max}
                             min={this.props.filterValues.points.min}
-                            onChange={this.handlePointsChange} 
+                            onChange={(value) => { this.handleSliderChange('points', value)}} 
                             trackStyle={[{backgroundColor: indigo500}]}
                             handleStyle={[{borderColor: indigo500}, {borderColor: indigo500}]}
                             activeDotStyle={{borderColor: indigo500}}
                             value={this.state.points}
                         />
                     </div>
-                }
+                */}
+                {this.props.numericalFields.map(function(field) {
+                    if(this.props.filterValues[field.name].min !== null && this.props.filterValues[field.name].max !== null) {
+                        return (
+                            <div className="section" style={{paddingRight: '10%'}} key={field.name}>
+                                <label>{field.label}: <span>{this.state[field.name][0]} to {this.state[field.name][1]}</span></label>
+                                <Range 
+                                    allowCross={true}
+                                    marks={this.getSliderMarks(field.name)}
+                                    max={this.props.filterValues[field.name].max}
+                                    min={this.props.filterValues[field.name].min}
+                                    onChange={(value) => { this.handleSliderChange(field.name, value)}} 
+                                    trackStyle={[{backgroundColor: indigo500}]}
+                                    handleStyle={[{borderColor: indigo500}, {borderColor: indigo500}]}
+                                    activeDotStyle={{borderColor: indigo500}}
+                                    value={this.state[field.name]}
+                                />
+                            </div>
+                        );
+                    }
+                }, this)}
                 
                 //All filterable field types - numerical, lists, date ranges
                 

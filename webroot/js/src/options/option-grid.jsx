@@ -47,35 +47,63 @@ var OptionsGrid = React.createClass({
     },
     
     getFilterValues: function() {
+        var numericalFields = this.getNumericalFields();
         var filterValues = {};
         
-        if(this.props.choice.use_points) {
-            //Set defaults to null
-            var pointsMin = null;
-            var pointsMax = null;
-        
-            this.props.options.options.forEach(function(option) {
-                //Does this option have a points value
-                if(option.points !== undefined && option.points !== null) {
-                    if(pointsMin === null || option.points < pointsMin) {
-                        pointsMin = option.points * 10;
-                    }
-                    if(pointsMax === null || option.points > pointsMax) {
-                        pointsMax = option.points * 10;
-                    }
-                }
-            });
+        numericalFields.forEach(function(field) {
+            if(this.props.choice['use_' + field.name]) {
+                //Set defaults to null
+                var min = null;
+                var max = null;
             
-            filterValues.points = {
-                min: pointsMin,
-                max: pointsMax,
+                this.props.options.options.forEach(function(option) {
+                    //Does this option have a value for this field
+                    if(option[field.name] !== undefined && option[field.name] !== null) {
+                        if(min === null || option[field.name] < min) {
+                            min = option[field.name];
+                        }
+                        if(max === null || option[field.name] > max) {
+                            max = option[field.name];
+                        }
+                    }
+                });
+                
+                filterValues[field.name] = {
+                    min: min,
+                    max: max,
+                }
+            
             }
-        
-        }
+        }, this);
     
         return filterValues;
     },
     
+    getNumericalFields: function() {
+        var numericalFields = [];
+        
+        if(this.props.choice.use_points) {
+            numericalFields.push({
+                label: 'Points',
+                name: 'points',
+            });
+        }
+        if(this.props.choice.use_min_places) {
+            numericalFields.push({
+                label: 'Min. Places',
+                name: 'min_places',
+            });
+        }
+        if(this.props.choice.use_max_places) {
+            numericalFields.push({
+                label: 'Max. Places',
+                name: 'max_places',
+            });
+        }
+        
+        return numericalFields;
+    },
+        
     getPlacesType: function() {
         var placesType = false;
         if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
@@ -376,6 +404,7 @@ var OptionsGrid = React.createClass({
                         submit: this.handleFilterSubmit,
                     }}
                     filterValues={this.getFilterValues()}
+                    numericalFields={this.getNumericalFields()}
                 />
             </div>
         );
