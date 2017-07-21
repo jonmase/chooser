@@ -51,6 +51,7 @@ var OptionFilterDialog = React.createClass({
         
         var step = 1;
         
+        //Work out what the gap between marks should be
         if(diff > 10) {
             step = 2;
         }
@@ -63,9 +64,42 @@ var OptionFilterDialog = React.createClass({
         if(diff > 100) {
             step = 20;
         }
+        
+        //Set the max and min marks as the max and min values
+        var minMark = min;
+        var maxMark = max;
+        
+        //The remaining marks, which will be created by a for loop, should be on multiples of the step
+        //If step is 1, the first and last in the loop should just be one in from the ends
+        var minStepMark = min + 1;
+        var maxStepMark = max - 1;
+        //For larger steps, the first and last should be first multiple of step in from the ends
+        if(step > 1) {
+            //If min is a multiple of step, the first iterated mark will just be one step in from min
+            if(min%step === 0) {
+                minStepMark = min + step;
+            }
+            //Otherwise, round up min/step and multiply bt step to get the first multiple
+            else {
+                minStepMark = Math.ceil(min/step) * step;
+            }
             
-        var marks = {};
-        for(var i = min; i <= max; i+= step) {
+            //If max is a multiple of step, the last iterated mark will just be one step in from max
+            if(max%step === 0) {
+                maxStepMark = max - step;
+            }
+            //Otherwise, round down max/step and multiply bt step to get the last multiple
+            else {
+                maxStepMark = Math.floor(max/step) * step;
+            }
+        }
+        
+        //First mark is the min and last is the max
+        var marks = {
+            [minMark]: minMark,
+            [maxMark]: maxMark,
+        };
+        for(var i = minStepMark; i <= maxStepMark; i+= step) {
             marks[i] = i;
         };
         return marks;
