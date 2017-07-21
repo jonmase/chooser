@@ -139,6 +139,9 @@ form div.section {
 textarea {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }
+.rc-slider-handle:active {
+    box-shadow: 0 0 5px rgb(63, 81, 181);
+}
 
 /* DROPZONE */
 .dropzone {

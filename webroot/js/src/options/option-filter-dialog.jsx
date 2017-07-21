@@ -1,7 +1,12 @@
 import React from 'react';
 
 import FlatButton from 'material-ui/FlatButton';
+import Slider from 'material-ui/Slider';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
+import InputRange from 'react-input-range';
+import RCSlider, { Range } from 'rc-slider';
+import {indigo500} from 'material-ui/styles/colors';
+
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 import Radio from '../elements/fields/radio.jsx';
@@ -15,6 +20,10 @@ var OptionFilterDialog = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
+            sliderPointsMax: this.props.filterValues.points.max,
+            sliderPointsMin: this.props.filterValues.points.min,
+            sliderPoints: {min: this.props.filterValues.points.min, max: this.props.filterValues.points.max},
+            rangePoints: [this.props.filterValues.points.min, this.props.filterValues.points.max],
         };
     },
 
@@ -30,8 +39,32 @@ var OptionFilterDialog = React.createClass({
         });
     },
     
+    getSliderMarks: function() {
+        var marks = {};
+        for(var i = this.props.filterValues.points.min; i <= this.props.filterValues.points.max; i++) {
+            marks[i] = i;
+        };
+        return marks;
+    },
+    
     handleClear: function() {
         console.log("Clear all filter");
+    },
+    
+    handleRangePointsChange: function(value) {
+        this.setState({rangePoints: value});
+    },
+
+    handleSliderPointsChange: function(value) {
+        this.setState({sliderPoints: value});
+    },
+
+    handleSliderPointsMaxChange: function(event, value) {
+        this.setState({sliderPointsMax: value});
+    },
+
+    handleSliderPointsMinChange: function(event, value) {
+        this.setState({sliderPointsMin: value});
     },
 
     render: function() {
@@ -117,7 +150,54 @@ var OptionFilterDialog = React.createClass({
                     }}
                 />*/}
                 
+                {this.props.choice.use_points &&
+                    <div className="section">
+                        <h4>Min. Points <span>{this.state.sliderPointsMin}</span></h4>
+                        <Slider
+                            //defaultValue={this.props.filterValues.points.min}
+                            min={this.props.filterValues.points.min}
+                            max={this.props.filterValues.points.max}
+                            name="min_points"
+                            onChange={this.handleSliderPointsMinChange}
+                            step={1}
+                            value={this.state.sliderPointsMin}
+                            //onChange={this.handleSecondSlider}
+                        />
+                        <h4>Max. Points: <span>{this.state.sliderPointsMax}</span></h4>
+                        <Slider
+                            //defaultValue={this.props.filterValues.points.max}
+                            min={this.props.filterValues.points.min}
+                            max={this.props.filterValues.points.max}
+                            name="max_points"
+                            onChange={this.handleSliderPointsMaxChange}
+                            step={1}
+                            value={this.state.sliderPointsMax}
+                            //onChange={this.handleSecondSlider}
+                        />
+                        <h4>Points</h4>
+                        <InputRange 
+                            maxValue={this.props.filterValues.points.max}
+                            minValue={this.props.filterValues.points.min}
+                            value={this.state.sliderPoints}
+                            onChange={this.handleSliderPointsChange} 
+                        />
+                        <h4>Points</h4>
+                        <Range 
+                            allowCross={true}
+                            marks={this.getSliderMarks()}
+                            max={this.props.filterValues.points.max}
+                            min={this.props.filterValues.points.min}
+                            onChange={this.handleRangePointsChange} 
+                            trackStyle={[{backgroundColor: indigo500}]}
+                            handleStyle={[{borderColor: indigo500}, {borderColor: indigo500}]}
+                            activeDotStyle={{borderColor: indigo500}}
+                            value={this.state.rangePoints}
+                        />
+                    </div>
+                }
+                
                 //All filterable field types - numerical, lists, date ranges
+                
             </FormsyDialog>
         );
     }

@@ -31,6 +31,8 @@
     <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
     <?= $this->Html->css('/js/node_modules/flexboxgrid/dist/flexboxgrid.min.css'); //Flexboxgrid ?>
     <?= $this->Html->css('/js/node_modules/alloyeditor/dist/alloy-editor/assets/alloy-editor-ocean-min.css'); //Alloy Editor ?>
+    <?= $this->Html->css('/js/node_modules/react-input-range/lib/css/index.css'); //React Input Range Slider ?>
+    <?= $this->Html->css('/js/node_modules/rc-slider/assets/index.css'); //RC Slider ?>
     <?= $this->Html->css('chooser'); ?>
 
     <!--[if lt IE 9]>

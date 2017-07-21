@@ -46,6 +46,15 @@ var OptionsGrid = React.createClass({
         return false;
     },
     
+    getFilterValues: function() {
+        return {
+            points: {
+                min: 0,
+                max: 5,
+            }
+        };
+    },
+    
     getPlacesType: function() {
         var placesType = false;
         if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
@@ -345,6 +354,7 @@ var OptionsGrid = React.createClass({
                         dialogClose: this.handleFilterDialogClose,
                         submit: this.handleFilterSubmit,
                     }}
+                    filterValues={this.getFilterValues()}
                 />
             </div>
         );
