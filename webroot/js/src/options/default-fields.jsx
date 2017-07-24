@@ -15,7 +15,6 @@ var DefaultFields = React.createClass({
         
         var defaultsFields = [];
         
-        var useMinPlaces = false;
         allDefaults.forEach(function(field) {
             if(this.props.choice['use_' + field.name]) {
                 var ComponentClass = null;
@@ -33,27 +32,6 @@ var DefaultFields = React.createClass({
                         ComponentClass = null;
                         break;
                 }
-                
-                /*var key = field.name;
-                var label = field.label;
-                var value = option[field.name];
-                if(field.name === 'min_places' || field.name === 'max_places') {
-                    label = 'Places';
-                    if(field.name === 'min_places') {
-                        value = "At least " + option.min_places;
-                        useMinPlaces = true;
-                    }
-                    else if(field.name === 'max_places') {
-                        if(useMinPlaces) {
-                            key = 'places';
-                            value = option.min_places + " to " + option.max_places;
-                            defaultsFields.pop(); //Pop min places off the defaultFields array
-                        }
-                        else {
-                            value = "Up to " + option.max_places;
-                        }
-                    }
-                }*/
                 
                 defaultsFields.push(
                     {
