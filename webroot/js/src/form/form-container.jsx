@@ -7,53 +7,11 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import AppTitle from '../elements/app-title.jsx';
 import SortWrapper from '../elements/wrappers/sort.jsx';
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 
 import DefaultFields from './default-fields.jsx';
 import ExtraFields from './extra-fields.jsx';
 import ExtraFieldEdit from './extra-field-edit.jsx';
-
-var fieldTypes = [
-    {
-        value: 'text',
-        label: 'Simple Text',
-    },
-    {
-        value: 'wysiwyg',
-        label: 'Rich Text',
-    },
-    {
-        value: 'list',
-        label: 'Option List',
-    },
-    {
-        value: 'number',
-        label: 'Number',
-    },
-    {
-        value: 'email',
-        label: 'Email',
-    },
-    {
-        value: 'url',
-        label: 'URL',
-    },
-    {
-        value: 'date',
-        label: 'Date',
-    },
-    {
-        value: 'datetime',
-        label: 'Date & Time',
-    },
-    /*{
-        value: 'person',
-        label: 'Person',
-    },*/
-    /*{
-        value: 'file',
-        label: 'File Upload',
-    },*/
-];
 
 var FormContainer = React.createClass({
     loadExtraFieldsFromServer: function() {
@@ -76,16 +34,8 @@ var FormContainer = React.createClass({
     },
     
     getInitialState: function () {
-        return {
+        var initialState = {
             action: 'view',
-            defaults: {
-                code: this.props.choice.use_code,
-                title: this.props.choice.use_title,
-                description: this.props.choice.use_description,
-                min_places: this.props.choice.use_min_places,
-                max_places: this.props.choice.use_max_places,
-                points: this.props.choice.use_points,
-            },
             defaultsButton: {
                 disabled: true,
                 label: 'Saved',
@@ -99,6 +49,16 @@ var FormContainer = React.createClass({
                 message: '',
             },
         };
+        
+        var defaultFields = this.props.allDefaultFields;
+        var defaults = {};
+        defaultFields.forEach(function(field) {
+            defaults[field.name] = this.props.choice['use_' + field.name];
+        }, this);
+        
+        initialState.defaults = defaults;
+    
+        return initialState;
     },
     
     componentWillMount: function() {
@@ -216,6 +176,7 @@ var FormContainer = React.createClass({
     getFieldAndTypeFromId: function(fieldId) {
         var field = this.props.deepCopyHelper(this.state.extraFields[this.state.extraFieldIndexesById[fieldId]]);
         
+        var fieldTypes = this.props.getFieldTypes();
         
         fieldTypes.some(function(type) {
             if(type.value === field.type) {
@@ -280,7 +241,7 @@ var FormContainer = React.createClass({
                         />
                         <ExtraFields 
                             extraFields={this.state.extraFields}
-                            fieldTypes={fieldTypes}
+                            fieldTypes={this.props.getFieldTypes()}
                             loaded={this.state.loaded}
                             handlers={extrasHandlers}
                         />
@@ -293,7 +254,7 @@ var FormContainer = React.createClass({
             return (
                 <ExtraFieldEdit 
                     fieldBeingEditedId={this.state.fieldBeingEditedId}
-                    fieldTypes={fieldTypes}
+                    fieldTypes={this.props.getFieldTypes()}
                     handlers={extrasEditHandlers}
                     snackbar={snackbar}
                 />
@@ -302,4 +263,4 @@ var FormContainer = React.createClass({
     }
 });
 
-module.exports = SortWrapper(FormContainer);
+module.exports = SortWrapper(FieldsWrapper(FormContainer));

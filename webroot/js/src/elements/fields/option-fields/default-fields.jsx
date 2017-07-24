@@ -1,15 +1,20 @@
 import React from 'react';
-import CodeField from './code.jsx';
-import TitleField from './title.jsx';
-import DescriptionField from './description.jsx';
-import MinPlacesField from './min_places.jsx';
-import MaxPlacesField from './max_places.jsx';
-import PointsField from './points.jsx';
+
+import FieldsWrapper from '../../wrappers/fields.jsx';
+
+import Code from './code.jsx';
+import Title from './title.jsx';
+import Description from './description.jsx';
+import MinPlaces from './min_places.jsx';
+import MaxPlaces from './max_places.jsx';
+import Points from './points.jsx';
 
 
 var DefaultFields = React.createClass({
     render: function() {
         var defaults = this.props.defaults;
+        var allDefaults = this.props.allDefaultFields;
+        
         var option = false;
         if(typeof(this.props.option) !== "undefined") {
             option = this.props.option;
@@ -17,51 +22,64 @@ var DefaultFields = React.createClass({
         
         //Remove or hide the fields that are not being used?
         var remove = (this.props.removeOrHide === 'remove')?true:false;
+        var useDefaults = {};
+        allDefaults.forEach(function(field) {
+            if(this.props.choice['use_' + field.name]) {
+                useDefaults[field.name] = true;
+            }
+            else {
+                useDefaults[field.name] = false;
+            }
+        }, this);
         
         var defaultsFields = [];
-        if(!remove || defaults.code) {
-            defaultsFields.push(
-                <div className={defaults.code?((defaults.description && !defaults.title)?'section':''):'hidden'} key="code">
-                    <CodeField value={option?option.code:""} />
-                </div>
-            );
-        }
-        if(!remove || defaults.title) {
-            defaultsFields.push(
-                <div className={defaults.title?(defaults.description?'section':''):'hidden'} key="title">
-                    <TitleField value={option?option.title:""} onChange={this.props.onChange} />
-                </div>
-            );
-        }
-        if(!remove || defaults.description) {
-            defaultsFields.push(
-                <div className={defaults.description?'':'hidden'} key="description">
-                    <DescriptionField value={option?option.description:""} onChange={this.props.onWysiwygChange} />
-                </div>
-            );
-        }
-        if(!remove || defaults.min_places) {
-            defaultsFields.push(
-                <div className={defaults.min_places?'':'hidden'} key="min_places">
-                    <MinPlacesField value={option?option.min_places:""} onChange={this.props.onChange} />
-                </div>
-            );
-        }
-        if(!remove || defaults.max_places) {
-            defaultsFields.push(
-                <div className={defaults.max_places?'':'hidden'} key="max_places">
-                    <MaxPlacesField value={option?option.max_places:""} onChange={this.props.onChange} />
-                </div>
-            );
-        }
-        if(!remove || defaults.points) {
-            defaultsFields.push(
-                <div className={defaults.points?'':'hidden'} key="points">
-                    <PointsField value={option?option.points:""} onChange={this.props.onChange} />
-                </div>
-            );
-        }
-    
+        allDefaults.forEach(function(field) {
+            if(!remove || useDefaults[field.name]) {
+                var ComponentClass = null;
+                switch(field.name) {
+                    case 'code':
+                        ComponentClass = Code;
+                        break;
+                    case 'title': 
+                        ComponentClass = Title;
+                        break;
+                    case 'description': 
+                        ComponentClass = Description;
+                        break;
+                    case 'min_places':
+                        ComponentClass = MinPlaces;
+                        break;
+                    case 'max_places': 
+                        ComponentClass = MaxPlaces;
+                        break;
+                    case 'points': 
+                        ComponentClass = Points;
+                        break;
+                    default: 
+                        ComponentClass = null;
+                        break;
+                }
+                
+                if(field.type === "wysiwyg") {
+                    var onChange = this.props.onWysiwygChange;
+                }
+                else {
+                    var onChange = this.props.onChange;
+                }
+                
+                var style = null;
+                if(field.name === 'description') {
+                    style = {marginTop: '20px'};
+                }
+                
+                defaultsFields.push(
+                    <div className={useDefaults[field.name]?'':'hidden'} key={field.name} style={style} >
+                        <ComponentClass value={option?option[field.name]:""} onChange={onChange} />
+                    </div>
+                );
+            }
+        }, this);
+        
         return (
             <div>
                 {defaultsFields.map(function(field) {
@@ -74,4 +92,4 @@ var DefaultFields = React.createClass({
     }
 });
 
-module.exports = DefaultFields;
+module.exports = FieldsWrapper(DefaultFields);

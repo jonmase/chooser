@@ -20,6 +20,7 @@ import UnpublishButton from '../elements/buttons/unpublish-button.jsx';
 
 import SortableTableHeaderColumn from '../elements/table/sortable-header.jsx';
 import UnselectableCell from '../elements/table/unselectable-cell.jsx';
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
@@ -204,47 +205,25 @@ var OptionsTable = React.createClass({
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         var showActionsColumn = this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0 || this.isAdmin());
         
+        var defaultsExceptDescription = this.props.getDefaultFields(['description']);
         var defaultFields = [];
-        if(this.props.choice.use_code) {
-            defaultFields.push({
-                name: 'code',
-                label: 'Code',
-                type: 'text',
-                rowStyle: styles.tableRowColumn,
-            })
-        }
-        if(this.props.choice.use_title) {
-            defaultFields.push({
-                name: 'title',
-                label: 'Title',
-                type: 'text',
-                rowStyle: styles.tableRowColumnTitle,
-            })
-        }
-        if(this.props.choice.use_min_places) {
-            defaultFields.push({
-                name: 'min_places',
-                label: 'Min. Places',
-                type: 'number',
-                rowStyle: styles.tableRowColumn,
-            })
-        }
-        if(this.props.choice.use_max_places) {
-            defaultFields.push({
-                name: 'max_places',
-                label: 'Max. Places',
-                type: 'number',
-                rowStyle: styles.tableRowColumn,
-            })
-        }
-        if(this.props.choice.use_points) {
-            defaultFields.push({
-                name: 'points',
-                label: 'Points',
-                type: 'number',
-                rowStyle: styles.tableRowColumn,
-            })
-        }
+        defaultsExceptDescription.forEach(function(field) {
+            if(this.props.choice['use_' + field.name]) {
+                //if(field.name === 'title') {
+                    var rowStyle = styles.tableRowColumn;
+                /*}
+                else {
+                    var rowStyle = styles.tableRowColumnTitle;
+                }*/
+                
+                defaultFields.push({
+                    name: field.name,
+                    label: field.label,
+                    type: field.type,
+                    rowStyle: rowStyle,
+                });
+            }
+        }, this);
         
         var sortableExtraFields = [];
         var filterableExtraFields = [];
@@ -519,4 +498,4 @@ var OptionsTable = React.createClass({
     }
 });
 
-module.exports = OptionsTable;
+module.exports = FieldsWrapper(OptionsTable);

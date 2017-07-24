@@ -10,9 +10,11 @@ import ExtraField from './extra-field-labelled.jsx';
 import FavouriteButton from './option-favourite-button.jsx';
 import FilterDialog from './option-filter-dialog.jsx';
 
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 import ExpandButton from '../elements/buttons/expand-button.jsx';
 import FilterButton from '../elements/buttons/filter-button.jsx';
 import SortMenu from '../elements/buttons/sort-menu.jsx';
+import Text from '../elements/display/text-labelled.jsx';
 
 //TODO: Sort out title styles, and keep these styles DRY
 var styles = {
@@ -72,7 +74,6 @@ var OptionsGrid = React.createClass({
                     min: min,
                     max: max,
                 }
-            
             }
         }, this);
     
@@ -80,98 +81,17 @@ var OptionsGrid = React.createClass({
     },
     
     getNumericalFields: function() {
-        var numericalFields = [];
-        
-        if(this.props.choice.use_points) {
-            numericalFields.push({
-                label: 'Points',
-                name: 'points',
-            });
-        }
-        if(this.props.choice.use_min_places) {
-            numericalFields.push({
-                label: 'Min. Places',
-                name: 'min_places',
-            });
-        }
-        if(this.props.choice.use_max_places) {
-            numericalFields.push({
-                label: 'Max. Places',
-                name: 'max_places',
-            });
-        }
-        
-        return numericalFields;
-    },
-        
-    getPlacesType: function() {
-        var placesType = false;
-        if(this.props.choice.use_min_places && this.props.choice.use_max_places) {
-            placesType = 'both';
-        }
-        else if(this.props.choice.use_min_places) {
-            placesType = 'min';
-        }
-        else if(this.props.choice.use_max_places) {
-            placesType = 'max';
-        }
-        
-        return placesType;
+        return this.props.getDefaultFields(null, ['number']);
     },
     
-    getSortableFields: function(placesType) {
+    getSortableFields: function() {
         var sortableFields = [];
-        if(this.props.choice.use_code) {
-            sortableFields.push(
-                {
-                    label: 'Code',
-                    type: 'text',
-                    name: 'code',
-                }
-            );
-        }
-        sortableFields.push(
-            {
-                label: 'Title',
-                type: 'text',
-                name: 'title',
+        
+        this.props.allDefaultFields.forEach(function(field) {
+            if(this.props.choice['use_' + field.name]) {
+                sortableFields.push(field);
             }
-        );
-        
-        var minPlacesSortableField = {
-            label: 'Min. Places',
-            type: 'number',
-            name: 'min_places',
-        };
-        var maxPlacesSortableField = {
-            label: 'Max. Places',
-            type: 'number',
-            name: 'max_places',
-        };
-        
-        if(placesType === 'both') {
-            //placesType = 'both';
-            sortableFields.push(minPlacesSortableField);
-            sortableFields.push(maxPlacesSortableField);
-        }
-        else if(placesType === 'min') {
-            //placesType = 'min';
-            sortableFields.push(minPlacesSortableField);
-        }
-        else if(placesType === 'max') {
-            //placesType = 'max';
-            sortableFields.push(maxPlacesSortableField);
-        }
-        
-        if(this.props.choice.use_points) {
-            sortableFields.push(
-                {
-                    label: 'Points',
-                    type: 'number',
-                    name: 'points',
-                }
-            );
-        }        
+        }, this);
         
         this.props.choice.extra_fields.forEach(function(field, index) {
             //If field is sortable, add it to the array of sortable fields
@@ -201,8 +121,8 @@ var OptionsGrid = React.createClass({
         return sortableExtraFields;
     },
     
-    getSortMenuItems: function(placesType) {
-        var sortableFields = this.getSortableFields(placesType);
+    getSortMenuItems: function() {
+        var sortableFields = this.getSortableFields();
         
         var sortMenuItems = [];
         sortableFields.forEach(function(field) {
@@ -289,7 +209,7 @@ var OptionsGrid = React.createClass({
     },
 
     render: function() {
-        var placesType = this.getPlacesType();
+        var numericalFields = this.getNumericalFields();
         
         return (
             <div>
@@ -303,7 +223,7 @@ var OptionsGrid = React.createClass({
                         />
                         <SortMenu 
                             handleChange={this.handleSort} 
-                            items={this.getSortMenuItems(placesType)}
+                            items={this.getSortMenuItems()}
                             sortValue={(this.props.optionsSort.field + sortSeparator + this.props.optionsSort.fieldType + sortSeparator + this.props.optionsSort.direction)}
                             sortDirection={this.props.optionsSort.direction}
                             tooltip="Sort Options"
@@ -331,24 +251,6 @@ var OptionsGrid = React.createClass({
                                             {option.title}
                                         </div>;
                                     
-                                    var placesText = "";
-                                    if(placesType) {
-                                        if(placesType === 'min') {
-                                            placesText = <span><strong>Min. Places: </strong>{option.min_places}</span>;
-                                        }
-                                        else if(placesType === 'max') {
-                                            placesText = <span><strong>Max. Places: </strong>{option.max_places}</span>;
-                                        }
-                                        else if(placesType === 'both') {
-                                            placesText = <span><strong>Places: </strong>{option.min_places} - {option.max_places}</span>;
-                                        }
-                                    }
-                                    
-                                    var pointsText = "";
-                                    if(this.props.choice.use_points) {
-                                        pointsText = <span>{placesType&&" | "}<strong>Points: </strong>{option.points}</span>;
-                                    }
-                                    
                                     if(this.getExpandButtonShown()) {
                                         var rightIconButton = 
                                             <ExpandButton
@@ -358,6 +260,8 @@ var OptionsGrid = React.createClass({
                                                 tooltip=""
                                             />;
                                     }
+                                    
+                                    var firstSecondaryTextItem = true;
                                 
                                     return (
                                         <div key={option.id}>
@@ -368,22 +272,48 @@ var OptionsGrid = React.createClass({
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
                                                     <div>
-                                                        {placesText}
-                                                        {pointsText}
+                                                        {numericalFields.map(function(field) {
+                                                            if(this.props.choice['use_' + field.name]) {
+                                                                var divider = "";
+                                                                if(firstSecondaryTextItem) {
+                                                                    firstSecondaryTextItem = false;
+                                                                }
+                                                                else {
+                                                                    divider = " | ";
+                                                                }
+                                                                
+                                                                return (
+                                                                    <span key={field.label}>
+                                                                        {divider}
+                                                                        <Text label={field.label} value={option[field.name]} />
+                                                                    </span>
+                                                                );
+                                                            }
+                                                        }, this)}
                                                         {this.getSortableExtraFields().map(function(fieldIndex, index) {
-                                                           return (
-                                                                <span key={fieldIndex}>
-                                                                    {(placesType || this.props.choice.use_points || index > 0) && " | "}
+                                                            var divider = "";
+                                                            if(!firstSecondaryTextItem || index > 0) {
+                                                                divider = " | ";
+                                                            }
+                                                            if(firstSecondaryTextItem) {
+                                                                firstSecondaryTextItem = false;
+                                                            }
+                                                            
+                                                            var field = this.props.choice.extra_fields[fieldIndex];
+                                                                
+                                                            return (
+                                                                <span key={field.name}>
+                                                                    {divider}
                                                                     <ExtraField 
-                                                                        extra={this.props.choice.extra_fields[fieldIndex].extra}
-                                                                        label={this.props.choice.extra_fields[fieldIndex].label}
-                                                                        options={this.props.choice.extra_fields[fieldIndex].options}
-                                                                        //field={this.props.choice.extra_fields[fieldIndex]}
-                                                                        type={this.props.choice.extra_fields[fieldIndex].type}
-                                                                        value={option[this.props.choice.extra_fields[fieldIndex].name]}
+                                                                        extra={field.extra}
+                                                                        label={field.label}
+                                                                        options={field.options}
+                                                                        //field={field}
+                                                                        type={field.type}
+                                                                        value={option[field.name]}
                                                                     />
                                                                 </span>
-                                                           );
+                                                            );
                                                         }, this)}
                                                     </div>
                                                 }
@@ -411,4 +341,4 @@ var OptionsGrid = React.createClass({
     }
 });
 
-module.exports = OptionsGrid;
+module.exports = FieldsWrapper(OptionsGrid);

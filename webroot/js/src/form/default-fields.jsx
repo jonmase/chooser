@@ -6,50 +6,21 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Formsy from 'formsy-react';
 import FormsyToggle from 'formsy-material-ui/lib/FormsyToggle';
 
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 
 var DefaultFieldToggles = React.createClass({
     render: function() {
-        var toggles = [
-            {
-                name: "code",
-                label: "Code",
-                defaultToggled: this.props.choice.use_code,
-            },
-            /*{
-                name: "title",
-                label: "Title",
-                defaultToggled: this.props.choice.use_title,
-            },*/
-            {
-                name: "description",
-                label: "Description",
-                defaultToggled: this.props.choice.use_description,
-            },
-            {
-                name: "min_places",
-                label: "Minimum Places",
-                defaultToggled: this.props.choice.use_min_places,
-            },
-            {
-                name: "max_places",
-                label: "Maximum Places",
-                defaultToggled: this.props.choice.use_max_places,
-            },
-            {
-                name: "points",
-                label: "Points",
-                defaultToggled: this.props.choice.use_points,
-            },
-        ];
+        var defaultsField = this.props.getDefaultFields(['title']);     //Get defaults, excluding title
+        var toggleNodes = [];
         
-        var toggleNodes = toggles.map(function(toggle) {
+        var toggleNodes = defaultsField.map(function(field) {
             return (
                 <FormsyToggle
-                    key={toggle.name}
-                    name={toggle.name}
-                    label={toggle.label}
-                    defaultToggled={toggle.defaultToggled}
+                    key={field.name}
+                    name={field.name}
+                    label={field.label}
+                    defaultToggled={this.props.choice['use_' + field.name]}
                     labelPosition="right"
                     onChange={this.props.handlers.change}
                 />
@@ -96,7 +67,7 @@ var DefaultFieldToggles = React.createClass({
                                 method="POST"
                             >
                                 <DefaultFields
-                                    defaults={this.props.defaults}
+                                    choice={this.props.choice}
                                     removeOrHide="hide"
                                 />
                             </Formsy.Form>
@@ -108,4 +79,4 @@ var DefaultFieldToggles = React.createClass({
     }
 });
 
-module.exports = DefaultFieldToggles;
+module.exports = FieldsWrapper(DefaultFieldToggles);

@@ -139,15 +139,6 @@ var OptionViewPage = React.createClass({
             title={title}
         />;
 
-        var defaults = {
-            code: false,    //Don't use code or title, as these are shown in the option title
-            title: false,
-            description: this.props.choice.use_description,
-            min_places: this.props.choice.use_min_places,
-            max_places: this.props.choice.use_max_places,
-            points: this.props.choice.use_points,
-        };
-        
         return (
             <Container topbar={topbar} title={null}>
                 {alert}
@@ -158,7 +149,7 @@ var OptionViewPage = React.createClass({
                 />
                 
                 <DefaultFields
-                    defaults={defaults}
+                    choice={this.props.choice}
                     option={option}
                 />
                 

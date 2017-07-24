@@ -85,19 +85,6 @@ var OptionEditPage = React.createClass({
         });
     },
 
-    getDefaults: function() {
-        var defaults = {
-            code: this.props.choice.use_code,
-            title: this.props.choice.use_title,
-            description: this.props.choice.use_description,
-            min_places: this.props.choice.use_min_places,
-            max_places: this.props.choice.use_max_places,
-            points: this.props.choice.use_points,
-        };
-        
-        return defaults;
-    },
-
     getOption: function() {
         var option = {};
         if(this.props.optionEditing.optionBeingEdited) {
@@ -270,7 +257,6 @@ var OptionEditPage = React.createClass({
     },
     
     render: function() {
-        var defaults = this.getDefaults();
         var option = this.getOption();
 
         var buttonsDisabled = !this.state.canSaveOption || !this.state.saveButtonEnabled || !this.state.dirty;
@@ -367,7 +353,7 @@ var OptionEditPage = React.createClass({
                     
                     <div className="section">
                         <DefaultFields
-                            defaults={defaults}
+                            choice={this.props.choice}
                             option={option}
                             removeOrHide="remove"
                             onChange={this.handleChange}

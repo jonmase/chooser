@@ -158,3 +158,8 @@ a[type="button"] {
 tr.self td:first-child div {
     display: none;  /*Hide the checkbox for the current user's row*/
 }
+
+/* OPTIONS */
+div.paragraph {
+    margin: 1em 0; 
+}

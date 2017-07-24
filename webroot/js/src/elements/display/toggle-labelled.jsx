@@ -15,7 +15,7 @@ var ToggleLabelled = React.createClass({
     
         if(this.props.paragraph) {
             return (
-                <p>{content}</p>
+                <div className="paragraph">{content}</div>
             );
         }
         else {

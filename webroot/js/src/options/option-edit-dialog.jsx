@@ -47,15 +47,6 @@ var OptionEditDialog = React.createClass({
             />,
         ];
         
-        var defaults = {
-            code: this.props.choice.use_code,
-            title: this.props.choice.use_title,
-            description: this.props.choice.use_description,
-            min_places: this.props.choice.use_min_places,
-            max_places: this.props.choice.use_max_places,
-            points: this.props.choice.use_points,
-        };
-        
         var option = {};
         if(this.props.optionEditing.optionBeingEdited) {
             option = this.props.options.options[this.props.options.indexesById[this.props.optionEditing.optionBeingEdited]];
@@ -75,7 +66,7 @@ var OptionEditDialog = React.createClass({
             >
                 <div className="section">
                     <DefaultFields
-                        defaults={defaults}
+                        choice={this.props.choice}
                         option={option}
                         removeOrHide="remove"
                         onWysiwygChange={this.props.handlers.wysiwygChange}

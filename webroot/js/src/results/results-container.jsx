@@ -104,43 +104,14 @@ var ResultsContainer = React.createClass({
     },
 
     render: function() {
+        var defaultsExceptDescription = this.props.getDefaultFields(['description']);
         var optionDefaultFields = [];
-        if(this.props.choice.use_code) {
-            optionDefaultFields.push({
-                name: 'code',
-                label: 'Code',
-                type: 'text',
-            })
-        }
-        if(this.props.choice.use_title) {
-            optionDefaultFields.push({
-                name: 'title',
-                label: 'Title',
-                type: 'text',
-            })
-        }
-        if(this.props.choice.use_min_places) {
-            optionDefaultFields.push({
-                name: 'min_places',
-                label: 'Min. Places',
-                type: 'number',
-            })
-        }
-        if(this.props.choice.use_max_places) {
-            optionDefaultFields.push({
-                name: 'max_places',
-                label: 'Max. Places',
-                type: 'number',
-            })
-        }
-        if(this.props.choice.use_points) {
-            optionDefaultFields.push({
-                name: 'points',
-                label: 'Points',
-                type: 'number',
-            })
-        }
-    
+        defaultsExceptDescription.forEach(function(field) {
+            if(this.props.choice['use_' + field.name]) {
+                optionDefaultFields.push(field);
+            }
+        }, this);
+        
         return (
             <div>
                 {(this.state.action === 'index') &&
