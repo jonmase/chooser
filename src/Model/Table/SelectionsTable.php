@@ -211,7 +211,7 @@ class SelectionsTable extends Table
         
         $selectionsQuery = $this->find('all', [
             'conditions' => [
-                'choosing_instance_id' => $choosingInstance->id,
+                'choosing_instance_id' => $choosingInstance['id'],
                 'archived' => 0,
                 'confirmed' => 1,   //TODO: include unsubmitted as well, with filter to choose whether to show them
             ],
