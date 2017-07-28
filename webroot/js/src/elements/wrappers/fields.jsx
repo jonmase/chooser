@@ -58,6 +58,19 @@ function FieldsWrapper(WrappedComponent) {
             }
         },
         
+        getDefaultsForChoice: function(choice, exclude, types) {
+            var defaults = this.getDefaults(exclude, types);
+            
+            var choiceDefaults = [];
+            defaults.forEach(function(field) {
+                if(choice['use_' + field.name]) {
+                    choiceDefaults.push(field);
+                }
+            });
+            
+            return choiceDefaults;
+        },
+        
         getTypes: function() {
             var fieldTypes = [
                 {
@@ -109,6 +122,7 @@ function FieldsWrapper(WrappedComponent) {
             var newProps = {
                 allDefaultFields: this.getDefaults(),
                 getDefaultFields: this.getDefaults,
+                getDefaultFieldsForChoice: this.getDefaultsForChoice,
                 getFieldTypes: this.getTypes,
             }
             

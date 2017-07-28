@@ -205,24 +205,22 @@ var OptionsTable = React.createClass({
         var showExpandColumn = this.props.choice.use_description;   //Initially set whether expand column should be shown based on whether description is used
         var showActionsColumn = this.props.action === 'edit' && (this.isApprover() || this.props.options.editableOptionsCount > 0 || this.isAdmin());
         
-        var defaultsExceptDescription = this.props.getDefaultFields(['description']);
+        var defaultsExceptDescription = this.props.getDefaultFieldsForChoice(this.props.choice, ['description']);
         var defaultFields = [];
         defaultsExceptDescription.forEach(function(field) {
-            if(this.props.choice['use_' + field.name]) {
-                //if(field.name === 'title') {
-                    var rowStyle = styles.tableRowColumn;
-                /*}
-                else {
-                    var rowStyle = styles.tableRowColumnTitle;
-                }*/
-                
-                defaultFields.push({
-                    name: field.name,
-                    label: field.label,
-                    type: field.type,
-                    rowStyle: rowStyle,
-                });
+            if(field.name === 'title') {
+                var rowStyle = styles.tableRowColumnTitle;
             }
+            else {
+                var rowStyle = styles.tableRowColumn;
+            }
+            
+            defaultFields.push({
+                name: field.name,
+                label: field.label,
+                type: field.type,
+                rowStyle: rowStyle,
+            });
         }, this);
         
         var sortableExtraFields = [];

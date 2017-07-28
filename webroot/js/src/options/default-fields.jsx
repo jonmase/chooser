@@ -11,44 +11,42 @@ var DefaultFields = React.createClass({
             option = this.props.option;
         }
         
-        var allDefaults = this.props.allDefaultFields;
+        var defaultsFields = this.props.getDefaultFieldsForChoice(this.props.choice);
         
-        var defaultsFields = [];
+        var defaultFieldComponents = [];
         
-        allDefaults.forEach(function(field) {
-            if(this.props.choice['use_' + field.name]) {
-                var ComponentClass = null;
-                switch(field.type) {
-                    case 'text':
-                        ComponentClass = Text;
-                        break;
-                    case 'wysiwyg': 
-                        ComponentClass = Wysiwyg;
-                        break;
-                    case 'number': 
-                        ComponentClass = Text;
-                        break;
-                    default: 
-                        ComponentClass = null;
-                        break;
-                }
-                
-                defaultsFields.push(
-                    {
-                        key: field.name,
-                        element: <ComponentClass 
-                            label={field.label}
-                            paragraph={true}
-                            value={option[field.name]}
-                        />
-                    }
-                );
+        defaultsFields.forEach(function(field) {
+            var ComponentClass = null;
+            switch(field.type) {
+                case 'text':
+                    ComponentClass = Text;
+                    break;
+                case 'wysiwyg': 
+                    ComponentClass = Wysiwyg;
+                    break;
+                case 'number': 
+                    ComponentClass = Text;
+                    break;
+                default: 
+                    ComponentClass = null;
+                    break;
             }
+            
+            defaultFieldComponents.push(
+                {
+                    key: field.name,
+                    element: <ComponentClass 
+                        label={field.label}
+                        paragraph={true}
+                        value={option[field.name]}
+                    />
+                }
+            );
         }, this);
         
         return (
             <div>
-                {defaultsFields.map(function(field) {
+                {defaultFieldComponents.map(function(field) {
                     return(
                         <div key={field.key}>{field.element}</div>
                     );

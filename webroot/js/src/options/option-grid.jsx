@@ -53,27 +53,25 @@ var OptionsGrid = React.createClass({
         var filterValues = {};
         
         numericalFields.forEach(function(field) {
-            if(this.props.choice['use_' + field.name]) {
-                //Set defaults to null
-                var min = null;
-                var max = null;
-            
-                this.props.options.options.forEach(function(option) {
-                    //Does this option have a value for this field
-                    if(option[field.name] !== undefined && option[field.name] !== null) {
-                        if(min === null || option[field.name] < min) {
-                            min = option[field.name];
-                        }
-                        if(max === null || option[field.name] > max) {
-                            max = option[field.name];
-                        }
+            //Set defaults to null
+            var min = null;
+            var max = null;
+        
+            this.props.options.options.forEach(function(option) {
+                //Does this option have a value for this field
+                if(option[field.name] !== undefined && option[field.name] !== null) {
+                    if(min === null || option[field.name] < min) {
+                        min = option[field.name];
                     }
-                });
-                
-                filterValues[field.name] = {
-                    min: min,
-                    max: max,
+                    if(max === null || option[field.name] > max) {
+                        max = option[field.name];
+                    }
                 }
+            });
+            
+            filterValues[field.name] = {
+                min: min,
+                max: max,
             }
         }, this);
     
@@ -81,17 +79,11 @@ var OptionsGrid = React.createClass({
     },
     
     getNumericalFields: function() {
-        return this.props.getDefaultFields(null, ['number']);
+        return this.props.getDefaultFieldsForChoice(this.props.choice, null, ['number']);
     },
     
     getSortableFields: function() {
-        var sortableFields = [];
-        
-        this.props.allDefaultFields.forEach(function(field) {
-            if(this.props.choice['use_' + field.name]) {
-                sortableFields.push(field);
-            }
-        }, this);
+        var sortableFields = this.props.getDefaultFieldsForChoice(this.props.choice, ['description']); //Get defaults field for choice, except description
         
         this.props.choice.extra_fields.forEach(function(field, index) {
             //If field is sortable, add it to the array of sortable fields
@@ -273,22 +265,20 @@ var OptionsGrid = React.createClass({
                                                 secondaryText={
                                                     <div>
                                                         {numericalFields.map(function(field) {
-                                                            if(this.props.choice['use_' + field.name]) {
-                                                                var divider = "";
-                                                                if(firstSecondaryTextItem) {
-                                                                    firstSecondaryTextItem = false;
-                                                                }
-                                                                else {
-                                                                    divider = " | ";
-                                                                }
-                                                                
-                                                                return (
-                                                                    <span key={field.label}>
-                                                                        {divider}
-                                                                        <Text label={field.label} value={option[field.name]} />
-                                                                    </span>
-                                                                );
+                                                            var divider = "";
+                                                            if(firstSecondaryTextItem) {
+                                                                firstSecondaryTextItem = false;
                                                             }
+                                                            else {
+                                                                divider = " | ";
+                                                            }
+                                                            
+                                                            return (
+                                                                <span key={field.label}>
+                                                                    {divider}
+                                                                    <Text label={field.label} value={option[field.name]} />
+                                                                </span>
+                                                            );
                                                         }, this)}
                                                         {this.getSortableExtraFields().map(function(fieldIndex, index) {
                                                             var divider = "";
@@ -334,7 +324,7 @@ var OptionsGrid = React.createClass({
                         submit: this.handleFilterSubmit,
                     }}
                     filterValues={this.getFilterValues()}
-                    numericalFields={this.getNumericalFields()}
+                    numericalFields={numericalFields}
                 />
             </div>
         );

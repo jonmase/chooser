@@ -4,6 +4,7 @@ import ResultsIndex from './results-index.jsx';
 import OptionResult from './option-result.jsx';
 import StudentResult from './student-result.jsx';
 
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 import SortWrapper from '../elements/wrappers/sort.jsx';
 
 var ResultsContainer = React.createClass({
@@ -104,13 +105,7 @@ var ResultsContainer = React.createClass({
     },
 
     render: function() {
-        var defaultsExceptDescription = this.props.getDefaultFields(['description']);
-        var optionDefaultFields = [];
-        defaultsExceptDescription.forEach(function(field) {
-            if(this.props.choice['use_' + field.name]) {
-                optionDefaultFields.push(field);
-            }
-        }, this);
+        var optionDefaultFields = this.props.getDefaultFieldsForChoice(this.props.choice, ['description']);
         
         return (
             <div>
@@ -159,4 +154,4 @@ var ResultsContainer = React.createClass({
     }
 });
 
-module.exports = SortWrapper(ResultsContainer);
+module.exports = SortWrapper(FieldsWrapper(ResultsContainer));
