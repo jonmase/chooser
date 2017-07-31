@@ -701,7 +701,7 @@ var OptionContainer = React.createClass({
     
     //Selection is enabled if choosing is open, or if user is admin and instance is set up
     isOptionSelectionEnabled: function() {
-        return this.state.instance.choosing.open || (this.state.instance.choosing.id && this.props.roles.indexOf('admin') > -1);
+        return (this.state.options.loaded && this.state.instance.loaded) && this.state.instance.choosing.choosable && (this.state.instance.choosing.open || this.props.roles.indexOf('admin') > -1);
     },
     
     saveSelectedOptions: function(optionsSelectedIds) {
@@ -866,7 +866,7 @@ var OptionContainer = React.createClass({
         
             if(action === 'view' || action === 'confirmed'){
                 //If instance created and open or user is administrator, show selection basket or change selection buttons
-                if((this.state.options.loaded && this.state.instance.loaded) && (this.state.instance.choosing.id && (this.state.instance.choosing.open || this.props.roles.indexOf('admin') > -1))) {
+                if(this.isOptionSelectionEnabled()) {
                     if(action === 'view') {
                         topbarIconRight=
                             <div style={{paddingRight: '10px'}}>
@@ -1006,7 +1006,6 @@ var OptionContainer = React.createClass({
                                 action={this.state.action}
                                 choice={this.props.choice}
                                 favourites={this.state.favourites}
-                                instance={this.state.instance}
                                 optionContainerHandlers={{
                                     favourite: this.handleFavourite,
                                     selectOption: this.handleOptionSelectFromGrid,
