@@ -46,6 +46,9 @@ var ChoiceInstructions = React.createClass({
                                         (this.props.roles.length > 0) &&
                                             <span>
                                                 You can view the available options below, but students are not able to see them yet. 
+                                                {!instance.choosable && 
+                                                    <span> Choosing is not enabled, so students will only be able to view/browse the options.</span>
+                                                }
                                             </span>
                                     }
                                 </p>
