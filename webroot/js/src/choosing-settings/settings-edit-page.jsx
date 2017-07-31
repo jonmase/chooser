@@ -146,12 +146,20 @@ var SettingsEditor = React.createClass({
                             actAsExpander={true}
                             showExpandableButton={true}
                             subtitle="Set the dates and times when the Choice will open and close"
-                            title="Dates & Times"
+                            title="Choosing, Dates & Times"
                         >
                         </CardHeader>
                         <CardText 
                             expandable={true}
                         >
+                            <div className="section">
+                                <FormsyToggle
+                                    defaultToggled={(typeof(instance.choosable) !== "undefined")?instance.choosable:true}
+                                    label="Enable choosing. Switch this off if you only want students to browse the options, but not actually make choices."
+                                    labelPosition="right"
+                                    name="choosable"
+                                />
+                            </div>
                             <DateTime field={{
                                     label: "Opens",
                                     instructions: "Set the date/time when the choice will become available",
