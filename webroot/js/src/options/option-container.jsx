@@ -59,27 +59,30 @@ var OptionContainer = React.createClass({
                     
                     if(data.choosingInstance.id) {
                         stateData.favourites = data.favourites;
-                        stateData.optionsSelected = data.optionsSelected;
-                        stateData.optionsSelectedTableOrder = data.optionsSelectedIds;
-                        stateData.optionsSelectedPreferenceOrder = data.optionsSelectedIdsPreferenceOrder;
-                        stateData.rules = {
-                            rules: data.rules,
-                            indexesById: data.ruleIndexesById,
-                        };
-                        stateData.selection = {
-                            allowSubmit: data.allowSubmit,
-                            ruleWarnings: data.ruleWarnings,
-                            selection: data.selection,
-                        };
                         
-                        //If the user has selected some options, do not show the instructions
-                        if(data.selection.id && !data.choosingInstance.deadline.passed) {
-                            stateData.showInstructions = false;
-                        }
-                        
-                        //If selection is confirmed, add it to the confirmedSelection state data
-                        if(data.selection.confirmed) {
-                            stateData.confirmedSelection = data.selection;
+                        if(data.choosingInstance.choosable) {
+                            stateData.optionsSelected = data.optionsSelected;
+                            stateData.optionsSelectedTableOrder = data.optionsSelectedIds;
+                            stateData.optionsSelectedPreferenceOrder = data.optionsSelectedIdsPreferenceOrder;
+                            stateData.rules = {
+                                rules: data.rules,
+                                indexesById: data.ruleIndexesById,
+                            };
+                            stateData.selection = {
+                                allowSubmit: data.allowSubmit,
+                                ruleWarnings: data.ruleWarnings,
+                                selection: data.selection,
+                            };
+                            
+                            //If the user has selected some options, do not show the instructions
+                            if(data.selection.id && !data.choosingInstance.deadline.passed) {
+                                stateData.showInstructions = false;
+                            }
+                            
+                            //If selection is confirmed, add it to the confirmedSelection state data
+                            if(data.selection.confirmed) {
+                                stateData.confirmedSelection = data.selection;
+                            }
                         }
                     }
                 }

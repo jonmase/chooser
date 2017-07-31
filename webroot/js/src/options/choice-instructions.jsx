@@ -25,7 +25,7 @@ var ChoiceInstructions = React.createClass({
                 onExpandChange={this.props.expandChangeHandler}
             >
                 <CardHeader
-                    title="Instructions & Rules"
+                    title={"Instructions " + (instance.choosable?" & Rules":"")}
                     actAsExpander={true}
                     showExpandableButton={true}
                 />
@@ -36,9 +36,9 @@ var ChoiceInstructions = React.createClass({
                     {(instance.id)?
                         <div>
                             {(!instance.opens.passed)?
-                                <div>
+                                <p style={{marginTop: 0}}>
                                     This Choice will open at <strong><DateTime value={instance.opens} /></strong>.&nbsp; 
-                                    {(this.props.roles.indexOf('admin') > -1)?
+                                    {(instance.choosable && this.props.roles.indexOf('admin') > -1)?
                                         <span>
                                             As an Administrator, you can view the available options and test the choosing process, but students are not able to see them yet. 
                                         </span>
@@ -48,36 +48,37 @@ var ChoiceInstructions = React.createClass({
                                                 You can view the available options below, but students are not able to see them yet. 
                                             </span>
                                     }
-                                </div>
+                                </p>
                             :
-                                <div>
-                                    {(this.props.confirmedSelection.id)&&
-                                        <div>
-                                            {/*<div style={{float: 'right'}}>
-                                                <RaisedButton
-                                                    label="Abandon Changes"
-                                                    onTouchTap={this.props.abandonHandler}
-                                                    primary={false}
-                                                    style={{marginRight: '15px'}}
-                                                />
+                                (instance.choosable)&&
+                                    <div>
+                                        {(this.props.confirmedSelection.id)&&
+                                            <div>
+                                                {/*<div style={{float: 'right'}}>
+                                                    <RaisedButton
+                                                        label="Abandon Changes"
+                                                        onTouchTap={this.props.abandonHandler}
+                                                        primary={false}
+                                                        style={{marginRight: '15px'}}
+                                                    />
+                                                </div>
+                                                <p style={{marginRight: '200px'}}>*/}
+                                                <p>
+                                                    You are changing the choices that you submitted on <DateTime value={this.props.confirmedSelection.modified} />. Any changes you make will not be saved unless you submit them in the next step. If you decide you don't want to make any changes, just use the Cancel Changes button.
+                                                </p>
                                             </div>
-                                            <p style={{marginRight: '200px'}}>*/}
-                                            <p>
-                                                You are changing the choices that you submitted on <DateTime value={this.props.confirmedSelection.modified} />. Any changes you make will not be saved unless you submit them in the next step. If you decide you don't want to make any changes, just use the Cancel Changes button.
-                                            </p>
-                                        </div>
-                                    }
-                                    {(instance.deadline.passed)?
-                                        (instance.extension.passed)?
-                                            <p>
-                                                The deadline has now passed, and you can no longer {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices. 
-                                            </p>
-                                        :
-                                            <p>
-                                                The deadline has passed, but you can still {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices until <strong><DateTime value={instance.extension} /></strong>.
-                                            </p>
-                                    :""}
-                                </div>
+                                        }
+                                        {(instance.deadline.passed)?
+                                            (instance.extension.passed)?
+                                                <p>
+                                                    The deadline has now passed, and you can no longer {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices. 
+                                                </p>
+                                            :
+                                                <p>
+                                                    The deadline has passed, but you can still {(this.props.confirmedSelection.id)?<span>change</span>:<span>make</span>} your choices until <strong><DateTime value={instance.extension} /></strong>.
+                                                </p>
+                                        :""}
+                                    </div>
                             }
                             
                             {/*Show the instructions, deadline and rules*/}
@@ -85,9 +86,9 @@ var ChoiceInstructions = React.createClass({
                                 <div className="row">
                                     <div className="col-xs-12 col-md-6">
                                         <div style={{marginRight: '20px'}}>
-                                            <h5>Deadline</h5>
-                                            {(instance.deadline)&&
+                                            {(instance.choosable && instance.deadline)&&
                                                 <div>
+                                                    <h5>Deadline</h5>
                                                     <DateTime value={instance.deadline} />
                                                     {/*<DateTimeLabelled label="Deadline" value={instance.deadline} />*/}
                                                     {/*(instance.extension)&&
@@ -95,13 +96,17 @@ var ChoiceInstructions = React.createClass({
                                                     */}
                                                 </div>
                                             }
-                                            <h5>Instructions</h5>
-                                            <Wysiwyg value={instance.choosing_instructions} />
+                                            {instance.choosable &&
+                                                <h5>Instructions</h5>
+                                            }
+                                            <Wysiwyg value={instance.choosing_instructions || "No instructions given"} />
                                         </div>
                                     </div>
-                                    <div className="col-xs-12 col-md-6">
-                                        <Rules rules={this.props.rules} />
-                                    </div>
+                                    {instance.choosable &&
+                                        <div className="col-xs-12 col-md-6">
+                                            <Rules rules={this.props.rules} />
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
