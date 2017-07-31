@@ -21,7 +21,7 @@ use Cake\Validation\Validator;
 class ChoosingInstancesTable extends Table
 {
     protected $_datetimeFields = ['opens', 'deadline', 'extension'];
-    protected $_boolFields = ['editable', 'preference', 'comments_overall', 'comments_per_option', 'editor_preferences', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_results_available', 'notify_editor_prefs_available', 'notify_allocation_available', 'notify_student_allocations', 'notify_editor_allocations'];
+    protected $_boolFields = ['choosable', 'editable', 'preference', 'comments_overall', 'comments_per_option', 'editor_preferences', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_results_available', 'notify_editor_prefs_available', 'notify_allocation_available', 'notify_student_allocations', 'notify_editor_allocations'];
 
     /**
      * Initialize method
@@ -84,6 +84,11 @@ class ChoosingInstancesTable extends Table
 
         $validator
             ->allowEmpty('choosing_instructions');
+
+        $validator
+            ->boolean('choosable')
+            ->requirePresence('choosable', 'create')
+            ->notEmpty('choosable');
 
         $validator
             ->boolean('editable')
@@ -359,6 +364,7 @@ class ChoosingInstancesTable extends Table
                     $newInstanceArray = [
                         'choice_id' => $choiceId,
                         'active' => 1,
+                        'choosable' => 1,
                         'editable' => 1,
                         'preference' => 0,
                         'comments_overall' => 0,
