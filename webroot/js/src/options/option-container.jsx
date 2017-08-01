@@ -26,6 +26,7 @@ import OptionsTable from './option-table.jsx';
 import OptionsGrid from './option-grid.jsx';
 import OptionsList from './option-list.jsx';
 import OptionEditPage from './option-edit-page.jsx';
+import OptionFilterPage from './option-filter-page.jsx';
 import OptionViewPage from './option-view-page.jsx';
 
 
@@ -260,6 +261,17 @@ var OptionContainer = React.createClass({
         });
     },
     
+    handleFilterButtonClick: function() {
+        this.setState({
+            action: 'filter_'  + this.state.action,
+        });
+    },
+    
+    handleFilterSubmit(filters) {
+        console.log("Filter the options:");
+        console.log(filters);
+    },
+
     //Could move to option-view-index (which doesn't exist yet)
     handleInstructionsExpandChange(newExpandedState) {
         //console.log("Expand change: " + newExpandedState);
@@ -1007,7 +1019,9 @@ var OptionContainer = React.createClass({
                                 choice={this.props.choice}
                                 favourites={this.state.favourites}
                                 optionContainerHandlers={{
+                                    back: this.backToView,
                                     favourite: this.handleFavourite,
+                                    filterClick: this.handleFilterButtonClick,
                                     selectOption: this.handleOptionSelectFromGrid,
                                     sort: this.handleSort,
                                     viewMore: this.handleOptionViewMoreFromView,
@@ -1019,6 +1033,20 @@ var OptionContainer = React.createClass({
                             />
                         }
                     </div>
+                );
+            case 'filter_view': //Filter from View page
+            case 'filter_edit': //Filter from More page
+                return (
+                    <OptionFilterPage
+                        action={this.state.action}
+                        choice={this.props.choice}
+                        optionContainerHandlers={{
+                            backToEdit: this.handleBackToEdit,
+                            backToView: this.handleBackToView,
+                            filter: this.handleFilterSubmit,
+                        }}
+                        options={this.state.options.options}
+                    />
                 );
             case 'more_view': //More
             case 'more_edit': //More
@@ -1131,7 +1159,7 @@ var OptionContainer = React.createClass({
     },
     
     render: function() {
-        var actionsWithOwnContainer = ['edit_option', 'more_edit', 'more_view', 'approve'];
+        var actionsWithOwnContainer = ['edit_option', 'filter_edit', 'filter_view', 'more_edit', 'more_view', 'approve'];
     
         if(this.state.action === 'unavailable') {
             var defaultAppTitle = <AppTitle subtitle={this.props.choice.name} />;

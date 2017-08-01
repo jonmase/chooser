@@ -30,6 +30,15 @@ var OptionViewPage = React.createClass({
         this.props.optionContainerHandlers.changeStatus('approve', optionId, true);
     },
     
+    handleBackButtonClick: function() {
+        if(this.props.action === 'more_view') {
+            this.props.optionContainerHandlers.backToView();
+        }
+        else if(this.props.action === 'more_edit' || this.props.action === 'approve') {
+            this.props.optionContainerHandlers.backToEdit();
+        }
+    },
+    
     handleReject: function(data) {
         var optionId = this.props.option.id;
         console.log('reject option: ' + optionId);
@@ -57,11 +66,6 @@ var OptionViewPage = React.createClass({
         var option = this.props.option;
         var alert = null;
 
-        var backAction = this.props.optionContainerHandlers.backToView;
-        if(this.props.action === 'more_edit' || this.props.action === 'approve') {
-            var backAction = this.props.optionContainerHandlers.backToEdit;
-        }
-            
         if(this.props.action === 'more_view' && this.props.selectionEnabled) {
             var topbarIconRight=<Checkbox 
                 disableTouchRipple={true}
@@ -134,7 +138,7 @@ var OptionViewPage = React.createClass({
         }
             
         var topbar = <TopBar 
-            iconLeft={<TopBarBackButton onTouchTap={backAction} />}
+            iconLeft={<TopBarBackButton onTouchTap={this.handleBackButtonClick} />}
             iconRight={topbarIconRight}
             title={title}
         />;
