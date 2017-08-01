@@ -84,7 +84,6 @@ var OptionFilterPage = React.createClass({
     },
     
     handleClear: function() {
-        console.log("Clear all filter");
         this.refs.filter.reset();
         
         this.setState(this.getInitialValues());

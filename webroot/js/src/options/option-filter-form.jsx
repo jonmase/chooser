@@ -5,20 +5,14 @@ import DateTime from '../elements/fields/datetime.jsx';
 import Radio from '../elements/fields/radio.jsx';
 import RangeSlider from '../elements/fields/range-slider.jsx';
 
-var OptionFilterForm = React.createClass({
-    getInitialState: function () {
-        var initialState = {};
-    
-        return initialState;
-    },
-    
+function OptionFilterForm(props) {
     //Adjust right padding on slider to allow for overshoot of final label, which caused a horizontal scroll bar on the dialog
-    getSliderRightPaddingAdjustment: function() {
+    var getSliderRightPaddingAdjustment = function() {
         //Base this on the minimum difference between min and max for all the sliders
         var minDiff = null;
 
-        this.props.filters.numericalFields.forEach(function(field) {
-            var diff = this.props.filters.values[field.name].max - this.props.filters.values[field.name].min;
+        props.filters.numericalFields.forEach(function(field) {
+            var diff = props.filters.values[field.name].max - props.filters.values[field.name].min;
             
             if(minDiff === null || diff < minDiff) {
                 minDiff = diff;
@@ -29,125 +23,123 @@ var OptionFilterForm = React.createClass({
         var sliderRightPaddingAdjustment = (100/(minDiff*2) - 4) + '%';
         
         return sliderRightPaddingAdjustment;
-    },
+    };
     
-    render: function() {
-        return (
-            <div>
-                <Radio 
-                    field={{
-                        instructions: "",
-                        label: "Selected",
-                        name: "selected",
-                        options: [
-                            {
-                                label: "All",
-                                value: "all",
-                            },
-                            {
-                                label: "Selected only",
-                                value: "selected",
-                            },
-                            {
-                                label: "Unselected only",
-                                value: "unselected",
-                            },
-                        ],
-                        section: true,
-                        value: this.props.selectedValue,
-                    }}
-                />
-                
-                {/*<Radio 
-                    field={{
-                        instructions: "",
-                        label: "Favourites",
-                        name: "favourites",
-                        options: [
-                            {
-                                label: "All",
-                                value: "all",
-                            },
-                            {
-                                label: "Favourites only",
-                                value: "favourites",
-                            },
-                            {
-                                label: "Non Favourites only",
-                                value: "nonfavourites",
-                            },
-                        ],
-                        section: true,
-                        value: this.props.favouritesValue,
-                    }}
-                />*/}
-                
-                {this.props.filters.numericalFields.map(function(field) {
-                    if(this.props.filters.values[field.name].min !== null && this.props.filters.values[field.name].max !== null) {
-                        return (
-                            <RangeSlider
-                                key={field.name}
-                                label={field.label}
-                                max={this.props.filters.values[field.name].max}
-                                min={this.props.filters.values[field.name].min}
-                                name={field.name}
-                                onChange={this.props.handlers.sliderChange}
-                                rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
-                                section={true}
-                                value={this.props.sliderValues[field.name]}
-                            />
-                        );
-                    }
-                }, this)}
-                
-                {this.props.filters.listFields.map(function(field) {
-                    field.section = true;
-                    
+    return (
+        <div>
+            <Radio 
+                field={{
+                    instructions: "",
+                    label: "Selected",
+                    name: "selected",
+                    options: [
+                        {
+                            label: "All",
+                            value: "all",
+                        },
+                        {
+                            label: "Selected only",
+                            value: "selected",
+                        },
+                        {
+                            label: "Unselected only",
+                            value: "unselected",
+                        },
+                    ],
+                    section: true,
+                    value: props.selectedValue,
+                }}
+            />
+            
+            {/*<Radio 
+                field={{
+                    instructions: "",
+                    label: "Favourites",
+                    name: "favourites",
+                    options: [
+                        {
+                            label: "All",
+                            value: "all",
+                        },
+                        {
+                            label: "Favourites only",
+                            value: "favourites",
+                        },
+                        {
+                            label: "Non Favourites only",
+                            value: "nonfavourites",
+                        },
+                    ],
+                    section: true,
+                    value: props.favouritesValue,
+                }}
+            />*/}
+            
+            {props.filters.numericalFields.map(function(field) {
+                if(props.filters.values[field.name].min !== null && props.filters.values[field.name].max !== null) {
                     return (
-                        <Checkbox
-                            field={field}
+                        <RangeSlider
                             key={field.name}
+                            label={field.label}
+                            max={props.filters.values[field.name].max}
+                            min={props.filters.values[field.name].min}
+                            name={field.name}
+                            onChange={props.handlers.sliderChange}
+                            rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
+                            section={true}
+                            value={props.sliderValues[field.name]}
                         />
                     );
-                })}
+                }
+            }, this)}
+            
+            {props.filters.listFields.map(function(field) {
+                field.section = true;
                 
-                {this.props.filters.dateTimeFields.map(function(field) {
-                    field.section = true;
-                    field.max = this.props.filters.values[field.name].max;
-                    field.min = this.props.filters.values[field.name].min;
-                    
-                    var fromField = Object.assign({}, field);
-                    fromField.label = "From";
-                    fromField.value = {date: this.props.dateTimeValues[field.name].min};
-                    var toField = Object.assign({}, field);
-                    toField.label = "To";
-                    toField.value = {date: this.props.dateTimeValues[field.name].max};
+                return (
+                    <Checkbox
+                        field={field}
+                        key={field.name}
+                    />
+                );
+            })}
+            
+            {props.filters.dateTimeFields.map(function(field) {
+                field.section = true;
+                field.max = props.filters.values[field.name].max;
+                field.min = props.filters.values[field.name].min;
+                
+                var fromField = Object.assign({}, field);
+                fromField.label = "From";
+                fromField.value = {date: props.dateTimeValues[field.name].min};
+                var toField = Object.assign({}, field);
+                toField.label = "To";
+                toField.value = {date: props.dateTimeValues[field.name].max};
 
-                    var time = field.type === 'datetime';
-                    
-                    return (
-                        <div key={field.name}>
-                            <label style={{fontSize: '125%'}}>
-                                {field.label}
-                            </label>
-                            <div>
-                                <DateTime
-                                    field={fromField}
-                                    time={time}
-                                />
-                            </div>
-                            <div>
-                                <DateTime
-                                    field={toField}
-                                    time={time}
-                                />
-                            </div>
+                var time = field.type === 'datetime';
+                
+                return (
+                    <div key={field.name}>
+                        <label style={{fontSize: '125%'}}>
+                            {field.label}
+                        </label>
+                        <div>
+                            <DateTime
+                                field={fromField}
+                                time={time}
+                            />
                         </div>
-                    );
-                }, this)}
-            </div>
-        );
-    }
-});
+                        <div>
+                            <DateTime
+                                field={toField}
+                                time={time}
+                            />
+                        </div>
+                    </div>
+                );
+            }, this)}
+        </div>
+    );
+};
 
 module.exports = OptionFilterForm;
