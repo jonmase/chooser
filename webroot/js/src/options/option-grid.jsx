@@ -35,6 +35,19 @@ var OptionsGrid = React.createClass({
         return initialState;
     },
     
+    getDateTimeFields: function() {
+        var dateTimeFields = [];    //Start with empty array - no default date time fields
+        
+        this.props.choice.extra_fields.forEach(function(field) {
+            //If field is sortable, add it to the array of sortable fields
+            if(field.type === 'date' || field.type === 'datetime') {
+                dateTimeFields.push(field);
+            }
+        });
+        
+        return dateTimeFields;
+    },
+    
     //Expand button shown if using description or not all extra fields are sortable
     getExpandButtonShown: function() {
         return this.props.choice.use_description || !this.props.choice.extra_fields.every(function(field, index) {
@@ -341,6 +354,7 @@ var OptionsGrid = React.createClass({
                     </CardText>
                 </Card>
                 <FilterDialog
+                    dateTimeFields={this.getDateTimeFields()}
                     dialogOpen={this.state.filterDialogOpen}
                     handlers={{
                         dialogClose: this.handleFilterDialogClose,
