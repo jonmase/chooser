@@ -17,7 +17,7 @@ function OptionFilterForm(props) {
             if(minDiff === null || diff < minDiff) {
                 minDiff = diff;
             }
-        }, this);
+        });
         
         //Extra padding needs to be 100% divided by half the min difference, minus 4 as the slider allows a 5% gap either side
         var sliderRightPaddingAdjustment = (100/(minDiff*2) - 4) + '%';
@@ -85,13 +85,13 @@ function OptionFilterForm(props) {
                             min={props.filters.values[field.name].min}
                             name={field.name}
                             onChange={props.handlers.sliderChange}
-                            rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
+                            rightPaddingAdjustment={getSliderRightPaddingAdjustment()}
                             section={true}
                             value={props.sliderValues[field.name]}
                         />
                     );
                 }
-            }, this)}
+            })}
             
             {props.filters.listFields.map(function(field) {
                 field.section = true;
@@ -137,7 +137,7 @@ function OptionFilterForm(props) {
                         </div>
                     </div>
                 );
-            }, this)}
+            })}
         </div>
     );
 };
