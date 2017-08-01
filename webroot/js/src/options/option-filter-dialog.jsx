@@ -173,11 +173,15 @@ var OptionFilterDialog = React.createClass({
                 
                 {this.props.filters.dateTimeFields.map(function(field) {
                     field.section = true;
+                    field.max = this.props.filters.values[field.name].max;
+                    field.min = this.props.filters.values[field.name].min;
                     
                     var fromField = Object.assign({}, field);
                     fromField.label = "From";
+                    fromField.value = {date: field.min};
                     var toField = Object.assign({}, field);
                     toField.label = "To";
+                    toField.value = {date: field.max};
 
                     var time = field.type === 'datetime';
                     

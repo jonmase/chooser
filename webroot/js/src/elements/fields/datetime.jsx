@@ -45,8 +45,15 @@ var DateTimeField = React.createClass({
         
         var defaultDate = null;
         if(field.value && field.value.date) {
-            //Create the date to pass to the datepicker (months start from 0 not 1)
-            defaultDate = new Date(field.value.date.year, field.value.date.month - 1, field.value.date.day);
+            //If date object has getDate function, then it is a date object, so we can just use this
+            if(typeof(field.value.date.getDate) === 'function') {
+                defaultDate = field.value.date;
+            }
+            //Otherwise assume that date object has year, month and day values
+            else {
+                //Create the date to pass to the datepicker (months start from 0 not 1)
+                defaultDate = new Date(field.value.date.year, field.value.date.month - 1, field.value.date.day);
+            }
         }
         
         return (
@@ -61,6 +68,8 @@ var DateTimeField = React.createClass({
                             autoOk={true}
                             defaultDate={defaultDate}
                             hintText="Date"
+                            maxDate={field.max}
+                            minDate={field.min}
                             name={field.name + '_date'}
                             onChange={field.onChange}
                             required={required}
