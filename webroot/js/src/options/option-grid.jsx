@@ -102,6 +102,31 @@ var OptionsGrid = React.createClass({
             }
         }, this);
     
+        dateTimeFields.forEach(function(field) {
+            //Set defaults to null
+            var min = null;
+            var max = null;
+            
+            this.props.options.options.forEach(function(option) {
+                //Does this option have a value for this field
+                if(option[field.name] !== undefined && option[field.name] !== null && option[field.name] !== "") {
+                    var fieldDate = option[field.name].date
+                    var date = new Date(fieldDate.year, fieldDate.month - 1, fieldDate.day);
+                    if(min === null || date < min) {
+                        min = date;
+                    }
+                    if(max === null || date > max) {
+                        max = date;
+                    }
+                }
+            });
+            
+            filterValues[field.name] = {
+                min: min,
+                max: max,
+            }
+        }, this);
+
         return filterValues;
     },
     
