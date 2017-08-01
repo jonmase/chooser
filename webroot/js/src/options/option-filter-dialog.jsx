@@ -149,10 +149,11 @@ var OptionFilterDialog = React.createClass({
                             <RangeSlider
                                 key={field.name}
                                 label={field.label}
-                                min={this.props.filterValues[field.name].min}
                                 max={this.props.filterValues[field.name].max}
+                                min={this.props.filterValues[field.name].min}
                                 name={field.name}
                                 rightPaddingAdjustment={sliderRightPaddingAdjustment}
+                                section={true}
                             />
                         );
                     }

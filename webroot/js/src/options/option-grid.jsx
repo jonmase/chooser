@@ -59,12 +59,12 @@ var OptionsGrid = React.createClass({
         
             this.props.options.options.forEach(function(option) {
                 //Does this option have a value for this field
-                if(option[field.name] !== undefined && option[field.name] !== null) {
+                if(option[field.name] !== undefined && option[field.name] !== null && option[field.name] !== "") {
                     if(min === null || option[field.name] < min) {
-                        min = option[field.name];
+                        min = parseInt(option[field.name], 10);
                     }
                     if(max === null || option[field.name] > max) {
-                        max = option[field.name];
+                        max = parseInt(option[field.name], 10);
                     }
                 }
             });
@@ -78,8 +78,21 @@ var OptionsGrid = React.createClass({
         return filterValues;
     },
     
-    getNumericalFields: function() {
+    getNumericalDefaultFields: function() {
         return this.props.getDefaultFieldsForChoice(this.props.choice, null, ['number']);
+    },
+    
+    getNumericalFields: function() {
+        var numericalFields = this.getNumericalDefaultFields();
+        
+        this.props.choice.extra_fields.forEach(function(field) {
+            //If field is sortable, add it to the array of sortable fields
+            if(field.type === 'number') {
+                numericalFields.push(field);
+            }
+        });
+        
+        return numericalFields;
     },
     
     getSortableFields: function() {
@@ -201,8 +214,6 @@ var OptionsGrid = React.createClass({
     },
 
     render: function() {
-        var numericalFields = this.getNumericalFields();
-        
         return (
             <div>
                 <Card 
@@ -264,7 +275,7 @@ var OptionsGrid = React.createClass({
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
                                                     <div>
-                                                        {numericalFields.map(function(field) {
+                                                        {this.getNumericalDefaultFields().map(function(field) {
                                                             var divider = "";
                                                             if(firstSecondaryTextItem) {
                                                                 firstSecondaryTextItem = false;
@@ -324,7 +335,7 @@ var OptionsGrid = React.createClass({
                         submit: this.handleFilterSubmit,
                     }}
                     filterValues={this.getFilterValues()}
-                    numericalFields={numericalFields}
+                    numericalFields={this.getNumericalFields()}
                 />
             </div>
         );
