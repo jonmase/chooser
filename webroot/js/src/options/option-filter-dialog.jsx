@@ -18,13 +18,13 @@ var OptionFilterDialog = React.createClass({
             canSubmit: false,
         };
     
-        this.props.numericalFields.map(function(field) {
-            initialState[field.name] = [this.props.filterValues[field.name].min, this.props.filterValues[field.name].max];
+        this.props.filters.numericalFields.map(function(field) {
+            initialState[field.name] = [this.props.filters.values[field.name].min, this.props.filters.values[field.name].max];
         }, this);
         
         return initialState;
     },
-
+    
     enableSubmitButton: function () {
         this.setState({
             canSubmit: true
@@ -42,8 +42,8 @@ var OptionFilterDialog = React.createClass({
         //Base this on the minimum difference between min and max for all the sliders
         var minDiff = null;
 
-        this.props.numericalFields.forEach(function(field) {
-            var diff = this.props.filterValues[field.name].max - this.props.filterValues[field.name].min;
+        this.props.filters.numericalFields.forEach(function(field) {
+            var diff = this.props.filters.values[field.name].max - this.props.filters.values[field.name].min;
             
             if(minDiff === null || diff < minDiff) {
                 minDiff = diff;
@@ -143,14 +143,14 @@ var OptionFilterDialog = React.createClass({
                     }}
                 />*/}
                 
-                {this.props.numericalFields.map(function(field) {
-                    if(this.props.filterValues[field.name].min !== null && this.props.filterValues[field.name].max !== null) {
+                {this.props.filters.numericalFields.map(function(field) {
+                    if(this.props.filters.values[field.name].min !== null && this.props.filters.values[field.name].max !== null) {
                         return (
                             <RangeSlider
                                 key={field.name}
                                 label={field.label}
-                                max={this.props.filterValues[field.name].max}
-                                min={this.props.filterValues[field.name].min}
+                                max={this.props.filters.values[field.name].max}
+                                min={this.props.filters.values[field.name].min}
                                 name={field.name}
                                 rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
                                 section={true}
@@ -159,7 +159,19 @@ var OptionFilterDialog = React.createClass({
                     }
                 }, this)}
                 
-                {this.props.listFields.map(function(field) {
+                {this.props.filters.listFields.map(function(field) {
+                    field.section = true;
+                    
+                    return (
+                        <Checkbox
+                            field={field}
+                            key={field.name}
+                        />
+                    );
+                }, this)}
+                
+                //All filterable field types - numerical, lists, date ranges
+                {/*this.props.filters.dateTimeFields.map(function(field) {
                     field.section = true;
                     
                     return (
@@ -167,9 +179,7 @@ var OptionFilterDialog = React.createClass({
                             field={field}
                         />
                     );
-                }, this)}
-                
-                //All filterable field types - numerical, lists, date ranges
+                }, this)*/}
                 
             </FormsyDialog>
         );

@@ -61,8 +61,22 @@ var OptionsGrid = React.createClass({
         return false;
     },
     
-    getFilterValues: function() {
+    getFilters: function() {
+        var dateTimeFields = this.getDateTimeFields();
+        var listFields = this.getListFields();
         var numericalFields = this.getNumericalFields();
+        
+        var values = this.getFilterValues(dateTimeFields, numericalFields);
+    
+        return {
+            dateTimeFields: dateTimeFields,
+            listFields: listFields,
+            numericalFields: numericalFields,
+            values: values,
+        };
+    },
+    
+    getFilterValues: function(dateTimeFields, numericalFields) {
         var filterValues = {};
         
         numericalFields.forEach(function(field) {
@@ -354,15 +368,12 @@ var OptionsGrid = React.createClass({
                     </CardText>
                 </Card>
                 <FilterDialog
-                    dateTimeFields={this.getDateTimeFields()}
                     dialogOpen={this.state.filterDialogOpen}
+                    filters={this.getFilters()}
                     handlers={{
                         dialogClose: this.handleFilterDialogClose,
                         submit: this.handleFilterSubmit,
                     }}
-                    filterValues={this.getFilterValues()}
-                    listFields={this.getListFields()}
-                    numericalFields={this.getNumericalFields()}
                 />
             </div>
         );
