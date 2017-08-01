@@ -118,10 +118,10 @@ var OptionFilterForm = React.createClass({
                     
                     var fromField = Object.assign({}, field);
                     fromField.label = "From";
-                    fromField.value = {date: field.min};
+                    fromField.value = {date: this.props.dateTimeValues[field.name].min};
                     var toField = Object.assign({}, field);
                     toField.label = "To";
-                    toField.value = {date: field.max};
+                    toField.value = {date: this.props.dateTimeValues[field.name].max};
 
                     var time = field.type === 'datetime';
                     

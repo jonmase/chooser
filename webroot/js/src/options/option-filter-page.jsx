@@ -36,12 +36,26 @@ var OptionFilterPage = React.createClass({
     
     getInitialValues: function() {
         return {
+            dateTimeValues: this.getInitialDateTimeValues(),
             favouritesValue: this.getInitialFavouritesToggleValue(),
             selectedValue: this.getInitialSelectedToggleValue(),
             sliderValues: this.getInitialSliderValues(),
         }
     },
     
+    getInitialDateTimeValues: function () {
+        var dateTimeValues = {};
+        
+        this.props.filters.dateTimeFields.map(function(field) {
+            dateTimeValues[field.name] = {
+                max: this.props.filters.values[field.name].max,
+                min: this.props.filters.values[field.name].min,
+            };
+        }, this);
+        
+        return dateTimeValues;
+    },
+
     getInitialFavouritesToggleValue: function () {
         return "all";
     },
@@ -130,6 +144,7 @@ var OptionFilterPage = React.createClass({
                     ref="filter"
                 >
                     <OptionFilterForm
+                        dateTimeValues={this.state.dateTimeValues}
                         favouritesValue={this.state.favouritesValue}
                         filters={this.props.filters}
                         selectedValue={this.state.selectedValue}

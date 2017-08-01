@@ -22,37 +22,55 @@ var DateTimeField = React.createClass({
         
         var timeElement = '';
         if(this.props.time) {
-            var defaultTime = null;
+            var timeValue = null;
+            var timeDefaultValue = null;
             if(field.value && field.value.time) {
-                //defaultTime = new Date(field.value.time);
-                defaultTime = new Date(2016, 1, 1, field.value.time.hour, field.value.time.minute);
+                //timeValue = new Date(field.value.time);
+                timeValue = new Date(2016, 1, 1, field.value.time.hour, field.value.time.minute);
+            }
+            else if(field.defaultValue && field.defaultValue.time) {
+                //timeDefaultValue = new Date(field.defaultValue.time);
+                timeDefaultValue = new Date(2016, 1, 1, field.defaultValue.time.hour, field.defaultValue.time.minute);
             }
             
             timeElement = 
                 <div className={colClasses}>
                     <FormsyTime
                         //autoOk={true}
-                        defaultTime={defaultTime}   //Should be object, but not sure the format
+                        defaultTime={timeDefaultValue}   //Should be object, but not sure the format
                         format='ampm'
                         hintText="Time"
                         name={field.name + '_time'}
                         onChange={field.onChange}
                         pedantic={true}
                         required={required}
+                        value={timeValue}
                     />
                 </div>;
         }
         
-        var defaultDate = null;
+        var dateValue = null;
+        var dateDefaultValue = null;
         if(field.value && field.value.date) {
             //If date object has getDate function, then it is a date object, so we can just use this
             if(typeof(field.value.date.getDate) === 'function') {
-                defaultDate = field.value.date;
+                dateValue = field.value.date;
             }
             //Otherwise assume that date object has year, month and day values
             else {
                 //Create the date to pass to the datepicker (months start from 0 not 1)
-                defaultDate = new Date(field.value.date.year, field.value.date.month - 1, field.value.date.day);
+                dateValue = new Date(field.value.date.year, field.value.date.month - 1, field.value.date.day);
+            }
+        }
+        else if(field.defaultValue && field.defaultValue.date) {
+            //If date object has getDate function, then it is a date object, so we can just use this
+            if(typeof(field.defaultValue.date.getDate) === 'function') {
+                dateDefaultValue = field.defaultValue.date;
+            }
+            //Otherwise assume that date object has year, month and day values
+            else {
+                //Create the date to pass to the datepicker (months start from 0 not 1)
+                dateDefaultValue = new Date(field.defaultValue.date.year, field.defaultValue.date.month - 1, field.defaultValue.date.day);
             }
         }
         
@@ -66,7 +84,7 @@ var DateTimeField = React.createClass({
                     <div className={colClasses}>
                         <FormsyDate
                             autoOk={true}
-                            defaultDate={defaultDate}
+                            defaultDate={dateDefaultValue}
                             hintText="Date"
                             maxDate={field.max}
                             minDate={field.min}
@@ -77,6 +95,7 @@ var DateTimeField = React.createClass({
                                 var dateString = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
                                 return dateString;
                             }}
+                            value={dateValue}
                         />
                     </div>
                     {timeElement}
