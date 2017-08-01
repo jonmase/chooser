@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
 import Checkbox from '../elements/fields/checkbox.jsx';
+import DateTime from '../elements/fields/datetime.jsx';
 import Radio from '../elements/fields/radio.jsx';
 import RangeSlider from '../elements/fields/range-slider.jsx';
 
@@ -168,18 +169,38 @@ var OptionFilterDialog = React.createClass({
                             key={field.name}
                         />
                     );
-                }, this)}
+                })}
                 
-                //All filterable field types - numerical, lists, date ranges
-                {/*this.props.filters.dateTimeFields.map(function(field) {
+                {this.props.filters.dateTimeFields.map(function(field) {
                     field.section = true;
                     
+                    var fromField = Object.assign({}, field);
+                    fromField.label = "From";
+                    var toField = Object.assign({}, field);
+                    toField.label = "To";
+
+                    var time = field.type === 'datetime';
+                    
                     return (
-                        <Checkbox
-                            field={field}
-                        />
+                        <div key={field.name}>
+                            <label style={{fontSize: '125%'}}>
+                                {field.label}
+                            </label>
+                            <div>
+                                <DateTime
+                                    field={fromField}
+                                    time={time}
+                                />
+                            </div>
+                            <div>
+                                <DateTime
+                                    field={toField}
+                                    time={time}
+                                />
+                            </div>
+                        </div>
                     );
-                }, this)*/}
+                }, this)}
                 
             </FormsyDialog>
         );
