@@ -78,6 +78,19 @@ var OptionsGrid = React.createClass({
         return filterValues;
     },
     
+    getListFields: function() {
+        var listFields = [];    //Start with empty array - no default list fields
+        
+        this.props.choice.extra_fields.forEach(function(field) {
+            //If field is sortable, add it to the array of sortable fields
+            if(field.type === 'list') {
+                listFields.push(field);
+            }
+        });
+        
+        return listFields;
+    },
+    
     getNumericalDefaultFields: function() {
         return this.props.getDefaultFieldsForChoice(this.props.choice, null, ['number']);
     },
@@ -335,6 +348,7 @@ var OptionsGrid = React.createClass({
                         submit: this.handleFilterSubmit,
                     }}
                     filterValues={this.getFilterValues()}
+                    listFields={this.getListFields()}
                     numericalFields={this.getNumericalFields()}
                 />
             </div>
