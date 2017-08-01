@@ -73,13 +73,13 @@ var RangeSlider = React.createClass({
     },
     
     handleSliderChange: function(value) {
-        this.setState({range: value});
+        this.props.onChange(this.props.name, value);
     },
 
     render: function() {
         return (
             <div className={this.props.section?"section":""} style={{paddingRight: this.props.rightPaddingAdjustment, paddingBottom: '20px'}}>
-                <label>{this.props.label}: <span>{this.state.range[0]} to {this.state.range[1]}</span></label>
+                <label>{this.props.label}: <span>{this.props.value[0]} to {this.props.value[1]}</span></label>
                 <Range 
                     activeDotStyle={{borderColor: indigo500}}
                     allowCross={true}
@@ -90,7 +90,7 @@ var RangeSlider = React.createClass({
                     onChange={(value) => { this.handleSliderChange(value)}} 
                     style={{marginTop: '5px'}}
                     trackStyle={[{backgroundColor: indigo500}]}
-                    value={this.state.range}
+                    value={this.props.value}
                 />
             </div>
         );

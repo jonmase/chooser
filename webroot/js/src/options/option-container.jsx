@@ -26,7 +26,7 @@ import OptionsTable from './option-table.jsx';
 import OptionsGrid from './option-grid.jsx';
 import OptionsList from './option-list.jsx';
 import OptionEditPage from './option-edit-page.jsx';
-import OptionFilterPage from './option-filter-page.jsx';
+import OptionFilterContainer from './option-filter-container.jsx';
 import OptionViewPage from './option-view-page.jsx';
 
 
@@ -1037,7 +1037,7 @@ var OptionContainer = React.createClass({
             case 'filter_view': //Filter from View page
             case 'filter_edit': //Filter from More page
                 return (
-                    <OptionFilterPage
+                    <OptionFilterContainer
                         action={this.state.action}
                         choice={this.props.choice}
                         optionContainerHandlers={{

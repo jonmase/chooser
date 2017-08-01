@@ -9,10 +9,6 @@ var OptionFilterForm = React.createClass({
     getInitialState: function () {
         var initialState = {};
     
-        this.props.filters.numericalFields.map(function(field) {
-            initialState[field.name] = [this.props.filters.values[field.name].min, this.props.filters.values[field.name].max];
-        }, this);
-        
         return initialState;
     },
     
@@ -95,8 +91,10 @@ var OptionFilterForm = React.createClass({
                                 max={this.props.filters.values[field.name].max}
                                 min={this.props.filters.values[field.name].min}
                                 name={field.name}
+                                onChange={this.props.handlers.sliderChange}
                                 rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
                                 section={true}
+                                value={this.props.sliderValues[field.name]}
                             />
                         );
                     }
