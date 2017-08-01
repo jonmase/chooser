@@ -24,11 +24,12 @@ var RadioField = React.createClass({
                     label={field.label}
                 />
                 <FormsyRadioGroup 
-                    defaultSelected={field.value}
+                    defaultSelected={field.defaultValue}
                     floatingLabelText={field.label}
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    value={field.value}
                 >
                     {radios}
                 </FormsyRadioGroup>                        

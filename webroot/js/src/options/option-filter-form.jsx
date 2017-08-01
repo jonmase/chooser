@@ -54,7 +54,7 @@ var OptionFilterForm = React.createClass({
                             },
                         ],
                         section: true,
-                        value: "all",
+                        value: this.props.selectedValue,
                     }}
                 />
                 
@@ -78,7 +78,7 @@ var OptionFilterForm = React.createClass({
                             },
                         ],
                         section: true,
-                        value: "all",
+                        value: this.props.favouritesValue,
                     }}
                 />*/}
                 

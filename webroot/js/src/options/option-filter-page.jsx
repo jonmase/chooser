@@ -13,12 +13,11 @@ import OptionFilterForm from './option-filter-form.jsx';
 
 var OptionFilterPage = React.createClass({
     getInitialState: function () {
-        var initialState = {
+        var initialState = Object.assign({
             buttonsDisabled: false,
             canSubmit: false,
             filterButtonLabel: 'Filter',
-            sliderValues: this.getInitialSliderValues(),
-        };
+        }, this.getInitialValues());
         
         return initialState;
     },
@@ -33,6 +32,22 @@ var OptionFilterPage = React.createClass({
         this.setState({
             canSubmit: false,
         });
+    },
+    
+    getInitialValues: function() {
+        return {
+            favouritesValue: this.getInitialFavouritesToggleValue(),
+            selectedValue: this.getInitialSelectedToggleValue(),
+            sliderValues: this.getInitialSliderValues(),
+        }
+    },
+    
+    getInitialFavouritesToggleValue: function () {
+        return "all";
+    },
+    
+    getInitialSelectedToggleValue: function () {
+        return "all";
     },
     
     getInitialSliderValues: function () {
@@ -58,9 +73,7 @@ var OptionFilterPage = React.createClass({
         console.log("Clear all filter");
         this.refs.filter.reset();
         
-        this.setState({
-            sliderValues: this.getInitialSliderValues(),
-        });
+        this.setState(this.getInitialValues());
     },
     
     handleFilterButtonClick: function() {
@@ -117,7 +130,9 @@ var OptionFilterPage = React.createClass({
                     ref="filter"
                 >
                     <OptionFilterForm
+                        favouritesValue={this.state.favouritesValue}
                         filters={this.props.filters}
+                        selectedValue={this.state.selectedValue}
                         sliderValues={this.state.sliderValues}
                         handlers={{
                             sliderChange: this.handleSliderChange,
