@@ -3,6 +3,7 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 
 import FormsyDialog from '../elements/formsy-dialog.jsx';
+import Checkbox from '../elements/fields/checkbox.jsx';
 import Radio from '../elements/fields/radio.jsx';
 import RangeSlider from '../elements/fields/range-slider.jsx';
 
@@ -156,6 +157,16 @@ var OptionFilterDialog = React.createClass({
                             />
                         );
                     }
+                }, this)}
+                
+                {this.props.listFields.map(function(field) {
+                    field.section = true;
+                    
+                    return (
+                        <Checkbox
+                            field={field}
+                        />
+                    );
                 }, this)}
                 
                 //All filterable field types - numerical, lists, date ranges

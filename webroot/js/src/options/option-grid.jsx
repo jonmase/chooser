@@ -341,7 +341,6 @@ var OptionsGrid = React.createClass({
                     </CardText>
                 </Card>
                 <FilterDialog
-                    choice={this.props.choice}
                     dialogOpen={this.state.filterDialogOpen}
                     handlers={{
                         dialogClose: this.handleFilterDialogClose,
