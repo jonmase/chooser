@@ -36,7 +36,9 @@ var OptionFilterDialog = React.createClass({
         });
     },
     
-    getMinDiff: function() {
+    //Adjust right padding on slider to allow for overshoot of final label, which caused a horizontal scroll bar on the dialog
+    getSliderRightPaddingAdjustment: function() {
+        //Base this on the minimum difference between min and max for all the sliders
         var minDiff = null;
 
         this.props.numericalFields.forEach(function(field) {
@@ -47,7 +49,10 @@ var OptionFilterDialog = React.createClass({
             }
         }, this);
         
-        return minDiff;
+        //Extra padding needs to be 100% divided by half the min difference, minus 4 as the slider allows a 5% gap either side
+        var sliderRightPaddingAdjustment = (100/(minDiff*2) - 4) + '%';
+        
+        return sliderRightPaddingAdjustment;
     },
     
     handleClear: function() {
@@ -76,12 +81,6 @@ var OptionFilterDialog = React.createClass({
                 disabled={!this.state.canSubmit}
             />,
         ];
-        
-        //Adjust right padding on slider to allow for overshoot of final label, which caused a horizontal scroll bar on the dialog
-        //Base this on the minimum difference between min and max for all the sliders
-        //Extra padding needs to be 100% divided by half the min difference, minus 4 as the slider allows a 5% gap either side
-        var minDiff = this.getMinDiff();
-        var sliderRightPaddingAdjustment = (100/(minDiff*2) - 4) + '%';
         
         return (
             <FormsyDialog
@@ -152,7 +151,7 @@ var OptionFilterDialog = React.createClass({
                                 max={this.props.filterValues[field.name].max}
                                 min={this.props.filterValues[field.name].min}
                                 name={field.name}
-                                rightPaddingAdjustment={sliderRightPaddingAdjustment}
+                                rightPaddingAdjustment={this.getSliderRightPaddingAdjustment()}
                                 section={true}
                             />
                         );
