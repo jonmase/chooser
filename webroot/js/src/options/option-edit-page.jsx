@@ -13,6 +13,7 @@ import Alert from '../elements/alert.jsx';
 
 import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 import ExtraField from '../elements/fields/option-fields/extra-field.jsx';
+import FieldsWrapper from '../elements/wrappers/fields.jsx';
 
 var buttonLabels = {
     save: {
@@ -353,7 +354,7 @@ var OptionEditPage = React.createClass({
                     
                     <div className="section">
                         <DefaultFields
-                            choice={this.props.choice}
+                            defaultFields={this.props.getDefaultFieldsForChoice(this.props.choice)}
                             option={option}
                             removeOrHide="remove"
                             onChange={this.handleChange}

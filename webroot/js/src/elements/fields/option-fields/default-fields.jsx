@@ -1,7 +1,5 @@
 import React from 'react';
 
-import FieldsWrapper from '../../wrappers/fields.jsx';
-
 import Code from './code.jsx';
 import Title from './title.jsx';
 import Description from './description.jsx';
@@ -17,10 +15,8 @@ var DefaultFields = React.createClass({
             option = this.props.option;
         }
         
-        var defaultsFields = this.props.getDefaultFieldsForChoice(this.props.choice);
-        
         var defaultsFieldComponents = [];
-        defaultsFields.forEach(function(field) {
+        this.props.defaultFields.forEach(function(field) {
             var ComponentClass = null;
             switch(field.name) {
                 case 'code':
@@ -77,4 +73,4 @@ var DefaultFields = React.createClass({
     }
 });
 
-module.exports = FieldsWrapper(DefaultFields);
+module.exports = DefaultFields;

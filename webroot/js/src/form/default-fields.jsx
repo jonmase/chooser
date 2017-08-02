@@ -11,10 +11,10 @@ import DefaultFields from '../elements/fields/option-fields/default-fields.jsx';
 
 var DefaultFieldToggles = React.createClass({
     render: function() {
-        var defaultsField = this.props.getDefaultFields(['title']);     //Get defaults, excluding title
+        var defaultFieldsNotTitle = this.props.getDefaultFields(['title']);     //Get defaults, excluding title
         var toggleNodes = [];
         
-        var toggleNodes = defaultsField.map(function(field) {
+        var toggleNodes = defaultFieldsNotTitle.map(function(field) {
             return (
                 <FormsyToggle
                     key={field.name}
@@ -27,6 +27,14 @@ var DefaultFieldToggles = React.createClass({
             );
         }, this);
 
+        var allDefaultFields = this.props.allDefaultFields;     //Get defaults, excluding title
+        var defaultFieldsToShow = [];
+        
+        allDefaultFields.forEach(function(field) {
+            if(this.props.defaults[field.name]) {
+                defaultFieldsToShow.push(field);
+            }
+        }, this);
     
         return (
             <Card 
@@ -67,7 +75,7 @@ var DefaultFieldToggles = React.createClass({
                                 method="POST"
                             >
                                 <DefaultFields
-                                    choice={this.props.choice}
+                                    defaultFields={defaultFieldsToShow}
                                 />
                             </Formsy.Form>
                         </div>
