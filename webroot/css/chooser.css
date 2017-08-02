@@ -22,8 +22,8 @@ body {
 
 /* FIXES */
 /*Prevent IE from showing it's clear button in text fields, which shows up as an ugly, big black X*/
-input[type=text]::-ms-clear { display: none; width : 0; height: 0; }
-input[type=text]::-ms-reveal { display: none; width : 0; height: 0; }
+input[type=text]::-ms-clear, input[type=url]::-ms-clear, input[type=email]::-ms-clear { display: none; width : 0; height: 0; }
+input[type=text]::-ms-reveal, input[type=url]::-ms-reveal, input[type=email]::-ms-reveal { display: none; width : 0; height: 0; }
 
 /* GRID STYLES */
 @media (min-width: 64em) {
