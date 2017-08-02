@@ -35,6 +35,7 @@ var TextField = React.createClass({
                     required={required}
                     style={field.style}
                     value={field.value}
+                    updateImmediately={true}
                 />
             </div>
         );
