@@ -117,12 +117,22 @@ var OptionsGrid = React.createClass({
     },
     
     getSubtitle: function() {
-        //return 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
-        return 'Choose options using the tick boxes. Sort the options using the table headings. Review and submit your choices using the button in the top right.';
+        if(this.props.selectionEnabled) {
+            //return 'Choose options using the tick boxes. Shortlist them using the stars. Sort the options using the table headings. Review and submit your choices using the button in the top right. ';
+            return 'Click on an option to choose it. Sort the options using the button to the right. Use the ... buttons to view full details.';
+        }
+        else {
+            return 'Click on an option to view full details. Sort the options using the button to the right.';
+        }
     },
     
     getTitle: function() {
-        return 'Choose Options';
+        if(this.props.selectionEnabled) {
+            return 'Choose Options';
+        }
+        else {
+            return 'Browse Options';
+        }
     },
     
     handleListItemClick: function(optionId) {
