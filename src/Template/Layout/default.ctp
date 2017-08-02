@@ -29,16 +29,15 @@
     <?= $this->Html->css('https://fonts.googleapis.com/css?family=Roboto:400,300,500,700'); //Roboto font ?>
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
     <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('/js/node_modules/flexboxgrid/dist/flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('/js/node_modules/alloyeditor/dist/alloy-editor/assets/alloy-editor-ocean-min.css'); //Alloy Editor ?>
-    <?= $this->Html->css('/js/node_modules/react-input-range/lib/css/index.css'); //React Input Range Slider ?>
-    <?= $this->Html->css('/js/node_modules/rc-slider/assets/index.css'); //RC Slider ?>
+    <?= $this->Html->css('flexboxgrid.min.css'); //Flexboxgrid ?>
+    <?= $this->Html->css('alloy-editor-ocean-min.css'); //Alloy Editor ?>
+    <?= $this->Html->css('rc-slider.css'); //RC Slider ?>
     <?= $this->Html->css('chooser'); ?>
 
     <!--[if lt IE 9]>
         <script src="js/node_modules/html5shiv/dist/html5shiv.min.js"></script>
     <![endif]-->
-    <?php echo $this->Html->script('node_modules/jquery/dist/jquery.min'); ?>
+    <?php echo $this->Html->script('jquery.min'); ?>
     <?php echo $this->Html->script('polyfills'); ?>
     <script>
       window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
