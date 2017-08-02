@@ -287,7 +287,7 @@ var OptionEditPage = React.createClass({
                             this.state.canSaveOption?
                                 (!this.state.dirty&&<span>No changes</span>)
                             :
-                                <span>Incomplete form</span>
+                                <span>Incomplete or invalid form</span>
                         }
                     </span>
                     
