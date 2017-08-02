@@ -15,11 +15,14 @@ var EmailField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
+                    className="standard-width-input"
+                    defaultValue={field.defaultValue}
                     floatingLabelText={field.label}
                     hintText={instructions}
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    style={field.style}
                     type="email"
                     validations="isEmail"
                     validationError="Please enter a valid email address"

@@ -54,11 +54,14 @@ var NumberField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
+                    className="standard-width-input"
+                    defaultValue={field.defaultValue}
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    style={field.style}
                     validations={validations}
                     validationErrors={validationErrors}
                     value={field.value}

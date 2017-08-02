@@ -10,11 +10,14 @@ var UrlField = React.createClass({
         return (
             <div className={field.section?'section':''}>
                 <FormsyText
+                    className="full-width"
+                    defaultValue={field.defaultValue}
                     floatingLabelText={field.label}
                     hintText={field.instructions}
                     name={field.name}
                     onChange={field.onChange}
                     required={required}
+                    style={field.style}
                     type="url"
                     validations="isUrl"
                     validationError="Please enter a valid URL (web address)"

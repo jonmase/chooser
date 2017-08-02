@@ -12,8 +12,13 @@ var TextField = React.createClass({
         if(field.section) {
             divClass += 'section';
         }
+        
+        //Make full width
         if(field.fullWidth) {
             inputClass += 'full-width';
+        }
+        else {
+            inputClass += 'standard-width-input';
         }
         
         return (

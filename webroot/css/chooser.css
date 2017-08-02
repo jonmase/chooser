@@ -136,6 +136,9 @@ form div.section {
     font-size: 85%;
     opacity: 0.8;
 }
+.standard-width-input {
+    width: 400px !important;
+}
 textarea {
     border: 1px solid rgba(0, 0, 0, 0.05);
 }

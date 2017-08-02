@@ -406,4 +406,4 @@ var OptionEditPage = React.createClass({
     }
 });
 
-module.exports = OptionEditPage;
+module.exports = FieldsWrapper(OptionEditPage);

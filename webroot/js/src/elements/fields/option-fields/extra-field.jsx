@@ -17,13 +17,12 @@ var ExtraField = React.createClass({
         var field = this.props.field;
         field.section = true;
         
-        var props = {
-            field: field,
-        };
+        var props = {};
         
         var ComponentClass = null;
         switch(field.type) {
             case 'text': 
+                field.fullWidth = true;
                 ComponentClass = Text;
                 break;
             case 'wysiwyg': 
@@ -69,6 +68,8 @@ var ExtraField = React.createClass({
                 ComponentClass = null;
                 break;
         }
+
+        props.field = field;
 
         return (
             <div>
