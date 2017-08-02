@@ -125,6 +125,12 @@ var OptionsGrid = React.createClass({
         return 'Choose Options';
     },
     
+    handleListItemClick: function(optionId) {
+        if(!this.props.selectionEnabled) {
+            this.props.optionContainerHandlers.viewMore(optionId)
+        }
+    },
+    
     handleSelectOption: function(optionId, checked) {
         var optionsSelectedIds = this.state.optionsSelectedIds.slice();
         
@@ -206,6 +212,7 @@ var OptionsGrid = React.createClass({
                                             {index>0&&<Divider />}
                                             <ListItem
                                                 leftCheckbox={this.props.selectionEnabled?<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />:null}
+                                                onTouchTap={() => this.handleListItemClick(option.id)}
                                                 primaryText={primaryText}
                                                 rightIconButton={rightIconButton}
                                                 secondaryText={
