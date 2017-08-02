@@ -6,7 +6,6 @@ import {indigo500} from 'material-ui/styles/colors';
 var RangeSlider = React.createClass({
     getInitialState: function () {
         var initialState = {
-            range: [this.props.min, this.props.max],
         };
         
         return initialState;
@@ -87,6 +86,7 @@ var RangeSlider = React.createClass({
                     marks={this.getSliderMarks(this.props.name)}
                     max={this.props.max}
                     min={this.props.min}
+                    name={this.props.name}
                     onChange={(value) => { this.handleSliderChange(value)}} 
                     style={{marginTop: '5px'}}
                     trackStyle={[{backgroundColor: indigo500}]}
