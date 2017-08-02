@@ -42,11 +42,24 @@ var DefaultFields = React.createClass({
                     break;
             }
             
-            if(field.type === "wysiwyg") {
-                var onChange = this.props.onWysiwygChange;
+            var onBlur = null;
+            var onChange = null;
+            var onFocus = null;
+            
+            //If field is description, i.e. WYSIWYG
+            if(field.name === 'description') {
+                //Set form to dirty and add WYSIWYG to container state on focus
+                onFocus = this.props.onWysiwygFocus;
+                //Save WYSIWYG values on blur
+                onBlur = this.props.onWysiwygBlur;
             }
+            //If this is a text type field, i.e. where user will be typing, assume it is changed on focus
+            else if(field.name === 'code' || field.name === 'title') {
+                onFocus = this.props.onChange;
+            }
+            //Otherwise, set as changed when it changes
             else {
-                var onChange = this.props.onChange;
+                onChange = this.props.onChange;
             }
             
             var style = null;
@@ -56,7 +69,7 @@ var DefaultFields = React.createClass({
             
             defaultsFieldComponents.push(
                 <div key={field.name} style={style} >
-                    <ComponentClass value={option?option[field.name]:""} onChange={onChange} />
+                    <ComponentClass value={option?option[field.name]:""} onBlur={onBlur} onChange={onChange} onFocus={onFocus} />
                 </div>
             );
         }, this);

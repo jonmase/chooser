@@ -71,6 +71,12 @@ function FieldsWrapper(WrappedComponent) {
             return choiceDefaults;
         },
         
+        getTextFieldTypes: function() {
+            var textTypes = ['text','wysiwyg','email','url'];
+            
+            return textTypes;
+        },
+        
         getTypes: function() {
             var fieldTypes = [
                 {
@@ -124,6 +130,7 @@ function FieldsWrapper(WrappedComponent) {
                 getDefaultFields: this.getDefaults,
                 getDefaultFieldsForChoice: this.getDefaultsForChoice,
                 getFieldTypes: this.getTypes,
+                textFieldTypes: this.getTextFieldTypes(),
             }
             
             return (

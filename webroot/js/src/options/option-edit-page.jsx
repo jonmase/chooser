@@ -128,10 +128,21 @@ var OptionEditPage = React.createClass({
     },
     
     //Handle changes to WYSIWYG form fields
-    handleChangeWysiwyg: function(element, value) {
+    handleWysiwygBlur: function(fieldName, value) {
+        this.props.optionContainerHandlers.wysiwygChange(fieldName, value);
+    },
+    
+    //When focussing on WYSIWYG field, set the form to dirty and make sure WYSWIGY is activated
+    handleWysiwygFocus: function(fieldName, editor) {
+        this.handleChange();
+        this.props.optionContainerHandlers.wysiwygActivate(fieldName, editor);
+    },
+    
+    //Handle changes to WYSIWYG form fields
+    /*handleWysiwygChange: function(element, value) {
         this.handleChange();
         this.props.optionContainerHandlers.wysiwygChange(element, value);
-    },
+    },*/
     
     handleSave: function(publishing) {
         if(typeof(publishing) === "undefined") {
@@ -182,13 +193,22 @@ var OptionEditPage = React.createClass({
         this.setState(newState);
 
         //Get the alloy editor data
+
         if(this.props.choice.use_description) {
-            option.description = this.props.optionValues.value_description;
+            var editor = this.props.wysiwygEditors['description'];
+            if(typeof(editor) !== "undefined") {
+                option.description = editor.getData();
+            }
+            //option.description = this.props.optionValues.value_description;
         }
         for(var extra in this.props.choice.extra_fields) {
             var field = this.props.choice.extra_fields[extra];
             if(field.type === 'wysiwyg') {
-                option[field.name] = this.props.optionValues['value_' + field.name];
+                var editor = this.props.wysiwygEditors[field.name];
+                if(typeof(editor) !== "undefined") {
+                    option[field.name] = editor.getData();
+                }
+                //option[field.name] = this.props.optionValues['value_' + field.name];
             }
         }
         
@@ -357,18 +377,30 @@ var OptionEditPage = React.createClass({
                             defaultFields={this.props.getDefaultFieldsForChoice(this.props.choice)}
                             option={option}
                             removeOrHide="remove"
+                            onWysiwygBlur={this.handleWysiwygBlur}
                             onChange={this.handleChange}
-                            onWysiwygChange={this.handleChangeWysiwyg}
+                            onWysiwygFocus={this.handleWysiwygFocus}
                         />
                     </div>
                     <div className="section">
                         {this.props.choice.extra_fields.map(function(field) {
+                            //If field is WYSIWYG
                             if(field.type === 'wysiwyg') {
-                                field.onChange = this.handleChangeWysiwyg;
+                                //field.onChange = this.handleChangeWysiwyg;
+                                //Set form to dirty and add WYSIWYG to container state on focus
+                                field.onFocus = this.handleWysiwygFocus;
+                                //Save WYSIWYG values on blur
+                                field.onBlur = this.handleWysiwygBlur;
                             }
+                            //If this is a text type field, i.e. where user will be typing, assume it is changed on focus
+                            else if(this.props.textFieldTypes.indexOf(field.type) > -1) {
+                                field.onFocus = this.handleChange;
+                            }
+                            //Otherwise, set as changed when it changes
                             else {
                                 field.onChange = this.handleChange;
                             }
+                            
                             if(option && typeof(option[field.name]) !== "undefined") {
                                 field.value = option[field.name];
                             }

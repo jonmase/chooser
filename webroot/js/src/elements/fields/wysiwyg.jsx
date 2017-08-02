@@ -48,16 +48,23 @@ var WysiwygField = React.createClass({
         this._editor = AlloyEditor.editable(field.name, {toolbars: toolbars});
         var nativeEditor = this._editor.get('nativeEditor');
         
-        if(typeof(field.onChange) === 'function') {
+        /*if(typeof(field.onChange) === 'function') {
             nativeEditor.on('change', function(e) {
                 var data = nativeEditor.getData();
                 field.onChange(field.name, data);
             }); 
-        }
+        }*/
         nativeEditor.on('focus', function(e) {
+            if(typeof(field.onFocus) === 'function') {
+                field.onFocus(field.name, nativeEditor);
+            }
             this.onFocus();
         }, this); 
         nativeEditor.on('blur', function(e) {
+            if(typeof(field.onBlur) === 'function') {
+                var data = nativeEditor.getData();
+                field.onBlur(field.name, data);
+            }
             this.onBlur();
         }, this); 
     },

@@ -168,6 +168,7 @@ var OptionContainer = React.createClass({
                 open: false,
                 message: '',
             },
+            wysiwygEditors: {},
         };
         
         if(this.props.action === 'view') {
@@ -397,14 +398,24 @@ var OptionContainer = React.createClass({
     //Currently wysiwyg values are set here and in handleOptionEditButtonClick (which needs to stay in container)
     //Could wysiwyg value setting in handleOptionEditButtonClick be done in option-edit-page, in one of the lifecycle methods?
     //That way wysiwyg value state could be in the option-edit-page, which seems like the right place
-    handleOptionEditWysiwygChange: function(element, value) {
+    handleOptionEditWysiwygChange: function(fieldName, value) {
         var optionValuesState = this.state.optionValues;
         var newOptionValuesState = update(optionValuesState, {
-            ['value_' + element]: {$set: value},
+            ['value_' + fieldName]: {$set: value},
         });
         this.setState({optionValues: newOptionValuesState});
     },
     
+    handleOptionEditWysiwygActivate: function(fieldName, editor) {
+        if(typeof(this.state.wysiwygEditors[fieldName]) === "undefined") {
+            var wysiwygEditorsState = this.state.wysiwygEditors;
+            var newWysiwygEditorsState = update(wysiwygEditorsState, {
+                [fieldName]: {$set: editor},
+            });
+            this.setState({wysiwygEditors: newWysiwygEditorsState});
+        }
+    },
+
     handleOptionRejectButtonClick: function() {
         console.log('reject option');
     },
@@ -992,6 +1003,7 @@ var OptionContainer = React.createClass({
                             handleReturnedData: this.handleOptionEditReturnedData,
                             snackbarClose: this.handleSnackbarClose,
                             snackbarOpen: this.handleSnackbarOpen,
+                            wysiwygActivate: this.handleOptionEditWysiwygActivate,
                             wysiwygChange: this.handleOptionEditWysiwygChange,
                         }}
                         optionEditing={this.state.optionEditing}
@@ -999,6 +1011,7 @@ var OptionContainer = React.createClass({
                         optionValues={this.state.optionValues}
                         roles={this.props.roles}
                         snackbar={this.getSnackbar()}
+                        wysiwygEditors={this.state.wysiwygEditors}
                     />
                 );
             case 'view': //View
