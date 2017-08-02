@@ -30,7 +30,7 @@
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
     <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
     <?= $this->Html->css('flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('alloy-editor-ocean-min.css'); //Alloy Editor ?>
+    <?= $this->Html->css('alloy-editor/alloy-editor-ocean-min.css'); //Alloy Editor ?>
     <?= $this->Html->css('rc-slider.css'); //RC Slider ?>
     <?= $this->Html->css('chooser'); ?>
 
