@@ -26,7 +26,7 @@ import OptionsTable from './option-table.jsx';
 import OptionsGrid from './option-grid.jsx';
 import OptionsList from './option-list.jsx';
 import OptionEditPage from './option-edit-page.jsx';
-import OptionFilterContainer from './option-filter-container.jsx';
+//import OptionFilterContainer from './option-filter-container.jsx';
 import OptionViewPage from './option-view-page.jsx';
 
 
@@ -219,7 +219,7 @@ var OptionContainer = React.createClass({
     },
     
     //Could move to option-view-index (which doesn't exist yet)
-    handleFavourite: function(choicesOptionId, action) {
+    /*handleFavourite: function(choicesOptionId, action) {
         if(!choicesOptionId || !action) {
             return false;
         }
@@ -259,9 +259,9 @@ var OptionContainer = React.createClass({
                 this.handleSnackbarOpen('Error adding favourite (' + err.toString() + ')'); //Show error in snackbar
             }.bind(this)
         });
-    },
+    },*/
     
-    handleFilterButtonClick: function() {
+    /*handleFilterButtonClick: function() {
         this.setState({
             action: 'filter_'  + this.state.action,
         });
@@ -270,7 +270,7 @@ var OptionContainer = React.createClass({
     handleFilterSubmit(filters) {
         console.log("Filter the options:");
         console.log(filters);
-    },
+    },*/
 
     //Could move to option-view-index (which doesn't exist yet)
     handleInstructionsExpandChange(newExpandedState) {
@@ -1020,8 +1020,8 @@ var OptionContainer = React.createClass({
                                 favourites={this.state.favourites}
                                 optionContainerHandlers={{
                                     back: this.backToView,
-                                    favourite: this.handleFavourite,
-                                    filterClick: this.handleFilterButtonClick,
+                                    //favourite: this.handleFavourite,
+                                    //filterClick: this.handleFilterButtonClick,
                                     selectOption: this.handleOptionSelectFromGrid,
                                     sort: this.handleSort,
                                     viewMore: this.handleOptionViewMoreFromView,
@@ -1034,7 +1034,7 @@ var OptionContainer = React.createClass({
                         }
                     </div>
                 );
-            case 'filter_view': //Filter from View page
+            /*case 'filter_view': //Filter from View page
             case 'filter_edit': //Filter from More page
                 return (
                     <OptionFilterContainer
@@ -1047,7 +1047,7 @@ var OptionContainer = React.createClass({
                         }}
                         options={this.state.options.options}
                     />
-                );
+                );*/
             case 'more_view': //More
             case 'more_edit': //More
             case 'approve': //Approval
