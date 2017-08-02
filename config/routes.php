@@ -51,6 +51,7 @@ Router::scope('/', function (RouteBuilder $routes) {
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
     $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    $routes->connect('/maintenance', ['controller' => 'Pages', 'action' => 'display', 'maintenance']);
     $routes->connect('/launch', ['controller' => 'LtiConsumer', 'action' => 'launch']);
     $routes->connect('/profile/save', ['controller' => 'Profiles', 'action' => 'save']);
     $routes->connect('/profile/*', ['controller' => 'Profiles', 'action' => 'view']);
