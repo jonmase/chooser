@@ -168,7 +168,6 @@ var OptionContainer = React.createClass({
                 open: false,
                 message: '',
             },
-            wysiwygEditors: {},
         };
         
         if(this.props.action === 'view') {
@@ -180,18 +179,6 @@ var OptionContainer = React.createClass({
         //}
         else if(this.props.action === 'edit') {
             initialState.optionEditing = optionEditingDefaults;
-        
-            var optionValuesState = {};
-            if(this.props.choice.use_description) {
-                optionValuesState.value_description = '';
-            }
-            for(var extra in this.props.choice.extra_fields) {
-                var field = this.props.choice.extra_fields[extra];
-                if(field.type === 'wysiwyg') {
-                    optionValuesState['value_' + field.name] = '';
-                }
-            }
-            initialState.optionValues = optionValuesState;
         }
 
         return initialState;
@@ -331,28 +318,6 @@ var OptionContainer = React.createClass({
                 optionBeingEdited: optionId,
                 title: 'Edit Option',
             };
-            
-            //Update the WYSIWYG field values
-            if(optionId && this.props.choice.use_description) {
-                var description = this.state.options.options[this.state.options.indexesById[optionId]].description;
-            }
-            else {
-                var description = '';
-            }
-            
-            var optionValuesState = this.state.optionValues;
-            var newOptionValuesState = update(optionValuesState, {
-                value_description: {$set: description},
-            });
-
-            for(var extra in this.props.choice.extra_fields) {
-                var field = this.props.choice.extra_fields[extra];
-                if(field.type === 'wysiwyg') {
-                    var value = this.state.options.options[this.state.options.indexesById[optionId]][field.name];
-                    var newOptionValuesState = update(newOptionValuesState, {['value_' + field.name]: {$set: value}});
-                }
-            }
-            this.setState({optionValues: newOptionValuesState});
         }
         //If no option is specified, a new option is being added so set optionBeingEdited to null
         else {
@@ -392,28 +357,6 @@ var OptionContainer = React.createClass({
     
     handleOptionEditError: function(err) {
         this.handleSnackbarOpen('Save error (' + err.toString() + ')');
-    },
-
-    //Could move to option-edit-page, but would need to sort out where wysiwyg values live
-    //Currently wysiwyg values are set here and in handleOptionEditButtonClick (which needs to stay in container)
-    //Could wysiwyg value setting in handleOptionEditButtonClick be done in option-edit-page, in one of the lifecycle methods?
-    //That way wysiwyg value state could be in the option-edit-page, which seems like the right place
-    handleOptionEditWysiwygChange: function(fieldName, value) {
-        var optionValuesState = this.state.optionValues;
-        var newOptionValuesState = update(optionValuesState, {
-            ['value_' + fieldName]: {$set: value},
-        });
-        this.setState({optionValues: newOptionValuesState});
-    },
-    
-    handleOptionEditWysiwygActivate: function(fieldName, editor) {
-        if(typeof(this.state.wysiwygEditors[fieldName]) === "undefined") {
-            var wysiwygEditorsState = this.state.wysiwygEditors;
-            var newWysiwygEditorsState = update(wysiwygEditorsState, {
-                [fieldName]: {$set: editor},
-            });
-            this.setState({wysiwygEditors: newWysiwygEditorsState});
-        }
     },
 
     handleOptionRejectButtonClick: function() {
@@ -1008,7 +951,6 @@ var OptionContainer = React.createClass({
                         }}
                         optionEditing={this.state.optionEditing}
                         options={this.state.options}
-                        optionValues={this.state.optionValues}
                         roles={this.props.roles}
                         snackbar={this.getSnackbar()}
                         wysiwygEditors={this.state.wysiwygEditors}

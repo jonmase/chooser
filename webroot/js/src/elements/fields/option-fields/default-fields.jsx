@@ -48,10 +48,8 @@ var DefaultFields = React.createClass({
             
             //If field is description, i.e. WYSIWYG
             if(field.name === 'description') {
-                //Set form to dirty and add WYSIWYG to container state on focus
+                //If field is WYSIWYG, add editor to state and assume it is changed on focus 
                 onFocus = this.props.onWysiwygFocus;
-                //Save WYSIWYG values on blur
-                onBlur = this.props.onWysiwygBlur;
             }
             //If this is a text type field, i.e. where user will be typing, assume it is changed on focus
             else if(field.name === 'code' || field.name === 'title') {
