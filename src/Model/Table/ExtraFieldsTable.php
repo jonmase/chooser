@@ -209,8 +209,9 @@ class ExtraFieldsTable extends Table
     public function processExtraFieldsForView($field) {
         //$field['name'] = $this->cleanFieldName($field['label']);
         
+        $field['edit_label'] = $field['label'];
         if($field['required']) {
-            $field['label'] .= "*";
+            $field['edit_label'] .= "*";
         }
         
         $listTypes = $this->getListTypes();

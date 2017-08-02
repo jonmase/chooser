@@ -14,8 +14,9 @@ import File from '../file.jsx';
 
 var ExtraField = React.createClass({
     render: function() {
-        var field = this.props.field;
+        var field = Object.assign({}, this.props.field);
         field.section = true;
+        field.label = field.edit_label;
         
         var props = {};
         
@@ -70,7 +71,7 @@ var ExtraField = React.createClass({
         }
 
         props.field = field;
-
+        
         return (
             <div>
                 {(ComponentClass)?

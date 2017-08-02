@@ -220,7 +220,7 @@ var OptionsGrid = React.createClass({
                                                             }
                                                             
                                                             return (
-                                                                <span key={field.label}>
+                                                                <span key={field.name}>
                                                                     {divider}
                                                                     <Text label={field.label} value={option[field.name]} />
                                                                 </span>
