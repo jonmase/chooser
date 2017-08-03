@@ -30,7 +30,7 @@
     <?= $this->Html->css('https://fonts.googleapis.com/icon?family=Material+Icons'); //Material Icons font ?>
     <?php //= $this->Html->css('//cdn.jsdelivr.net/flexboxgrid/6.3.0/flexboxgrid.min.css'); //Flexboxgrid ?>
     <?= $this->Html->css('flexboxgrid.min.css'); //Flexboxgrid ?>
-    <?= $this->Html->css('alloy-editor/alloy-editor-ocean-min.css'); //Alloy Editor ?>
+    <?= $this->Html->css('/alloy-editor/assets/alloy-editor-ocean-min.css'); //Alloy Editor ?>
     <?= $this->Html->css('rc-slider.css'); //RC Slider ?>
     <?= $this->Html->css('chooser'); ?>
 
@@ -40,8 +40,8 @@
     <?php echo $this->Html->script('jquery.min'); ?>
     <?php echo $this->Html->script('polyfills'); ?>
     <script>
-      window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
-      window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/js/node_modules/alloyeditor/dist/alloy-editor/'); ?>';
+      window.ALLOYEDITOR_BASEPATH = '<?php echo $this->Url->build('/alloy-editor/'); ?>';
+      window.CKEDITOR_BASEPATH = '<?php echo $this->Url->build('/alloy-editor/'); ?>';
     </script>
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
