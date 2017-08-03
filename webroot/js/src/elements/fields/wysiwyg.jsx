@@ -48,6 +48,9 @@ var WysiwygField = React.createClass({
         this._editor = AlloyEditor.editable(field.name, {toolbars: toolbars});
         var nativeEditor = this._editor.get('nativeEditor');
         
+        if(typeof(field.onInitialise) === 'function') {
+            field.onInitialise(field.name, nativeEditor);
+        }
         /*if(typeof(field.onChange) === 'function') {
             nativeEditor.on('change', function(e) {
                 var data = nativeEditor.getData();

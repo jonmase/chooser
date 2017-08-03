@@ -19,7 +19,8 @@ var SettingsEditor = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            instructions: this.props.instance.instructions,
+            //instructions: this.props.instance.instructions,
+            instructionsEditor: null,
             approval_required: this.props.instance.approval_required,
             saveButtonEnabled: true,
             saveButtonLabel: 'Save',
@@ -50,7 +51,10 @@ var SettingsEditor = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        settings.instructions = this.state.instructions;
+        var editor = this.state.instructionsEditor;
+        if(typeof(editor) !== "undefined") {
+            settings.instructions = editor.getData();
+        }
         
         console.log("Saving settings: ", settings);
         
@@ -85,12 +89,14 @@ var SettingsEditor = React.createClass({
         this.setState(stateData);
     },
 
-    handleWysiwygChange: function(element, value) {
-        var stateData = {};
-        stateData[element] = value;
-        this.setState(stateData);
+    //When initialising instructions WYSIWYG, add editor to state
+    handleInstructionsWysiwygInitialise: function(fieldName, editor) {
+        var stateKey = fieldName + 'Editor';
+        if(this.state[stateKey] === null) {
+            this.setState({[stateKey]: editor});
+        }
     },
-
+    
     render: function() {
         var instance = this.props.instance;
         
@@ -139,7 +145,7 @@ var SettingsEditor = React.createClass({
                                 label: "Instructions for Editing",
                                 instructions: "Provide instructions that will be shown on the option editing page.",
                                 name: "instructions",
-                                onChange: this.handleWysiwygChange,
+                                onInitialise: this.handleInstructionsWysiwygInitialise,
                                 section: true,
                                 value: this.state.instructions,
                             }} />
