@@ -286,7 +286,7 @@ class UsersController extends AppController
         }
 
         //Delete all the users given by ID in $this->request->data['users']
-        if ($this->Users->ChoicesUsers->deleteAll(['user_id IN' => $this->request->data['users']])) {
+        if ($this->Users->ChoicesUsers->deleteAll(['user_id IN' => $this->request->data['users'], 'choice_id' => $choiceId])) {
             //Get the updated users list and return it
             $users = $this->Users->getForChoice($choiceId, $currentUserId);
             $this->set(compact('users'));
