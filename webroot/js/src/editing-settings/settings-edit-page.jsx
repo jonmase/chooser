@@ -19,8 +19,6 @@ var SettingsEditor = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            //instructions: this.props.instance.instructions,
-            instructionsEditor: null,
             approval_required: this.props.instance.approval_required,
             saveButtonEnabled: true,
             saveButtonLabel: 'Save',
@@ -51,10 +49,13 @@ var SettingsEditor = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        var editor = this.state.instructionsEditor;
-        if(typeof(editor) !== "undefined") {
-            settings.instructions = editor.getData();
-        }
+        var wysiwygFields = ['instructions'];
+        wysiwygFields.forEach(function (fieldName) {
+            var editor = this.state[fieldName + 'Editor'];
+            if(typeof(editor) !== "undefined") {
+                settings[fieldName] = editor.getData();
+            }
+        }, this);
         
         console.log("Saving settings: ", settings);
         
@@ -90,9 +91,9 @@ var SettingsEditor = React.createClass({
     },
 
     //When initialising instructions WYSIWYG, add editor to state
-    handleInstructionsWysiwygInitialise: function(fieldName, editor) {
+    handleWysiwygInitialise: function(fieldName, editor) {
         var stateKey = fieldName + 'Editor';
-        if(this.state[stateKey] === null) {
+        if(typeof(this.state[stateKey]) === "undefined") {
             this.setState({[stateKey]: editor});
         }
     },
@@ -145,9 +146,9 @@ var SettingsEditor = React.createClass({
                                 label: "Instructions for Editing",
                                 instructions: "Provide instructions that will be shown on the option editing page.",
                                 name: "instructions",
-                                onInitialise: this.handleInstructionsWysiwygInitialise,
+                                onInitialise: this.handleWysiwygInitialise,
                                 section: true,
-                                value: this.state.instructions,
+                                value: this.props.instance.instructions,
                             }} />
                             {/*
                             <div className="section" id="student_defined">
