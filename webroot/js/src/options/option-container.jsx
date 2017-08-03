@@ -17,7 +17,8 @@ import Loader from '../elements/loader.jsx';
 import SortWrapper from '../elements/wrappers/sort.jsx';
 
 import Unavailable from './choice-unavailable.jsx';
-import Instructions from './choice-instructions.jsx';
+import ChoosingInstructions from './choice-instructions.jsx';
+import EditingInstructions from './option-edit-instructions.jsx';
 import Basket from './selection-basket.jsx';
 import Review from './selection-review.jsx';
 import Confirmed from './selection-confirmed.jsx';
@@ -917,23 +918,29 @@ var OptionContainer = React.createClass({
         switch(action) {
             case 'edit': //Edit Index
                 return (
-                    <OptionsTable
-                        action={this.state.action}
-                        choice={this.props.choice}
-                        instance={this.state.instance}
-                        optionContainerHandlers={{
-                            approve: this.handleOptionApproveActionButtonClick,
-                            changeStatus: this.handleOptionChangeStatus,
-                            edit: this.handleOptionEditButtonClick,
-                            selectOption: this.handleOptionEditSelect,
-                            sort: this.handleSort,
-                            viewMore: this.handleOptionViewMoreFromEdit,
-                        }}
-                        options={this.state.options}
-                        optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
-                        optionsSort={this.state.optionsSort}
-                        roles={this.props.roles}
-                    />
+                    <div>
+                        <EditingInstructions
+                            editingInstance={this.state.instance.editing}
+                            roles={this.props.roles}
+                        />
+                        <OptionsTable
+                            action={this.state.action}
+                            choice={this.props.choice}
+                            instance={this.state.instance}
+                            optionContainerHandlers={{
+                                approve: this.handleOptionApproveActionButtonClick,
+                                changeStatus: this.handleOptionChangeStatus,
+                                edit: this.handleOptionEditButtonClick,
+                                selectOption: this.handleOptionEditSelect,
+                                sort: this.handleSort,
+                                viewMore: this.handleOptionViewMoreFromEdit,
+                            }}
+                            options={this.state.options}
+                            optionsSelectedTableOrder={this.state.optionsSelectedTableOrder}
+                            optionsSort={this.state.optionsSort}
+                            roles={this.props.roles}
+                        />
+                    </div>
                 );
             case 'edit_option': //Edit option page
                 return (
@@ -959,7 +966,7 @@ var OptionContainer = React.createClass({
             case 'view': //View
                 return (
                     <div>
-                        <Instructions
+                        <ChoosingInstructions
                             abandonHandler={this.handleSelectionAbandonChanges}
                             confirmedSelection={this.state.confirmedSelection}
                             expanded={this.state.showInstructions}
