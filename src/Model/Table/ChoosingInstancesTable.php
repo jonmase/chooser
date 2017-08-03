@@ -328,7 +328,7 @@ class ChoosingInstancesTable extends Table
         return $this->processInstanceForView($instance, $this->_datetimeFields);
     }
 
-    public function reset ($choiceId = null, $keepRules = false) {
+    public function reset ($choiceId = null, $keepSettings = false, $keepRules = false) {
         //If no choiceId passed, return empty array
         if(!$choiceId) {
             return [];
