@@ -22,13 +22,11 @@ var SettingsEditor = React.createClass({
     getInitialState: function () {
         return {
             canSubmit: false,
-            choosable: this.props.instance.choosable,
-            choosing_instructions: this.props.instance.choosing_instructions,
-            comments_overall: this.props.instance.comments_overall,
+            choosable: (typeof(this.props.instance.choosable) === "undefined")?true:this.props.instance.choosable,  //true by default
+            comments_overall: (typeof(this.props.instance.comments_overall) === "undefined")?false:this.props.instance.comments_overall,  //false by default
             //comments_per_option: this.props.instance.comments_per_option,
             preferenceType: 'rank',
-            preference: this.props.instance.preference,
-            review_instructions: this.props.instance.review_instructions,
+            preference: (typeof(this.props.instance.preference) === "undefined")?false:this.props.instance.preference,  //false by default
             saveButtonEnabled: true,
             saveButtonLabel: 'Save',
         };
@@ -58,8 +56,14 @@ var SettingsEditor = React.createClass({
         });
 
         //Get the wysiwyg editor data
-        settings.choosing_instructions = this.state.choosing_instructions;
-        settings.review_instructions = this.state.review_instructions;
+        var wysiwygFields = ['choosing_instructions', 'review_instructions'];
+        wysiwygFields.forEach(function (fieldName) {
+            var editor = this.state[fieldName + 'Editor'];
+            if(typeof(editor) !== "undefined") {
+                settings[fieldName] = editor.getData();
+            }
+        }, this);
+        
         
         console.log("Saving settings: ", settings);
         
@@ -99,18 +103,20 @@ var SettingsEditor = React.createClass({
         this.setState(stateData);
     },
 
-    handleWysiwygChange: function(element, value) {
-        var stateData = {};
-        stateData[element] = value;
-        this.setState(stateData);
-    },
-
     handlePreferenceTypeChange: function(event, value) {
         this.setState({
             preferenceType: value
         });
     },
 
+    //When initialising instructions WYSIWYG, add editor to state
+    handleWysiwygInitialise: function(fieldName, editor) {
+        var stateKey = fieldName + 'Editor';
+        if(typeof(this.state[stateKey]) === "undefined") {
+            this.setState({[stateKey]: editor});
+        }
+    },
+    
     render: function() {
         var instance = this.props.instance;
         
@@ -214,18 +220,18 @@ var SettingsEditor = React.createClass({
                                 label: "Instructions " + (this.state.choosable?"for Choosing":"when Viewing"),
                                 instructions: "Provide instructions that will be shown on the " + (this.state.choosable?"choosing page. Note that rules will have separate instructions, so you do not need to give instructions on how to fulfil the rules here.":"option viewing page"),
                                 name: "choosing_instructions",
-                                onChange: this.handleWysiwygChange,
+                                onInitialise: this.handleWysiwygInitialise,
                                 section: true,
-                                value: this.state.choosing_instructions,
+                                value: instance.choosing_instructions,
                             }} />
                             {this.state.choosable && 
                                 <Wysiwyg field={{
                                     label: "Instructions for Reviewing",
                                     instructions: "Provide instructions that will be shown on the review page.",
                                     name: "review_instructions",
-                                    onChange: this.handleWysiwygChange,
+                                    onInitialise: this.handleWysiwygInitialise,
                                     section: true,
-                                    value: this.state.review_instructions,
+                                    value: instance.review_instructions,
                                 }} />
                             }
                             {/*<Multiline field={{
