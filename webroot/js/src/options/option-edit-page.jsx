@@ -55,7 +55,7 @@ var OptionEditPage = React.createClass({
         
         var option = this.getOption();
         if(option.published) {
-            if(option.approved && this.isApprover()) {
+            if(this.isApprovalRequired() && option.approved && this.isApprover()) {
                 initialState.savePublishButtonType = 'reapprove';
             }
             else {
@@ -149,7 +149,7 @@ var OptionEditPage = React.createClass({
         if(this.state.dirty) {
             var option = this.getOption();
             //If publishing, editing an approved option and not an approver, show the warning dialog
-            if(publishing && !this.isApprover() && option.approved === true) {
+            if(this.isApprovalRequired() && publishing && !this.isApprover() && option.approved === true) {
                 this.setState({
                     warningDialogOpen: true,
                 });
@@ -259,8 +259,17 @@ var OptionEditPage = React.createClass({
         }, this.submitForm(true));  //Submit form, republishing option
     },
 
+    isApprovalRequired: function() {
+        if(this.props.editingInstance.approval_required) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
+    
     isApprover: function() {
-        if(this.props.editingInstance.approval_required && (this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1)) {
+        if(this.props.roles.indexOf('admin') > -1 || this.props.roles.indexOf('approver') > -1) {
             return true;
         }
         else {
@@ -336,7 +345,7 @@ var OptionEditPage = React.createClass({
                     ref="edit"
                 >
                     {
-                        this.props.editingInstance.approval_required?
+                        this.isApprovalRequired()?
                             option.approved === false?
                                 <Alert>
                                     This option has been rejected{approverComments}.
