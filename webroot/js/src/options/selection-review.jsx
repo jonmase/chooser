@@ -12,17 +12,18 @@ import WarningsTitle from './selection-warnings-title.jsx';
 import WarningsExplanation from './selection-warnings-explanation.jsx';
 import WarningIcon from '../elements/icons/warning.jsx';
 import EditableWarning from './selection-editable-warning.jsx';
+import Wysiwyg from '../elements/display/wysiwyg.jsx';
 
 import MultilineField from '../elements/fields/multiline-text-instructions.jsx';
 
 var SelectionReview = React.createClass({
     render: function() {
         var content = <div>
-            <p style={{marginTop: 0}}>
+            <div style={{marginBottom: '20px'}}>
                 {(this.props.choosingInstance.review_instructions)&&
-                    <span>{this.props.choosingInstance.review_instructions}</span>
+                    <Wysiwyg value={this.props.choosingInstance.review_instructions} />
                 }
-            </p>
+            </div>
                     
             {/*<p style={{marginTop: 0}}>
                 {(this.props.choosingInstance.preference_instructions)&&
