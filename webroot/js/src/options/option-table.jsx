@@ -54,11 +54,11 @@ var styles = {
 
 styles.tableRowColumnTitle = Object.assign({}, styles.tableRowColumn, {minWidth: '30%'});
 styles.publishedTableRowColumn = Object.assign({}, styles.tableRowColumn, {width: '72px', textAlign: 'center'});
-//styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
-styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '96px'});  //Delete removed
+styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});
+//styles.editorActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '96px'});  //Delete removed
 styles.approverActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '48px'});
-//styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
-styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});  //Delete removed
+styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '192px'});
+//styles.adminActionsTableRowColumn = Object.assign({}, styles.actionsTableRowColumn, {width: '144px'});  //Delete removed
     
 var OptionsTable = React.createClass({
     getInitialState: function () {
@@ -457,14 +457,13 @@ var OptionsTable = React.createClass({
                                                                         style={styles.actionsButtons}
                                                                         tooltip=""
                                                                     />
-                                                                :
-                                                                    <DeleteButton
-                                                                        handleClick={this.handleDelete} 
-                                                                        id={option.id}
-                                                                        style={styles.actionsButtons}
-                                                                        tooltip=""
-                                                                    />
-                                                                */}
+                                                                :*/}
+                                                                <DeleteButton
+                                                                    handleClick={this.handleDelete} 
+                                                                    id={option.id}
+                                                                    style={styles.actionsButtons}
+                                                                    tooltip=""
+                                                                />
                                                             </span>
                                                         }
                                                         {this.isApprover() &&

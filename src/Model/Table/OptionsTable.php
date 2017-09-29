@@ -103,6 +103,7 @@ class OptionsTable extends Table
         //Add basic conditions - options for this choice that aren't revisions
         $conditions['ChoicesOptions.choice_id'] = $choiceId;
         $conditions['ChoicesOptions.revision_parent'] = 0;
+        $conditions['ChoicesOptions.deleted'] = 0;
         
         //pr($conditions); exit;
         
