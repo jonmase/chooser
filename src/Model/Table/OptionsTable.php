@@ -325,11 +325,14 @@ class OptionsTable extends Table
         foreach($extraTypes as $name => $type) {
             if($type === 'datetime' || $type === 'date') {
                 $value = [];
-                if($type === 'datetime' && !empty($extraValues[$name]->time)) {
+                if($type === 'datetime' && !empty($extraValues[$name]->time) && !empty($extraValues[$name]->date)) {
                     $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValues[$name]->date, $extraValues[$name]->time);
                 }
                 else if(!empty($extraValues[$name]->date)) {
                     $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValues[$name]->date);
+                }
+                else if(!empty($extraValues[$name]->time)) {
+                    $extraValues[$name] = $this->formatSimpleDatetimeForView(null, $extraValues[$name]->time);
                 }
                 else {
                     $extraValues[$name] = null;
