@@ -103,16 +103,20 @@ var ResultsContainer = React.createClass({
             tab: value,
         })
     },
+    
+    optionDefaultFields: function() {
+        return this.props.getDefaultFieldsForChoice(this.props.choice, ['description']);
+    },
 
     render: function() {
-        var optionDefaultFields = this.props.getDefaultFieldsForChoice(this.props.choice, ['description']);
+        //var optionDefaultFields = 
         
         return (
             <div>
                 {(this.state.action === 'index') &&
                     <ResultsIndex
                         loaded={this.state.loaded}
-                        optionDefaultFields={optionDefaultFields}
+                        optionDefaultFields={this.optionDefaultFields()}
                         options={this.state.options}
                         resultsContainerHandlers={{
                             goToOptionView: this.goToOptionView,
@@ -139,8 +143,8 @@ var ResultsContainer = React.createClass({
                 }
                 {(this.state.action === 'option') &&
                     <OptionResult
+                        choice={this.props.choice}
                         option={this.state.options[this.state.optionBeingViewedIndex]}
-                        optionDefaultFields={optionDefaultFields}
                         resultsContainerHandlers={{
                             goToIndex: this.goToIndex,
                         }}

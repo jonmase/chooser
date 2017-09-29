@@ -37,34 +37,41 @@ var ResultsIndex = React.createClass({
                     code={this.props.choice.use_code && option.code}
                     title={option.title}
                 />
-
-                <DefaultFields
-                    defaults={this.props.optionDefaultFields}
-                    option={option}
-                />
                 
-                <TextLabelled 
-                    label="Times Chosen"
-                    value={option.count}
-                />
+                <div className="row">
+                    <div className="col-md-6">
+                        <DefaultFields
+                            choice={this.props.choice}
+                            option={option}
+                        />
+                    </div>    
+                    <div className="col-md-6">
+                        <TextLabelled 
+                            label="Times Chosen"
+                            paragraph={true}
+                            value={option.count}
+                        />
 
-                <div>
-                    <strong>Chosen by:</strong><br />
-                    <List>
-                        {option.selected_by.map(function(selectionId) {
-                            var selection = this.props.selections[this.props.selectionIndexesById[selectionId]];
-                            
-                            return (
-                                <ListItem
-                                    disabled={true}
-                                    primaryText={selection.user.fullname + " (" + selection.user.username + ")"}
-                                    secondaryText={null}
-                                    secondaryTextLines={1}
-                                />
+                        <div>
+                            <strong>Chosen by:</strong><br />
+                            <List>
+                                {option.selected_by.map(function(selectionId) {
+                                    var selection = this.props.selections[this.props.selectionIndexesById[selectionId]];
+                                    
+                                    return (
+                                        <ListItem
+                                            disabled={true}
+                                            key={selection.user.username}
+                                            primaryText={selection.user.fullname + " (" + selection.user.username + ")"}
+                                            secondaryText={null}
+                                            secondaryTextLines={1}
+                                        />
 
-                            );
-                        }, this)}
-                    </List>
+                                    );
+                                }, this)}
+                            </List>
+                        </div>
+                    </div>    
                 </div>
             </Container>
         );

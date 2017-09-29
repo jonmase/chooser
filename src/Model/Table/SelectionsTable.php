@@ -273,7 +273,7 @@ class SelectionsTable extends Table
                 unset($selection['options_selections']);
             }        
             
-            $options = $this->OptionsSelections->ChoicesOptions->Options->getOptionsForView($choosingInstance->choice_id);   //Get viewable options
+            $options = $this->OptionsSelections->ChoicesOptions->Options->getOptionsForView($choosingInstance['choice_id']);   //Get viewable options
             
             $optionIndexesById = [];
             foreach($options as $key => &$option) {

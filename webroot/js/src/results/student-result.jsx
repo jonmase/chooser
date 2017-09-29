@@ -31,22 +31,26 @@ var ResultsIndex = React.createClass({
 
         return (
             <Container topbar={topbar} title={null}>
-                <h3>{selection.user.fullname} ({selection.user.username})</h3>
+                <h3 style={{marginTop: 0}}>{selection.user.fullname} ({selection.user.username})</h3>
                 <TextLabelled 
                     label="Status"
+                    paragraph={true}
                     value={selection.confirmed?"Submitted":"Auto-saved"}
                 />
                 <DateTimeLabelled 
                     label={selection.confirmed?"Date/Time Submitted":"Date/Time Saved"}
+                    paragraph={true}
                     time={true}
                     value={selection.modified}
                 />
                 <TextLabelled 
                     label="Comments"
+                    paragraph={true}
                     value={selection.comments}
                 />
                 <TextLabelled 
                     label="Options Selected"
+                    paragraph={true}
                     value={selection.option_count}
                 />
 
