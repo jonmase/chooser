@@ -7,6 +7,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Network\Exception\ForbiddenException;
 use Cake\Network\Exception\InternalErrorException;
 use Cake\Event\Event;
+use Cake\Log\Log;
 
 /**
  * LtiConsumer Controller
@@ -84,6 +85,8 @@ class LtiConsumerController extends AppController
                 $session = $this->request->session();
                 $session->write('tool', $tool);
                 
+                Log::write('debug', 'Tring to save User Details.');
+                //pr($tool); exit;
                 //Register the user
                 if($user = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->register($tool)) {
                     //Log the user in
@@ -109,6 +112,10 @@ class LtiConsumerController extends AppController
                     }
                 }
                 else {
+                    Log::write('debug', 'User details could not be saved.');
+					if(isset($user)) {
+						Log::write('debug', $tool);
+					}
                     throw new InternalErrorException(__('User details could not be saved.'));
                 }
             }

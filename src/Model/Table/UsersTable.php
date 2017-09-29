@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Log\Log;
 
 /**
  * Users Model
@@ -155,7 +156,7 @@ class UsersTable extends Table
         else { $username = $tool->user->lti_result_sourcedid; }
         
         //Get the user's email, if it's set in the LTI request
-        if(isset($tool->user->email)) { 
+        if(!empty($tool->user->email)) { 
             $userEmail = $tool->user->email; 
         }
         else {
@@ -235,6 +236,7 @@ class UsersTable extends Table
         if(isset($tool->user->firstname)) { $user->firstname = $tool->user->firstname; }
         if(isset($tool->user->lastname)) { $user->lastname = $tool->user->lastname; }
         
+        Log::write('debug', $user);
         //pr($user); exit;    //Debugging
         if($this->save($user)) {
             //Send back just the user record - used for logging in
