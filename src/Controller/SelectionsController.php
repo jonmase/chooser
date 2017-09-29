@@ -213,7 +213,7 @@ class SelectionsController extends AppController
         $choice = $this->Selections->ChoosingInstances->Choices->get($choiceId);
         
         //Get the choosing instance
-        $choosingInstance = $this->Selections->ChoosingInstances->findByChoiceId($choiceId, true)->toArray();
+        $choosingInstance = $this->Selections->ChoosingInstances->findByChoiceId($choiceId, true)->first()->toArray();
         
         //Get the selections
         list($options, $optionIndexesById, $selections, $selectionIndexesById, $statistics) = $this->Selections->getForResults($choosingInstance);

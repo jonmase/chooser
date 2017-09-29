@@ -30,7 +30,7 @@ if($choosingInstance['comments_per_option']): $optionColspan++; endif;
 		<tr>
             <th colspan=<?php echo $headerColspan; ?> style="text-align: right;">Code: </th>
             <?php foreach($options as $option): ?>
-                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['code']; ?></th>';
+                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['code']; ?></th>
             <?php endforeach; ?>
 		</tr>
 	<?php endif; ?>
@@ -55,7 +55,7 @@ if($choosingInstance['comments_per_option']): $optionColspan++; endif;
             <th colspan=<?php echo $headerColspan; ?> style="text-align: right;">Points: </th>
             
             <?php foreach($options as $option): ?>
-                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['points']; ?></th>';
+                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['points']; ?></th>
             <?php endforeach; ?>
 		</tr>
 	<?php endif; ?>
@@ -64,7 +64,7 @@ if($choosingInstance['comments_per_option']): $optionColspan++; endif;
             <th colspan=<?php echo $headerColspan; ?> style="text-align: right;">Min. Places: </th>
             
             <?php foreach($options as $option): ?>
-                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['min_places']; ?></th>';
+                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['min_places']; ?></th>
             <?php endforeach; ?>
 		</tr>
 	<?php endif; ?>
@@ -73,7 +73,7 @@ if($choosingInstance['comments_per_option']): $optionColspan++; endif;
             <th colspan=<?php echo $headerColspan; ?> style="text-align: right;">Max. Places: </th>
             
             <?php foreach($options as $option): ?>
-                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['max_places']; ?></th>';
+                <th style="vertical-align: top" colspan=<?php echo $optionColspan; ?>><?php echo $option['max_places']; ?></th>
             <?php endforeach; ?>
 		</tr>
 	<?php endif; ?>

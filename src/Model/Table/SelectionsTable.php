@@ -198,7 +198,7 @@ class SelectionsTable extends Table
         if(!$choosingInstance) {
             return $blankReturn;
         }
-        
+
         $optionsSelectionsSort = [];
         if($choosingInstance['preference']) {
             if($choosingInstance['preference_type'] === 'rank') {

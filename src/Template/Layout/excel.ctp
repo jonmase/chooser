@@ -1,5 +1,5 @@
 <?php
-$debug = 1;
+$debug = 0;
 $filename = $this->fetch('filename');
 if($debug) {
     echo $filename;
