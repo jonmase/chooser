@@ -39,13 +39,13 @@ var ResultsIndex = React.createClass({
                 />
                 
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-xs-12 col-md-6">
                         <DefaultFields
                             choice={this.props.choice}
                             option={option}
                         />
                     </div>    
-                    <div className="col-md-6">
+                    <div className="col-xs-12 col-md-6">
                         <TextLabelled 
                             label="Times Chosen"
                             paragraph={true}
