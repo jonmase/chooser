@@ -345,7 +345,7 @@ var OptionEditPage = React.createClass({
                     ref="edit"
                 >
                     {
-                        this.isApprovalRequired()?
+                        (this.isApprovalRequired() && typeof(option.approved) !== "undefined")?
                             option.approved === false?
                                 <Alert>
                                     This option has been rejected{approverComments}.
