@@ -9,10 +9,7 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
-import FieldLabel from '../elements/fields/label.jsx';
 import Text from '../elements/fields/text.jsx';
-//import Wysiwyg from '../elements/fields/wysiwyg.jsx';
-import DateTime from '../elements/fields/datetime.jsx';
 import Dropdown from '../elements/fields/dropdown.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
 import Number from '../elements/fields/number.jsx';

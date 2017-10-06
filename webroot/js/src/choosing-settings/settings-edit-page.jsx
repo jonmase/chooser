@@ -10,7 +10,6 @@ import Container from '../elements/container.jsx';
 import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
-import FieldLabel from '../elements/fields/label.jsx';
 import Text from '../elements/fields/text.jsx';
 import Multiline from '../elements/fields/multiline-text.jsx';
 import Wysiwyg from '../elements/fields/wysiwyg.jsx';
