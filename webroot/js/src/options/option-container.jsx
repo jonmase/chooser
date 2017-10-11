@@ -437,6 +437,25 @@ var OptionContainer = React.createClass({
     },
 
     /*SELECTION METHODS*/
+    getSubmissionsSinceTimestamp: function(successCallback) {
+        //Check for submissions since the timestamp
+        var url = '../selections/getConfirmed.json';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            type: 'GET',
+            success: function(returnedData) {
+                successCallback(returnedData);
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(url, status, err.toString());
+                
+                //Show error in snackbar
+                this.handleSnackbarOpen('Error checking submissions since timestamp (' + err.toString() + ')');
+            }.bind(this)
+        });
+    },
+    
     handleSelectionAbandonChanges: function() {
         console.log('abandon changes');
         
@@ -580,41 +599,29 @@ var OptionContainer = React.createClass({
     handleSelectionConfirmButtonClick: function(event, fromDialog) {
         //If not confirmed in the dialog, and not editable or there are warnings or there has been another submission since the timestamp, open the dialog
         if(!fromDialog) {
-            //Check for submissions since the timestamp
-            var url = '../selections/getConfirmed.json';
-            $.ajax({
-                url: url,
-                dataType: 'json',
-                type: 'GET',
-                success: function(returnedData) {
-                    var submissionsSinceTimestamp = [];
-                    for(var selection in returnedData.confirmedSelections) {
-                        if(returnedData.confirmedSelections[selection]['modified']['timestamp'] > (this.state.timestamp/1000)) {
-                            submissionsSinceTimestamp.push(returnedData.confirmedSelections[selection]);
-                        }
-                    }
-                
-                    if(submissionsSinceTimestamp.length > 0 || !this.state.instance.choosing.editable || this.state.selection.ruleWarnings) {
-                        this.handleSelectionConfirmDialogOpen(submissionsSinceTimestamp);
-                    }
-                    //Otherwise, confirmed in the dialog, or editable and no warning and no other submission since timestamp, so submit the form
-                    else {
-                        this.handleSelectionConfirmFormSubmit();
-                    }
-                }.bind(this),
-                error: function(xhr, status, err) {
-                    console.error(url, status, err.toString());
-                    
-                    //Show error in snackbar
-                    this.handleSnackbarOpen('Error checking submission timestamp (' + err.toString() + ')');
-                }.bind(this)
-            });
+            this.getSubmissionsSinceTimestamp(this.handleSelectionConfirmButtonClickTimestampCheckSuccess)
         }
         else {
             this.handleSelectionConfirmDialogClose();
             this.handleSelectionConfirmFormSubmit();
         }
-            
+    },
+    
+    handleSelectionConfirmButtonClickTimestampCheckSuccess: function(returnedData) {
+        var submissionsSinceTimestamp = [];
+        for(var selection in returnedData.confirmedSelections) {
+            if(returnedData.confirmedSelections[selection]['modified']['timestamp'] > (this.state.timestamp/1000)) {
+                submissionsSinceTimestamp.push(returnedData.confirmedSelections[selection]);
+            }
+        }
+    
+        if(submissionsSinceTimestamp.length > 0 || !this.state.instance.choosing.editable || this.state.selection.ruleWarnings) {
+            this.handleSelectionConfirmDialogOpen(submissionsSinceTimestamp);
+        }
+        //Otherwise, confirmed in the dialog, or editable and no warning and no other submission since timestamp, so submit the form
+        else {
+            this.handleSelectionConfirmFormSubmit();
+        }
     },
     
     handleSelectionConfirmFormSubmit() {
