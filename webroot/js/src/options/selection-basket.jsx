@@ -19,10 +19,7 @@ var SelectionBasket = React.createClass({
                     <Card className="page-card">
                         <CardHeader 
                             avatar={<Avatar icon={<WarningIcon colour="red" large={true} />} backgroundColor='#fff' />}
-                            title={<WarningsTitle 
-                                allowSubmit={this.props.selection.allowSubmit}
-                                ruleWarnings={this.props.selection.ruleWarnings}
-                            />}
+                            title={<WarningsTitle />}
                             subtitle={<WarningsExplanation 
                                 allowSubmit={this.props.selection.allowSubmit}
                                 ruleWarnings={this.props.selection.ruleWarnings}

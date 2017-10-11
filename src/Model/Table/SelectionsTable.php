@@ -124,7 +124,7 @@ class SelectionsTable extends Table
         return $selections->toArray();
     }
     
-    public function findByInstanceAndUser($instanceId = null, $userId = null, $containSelectedOptions = true, $selectionIdsToOmit = []) {
+    public function findByInstanceAndUser($instanceId = null, $userId = null, $confirmedOnly = false, $containSelectedOptions = true, $selectionIdsToOmit = []) {
         if(!$instanceId || !$userId) {
             return [];
         }
@@ -135,10 +135,14 @@ class SelectionsTable extends Table
             'Selections.archived' => false,
         ];
         
+        if(!empty($confirmedOnly)) {
+            $conditions['confirmed'] = true;
+        }
+        
         if(!empty($selectionIdsToOmit)) {
             $conditions['Selections.id NOT IN'] = $selectionIdsToOmit;
         }
-        
+
         $instance = $this->ChoosingInstances->get($instanceId, ['fields' => ['choice_id']]);
         
         $selectionsQuery = $this->find('all')
@@ -333,18 +337,20 @@ class SelectionsTable extends Table
         unset($requestData['selection']['id']);
         
         //Make sure the confirmed value is a bool not a string
-        $requestData['selection']['confirmed'] = filter_var($requestData['selection']['confirmed'], FILTER_VALIDATE_BOOLEAN);
+        $requestData['selection']['confirmed'] = $confirmed = filter_var($requestData['selection']['confirmed'], FILTER_VALIDATE_BOOLEAN);
         
         if($selectionId) {
-            $currentSelectionEntity = $this->getByIdInstanceAndUser($selectionId, $instanceId, $userId);
+            $existingSelectionEntity = $this->getByIdInstanceAndUser($selectionId, $instanceId, $userId);
         }
         else {
-            $currentSelectionEntity = null;
+            $existingSelectionEntity = null;
         }
         
         //No Existing selection 
         // -> create new selection for saving edits
-        if(empty($currentSelectionEntity)) {
+        // -> this is also the case if user has two instances open and saves them both - the second save won't find an existing selection so will create a new one
+        $selectionIdsToOmitFromArchiving = [];
+        if(empty($existingSelectionEntity)) {
             $selectionData = $requestData['selection'];
             $selectionData['user_id'] = $userId; //Add user_id to data
             
@@ -353,8 +359,8 @@ class SelectionsTable extends Table
         //Existing Confirmed, New Unconfirmed, i.e. Editing an already confirmed selection
         //Patch the existing $selection entity with the request data//
         //Then unset the selection id and set it to new, so it is saved as a new record, but with the existing data, e.g. comments
-        else if($currentSelectionEntity->confirmed && !$requestData['selection']['confirmed']) {
-            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
+        else if($existingSelectionEntity->confirmed && !$confirmed) {
+            $selection = $this->patchEntity($existingSelectionEntity, $requestData['selection']);
             unset($selection->id);
             $selection = $this->unsetCreatedModified($selection);
             $selection->isNew(true);
@@ -363,16 +369,17 @@ class SelectionsTable extends Table
         //Or New Confirmed (Existing either confirmed or not), i.e. Confirming selection
         // -> Just patch requestData onto entity
         else {
-            $selection = $this->patchEntity($currentSelectionEntity, $requestData['selection']);
-
-            //If new selection is confirmed, it should be the only unarchived selection
-            if($selection->confirmed) {
-                //So check for any other unarchived selections for this instance and user, and archive them
-                $otherSelections = $this->findByInstanceAndUser($instanceId, $userId, false, [$currentSelectionEntity->id]);
-                $this->archive($otherSelections);
-            }
+            $selection = $this->patchEntity($existingSelectionEntity, $requestData['selection']);
+            $selectionIdsToOmitFromArchiving[] = $existingSelectionEntity->id;
         }
         
+        //If new selection is confirmed, it should be the only unarchived selection
+        if($confirmed) {
+            //So check for any other unarchived selections for this instance and user, and archive them
+            $otherSelections = $this->findByInstanceAndUser($instanceId, $userId, false, false, $selectionIdsToOmitFromArchiving);
+            $this->archive($otherSelections);
+        }
+
         $optionsSelectionsData = [];
         
         //If just selecting options (not confirming), options will contain an array of option ids

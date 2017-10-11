@@ -148,6 +148,7 @@ class DatetimeBehavior extends Behavior {
         $config = $this->config(); 
         if($date && $time) {
             $value['formatted'] = $this->formatTimeObject($timeObject, $config['viewDatetimeFormat']);
+            $value['timestamp'] = $timeObject->getTimestamp();
         }
         else if($date) {
             $value['formatted'] = $this->formatTimeObject($timeObject, $config['viewDateFormat']);
@@ -173,6 +174,8 @@ class DatetimeBehavior extends Behavior {
                 'minute' => $this->formatTimeObject($timeObject, $config['minFormat']),
             ];
         }
+        
+        
         
         return $value;
     }

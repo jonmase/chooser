@@ -169,6 +169,8 @@ var OptionContainer = React.createClass({
                 open: false,
                 message: '',
             },
+            submissionsSinceTimestamp: [],
+            timestamp: Date.now(),
         };
         
         if(this.props.action === 'view') {
@@ -207,6 +209,15 @@ var OptionContainer = React.createClass({
         });
     },
     
+    //Keep in container
+    //When click Change Selection button, go back to view and reset timestamp
+    handleChangeSelection: function() {
+        this.setState({
+            action: 'view',
+            timestamp: Date.now(),
+        });
+    },
+            
     //Could move to option-view-index (which doesn't exist yet)
     /*handleFavourite: function(choicesOptionId, action) {
         if(!choicesOptionId || !action) {
@@ -567,15 +578,47 @@ var OptionContainer = React.createClass({
     },
     
     handleSelectionConfirmButtonClick: function(event, fromDialog) {
-        //If not confirmed in the dialog, and not editable or there are warnings, open the dialog
-        if(!fromDialog && (!this.state.instance.choosing.editable || this.state.selection.ruleWarnings)) {
-            this.handleSelectionConfirmDialogOpen();
+        //If not confirmed in the dialog, and not editable or there are warnings or there has been another submission since the timestamp, open the dialog
+        if(!fromDialog) {
+            //Check for submissions since the timestamp
+            var url = '../selections/getConfirmed.json';
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                type: 'GET',
+                success: function(returnedData) {
+                    var submissionsSinceTimestamp = [];
+                    for(var selection in returnedData.confirmedSelections) {
+                        if(returnedData.confirmedSelections[selection]['modified']['timestamp'] > (this.state.timestamp/1000)) {
+                            submissionsSinceTimestamp.push(returnedData.confirmedSelections[selection]);
+                        }
+                    }
+                
+                    if(submissionsSinceTimestamp.length > 0 || !this.state.instance.choosing.editable || this.state.selection.ruleWarnings) {
+                        this.handleSelectionConfirmDialogOpen(submissionsSinceTimestamp);
+                    }
+                    //Otherwise, confirmed in the dialog, or editable and no warning and no other submission since timestamp, so submit the form
+                    else {
+                        this.handleSelectionConfirmFormSubmit();
+                    }
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    console.error(url, status, err.toString());
+                    
+                    //Show error in snackbar
+                    this.handleSnackbarOpen('Error checking submission timestamp (' + err.toString() + ')');
+                }.bind(this)
+            });
         }
-        //Otherwise, confirmed in the dialog, or editable and no warning, so submit the form
         else {
             this.handleSelectionConfirmDialogClose();
-            this.refs.confirm.submit();
+            this.handleSelectionConfirmFormSubmit();
         }
+            
+    },
+    
+    handleSelectionConfirmFormSubmit() {
+        this.refs.confirm.submit();
     },
     
     handleSelectionConfirmButtonDisable: function () {
@@ -590,9 +633,10 @@ var OptionContainer = React.createClass({
         });
     },
 
-    handleSelectionConfirmDialogOpen() {
+    handleSelectionConfirmDialogOpen(submissionsSinceTimestamp) {
         this.setState({
             confirmDialogOpen: true,
+            submissionsSinceTimestamp: submissionsSinceTimestamp,
         });
     },
     
@@ -1086,6 +1130,7 @@ var OptionContainer = React.createClass({
                             instance={this.state.instance}
                             rules={this.state.rules}
                             selection={this.state.selection}
+                            submissionsSinceTimestamp={this.state.submissionsSinceTimestamp}
                         />
                     </div>
                 );
@@ -1096,7 +1141,7 @@ var OptionContainer = React.createClass({
                         choice={this.props.choice}
                         choosingInstance={this.state.instance.choosing}
                         optionContainerHandlers={{
-                            change: this.handleBackToView,
+                            change: this.handleChangeSelection,
                         }}
                         options={this.state.options}
                         optionsSelected={this.state.optionsSelected}

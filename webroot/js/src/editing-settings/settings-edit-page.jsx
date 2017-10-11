@@ -11,7 +11,6 @@ import TopBar from '../elements/topbar.jsx';
 import TopBarBackButton from '../elements/buttons/topbar-back-button.jsx';
 
 import DateTime from '../elements/fields/datetime.jsx';
-import FieldLabel from '../elements/fields/label.jsx';
 import Hidden from '../elements/fields/hidden.jsx';
 import Wysiwyg from '../elements/fields/wysiwyg.jsx';
 

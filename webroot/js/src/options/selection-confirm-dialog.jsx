@@ -41,14 +41,17 @@ var SelectionConfirmDialog = React.createClass({
                 open={this.props.open}
                 title="Confirm Submission"
             >
+                {(this.props.submissionsSinceTimestamp) &&
+                    <div>
+                        <h5><span style={{marginRight: '5px'}}><WarningIcon colour="red" large={true} /></span>You have submitted another selection for this choice (possibly in another tab/window) since opening this tab/window. Submitting this selection will overwrite any previous selections you have made. If you are happy with this, choose Submit. Otherwise, choose Cancel.</h5>
+                    </div>
+                }
+            
                 {(this.props.selection.ruleWarnings) && 
                     <div>
                         <h5>
                             <span style={{marginRight: '5px'}}><WarningIcon colour={this.props.selection.allowSubmit?"orange":"red"} large={true} /></span>
-                            <WarningsTitle 
-                                allowSubmit={this.props.selection.allowSubmit}
-                                ruleWarnings={this.props.selection.ruleWarnings}
-                            />
+                            <WarningsTitle />
                         </h5>
                         <p>
                             <WarningsExplanation 

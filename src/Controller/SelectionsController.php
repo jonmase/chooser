@@ -168,6 +168,32 @@ class SelectionsController extends AppController
         $this->set(compact('choice', 'sections'));
     }
     
+    public function getConfirmed() {
+        //Make sure the user is allowed to view the results for this Choice
+        $choiceId = $this->SessionData->getChoiceId();
+        $currentUserId = $this->Auth->user('id');
+        $tool = $this->SessionData->getLtiTool();
+        
+        $isViewer = $this->Selections->ChoosingInstances->Choices->ChoicesUsers->isViewer($choiceId, $currentUserId, $tool);
+        if(!$isViewer) {
+            throw new ForbiddenException(__('Not permitted to view this Choice.'));
+        }
+
+        $choosingInstance = $this->Selections->ChoosingInstances->getActive($choiceId);
+        
+        $confirmedSelections = $this->Selections->findByInstanceAndUser($choosingInstance['id'], $currentUserId, true, true);
+        
+        /*$submittedTimestamps = [];
+        foreach($submittedSelections as $selection) {
+            $submittedTimestamps[$selection['id']] = $selection['modified']['timestamp'];
+        }*/
+        //pr($submittedTimestamps);
+        
+        $this->set(compact('confirmedSelections'));
+        $this->set('_serialize', ['confirmedSelections']);
+    }
+
+    
     public function getResults() {
         //Make sure the user is allowed to view the results for this Choice
         $choiceId = $this->SessionData->getChoiceId();
