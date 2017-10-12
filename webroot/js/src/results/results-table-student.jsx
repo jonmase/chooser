@@ -25,7 +25,7 @@ var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
             sortField: 'modified',
-            sortDirection: 'datetime',
+            sortDirection: 'desc',
         };
         
         return initialState;
