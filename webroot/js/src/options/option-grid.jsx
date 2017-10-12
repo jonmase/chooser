@@ -171,10 +171,10 @@ var OptionsGrid = React.createClass({
                     className="page-card"
                 >
                     <div style={{float: 'right', margin: '12px'}}>
-                        {/*<FilterButton
+                        <FilterButton
                             handleClick={this.props.optionContainerHandlers.filterClick} 
                             tooltip="Filter Options"
-                        />*/}
+                        />
                         <SortMenu 
                             handleChange={this.handleSort} 
                             items={this.getSortMenuItems()}
@@ -184,7 +184,7 @@ var OptionsGrid = React.createClass({
                         />
                     </div>
                     <CardHeader
-                        style={{marginRight: '48px'}}
+                        style={{marginRight: '96px'}}
                         textStyle={{paddingRight: 0}}
                         title={this.getTitle()}
                         subtitle={this.getSubtitle()}

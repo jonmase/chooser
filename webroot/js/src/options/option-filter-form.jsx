@@ -19,6 +19,11 @@ function OptionFilterForm(props) {
             }
         });
         
+        //Can't have a minDiff less than 1
+        if(minDiff < 1) {
+            minDiff = 1;
+        }
+        
         //Extra padding needs to be 100% divided by half the min difference, minus 4 as the slider allows a 5% gap either side
         var sliderRightPaddingAdjustment = (100/(minDiff*2) - 4) + '%';
         
