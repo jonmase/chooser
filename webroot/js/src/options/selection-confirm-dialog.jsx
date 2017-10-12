@@ -15,12 +15,22 @@ var SelectionConfirmDialog = React.createClass({
         this.props.handlers.submit(null, true);
     },
 
+    handleReload: function() {
+        window.location.reload();
+    },
+
     render: function() {
         var actions = [
             <FlatButton
                 key="cancel"
                 label="Cancel"
                 onTouchTap={this.props.handlers.close}
+                secondary={true}
+            />,
+            <FlatButton
+                key="reload"
+                label="Reload"
+                onTouchTap={this.handleReload}
                 secondary={true}
             />,
             <FlatButton
@@ -43,7 +53,13 @@ var SelectionConfirmDialog = React.createClass({
             >
                 {(this.props.submissionsSinceTimestamp) &&
                     <div>
-                        <h5><span style={{marginRight: '5px'}}><WarningIcon colour="red" large={true} /></span>You have submitted another selection for this choice (possibly in another tab/window) since opening this tab/window. Submitting this selection will overwrite any previous selections you have made. If you are happy with this, choose Submit. Otherwise, choose Cancel.</h5>
+                        <h5><span style={{marginRight: '5px'}}><WarningIcon colour="red" large={true} /></span>It looks like have submitted another selection for this choice (possibly in another tab, window or browser) since opening this page. Submitting this selection will overwrite any previous selections you have made. </h5>
+                        <ul>
+                            <li>Choose <b>Submit</b> if you are happy to overwrite your previous selections.</li>
+                            <li>Choose <b>Reload</b> to reload the page and view your most recent selection. You will lose the choices you have made on this page.</li>
+                            <li>Otherwise, choose <b>Cancel</b>.</li>
+                        </ul>
+                        
                     </div>
                 }
             

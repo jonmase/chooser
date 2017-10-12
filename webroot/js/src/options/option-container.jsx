@@ -23,6 +23,7 @@ import Basket from './selection-basket.jsx';
 import Review from './selection-review.jsx';
 import Confirmed from './selection-confirmed.jsx';
 import ConfirmDialog from './selection-confirm-dialog.jsx';
+import ReloadDialog from './reload-dialog.jsx';
 import OptionsTable from './option-table.jsx';
 import OptionsGrid from './option-grid.jsx';
 import OptionsList from './option-list.jsx';
@@ -159,6 +160,7 @@ var OptionContainer = React.createClass({
                 rules: [],
                 indexesById: [],
             },
+            reloadDialogOpen: false,
             selection: {
                 allowSubmit: false,
                 ruleWarnings: false,
@@ -209,15 +211,6 @@ var OptionContainer = React.createClass({
         });
     },
     
-    //Keep in container
-    //When click Change Selection button, go back to view and reset timestamp
-    handleChangeSelection: function() {
-        this.setState({
-            action: 'view',
-            timestamp: Date.now(),
-        });
-    },
-            
     //Could move to option-view-index (which doesn't exist yet)
     /*handleFavourite: function(choicesOptionId, action) {
         if(!choicesOptionId || !action) {
@@ -445,7 +438,14 @@ var OptionContainer = React.createClass({
             dataType: 'json',
             type: 'GET',
             success: function(returnedData) {
-                successCallback(returnedData);
+                var submissionsSinceTimestamp = [];
+                for(var selection in returnedData.confirmedSelections) {
+                    if(returnedData.confirmedSelections[selection]['modified']['timestamp'] > (this.state.timestamp/1000)) {
+                        submissionsSinceTimestamp.push(returnedData.confirmedSelections[selection]);
+                    }
+                }
+    
+                successCallback(submissionsSinceTimestamp);
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(url, status, err.toString());
@@ -456,6 +456,30 @@ var OptionContainer = React.createClass({
         });
     },
     
+    //Keep in container
+    //When click Change Selection button, go back to view and reset timestamp
+    handleSelectionChangeButtonClick: function() {
+        this.getSubmissionsSinceTimestamp(this.handleSelectionChangeButtonClickTimestampCheckSuccess);
+    },
+    
+    handleSelectionChangeButtonClickTimestampCheckSuccess: function(submissionsSinceTimestamp) {
+        if(submissionsSinceTimestamp.length > 0) {
+            //If there has been a submission since the timestamp, show the reload dialog
+            this.setState({
+                reloadDialogOpen: true,
+            });
+        }
+        else {
+            //Otherwise, just go back to the view
+            this.handleBackToView();
+        }
+    },
+    
+    handleReloadDialogClose: function(){
+        //When clicking ok from the reload dialog, reload the page
+        window.location.reload();   
+    },
+            
     handleSelectionAbandonChanges: function() {
         console.log('abandon changes');
         
@@ -607,14 +631,7 @@ var OptionContainer = React.createClass({
         }
     },
     
-    handleSelectionConfirmButtonClickTimestampCheckSuccess: function(returnedData) {
-        var submissionsSinceTimestamp = [];
-        for(var selection in returnedData.confirmedSelections) {
-            if(returnedData.confirmedSelections[selection]['modified']['timestamp'] > (this.state.timestamp/1000)) {
-                submissionsSinceTimestamp.push(returnedData.confirmedSelections[selection]);
-            }
-        }
-    
+    handleSelectionConfirmButtonClickTimestampCheckSuccess: function(submissionsSinceTimestamp) {
         if(submissionsSinceTimestamp.length > 0 || !this.state.instance.choosing.editable || this.state.selection.ruleWarnings) {
             this.handleSelectionConfirmDialogOpen(submissionsSinceTimestamp);
         }
@@ -793,6 +810,7 @@ var OptionContainer = React.createClass({
                 if(action === "confirm") {
                     newState.action = 'confirmed';
                     newState.confirmedSelection = returnedData.selection;
+                    newState.timestamp = Date.now();
                 }
 
                 this.setState(newState);
@@ -1144,18 +1162,26 @@ var OptionContainer = React.createClass({
 
             case 'confirmed': //Confirmed
                 return (
-                    <Confirmed
-                        choice={this.props.choice}
-                        choosingInstance={this.state.instance.choosing}
-                        optionContainerHandlers={{
-                            change: this.handleChangeSelection,
-                        }}
-                        options={this.state.options}
-                        optionsSelected={this.state.optionsSelected}
-                        optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
-                        rankSelectsDisabled={this.state.rankSelectsDisabled}
-                        selection={this.state.selection}
-                    />
+                    <div>
+                        <Confirmed
+                            choice={this.props.choice}
+                            choosingInstance={this.state.instance.choosing}
+                            optionContainerHandlers={{
+                                change: this.handleSelectionChangeButtonClick,
+                            }}
+                            options={this.state.options}
+                            optionsSelected={this.state.optionsSelected}
+                            optionsSelectedPreferenceOrder={this.state.optionsSelectedPreferenceOrder}
+                            rankSelectsDisabled={this.state.rankSelectsDisabled}
+                            selection={this.state.selection}
+                        />
+                        <ReloadDialog 
+                            open={this.state.reloadDialogOpen}
+                            handlers={{
+                                close: this.handleReloadDialogClose,
+                            }}
+                        />
+                    </div>
                 );
             default:
                 return null;
