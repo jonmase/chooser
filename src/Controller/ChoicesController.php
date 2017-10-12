@@ -222,7 +222,7 @@ class ChoicesController extends AppController
             //Save everything
             if($this->Choices->ChoicesLtiContext->save($choiceContext)) {
                 //Add the choice to the session
-                $session->write('choiceId', $choice->id);
+                $this->request->session()->write('choiceId', $choiceContext->choice_id);
                 
                 //Redirect to the Choice
                 $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
