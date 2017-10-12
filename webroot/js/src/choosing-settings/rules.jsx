@@ -109,21 +109,22 @@ var Rules = React.createClass({
                 className="page-card"
                 initiallyExpanded={true}
             >
+                <div style={{float: 'right'}}>
+                    {(this.props.instance.id)?
+                        <AddButton
+                            handleClick={this.props.handlers.editButtonClick}
+                            tooltip="Add Rule"
+                        />
+                    :""}
+                </div>
                 <CardHeader
-                    title="Rules"
-                    subtitle="The rules for making valid choices"
                     actAsExpander={false}
                     showExpandableButton={false}
-                >
-                    <div style={{float: 'right'}}>
-                        {(this.props.instance.id)?
-                            <AddButton
-                                handleClick={this.props.handlers.editButtonClick}
-                                tooltip="Add Rule"
-                            />
-                        :""}
-                    </div>
-                </CardHeader>
+                    style={{marginRight: '48px'}}
+                    textStyle={{paddingRight: 0}}
+                    title="Rules"
+                    subtitle="The rules for making valid choices"
+                />
                 <CardText 
                     expandable={true}
                 >

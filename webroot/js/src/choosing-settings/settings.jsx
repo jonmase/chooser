@@ -35,24 +35,25 @@ var Settings = React.createClass({
                 className="page-card"
                 initiallyExpanded={true}
             >
+                <div style={{float: 'right'}}>
+                    <ResetButton
+                        handleClick={this.handleResetButtonClick}
+                        tooltip="Reset Choice"
+                    />
+                    <EditButton
+                        handleClick={this.props.handlers.editButtonClick}
+                        id={null}
+                        tooltip={editTooltip}
+                    />
+                </div>
                 <CardHeader
                     actAsExpander={false}
                     showExpandableButton={false}
-                    subtitle="When the choice opens and closes, instructions, and other options"
+                    style={{marginRight: '96px'}}
+                    textStyle={{paddingRight: 0}}
                     title="Settings"
-                >
-                    <div style={{float: 'right'}}>
-                        <ResetButton
-                            handleClick={this.handleResetButtonClick}
-                            tooltip="Reset Choice"
-                        />
-                        <EditButton
-                            handleClick={this.props.handlers.editButtonClick}
-                            id={null}
-                            tooltip={editTooltip}
-                        />
-                    </div>
-                </CardHeader>
+                    subtitle="When the choice opens and closes, instructions, and other options"
+                />
                 <CardText 
                     expandable={false}
                 >

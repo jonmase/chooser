@@ -61,41 +61,41 @@ var UsersTable = React.createClass({
                     className="page-card"
                     //initiallyExpanded={true}
                 >
+                    <div style={{float: 'right'}}>
+                        <FilterUsers
+                            filteredRoles={this.props.filteredRoles}
+                            handler={props.handlers.filter} 
+                            iconStyle={(this.props.filteredRoles.length > 0)?{color: indigo500}:{}}
+                            roles={props.roles} 
+                        />&nbsp;
+                        <EditButton
+                            disabled={this.props.usersSelected.length===0?true:false}
+                            handleClick={this.props.handlers.setButtonClick}
+                            id={this.props.usersSelected}
+                            tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
+                        />&nbsp;
+                        <DeleteButton
+                            disabled={this.props.usersSelected.length===0?true:false}
+                            handleClick={this.props.handlers.deleteButtonClick}
+                            id={this.props.usersSelected}
+                            tooltip={this.props.usersSelected.length===0?"":"Remove Selected Users"}
+                        />&nbsp;
+                        <AddButton
+                            handleClick={this.props.handlers.setButtonClick}
+                            tooltip="Set Permissions"
+                        />
+                        {/*<UsersActionMenu
+                        
+                        />*/}
+                    </div>
                     <CardHeader
-                        title="Additional Permissions"
-                        subtitle="Give additional permissions to specific users"
-                        textStyle={{paddingRight: '20px'}}
                         //actAsExpander={true}
                         //showExpandableButton={true}
-                    >
-                        <div style={{float: 'right'}}>
-                            <FilterUsers
-                                filteredRoles={this.props.filteredRoles}
-                                handler={props.handlers.filter} 
-                                iconStyle={(this.props.filteredRoles.length > 0)?{color: indigo500}:{}}
-                                roles={props.roles} 
-                            />&nbsp;
-                            <EditButton
-                                disabled={this.props.usersSelected.length===0?true:false}
-                                handleClick={this.props.handlers.setButtonClick}
-                                id={this.props.usersSelected}
-                                tooltip={this.props.usersSelected.length===0?"":"Edit Selected Users"}
-                            />&nbsp;
-                            <DeleteButton
-                                disabled={this.props.usersSelected.length===0?true:false}
-                                handleClick={this.props.handlers.deleteButtonClick}
-                                id={this.props.usersSelected}
-                                tooltip={this.props.usersSelected.length===0?"":"Remove Selected Users"}
-                            />&nbsp;
-                            <AddButton
-                                handleClick={this.props.handlers.setButtonClick}
-                                tooltip="Set Permissions"
-                            />
-                            {/*<UsersActionMenu
-                            
-                            />*/}
-                        </div>
-                    </CardHeader>
+                        style={{marginRight: '192px'}}
+                        textStyle={{paddingRight: '0px'}}
+                        title="Additional Permissions"
+                        subtitle="Give additional permissions to specific users"
+                    />
                     <CardText 
                         //expandable={true}
                         style={styles.cardText}

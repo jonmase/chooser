@@ -248,23 +248,22 @@ var OptionsTable = React.createClass({
                     className="page-card"
                     //initiallyExpanded={true}
                 >
+                    <div style={{float: 'right'}}>
+                        {(this.props.action === 'edit')&&
+                            <AddButton 
+                                handleClick={this.props.optionContainerHandlers.edit} 
+                                tooltip="Add Option"
+                            />
+                        }
+                    </div>
                     <CardHeader
-                        title={title}
-                        subtitle={subtitle}
-                        textStyle={{float: 'left'}}
-                        style={{height: '72px'}}
                         //actAsExpander={true}
                         //showExpandableButton={true}
-                    >
-                        <div style={{float: 'right', marginTop: '-4px'}}>
-                            {(this.props.action === 'edit')&&
-                                <AddButton 
-                                    handleClick={this.props.optionContainerHandlers.edit} 
-                                    tooltip="Add Option"
-                                />
-                            }
-                        </div>
-                    </CardHeader>
+                        style={{marginRight: '48px'}}
+                        textStyle={{paddingRight: 0}}
+                        title={title}
+                        subtitle={subtitle}
+                    />
                     <CardText 
                         //expandable={true}
                         style={styles.cardText}

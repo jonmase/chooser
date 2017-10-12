@@ -128,8 +128,9 @@ var ExtraFields = React.createClass({
                     />
                 </div>
                 <CardHeader
+                    style={{marginRight: '48px'}}
+                    textStyle={{paddingRight: '0px'}}
                     title="Extra Fields"
-                    style={{marginRight: '60px'}}
                     subtitle="Add custom fields to the options form for this Choice"
                 />
                 <CardText>

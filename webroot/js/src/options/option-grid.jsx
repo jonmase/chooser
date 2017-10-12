@@ -184,10 +184,10 @@ var OptionsGrid = React.createClass({
                         />
                     </div>
                     <CardHeader
+                        style={{marginRight: '48px'}}
+                        textStyle={{paddingRight: 0}}
                         title={this.getTitle()}
                         subtitle={this.getSubtitle()}
-                        textStyle={{paddingRight: 0}}
-                        style={{marginRight: '120px'}}
                     >
                     </CardHeader>
                     <div style={{clear: 'both'}}></div>
