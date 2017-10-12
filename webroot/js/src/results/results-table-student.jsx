@@ -24,8 +24,8 @@ var styles = {
 var ResultsTable = React.createClass({
     getInitialState: function () {
         var initialState = {
-            sortField: 'user.username',
-            sortDirection: 'asc',
+            sortField: 'modified',
+            sortDirection: 'datetime',
         };
         
         return initialState;
