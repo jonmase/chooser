@@ -218,7 +218,7 @@ var OptionsGrid = React.createClass({
                                     var firstSecondaryTextItem = true;
                                 
                                     return (
-                                        <div key={option.id}>
+                                        <div key={option.id} className={option.visible?"":"hidden"}>
                                             {index>0&&<Divider />}
                                             <ListItem
                                                 leftCheckbox={this.props.selectionEnabled?<Checkbox checked={this.state.optionsSelectedIds.indexOf(option.id) > -1} onCheck={(e, checked) => {this.handleSelectOption(option.id, checked)}} />:null}

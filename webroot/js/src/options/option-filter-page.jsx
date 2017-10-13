@@ -90,7 +90,28 @@ var OptionFilterPage = React.createClass({
     },
     
     handleFilterButtonClick: function() {
+        
+    
         this.refs.filter.submit();
+    },
+    
+    handleFilterSubmit: function(filters) {
+        //Work out which filters are active
+        var activeFilters = {};
+        var stateUpdates = {};
+        
+        if(this.props.choosable) {
+            stateUpdates.selectedValue = filters.selected;
+            if(filters.selected === "selected") {
+                activeFilters.selected = true;
+            }
+            else {
+                activeFilters.selected = false;
+            }
+        }
+        
+        this.setState(stateUpdates);
+        this.props.optionContainerHandlers.filter(activeFilters);
     },
     
     handleSliderChange: function(fieldName, value) {
@@ -139,7 +160,7 @@ var OptionFilterPage = React.createClass({
                     noValidate={true}
                     onValid={this.enableSubmitButton}
                     onInvalid={this.disableSubmitButton}
-                    onValidSubmit={this.props.optionContainerHandlers.filter}
+                    onValidSubmit={this.handleFilterSubmit}
                     ref="filter"
                 >
                     <OptionFilterForm

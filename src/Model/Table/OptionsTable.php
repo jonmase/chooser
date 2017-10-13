@@ -516,6 +516,8 @@ class OptionsTable extends Table
         }
         unset($option->extra);
         
+        $option->visible = true;
+        
         //pr($option);
         return $option;
     }

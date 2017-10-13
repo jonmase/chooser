@@ -260,28 +260,38 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleFilterSubmit(filters) {
+    handleFilterSubmit(activeFilters) {
         console.log("Filter the options:");
-        console.log(filters);
+        console.log(activeFilters);
         
-        //Work out which filters are active
-        var activeFilters = {};
+        var filteredOptionsState = this.props.deepCopyHelper(this.state.options.options);
+        filteredOptionsState.forEach(function(option, index) {
+            filteredOptionsState[index].visible = true; //Reset options to true before applying filters
         
-        if(this.state.instance.choosing.choosable && filters.selected !== "all") {
-            if(filters.selected === "selected") {
-                activeFilters.selected = true;
-            }
-            else {
-                activeFilters.selected = false;
-            }
-        }
-        
-        this.state.options.options.forEach(function(option) {
             if(typeof(activeFilters.selected) !== "undefined") {
                 console.log("filter by selected: " + activeFilters.selected);
-                //this.state.optionsSelectedTableOrder.indexOf(option.id)
+                
+                if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
+                    if(!activeFilters.selected) {   //Filtering to show unselected
+                        filteredOptionsState[index].visible = false;   //Hide this one
+                    }
+                }
+                else {  //Option is not selection
+                    if(activeFilters.selected) {   //Filtering to show selected
+                        filteredOptionsState[index].visible = false;   //Hide this one
+                    }
+                }
             }
-        });
+        }, this);
+        
+        this.setState({
+            action: 'view',
+            options: {
+                options: filteredOptionsState,
+                indexesById: this.state.options.indexesById,
+                loaded: true,
+            },
+        })
     },
 
     //Could move to option-view-index (which doesn't exist yet)
