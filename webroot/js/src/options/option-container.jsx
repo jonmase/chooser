@@ -200,6 +200,7 @@ var OptionContainer = React.createClass({
     getEmptyActiveFilters: function() {
         return {
             numeric: {},
+            list: {},
         };
     },
     
@@ -291,9 +292,15 @@ var OptionContainer = React.createClass({
                 
                 if(optionVisible) {
                     for(var field in activeFilters.numeric) {
-                        //console.log(field);
-                        //console.log(activeFilters.numeric[field]);
                         if(filteredOptionsState[index][field] < activeFilters.numeric[field][0] || filteredOptionsState[index][field] > activeFilters.numeric[field][1]){
+                            optionVisible = false;   //Hide this option
+                        }
+                    }
+                }
+                
+                if(optionVisible) {
+                    for(var field in activeFilters.list) {
+                        if(!activeFilters.list[field][filteredOptionsState[index][field]]){
                             optionVisible = false;   //Hide this option
                         }
                     }

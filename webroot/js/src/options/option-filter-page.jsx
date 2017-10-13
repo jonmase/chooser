@@ -148,21 +148,43 @@ var OptionFilterPage = React.createClass({
         this.refs.filter.submit();
     },
     
-    handleFilterSubmit: function(filters) {
+    handleFilterSubmit: function(filterValues) {
         //Work out which filters are active
         var activeFilters = this.props.emptyActiveFilters;
         
         //If choosing is enabled and selected filter is not set to all, the filter is active
-        if(this.props.choosable && filters.selected !== "all") {
-            activeFilters.selected = filters.selected;
+        if(this.props.choosable && filterValues.selected !== "all") {
+            activeFilters.selected = filterValues.selected;
         }
         
         //Get the values for the numerical sliders and add these to active filters
         this.props.filters.numericalFields.map(function(field) {
-            var stateValues = this.state.sliderValues[field.name];
+            var stateSliderValues = this.state.sliderValues[field.name];
             //Only add to active filters if values are not at slider min and max
-            if(stateValues[0] > this.props.filters.values[field.name].min || stateValues[1] < this.props.filters.values[field.name].max) {
-                activeFilters.numeric[field.name] = this.state.sliderValues[field.name];
+            if(stateSliderValues[0] > this.props.filters.values[field.name].min || stateSliderValues[1] < this.props.filters.values[field.name].max) {
+                activeFilters.numeric[field.name] = stateSliderValues;
+            }
+        }, this);
+        
+        this.props.filters.listFields.map(function(field) {
+            var countTrue = 0;
+            var countFalse = 0;
+            //var selectedValues = [];
+        
+            field.options.map(function(option) {
+                if(filterValues[field.name][option.value]) {
+                    countTrue++;
+                    //selectedValues.push(option);
+                }
+                else {
+                    countFalse++;
+                }
+            }, this);
+            
+            //If either of the counts is 0, all the options are selected or not selected so don't filter
+            if(countTrue > 0 && countFalse > 0) {
+                //If filtering, add the selected values to activeFilters
+                activeFilters.list[field.name] = filterValues[field.name];
             }
         }, this);
         
