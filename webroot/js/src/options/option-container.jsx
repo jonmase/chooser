@@ -130,7 +130,9 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
-            activeFilters: {},
+            activeFilters: {
+                numeric: {},
+            },
             //stepIndex: 0,
             basketDisabled: false,
             canConfirm: true,
@@ -267,20 +269,32 @@ var OptionContainer = React.createClass({
         
         var filteredOptionsState = this.props.deepCopyHelper(this.state.options.options);
         filteredOptionsState.forEach(function(option, index) {
-            filteredOptionsState[index].visible = true; //Reset options to true before applying filters
+            var optionVisible = true; //Reset options to true before applying filters
 
             if(typeof(activeFilters.selected) !== "undefined") {
                 if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
                     if(activeFilters.selected === "unselected") {   //Filtering to show unselected
-                        filteredOptionsState[index].visible = false;   //Hide this one
+                        optionVisible = false;   //Hide this option
                     }
                 }
                 else {  //Option is not selection
                     if(activeFilters.selected === "selected") {   //Filtering to show selected
-                        filteredOptionsState[index].visible = false;   //Hide this one
+                        optionVisible = false;   //Hide this option
                     }
                 }
             }
+            
+            if(optionVisible) {
+                for(var field in activeFilters.numeric) {
+                    //console.log(field);
+                    //console.log(activeFilters.numeric[field]);
+                    if(filteredOptionsState[index][field] < activeFilters.numeric[field][0] || filteredOptionsState[index][field] > activeFilters.numeric[field][1]){
+                        optionVisible = false;   //Hide this option
+                    }
+                }
+            }
+            
+            filteredOptionsState[index].visible = optionVisible;
         }, this);
         
         this.setState({

@@ -116,8 +116,8 @@ var OptionFilterPage = React.createClass({
         var sliderValues = {};
         
         this.props.filters.numericalFields.map(function(field) {
-            if(typeof(this.props.activeFilters[field.name]) !== "undefined") {
-                sliderValues[field.name] = this.props.activeFilters[field.name].slice();
+            if(typeof(this.props.activeFilters.numeric[field.name]) !== "undefined") {
+                sliderValues[field.name] = this.props.activeFilters.numeric[field.name].slice();
             }
             else {
                 sliderValues[field.name] = this.getDefaultSliderValue(field.name);
@@ -148,7 +148,9 @@ var OptionFilterPage = React.createClass({
     
     handleFilterSubmit: function(filters) {
         //Work out which filters are active
-        var activeFilters = {};
+        var activeFilters = {
+            numeric: {},
+        };
         
         //If choosing is enabled and selected filter is not set to all, the filter is active
         if(this.props.choosable && activeFilters.selected !== "all") {
@@ -160,7 +162,7 @@ var OptionFilterPage = React.createClass({
             var stateValues = this.state.sliderValues[field.name];
             //Only add to active filters if values are not at slider min and max
             if(stateValues[0] > this.props.filters.values[field.name].min || stateValues[1] < this.props.filters.values[field.name].max) {
-                activeFilters[field.name] = this.state.sliderValues[field.name];
+                activeFilters.numeric[field.name] = this.state.sliderValues[field.name];
             }
         }, this);
         
