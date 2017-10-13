@@ -78,7 +78,7 @@ var RangeSlider = React.createClass({
     render: function() {
         return (
             <div className={this.props.section?"section":""} style={{paddingRight: this.props.rightPaddingAdjustment, paddingBottom: '20px'}}>
-                <label className="option-field-label">{this.props.label}: {/*<span>{this.props.value[0]} to {this.props.value[1]}</span>*/}</label>
+                <label className="option-field-label">{this.props.label}: <span>{this.props.value[0]} to {this.props.value[1]}</span></label>
                 <Range 
                     activeDotStyle={{borderColor: indigo500}}
                     allowCross={true}
