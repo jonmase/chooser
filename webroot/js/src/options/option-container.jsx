@@ -292,7 +292,7 @@ var OptionContainer = React.createClass({
                 
                 if(optionVisible) {
                     for(var field in activeFilters.numeric) {
-                        if(filteredOptionsState[index][field] < activeFilters.numeric[field][0] || filteredOptionsState[index][field] > activeFilters.numeric[field][1]){
+                        if(option[field] < activeFilters.numeric[field][0] || option[field] > activeFilters.numeric[field][1]){
                             optionVisible = false;   //Hide this option
                         }
                     }
@@ -300,8 +300,28 @@ var OptionContainer = React.createClass({
                 
                 if(optionVisible) {
                     for(var field in activeFilters.list) {
-                        if(!activeFilters.list[field][filteredOptionsState[index][field]]){
-                            optionVisible = false;   //Hide this option
+                        //If field value is an object, this is a checkbox field
+                        if(typeof(option[field]) === "object") {
+                            //Loop through this options values until we find one that is switched on in the filter
+                            var hasFilteredValue = false;
+                            for(var value in option[field]) {
+                                //Is this value on for this option and in the list of filtered values?
+                                if(option[field][value] && activeFilters.list[field][value]) {
+                                    hasFilteredValue = true;
+                                    break;  //Can stop once we find a filtered value
+                                }
+                            }
+                            
+                            //If hasFilteredValue is still false after looping through all of the option's values, hide the option
+                            if(!hasFilteredValue) {
+                                optionVisible = false;   //Hide this option
+                            }
+                        }
+                        //Otherwise field value is just a string and this is a radio/dropdown field, so can just see if this option's value is switched on in the filter
+                        else {
+                            if(!activeFilters.list[field][option[field]]){
+                                optionVisible = false;   //Hide this option
+                            }
                         }
                     }
                 }
