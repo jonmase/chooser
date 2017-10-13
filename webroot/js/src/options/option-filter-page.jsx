@@ -149,19 +149,21 @@ var OptionFilterPage = React.createClass({
     handleFilterSubmit: function(filters) {
         //Work out which filters are active
         var activeFilters = {};
-        //var stateUpdates = {};
         
         //If choosing is enabled and selected filter is not set to all, the filter is active
         if(this.props.choosable && activeFilters.selected !== "all") {
-            //stateUpdates.selectedValue = filters.selected;
             activeFilters.selected = filters.selected;
         }
         
+        //Get the values for the numerical sliders and add these to active filters
         this.props.filters.numericalFields.map(function(field) {
-            activeFilters[field.name] = this.state.sliderValues[field.name];
+            var stateValues = this.state.sliderValues[field.name];
+            //Only add to active filters if values are not at slider min and max
+            if(stateValues[0] > this.props.filters.values[field.name].min || stateValues[1] < this.props.filters.values[field.name].max) {
+                activeFilters[field.name] = this.state.sliderValues[field.name];
+            }
         }, this);
         
-        //this.setState(stateUpdates);
         this.props.optionContainerHandlers.filter(activeFilters);
     },
     
