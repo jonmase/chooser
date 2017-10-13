@@ -122,7 +122,7 @@ var OptionsGrid = React.createClass({
             return 'Click on an option to choose it. Sort the options using the button to the right. Use the ... buttons to view full details.';
         }
         else {
-            return 'Click on an option to view full details. Sort the options using the button to the right.';
+            return 'Click on an option to view full details. Filter and Sort the options using the buttons to the right.';
         }
     },
     
