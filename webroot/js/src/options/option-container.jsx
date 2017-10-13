@@ -130,9 +130,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
-            activeFilters: {
-                numeric: {},
-            },
+            activeFilters: this.getEmptyActiveFilters(),
             //stepIndex: 0,
             basketDisabled: false,
             canConfirm: true,
@@ -199,6 +197,12 @@ var OptionContainer = React.createClass({
         }
     },
     
+    getEmptyActiveFilters: function() {
+        return {
+            numeric: {},
+        };
+    },
+    
     //Keep in container
     handleBackToEdit: function() {
         //Return to edit action
@@ -263,7 +267,7 @@ var OptionContainer = React.createClass({
         });
     },
     
-    handleFilterSubmit(activeFilters) {
+    handleFilterSubmit(activeFilters, returnToView) {
         console.log("Filter the options:");
         console.log(activeFilters);
         
@@ -271,25 +275,27 @@ var OptionContainer = React.createClass({
         filteredOptionsState.forEach(function(option, index) {
             var optionVisible = true; //Reset options to true before applying filters
 
-            if(typeof(activeFilters.selected) !== "undefined") {
-                if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
-                    if(activeFilters.selected === "unselected") {   //Filtering to show unselected
-                        optionVisible = false;   //Hide this option
+            if(activeFilters) {
+                if(typeof(activeFilters.selected) !== "undefined") {
+                    if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
+                        if(activeFilters.selected === "unselected") {   //Filtering to show unselected
+                            optionVisible = false;   //Hide this option
+                        }
+                    }
+                    else {  //Option is not selection
+                        if(activeFilters.selected === "selected") {   //Filtering to show selected
+                            optionVisible = false;   //Hide this option
+                        }
                     }
                 }
-                else {  //Option is not selection
-                    if(activeFilters.selected === "selected") {   //Filtering to show selected
-                        optionVisible = false;   //Hide this option
-                    }
-                }
-            }
-            
-            if(optionVisible) {
-                for(var field in activeFilters.numeric) {
-                    //console.log(field);
-                    //console.log(activeFilters.numeric[field]);
-                    if(filteredOptionsState[index][field] < activeFilters.numeric[field][0] || filteredOptionsState[index][field] > activeFilters.numeric[field][1]){
-                        optionVisible = false;   //Hide this option
+                
+                if(optionVisible) {
+                    for(var field in activeFilters.numeric) {
+                        //console.log(field);
+                        //console.log(activeFilters.numeric[field]);
+                        if(filteredOptionsState[index][field] < activeFilters.numeric[field][0] || filteredOptionsState[index][field] > activeFilters.numeric[field][1]){
+                            optionVisible = false;   //Hide this option
+                        }
                     }
                 }
             }
@@ -297,15 +303,27 @@ var OptionContainer = React.createClass({
             filteredOptionsState[index].visible = optionVisible;
         }, this);
         
-        this.setState({
-            action: 'view',
-            activeFilters: activeFilters,
+        var updatedState = {
             options: {
                 options: filteredOptionsState,
                 indexesById: this.state.options.indexesById,
                 loaded: true,
             },
-        })
+        }
+        
+        if(!activeFilters) {
+            updatedState.activeFilters = this.getEmptyActiveFilters();
+        }
+        else {
+            updatedState.activeFilters = activeFilters;
+        }
+        
+        if(returnToView) {
+            updatedState.action = 'view';
+        }
+        
+        
+        this.setState(updatedState);
     },
 
     //Could move to option-view-index (which doesn't exist yet)
@@ -1116,6 +1134,7 @@ var OptionContainer = React.createClass({
                         activeFilters={this.state.activeFilters} 
                         choice={this.props.choice}
                         choosable={this.state.instance.choosing.choosable}
+                        emptyActiveFilters={this.getEmptyActiveFilters()}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
                             backToView: this.handleBackToView,

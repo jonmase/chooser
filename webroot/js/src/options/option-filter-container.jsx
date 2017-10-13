@@ -123,6 +123,7 @@ var OptionFilterContainer = React.createClass({
                 action={this.props.action}
                 activeFilters={this.props.activeFilters} 
                 choosable={this.props.choosable}
+                emptyActiveFilters={this.props.emptyActiveFilters}
                 filters={this.getFilters()}
                 optionContainerHandlers={this.props.optionContainerHandlers}
             />

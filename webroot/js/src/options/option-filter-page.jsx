@@ -140,6 +140,8 @@ var OptionFilterPage = React.createClass({
         this.refs.filter.reset();
         
         this.setState(this.getDefaultValues());
+        
+        this.props.optionContainerHandlers.filter(false, false);
     },
     
     handleFilterButtonClick: function() {
@@ -148,12 +150,10 @@ var OptionFilterPage = React.createClass({
     
     handleFilterSubmit: function(filters) {
         //Work out which filters are active
-        var activeFilters = {
-            numeric: {},
-        };
+        var activeFilters = this.props.emptyActiveFilters;
         
         //If choosing is enabled and selected filter is not set to all, the filter is active
-        if(this.props.choosable && activeFilters.selected !== "all") {
+        if(this.props.choosable && filters.selected !== "all") {
             activeFilters.selected = filters.selected;
         }
         
@@ -166,7 +166,7 @@ var OptionFilterPage = React.createClass({
             }
         }, this);
         
-        this.props.optionContainerHandlers.filter(activeFilters);
+        this.props.optionContainerHandlers.filter(activeFilters, true);
     },
     
     handleSliderChange: function(fieldName, value) {
