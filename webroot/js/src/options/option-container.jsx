@@ -130,6 +130,7 @@ var OptionContainer = React.createClass({
     getInitialState: function () {
         var initialState = {
             action: this.props.action,
+            activeFilters: {},
             //stepIndex: 0,
             basketDisabled: false,
             canConfirm: true,
@@ -267,17 +268,17 @@ var OptionContainer = React.createClass({
         var filteredOptionsState = this.props.deepCopyHelper(this.state.options.options);
         filteredOptionsState.forEach(function(option, index) {
             filteredOptionsState[index].visible = true; //Reset options to true before applying filters
-        
+
             if(typeof(activeFilters.selected) !== "undefined") {
                 console.log("filter by selected: " + activeFilters.selected);
                 
                 if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
-                    if(!activeFilters.selected) {   //Filtering to show unselected
+                    if(activeFilters.selected === "unselected") {   //Filtering to show unselected
                         filteredOptionsState[index].visible = false;   //Hide this one
                     }
                 }
                 else {  //Option is not selection
-                    if(activeFilters.selected) {   //Filtering to show selected
+                    if(activeFilters.selected === "selected") {   //Filtering to show selected
                         filteredOptionsState[index].visible = false;   //Hide this one
                     }
                 }
@@ -286,6 +287,7 @@ var OptionContainer = React.createClass({
         
         this.setState({
             action: 'view',
+            activeFilters: activeFilters,
             options: {
                 options: filteredOptionsState,
                 indexesById: this.state.options.indexesById,
@@ -1099,6 +1101,7 @@ var OptionContainer = React.createClass({
                 return (
                     <OptionFilterContainer
                         action={this.state.action}
+                        activeFilters={this.state.activeFilters} 
                         choice={this.props.choice}
                         choosable={this.state.instance.choosing.choosable}
                         optionContainerHandlers={{

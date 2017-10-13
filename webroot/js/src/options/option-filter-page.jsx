@@ -57,10 +57,14 @@ var OptionFilterPage = React.createClass({
     },
 
     getInitialFavouritesToggleValue: function () {
+    
         return "all";
     },
     
     getInitialSelectedToggleValue: function () {
+        if(typeof(this.props.activeFilters.selected) !== "undefined") {
+            return this.props.activeFilters.selected;
+        }
         return "all";
     },
     
@@ -98,19 +102,15 @@ var OptionFilterPage = React.createClass({
     handleFilterSubmit: function(filters) {
         //Work out which filters are active
         var activeFilters = {};
-        var stateUpdates = {};
+        //var stateUpdates = {};
         
-        if(this.props.choosable) {
-            stateUpdates.selectedValue = filters.selected;
-            if(filters.selected === "selected") {
-                activeFilters.selected = true;
-            }
-            else {
-                activeFilters.selected = false;
-            }
+        //If choosing is enabled and selected filter is not set to all, the filter is active
+        if(this.props.choosable && activeFilters.selected !== "all") {
+            //stateUpdates.selectedValue = filters.selected;
+            activeFilters.selected = filters.selected;
         }
         
-        this.setState(stateUpdates);
+        //this.setState(stateUpdates);
         this.props.optionContainerHandlers.filter(activeFilters);
     },
     
