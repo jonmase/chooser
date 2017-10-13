@@ -39,6 +39,7 @@ var OptionFilterPage = React.createClass({
         return {
             dateTimeValues: this.getDefaultDateTimeValues(),
             favouritesValue: this.getDefaultFavouritesToggleValue(),
+            listValues: this.getDefaultListValues(),
             selectedValue: this.getDefaultSelectedToggleValue(),
             sliderValues: this.getDefaultAllSliderValues(),
         }
@@ -61,6 +62,16 @@ var OptionFilterPage = React.createClass({
     //Defaults for favourites is show all
     getDefaultFavouritesToggleValue: function () {
         return "all";
+    },
+    
+    getDefaultListValues: function () {
+        var listValues = {};
+        
+        this.props.filters.listFields.map(function(field) {
+            listValues[field.name] = {};
+        });
+        
+        return listValues;
     },
     
     //Defaults for selected is show all
@@ -89,6 +100,7 @@ var OptionFilterPage = React.createClass({
         return {
             dateTimeValues: this.getInitialDateTimeValues(),
             favouritesValue: this.getInitialFavouritesToggleValue(),
+            listValues: this.getInitialListValues(),
             selectedValue: this.getInitialSelectedToggleValue(),
             sliderValues: this.getInitialSliderValues(),
         }
@@ -103,6 +115,21 @@ var OptionFilterPage = React.createClass({
             return this.props.activeFilters.favourites;
         }
         return this.getDefaultFavouritesToggleValue();
+    },
+    
+    getInitialListValues: function () {
+        var listValues = {};
+        
+        this.props.filters.listFields.map(function(field) {
+            if(typeof(this.props.activeFilters.list[field.name]) !== "undefined") {
+                listValues[field.name] = this.props.activeFilters.list[field.name];
+            }
+            else {
+                listValues[field.name] = {};
+            }
+        }, this);
+        
+        return listValues;
     },
     
     getInitialSelectedToggleValue: function () {
@@ -245,6 +272,7 @@ var OptionFilterPage = React.createClass({
                         dateTimeValues={this.state.dateTimeValues}
                         favouritesValue={this.state.favouritesValue}
                         filters={this.props.filters}
+                        listValues={this.state.listValues}
                         selectedValue={this.state.selectedValue}
                         sliderValues={this.state.sliderValues}
                         handlers={{

@@ -103,6 +103,8 @@ function OptionFilterForm(props) {
             {props.filters.listFields.map(function(field) {
                 field.section = true;
                 
+                field.value = props.listValues[field.name];
+                
                 return (
                     <Checkbox
                         field={field}
