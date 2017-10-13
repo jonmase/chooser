@@ -34,16 +34,7 @@ var OptionFilterPage = React.createClass({
         });
     },
     
-    getInitialValues: function() {
-        return {
-            dateTimeValues: this.getInitialDateTimeValues(),
-            favouritesValue: this.getInitialFavouritesToggleValue(),
-            selectedValue: this.getInitialSelectedToggleValue(),
-            sliderValues: this.getInitialSliderValues(),
-        }
-    },
-    
-    getInitialDateTimeValues: function () {
+    getDefaultDateTimeValues: function () {
         var dateTimeValues = {};
         
         this.props.filters.dateTimeFields.map(function(field) {
@@ -56,19 +47,15 @@ var OptionFilterPage = React.createClass({
         return dateTimeValues;
     },
 
-    getInitialFavouritesToggleValue: function () {
-    
+    getDefaultFavouritesToggleValue: function () {
         return "all";
     },
     
-    getInitialSelectedToggleValue: function () {
-        if(typeof(this.props.activeFilters.selected) !== "undefined") {
-            return this.props.activeFilters.selected;
-        }
+    getDefaultSelectedToggleValue: function () {
         return "all";
     },
     
-    getInitialSliderValues: function () {
+    getDefaultSliderValues: function () {
         var sliderValues = {};
         
         this.props.filters.numericalFields.map(function(field) {
@@ -76,6 +63,43 @@ var OptionFilterPage = React.createClass({
         }, this);
         
         return sliderValues;
+    },
+    
+    getDefaultValues: function() {
+        return {
+            dateTimeValues: this.getDefaultDateTimeValues(),
+            favouritesValue: this.getDefaultFavouritesToggleValue(),
+            selectedValue: this.getDefaultSelectedToggleValue(),
+            sliderValues: this.getDefaultSliderValues(),
+        }
+    },
+    
+    getInitialDateTimeValues: function () {
+        return this.getDefaultDateTimeValues();
+    },
+
+    getInitialFavouritesToggleValue: function () {
+        return this.getDefaultFavouritesToggleValue();
+    },
+    
+    getInitialSelectedToggleValue: function () {
+        if(typeof(this.props.activeFilters.selected) !== "undefined") {
+            return this.props.activeFilters.selected;
+        }
+        return this.getDefaultSelectedToggleValue();
+    },
+    
+    getInitialSliderValues: function () {
+        return this.getDefaultSliderValues();
+    },
+    
+    getInitialValues: function() {
+        return {
+            dateTimeValues: this.getInitialDateTimeValues(),
+            favouritesValue: this.getInitialFavouritesToggleValue(),
+            selectedValue: this.getInitialSelectedToggleValue(),
+            sliderValues: this.getInitialSliderValues(),
+        }
     },
     
     handleBackButtonClick: function() {
@@ -90,12 +114,10 @@ var OptionFilterPage = React.createClass({
     handleClear: function() {
         this.refs.filter.reset();
         
-        this.setState(this.getInitialValues());
+        this.setState(this.getDefaultValues());
     },
     
     handleFilterButtonClick: function() {
-        
-    
         this.refs.filter.submit();
     },
     
