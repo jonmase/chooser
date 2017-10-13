@@ -40,7 +40,7 @@ var OptionFilterPage = React.createClass({
             dateTimeValues: this.getDefaultDateTimeValues(),
             favouritesValue: this.getDefaultFavouritesToggleValue(),
             selectedValue: this.getDefaultSelectedToggleValue(),
-            sliderValues: this.getDefaultSliderValues(),
+            sliderValues: this.getDefaultAllSliderValues(),
         }
     },
     
@@ -68,15 +68,20 @@ var OptionFilterPage = React.createClass({
         return "all";
     },
     
-    //Work out defaults for sliders
-    getDefaultSliderValues: function () {
+    //Get defaults for all sliders
+    getDefaultAllSliderValues: function () {
         var sliderValues = {};
         
         this.props.filters.numericalFields.map(function(field) {
-            sliderValues[field.name] = [this.props.filters.values[field.name].min, this.props.filters.values[field.name].max];
+            sliderValues[field.name] = this.getDefaultSliderValue(field.name);
         }, this);
         
         return sliderValues;
+    },
+    
+    //Work out defaults for an individual slider
+    getDefaultSliderValue: function (fieldName) {
+        return [this.props.filters.values[fieldName].min, this.props.filters.values[fieldName].max]
     },
     
     //Initial filters values are based on activeFilters, falling back to defaults for inactive filters
@@ -108,7 +113,18 @@ var OptionFilterPage = React.createClass({
     },
     
     getInitialSliderValues: function () {
-        return this.getDefaultSliderValues();
+        var sliderValues = {};
+        
+        this.props.filters.numericalFields.map(function(field) {
+            if(typeof(this.props.activeFilters[field.name]) !== "undefined") {
+                sliderValues[field.name] = this.props.activeFilters[field.name].slice();
+            }
+            else {
+                sliderValues[field.name] = this.getDefaultSliderValue(field.name);
+            }
+        }, this);
+        
+        return sliderValues;
     },
     
     handleBackButtonClick: function() {
@@ -140,6 +156,10 @@ var OptionFilterPage = React.createClass({
             //stateUpdates.selectedValue = filters.selected;
             activeFilters.selected = filters.selected;
         }
+        
+        this.props.filters.numericalFields.map(function(field) {
+            activeFilters[field.name] = this.state.sliderValues[field.name];
+        }, this);
         
         //this.setState(stateUpdates);
         this.props.optionContainerHandlers.filter(activeFilters);

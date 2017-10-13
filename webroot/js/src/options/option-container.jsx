@@ -270,8 +270,6 @@ var OptionContainer = React.createClass({
             filteredOptionsState[index].visible = true; //Reset options to true before applying filters
 
             if(typeof(activeFilters.selected) !== "undefined") {
-                console.log("filter by selected: " + activeFilters.selected);
-                
                 if(this.state.optionsSelectedTableOrder.indexOf(option.id) > -1) {  //Option is selected
                     if(activeFilters.selected === "unselected") {   //Filtering to show unselected
                         filteredOptionsState[index].visible = false;   //Hide this one
