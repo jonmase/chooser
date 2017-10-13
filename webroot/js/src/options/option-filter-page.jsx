@@ -34,6 +34,17 @@ var OptionFilterPage = React.createClass({
         });
     },
     
+    //Default filter values are for the empty form
+    getDefaultValues: function() {
+        return {
+            dateTimeValues: this.getDefaultDateTimeValues(),
+            favouritesValue: this.getDefaultFavouritesToggleValue(),
+            selectedValue: this.getDefaultSelectedToggleValue(),
+            sliderValues: this.getDefaultSliderValues(),
+        }
+    },
+    
+    //Work out defaults for datetime fields
     getDefaultDateTimeValues: function () {
         var dateTimeValues = {};
         
@@ -47,14 +58,17 @@ var OptionFilterPage = React.createClass({
         return dateTimeValues;
     },
 
+    //Defaults for favourites is show all
     getDefaultFavouritesToggleValue: function () {
         return "all";
     },
     
+    //Defaults for selected is show all
     getDefaultSelectedToggleValue: function () {
         return "all";
     },
     
+    //Work out defaults for sliders
     getDefaultSliderValues: function () {
         var sliderValues = {};
         
@@ -65,12 +79,13 @@ var OptionFilterPage = React.createClass({
         return sliderValues;
     },
     
-    getDefaultValues: function() {
+    //Initial filters values are based on activeFilters, falling back to defaults for inactive filters
+    getInitialValues: function() {
         return {
-            dateTimeValues: this.getDefaultDateTimeValues(),
-            favouritesValue: this.getDefaultFavouritesToggleValue(),
-            selectedValue: this.getDefaultSelectedToggleValue(),
-            sliderValues: this.getDefaultSliderValues(),
+            dateTimeValues: this.getInitialDateTimeValues(),
+            favouritesValue: this.getInitialFavouritesToggleValue(),
+            selectedValue: this.getInitialSelectedToggleValue(),
+            sliderValues: this.getInitialSliderValues(),
         }
     },
     
@@ -79,6 +94,9 @@ var OptionFilterPage = React.createClass({
     },
 
     getInitialFavouritesToggleValue: function () {
+        if(typeof(this.props.activeFilters.favourites) !== "undefined") {
+            return this.props.activeFilters.favourites;
+        }
         return this.getDefaultFavouritesToggleValue();
     },
     
@@ -91,15 +109,6 @@ var OptionFilterPage = React.createClass({
     
     getInitialSliderValues: function () {
         return this.getDefaultSliderValues();
-    },
-    
-    getInitialValues: function() {
-        return {
-            dateTimeValues: this.getInitialDateTimeValues(),
-            favouritesValue: this.getInitialFavouritesToggleValue(),
-            selectedValue: this.getInitialSelectedToggleValue(),
-            sliderValues: this.getInitialSliderValues(),
-        }
     },
     
     handleBackButtonClick: function() {
