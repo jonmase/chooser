@@ -143,6 +143,7 @@ var OptionFilterPage = React.createClass({
                     ref="filter"
                 >
                     <OptionFilterForm
+                        choosable={this.props.choosable}
                         dateTimeValues={this.state.dateTimeValues}
                         favouritesValue={this.state.favouritesValue}
                         filters={this.props.filters}

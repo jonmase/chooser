@@ -32,29 +32,31 @@ function OptionFilterForm(props) {
     
     return (
         <div>
-            <Radio 
-                field={{
-                    instructions: "",
-                    label: "Selected",
-                    name: "selected",
-                    options: [
-                        {
-                            label: "All",
-                            value: "all",
-                        },
-                        {
-                            label: "Selected only",
-                            value: "selected",
-                        },
-                        {
-                            label: "Unselected only",
-                            value: "unselected",
-                        },
-                    ],
-                    section: true,
-                    value: props.selectedValue,
-                }}
-            />
+            {props.choosable && 
+                <Radio 
+                    field={{
+                        instructions: "",
+                        label: "Selected",
+                        name: "selected",
+                        options: [
+                            {
+                                label: "All",
+                                value: "all",
+                            },
+                            {
+                                label: "Selected only",
+                                value: "selected",
+                            },
+                            {
+                                label: "Unselected only",
+                                value: "unselected",
+                            },
+                        ],
+                        section: true,
+                        value: props.selectedValue,
+                    }}
+                />
+            }
             
             {/*<Radio 
                 field={{

@@ -121,6 +121,7 @@ var OptionFilterContainer = React.createClass({
         return (
             <OptionFilterPage
                 action={this.props.action}
+                choosable={this.props.choosable}
                 filters={this.getFilters()}
                 optionContainerHandlers={this.props.optionContainerHandlers}
             />

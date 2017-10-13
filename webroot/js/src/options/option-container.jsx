@@ -263,6 +263,25 @@ var OptionContainer = React.createClass({
     handleFilterSubmit(filters) {
         console.log("Filter the options:");
         console.log(filters);
+        
+        //Work out which filters are active
+        var activeFilters = {};
+        
+        if(this.state.instance.choosing.choosable && filters.selected !== "all") {
+            if(filters.selected === "selected") {
+                activeFilters.selected = true;
+            }
+            else {
+                activeFilters.selected = false;
+            }
+        }
+        
+        this.state.options.options.forEach(function(option) {
+            if(typeof(activeFilters.selected) !== "undefined") {
+                console.log("filter by selected: " + activeFilters.selected);
+                //this.state.optionsSelectedTableOrder.indexOf(option.id)
+            }
+        });
     },
 
     //Could move to option-view-index (which doesn't exist yet)
@@ -1071,6 +1090,7 @@ var OptionContainer = React.createClass({
                     <OptionFilterContainer
                         action={this.state.action}
                         choice={this.props.choice}
+                        choosable={this.state.instance.choosing.choosable}
                         optionContainerHandlers={{
                             backToEdit: this.handleBackToEdit,
                             backToView: this.handleBackToView,
