@@ -113,7 +113,7 @@ function OptionFilterForm(props) {
                 );
             })}
             
-            {props.filters.dateTimeFields.map(function(field) {
+            {/*props.filters.dateTimeFields.map(function(field) {
                 field.section = true;
                 field.max = props.filters.values[field.name].max;
                 field.min = props.filters.values[field.name].min;
@@ -146,7 +146,7 @@ function OptionFilterForm(props) {
                         </div>
                     </div>
                 );
-            })}
+            })*/}
         </div>
     );
 };

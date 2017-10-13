@@ -5,35 +5,36 @@ import FieldsWrapper from '../elements/wrappers/fields.jsx';
 import OptionFilterPage from './option-filter-page.jsx';
 
 var OptionFilterContainer = React.createClass({
-    getDateTimeFields: function() {
+    /*getDateTimeFields: function() {
         var dateTimeFields = [];    //Start with empty array - no default date time fields
         
         this.props.choice.extra_fields.forEach(function(field) {
-            //If field is sortable, add it to the array of sortable fields
             if(field.type === 'date' || field.type === 'datetime') {
                 dateTimeFields.push(field);
             }
         });
         
         return dateTimeFields;
-    },
+    },*/
     
     getFilters: function() {
-        var dateTimeFields = this.getDateTimeFields();
+        //var dateTimeFields = this.getDateTimeFields();
         var listFields = this.getListFields();
         var numericalFields = this.getNumericalFields();
         
-        var values = this.getFilterValues(dateTimeFields, numericalFields);
+        //var values = this.getFilterValues(dateTimeFields, numericalFields);
+        var values = this.getFilterValues(numericalFields);
     
         return {
-            dateTimeFields: dateTimeFields,
+            //dateTimeFields: dateTimeFields,
             listFields: listFields,
             numericalFields: numericalFields,
             values: values,
         };
     },
     
-    getFilterValues: function(dateTimeFields, numericalFields) {
+    //getFilterValues: function(dateTimeFields, numericalFields) {
+    getFilterValues: function(numericalFields) {
         var filterValues = {};
         
         numericalFields.forEach(function(field) {
@@ -59,7 +60,7 @@ var OptionFilterContainer = React.createClass({
             }
         }, this);
     
-        dateTimeFields.forEach(function(field) {
+        /*dateTimeFields.forEach(function(field) {
             //Set defaults to null
             var min = null;
             var max = null;
@@ -82,7 +83,7 @@ var OptionFilterContainer = React.createClass({
                 min: min,
                 max: max,
             }
-        }, this);
+        }, this);*/
 
         return filterValues;
     },

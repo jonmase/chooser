@@ -37,7 +37,7 @@ var OptionFilterPage = React.createClass({
     //Default filter values are for the empty form
     getDefaultValues: function() {
         return {
-            dateTimeValues: this.getDefaultDateTimeValues(),
+            //dateTimeValues: this.getDefaultDateTimeValues(),
             favouritesValue: this.getDefaultFavouritesToggleValue(),
             listValues: this.getDefaultListValues(),
             selectedValue: this.getDefaultSelectedToggleValue(),
@@ -98,7 +98,7 @@ var OptionFilterPage = React.createClass({
     //Initial filters values are based on activeFilters, falling back to defaults for inactive filters
     getInitialValues: function() {
         return {
-            dateTimeValues: this.getInitialDateTimeValues(),
+            //dateTimeValues: this.getInitialDateTimeValues(),
             favouritesValue: this.getInitialFavouritesToggleValue(),
             listValues: this.getInitialListValues(),
             selectedValue: this.getInitialSelectedToggleValue(),
@@ -269,7 +269,7 @@ var OptionFilterPage = React.createClass({
                 >
                     <OptionFilterForm
                         choosable={this.props.choosable}
-                        dateTimeValues={this.state.dateTimeValues}
+                        //dateTimeValues={this.state.dateTimeValues}
                         favouritesValue={this.state.favouritesValue}
                         filters={this.props.filters}
                         listValues={this.state.listValues}
