@@ -222,6 +222,11 @@ class ExtraFieldsTable extends Table
             
             //Process options
             $field['options'] = $field['extra_field_options'];  //Move extra_field_options to options
+
+			usort($field['options'], function($a, $b) {
+				return $a['label'] <=> $b['label'];
+			});
+
             $listOptions = [];  //Create array for storing list option labels
             foreach($field['options'] as $option) { //Loop through options
                 $listOptions[] = $option['label'];  //Add label to listOptions array

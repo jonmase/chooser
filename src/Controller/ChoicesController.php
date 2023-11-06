@@ -137,7 +137,7 @@ class ChoicesController extends AppController
         $tool = $this->SessionData->getLtiTool();
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
-            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+            throw new ForbiddenException(__('Not permitted to edit the form for this Choice.'));
         }
         
         $purpose = 'edit';
@@ -170,7 +170,7 @@ class ChoicesController extends AppController
         $tool = $this->SessionData->getLtiTool();
         $isAdmin = $this->Choices->ChoicesUsers->isAdmin($choiceId, $userId, $tool);
         if(!$isAdmin) {
-            throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
+            throw new ForbiddenException(__('Not permitted to edit the form for this Choice.'));
         }
 
         $choice = $this->Choices->get($choiceId);
