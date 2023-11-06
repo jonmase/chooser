@@ -210,7 +210,7 @@ class UsersController extends AppController
                 //If we don't have a user yet, create one from the username in the request data
                 if(empty($user)) {
                     $user = $this->Users->newEntity();
-                    $user->username = $userData['username'];
+                    $user->username = strtolower($userData['username']);
                 }
                 
                 //If user->choices is empty, user is not already associated with this choice

@@ -342,8 +342,8 @@ class ChoicesUsersTable extends Table
      * @param $ltiTool LTI tool object
      * @return boolean True if the User is allowed to view, false if not
      */
-    public function isViewer($choiceId = null, $userId = null, $userId = null) {
-        //User will alawys be allowed to view choice - not having option to switch between and not passing choice ID in URLs
+    public function isViewer($choiceId = null, $userId = null, $ltiTool = null) {
+        //User will always be allowed to view choice - not having option to switch between and not passing choice ID in URLs
         return true;
     }
 

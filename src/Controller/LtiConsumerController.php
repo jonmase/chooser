@@ -61,10 +61,19 @@ class LtiConsumerController extends AppController
             
             //Connect to the database using the LTI data connector (not the Cake way!)
             //TODO: Could we do this in a more Cakey way?
-            $dbconfig = ConnectionManager::get('default')->config();    //Get the database config using Cake ConnectionManager
-            mysql_connect($dbconfig['host'], $dbconfig['username'], $dbconfig['password']);
-            mysql_select_db($dbconfig['database']);
-            $db_connector = \LTI_Data_Connector::getDataConnector('', 'MySQL');
+			//JonM 14/6/21: Obsolete MySQL connector code commented out
+            //$dbconfig = ConnectionManager::get('default')->config();    //Get the database config using Cake ConnectionManager
+            //mysql_connect($dbconfig['host'], $dbconfig['username'], $dbconfig['password']);
+            //mysql_select_db($dbconfig['database']);
+            //$db_connector = \LTI_Data_Connector::getDataConnector('', 'MySQL');
+			
+			//JonM 14/6/21: Update to use MySQLi connector
+			$db = ConnectionManager::get('default');    //Get the database config using Cake ConnectionManager
+		    $dbconfig = $db->config();
+
+			$db_connection_object = mysqli_connect($dbconfig['host'], $dbconfig['username'], $dbconfig['password'], $dbconfig['database']);
+            $db_connector = \LTI_Data_Connector::getDataConnector('', $db_connection_object, 'mysqli');  
+
             
             //Verify the launch
             //This calls the onLaunch method in the LTIToolProviderComponent, which just sets ltilaunch = true
@@ -72,22 +81,24 @@ class LtiConsumerController extends AppController
             //Therefore, we will do all the processing from here, so we check for ltilaunch below then do the processing
             //Having ltilaunch set to true proves that we have been to LTIToolProviderComponent::onLaunch, which in turns proves that the LTI request was authenticated (see handle_request() method in LTI_Tool_Provider.php)
             $tool = new \LTI_Tool_Provider('App\Controller\Component\LTIToolProviderComponent::onLaunch', $db_connector);
-            $tool->execute();
+            //var_dump($tool);
+			//exit;
+			$tool->execute();
             
             //Check that we have gone to the LTIToolProviderComponent::onLaunch method
             if($tool->ltilaunch) {
                 //Add Sakai display ID to user data so it can be used as username
-                if(isset($_POST['ext_sakai_provider_displayid']) && !isset($tool->user->displayid)) {
-                    $tool->user->displayid = $_POST['ext_sakai_provider_displayid'];
-                }
+                //if(isset($_POST['ext_sakai_provider_displayid']) && !isset($tool->user->displayid)) {
+                //    $tool->user->displayid = $_POST['ext_sakai_provider_displayid'];
+                //}
                 
                 //Add the tool to the session
                 $session = $this->request->session();
                 $session->write('tool', $tool);
                 
-                Log::write('debug', 'Tring to save User Details.');
-                //pr($tool); exit;
                 //Register the user
+                Log::write('debug', 'Trying to save User Details.');
+				
                 if($user = $this->LtiConsumer->LtiContext->LtiUser->LtiUserUsers->Users->register($tool)) {
                     //Log the user in
                     $this->Auth->setUser($user->toArray());
@@ -108,6 +119,7 @@ class LtiConsumerController extends AppController
                     }
                     //Otherwise, there is no linked Choice, and user is Learner, so throw error, as Context has not been configured
                     else {
+						Log::write('debug', 'User details could not be saved.');
                         throw new ForbiddenException(__('There is no Choice associated with this link.'));
                     }
                 }
@@ -116,6 +128,7 @@ class LtiConsumerController extends AppController
 					if(isset($user)) {
 						Log::write('debug', $tool);
 					}
+					
                     throw new InternalErrorException(__('User details could not be saved.'));
                 }
             }

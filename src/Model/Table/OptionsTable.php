@@ -94,7 +94,7 @@ class OptionsTable extends Table
     
     //public function getOptions($choiceId, $publishedOnly = false, $approvedOnly = false, $editableOnly = false, $userId = null) {
     //public function getOptions($choiceId = null, $viewable = true, $editable = false, $approvable = false, $userId = null) {
-    public function getOptions($choiceId = null, $conditions = [], $editableOptions = false) {
+    public function getOptions($choiceId = null, $conditions = [], $purpose = 'view', $editableOptions = false) {
         //If no choice ID, or all types are specified as false, return empty array
         if(!$choiceId) {
             return [];
@@ -116,7 +116,8 @@ class OptionsTable extends Table
         $options = $optionsQuery->toArray();
         //pr($options);
         
-        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId, $purpose);
+        //pr($extraTypes);
         $editableOptionsCount = 0;
         foreach($options as &$option) {
             $option = $this->processForView($option, $extraTypes);
@@ -193,7 +194,7 @@ class OptionsTable extends Table
             }
         }
             
-        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions, $editableOptions);
+        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions, 'edit', $editableOptions);
         
         return [$options, $editableOptionsCount];
     }
@@ -216,7 +217,7 @@ class OptionsTable extends Table
             $conditions['ChoicesOptions.approved'] = 1;
         }
 
-        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions);
+        list($options, $editableOptionsCount) = $this->getOptions($choiceId, $conditions, 'view');
         
         return $options;
     }
@@ -316,36 +317,43 @@ class OptionsTable extends Table
         return $extrasJSON;
     }
 
-    public function processExtrasForView($extraValuesJSON, $extraTypes) {
+    public function processExtrasForView($extraValuesJSON = null, $extraTypes = null) {
+        if(!$extraValuesJSON || !$extraTypes) {
+            return [];
+        }
+        
         //TODO: Work out how this should be done
-        $extraValues = (array) json_decode($extraValuesJSON);
+        $extraValuesRaw = (array) json_decode($extraValuesJSON);
         //pr($extraTypes);
-        //pr($extraValues);
+        //pr($extraValuesRaw);
         //exit;
         
         foreach($extraTypes as $name => $type) {
             if($type === 'datetime' || $type === 'date') {
                 $value = [];
-                if($type === 'datetime' && !empty($extraValues[$name]->time) && !empty($extraValues[$name]->date)) {
-                    $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValues[$name]->date, $extraValues[$name]->time);
+                if($type === 'datetime' && !empty($extraValuesRaw[$name]->time) && !empty($extraValuesRaw[$name]->date)) {
+                    $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValuesRaw[$name]->date, $extraValuesRaw[$name]->time);
                 }
-                else if(!empty($extraValues[$name]->date)) {
-                    $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValues[$name]->date);
+                else if(!empty($extraValuesRaw[$name]->date)) {
+                    $extraValues[$name] = $this->formatSimpleDatetimeForView($extraValuesRaw[$name]->date);
                 }
-                else if(!empty($extraValues[$name]->time)) {
-                    $extraValues[$name] = $this->formatSimpleDatetimeForView(null, $extraValues[$name]->time);
+                else if(!empty($extraValuesRaw[$name]->time)) {
+                    $extraValues[$name] = $this->formatSimpleDatetimeForView(null, $extraValuesRaw[$name]->time);
                 }
                 else {
                     $extraValues[$name] = null;
                 }
             }
             else if($type === 'checkbox') {
-                if(!empty($extraValues[$name])) {
-                    $extraValues[$name] = get_object_vars($extraValues[$name]);
+                if(!empty($extraValuesRaw[$name])) {
+                    $extraValues[$name] = get_object_vars($extraValuesRaw[$name]);
                 }
                 else {
                     $extraValues[$name] = null;
                 }
+           }
+           else if(!empty($extraValuesRaw[$name])) {
+               $extraValues[$name] = $extraValuesRaw[$name];
            }
         }        
         //pr($extraValues);
@@ -456,7 +464,8 @@ class OptionsTable extends Table
         
         //Remaining fields are extra fields
         //pr($requestData);
-        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        $purpose = 'edit';
+        $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId, $purpose);
         $choicesOptionData['extra'] = $this->processExtrasForSave($choiceId, $requestData, $extraTypes);
         //pr($choicesOptionData);
         //exit;
@@ -491,7 +500,7 @@ class OptionsTable extends Table
         return $this->ChoicesOptions->newEntity($originalChoicesOption);
     }
     
-    public function processForView($option, $extraTypes = null, $choiceId = null) {
+    public function processForView($option, $extraTypes = null) {
         if(!$option) {
             return null;
         }
@@ -505,9 +514,9 @@ class OptionsTable extends Table
         //pr($option);
        
         //Process the extra fields for displaying
-        if($extraTypes === null) {
-            $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
-        }
+        //if($extraTypes === null) {
+        //    $extraTypes = $this->ChoicesOptions->Choices->getExtraFieldTypes($choiceId);
+        //}
         
         $extras = $this->processExtrasForView($option->extra, $extraTypes);
         

@@ -6,6 +6,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\I18n\Time;
 
 /**
  * Selections Model
@@ -97,6 +98,98 @@ class SelectionsTable extends Table
         $rules->add($rules->existsIn(['choosing_instance_id'], 'ChoosingInstances'));
         $rules->add($rules->existsIn(['user_id'], 'Users'));
         return $rules;
+    }
+    
+    public function createWithAllSelected($choiceId = null, $choosingInstanceId = null, $currentUserId = null) {
+        if(!$choiceId || !$choosingInstanceId || !$currentUserId) {
+            return [];
+        }
+
+        //Create a selection for this user, with all options selected, and set autoselected to true 
+        $options = $this->OptionsSelections->ChoicesOptions->Options->getOptionsForView($choiceId);
+        //pr($options);
+        $selectionData = [
+            'choosing_instance_id' => $choosingInstanceId,
+            'user_id' => $currentUserId,
+            'confirmed' => 0,
+            'archived' => 0,
+        ]; 
+        
+        $selection = $this->newEntity($selectionData);
+        
+        $optionsSelectionsData = [];
+        foreach($options as $option) {
+            $optionsSelectionsData[] = [
+                'choices_option_id' => $option->id
+            ];
+        }
+        
+        $selection->options_selections = $this->OptionsSelections->newEntities($optionsSelectionsData);
+        
+        if($this->save($selection)) {
+            return $selection;
+        }
+        else {
+            return [];
+        }
+    }
+    
+    public function setAllToSelected($selection = null, $choiceId = null) {
+        if(!$choiceId || !$selection) {
+            return [];
+        }
+
+        //Create a selection for this user, with all options selected, and set autoselected to true 
+        $options = $this->OptionsSelections->ChoicesOptions->Options->getOptionsForView($choiceId);
+        //pr($options);
+        
+        $selectedOptions = [];
+        foreach($selection['options_selections'] as $selectedOption) {
+            $selectedOptions[$selectedOption['choices_option_id']] = $selectedOption;
+        }
+        
+        $optionsSelectionsData = [];
+        //Loop through all of the current options
+        foreach($options as $option) {
+            //If the option is already one that is selected, add this to the selectedData array
+            if(array_key_exists($option->id, $selectedOptions)) {
+                $selectedOption = $selectedOptions[$option->id]->toArray();
+                
+                //Unset the options_selections id and the choices_option array
+                unset($selectedOption['id']);
+                unset($selectedOption['choices_option']);
+                
+                $optionsSelectionsData[] = $selectedOption;
+            }
+            //Otherwise, this option has not already been selected
+            else {
+                //Create a new options_selections record
+                $optionsSelectionsData[] = [
+                    'choices_option_id' => $option->id,
+                    'rank' => null,
+                    'points' => null,
+                    'comments' => null,
+                ];
+            }
+        }
+        
+        //Hydrate optionsSelections 
+        $selection->options_selections = $this->OptionsSelections->newEntities($optionsSelectionsData);
+        
+        //Set the modified datetime to the existing datetime
+        $selection['modified'] = Time::createFromTimestamp($selection['modified']['timestamp']);
+        //pr($selection);
+        //pr($optionsSelections);
+        //exit;
+        
+        if($this->save($selection)) {
+            $selection['modified'] = $this->formatDate($selection['modified']);
+
+            return $selection;
+        }
+        else {
+            return [];
+        }
     }
     
     public function formatDate($date = null) {

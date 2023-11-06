@@ -136,7 +136,8 @@ class RulesTable extends Table
             $selectedOptions = [];
         }
         
-        $extraTypes = $this->ChoosingInstances->Choices->getExtraFieldTypes($choiceId);
+        $purpose = 'view';
+        $extraTypes = $this->ChoosingInstances->Choices->getExtraFieldTypes($choiceId, $purpose);
         foreach($selectedOptions as &$option) {
             $option = $this->ChoosingInstances->Choices->ChoicesOptions->Options->processForView($option, $extraTypes);
         }
@@ -328,7 +329,9 @@ class RulesTable extends Table
         //Generate the outcome using the $numberText and $pluraliseNoun values generated above
         $ruleWarning = false;
         if(!$passed) {
-            $ruleWarning = 'Selected ' . $selectedValue;
+			$ruleWarning = $rule['warning'];
+			
+            $ruleWarning .= ' (Selected ' . $selectedValue;
             if($rule['type'] === 'points') {
                 $ruleWarning .=  ' point' . (($selectedValue !== 1)?"s":"");
             }
@@ -337,6 +340,8 @@ class RulesTable extends Table
             if($rule['type'] === 'points') {
                 $ruleWarning .= ' point' . ($pluraliseNoun?"s":"");
             }
+			
+			$ruleWarning .= ')';
         }
         
         return $ruleWarning;

@@ -21,7 +21,7 @@ use Cake\Validation\Validator;
 class ChoosingInstancesTable extends Table
 {
     protected $_datetimeFields = ['opens', 'deadline', 'extension'];
-    protected $_boolFields = ['choosable', 'editable', 'preference', 'comments_overall', 'comments_per_option', 'editor_preferences', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_results_available', 'notify_editor_prefs_available', 'notify_allocation_available', 'notify_student_allocations', 'notify_editor_allocations'];
+    protected $_boolFields = ['choosable', 'editable', 'preference', 'preferences_only', 'select_all_initially', 'comments_overall', 'comments_per_option', 'editor_preferences', 'notify_open', 'notify_deadline', 'notify_submission', 'notify_results_available', 'notify_editor_prefs_available', 'notify_allocation_available', 'notify_student_allocations', 'notify_editor_allocations'];
 
     /**
      * Initialize method

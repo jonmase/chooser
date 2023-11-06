@@ -147,14 +147,18 @@ class ChoicesTable extends Table
      * @param int $choiceId The DB ID of the choice
      * @return array
      */
-    public function getChoiceWithProcessedExtraFields($choiceId = null) {
+    public function getChoiceWithProcessedExtraFields($choiceId = null, $purpose = 'view') {
         if(!$choiceId) {
             return [];
         }
         
+        $extraFieldConditions = [];
+        if($purpose === 'view') {
+            $extraFieldConditions['show_to_students'] = 1;
+        }
         $choice = $this->get($choiceId, [
             'contain' => [
-                'ExtraFields' => ['ExtraFieldOptions']
+                'ExtraFields' => ['ExtraFieldOptions', 'conditions' => $extraFieldConditions]
             ]
         ]);
         
@@ -210,15 +214,21 @@ class ChoicesTable extends Table
      * getExtraFieldTypes method
      *
      * @param int $choiceId The DB ID of the choice
+     * @param string $purpose The purpose that the fields are being used for - view or edit. If view, only fields with show_to_students set to 1 should be returned
      * @return array
      */
-    public function getExtraFieldTypes($choiceId = null) {
+    public function getExtraFieldTypes($choiceId = null, $purpose = 'edit') {
         if(!$choiceId) {
             return [];  //Return empty array so that it doesn't cause error when iterated
         }
         
+        $conditions = ['choice_id' => $choiceId];
+        if($purpose === 'view') {
+            $conditions['show_to_students'] = 1;
+        }
+        
         $extraTypes = $this->ChoicesOptions->Choices->ExtraFields->find('list', [
-            'conditions' => ['choice_id' => $choiceId],
+            'conditions' => $conditions,
             'keyField' => 'name',
             'valueField' => 'type',
         ]);

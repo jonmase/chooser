@@ -106,17 +106,35 @@ class ChoosingInstancesController extends AppController
                 //Get all of the selections for this instance and user (should never be more than 2), and will have confirmed first
                 $selections = $this->ChoosingInstances->Selections->findByInstanceAndUser($choosingInstance->id, $this->Auth->user('id'));
                 
-                if(!empty($selections)) {
-                    //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
-                    $selection = array_shift($selections);
-                    //pr($selection); exit;
-                    //Archive the remaining selections (should only ever be one)
-                    $this->ChoosingInstances->Selections->archive($selections);
+                //If set to preferences_only, need to make sure all options are selected
+                if($choosingInstance['preferences_only']) {
+                    if(!empty($selections)) {
+                        $selection = $this->ChoosingInstances->Selections->setAllToSelected(array_shift($selections), $choiceId);
+                    }
+                    else {
+                        $selection = $this->ChoosingInstances->Selections->createWithAllSelected($choiceId, $choosingInstance->id, $currentUserId);
+                    }
                 }
                 else {
-                    $selection = [];
+                    if(!empty($selections)) {
+                        //We always want to use the first selection, which will be either confirmed or the most recent unconfirmed one
+                        $selection = array_shift($selections);
+                        //pr($selection); exit;
+                        //Archive the remaining selections (should only ever be one)
+                        $this->ChoosingInstances->Selections->archive($selections);
+                    }
+                    else {
+                        if($choosingInstance['select_all_initially']) {
+                            $selection = $this->ChoosingInstances->Selections->createWithAllSelected($choiceId, $choosingInstance->id, $currentUserId);
+                            //pr($selection);
+                            //exit;
+                            $selection['autoselected'] = true;
+                        }
+                        else {
+                            $selection = []; 
+                        }
+                    }
                 }
-                
                 
                 list($optionsSelected, $optionsSelectedIds, $optionsSelectedIdsPreferenceOrder) = $this->ChoosingInstances->Selections->processSelectedOptions($selection);
                 list($allowSubmit, $ruleWarnings) = $this->ChoosingInstances->Rules->checkSelection($optionsSelectedIds, $choosingInstance->id, $choiceId);
@@ -141,7 +159,7 @@ class ChoosingInstancesController extends AppController
     public function save()
     {
         $this->request->allowMethod(['post']);
-        $this->viewBuilder()->layout('ajax');
+        //$this->viewBuilder()->layout('ajax');
 
         //Make sure the user is an admin for this Choice
         $choiceId = $this->SessionData->getChoiceId();

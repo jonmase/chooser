@@ -97,6 +97,8 @@ class OptionsController extends AppController
                     $this->redirect(['controller' => 'choices', 'action' => 'dashboard']);
                 }
             }
+            
+            $purpose = 'edit';
         }
         //Otherwise view action, but need to work out whether it should be initial view or review
         else {
@@ -142,12 +144,19 @@ class OptionsController extends AppController
                     $action = 'confirmed';
                 }
                 else {
-                    $action = 'view';
+                    if($instance['preferences_only']) {
+                        $action = 'review';
+                    }
+                    else {
+                        $action = 'view';
+                    }
                 }
             }
+            
+            $purpose = 'view';
         }
         
-        $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId);
+        $choice = $this->Options->ChoicesOptions->Choices->getChoiceWithProcessedExtraFields($choiceId, $purpose);
         //pr($choice);
 
         $this->set(compact('action', 'choice', 'roles'));

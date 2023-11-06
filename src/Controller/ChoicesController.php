@@ -140,7 +140,8 @@ class ChoicesController extends AppController
             throw new ForbiddenException(__('Not permitted to edit users for this Choice.'));
         }
         
-        $choice = $this->Choices->getChoiceWithProcessedExtraFields($choiceId);
+        $purpose = 'edit';
+        $choice = $this->Choices->getChoiceWithProcessedExtraFields($choiceId, $purpose);
         
         //Get the sections to show in the menu  bar
         $sections = $this->Choices->getDashboardSectionsForUser($choiceId, $userId);
