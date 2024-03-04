@@ -212,8 +212,8 @@ Type::build('datetime')
     ->useLocaleParser();
     
 //CHANGE THIS - Details of VLE and support team
-Configure::write('VLE.name','WebLearn');
-Configure::write('VLE.url','https://weblearn.ox.ac.uk');
+Configure::write('VLE.name','Canvas');
+Configure::write('VLE.url','https://canvas.ox.ac.uk');
 Configure::write('Support.team','MSD Learning Technologies');
 Configure::write('Support.email','msdlt@medsci.ox.ac.uk');
 

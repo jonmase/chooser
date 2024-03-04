@@ -51,7 +51,7 @@ class LtiConsumerController extends AppController
         $this->request->allowMethod(['post']);
         $this->autoRender = false;
         if(isset($_REQUEST['lti_message_type']) && isset($_REQUEST['oauth_consumer_key'])) {	//Is this an LTI request
-            //lis_result_sourcedid is not sent by WebLearn, but is required for the LTI_Tool_Provider to save the user
+            //lis_result_sourcedid is not sent by Canvas, but is required for the LTI_Tool_Provider to save the user
             //Use the lis_person_sourcedid as the lis_result_sourcedid
             if(!isset($_POST['lis_result_sourcedid']) && isset($_POST['lis_person_sourcedid'])) {
                 $_POST['lis_result_sourcedid'] = $_POST['lis_person_sourcedid'];

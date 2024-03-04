@@ -247,7 +247,7 @@ var AddUser = React.createClass({
         if(this.state.action === 'edit') {
             var message = "If you do not select any roles, ";
             message += (this.state.usersBeingEdited.length > 1)?"these users":"this user";
-            message += " will be removed from the list of users with additional permissions, but will still have their default permissions based on their role in the WebLearn site that this choice is launched from.";
+            message += " will be removed from the list of users with additional permissions, but will still have their default permissions based on their role in the Canvas course that this choice is launched from.";
         }
         else {
             var message = "You must give the user some additional permissions before you can save";
@@ -369,7 +369,7 @@ var AddUser = React.createClass({
                     <div className="section">
                         <FieldLabel
                             label={this.getPermissionsLabel()}
-                            instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in the WebLearn site that this choice is launched from.'
+                            instructions='Additional permissions can only add to, not remove or replace, the default permissions that a user has based on their role in the Canvas course that this choice is launched from.'
                         />
                         <RoleCheckboxes disableAll={this.state.editingCurrentUser} nameBase={roleCheckboxesNameBase} onChange={this.handleRoleChange} rolesChecked={this.state.rolesChecked} roles={this.props.roles} />
                         {(this.getRolesCheckedCount() == 0) &&

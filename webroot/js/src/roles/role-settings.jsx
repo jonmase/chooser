@@ -30,7 +30,7 @@ var RolesSettingsForm = React.createClass({
                         method="POST"
                         onValidSubmit={this.props.handlers.submit}
                     >
-                        <p className="no-top-margin">Please note that 'Instructors' means anyone who has the maintain or contribute role in a WebLearn site from which this Choice is linked.</p>
+                        <p className="no-top-margin">Please note that 'Instructors' means anyone who has the maintain or contribute role in a Canvas course from which this Choice is linked.</p>
                         <div className="section">
                             <FormsyToggle
                                 name="defaultRoles.editor"
