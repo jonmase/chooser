@@ -57,7 +57,8 @@ class LtiConsumerController extends AppController
                 $_POST['lis_result_sourcedid'] = $_POST['lis_person_sourcedid'];
             }
 			//require_once(ROOT . DS . 'vendor' . DS  . 'adurolms' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
-			require_once(ROOT . DS . 'vendor' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
+			//Now do this in AppController.php as needed in any Controller that gets tool from session
+			//require_once(ROOT . DS . 'vendor' . DS  . 'lti-tool-provider' . DS . 'LTI_Tool_Provider.php');	//Load the LTI class
             
             //Connect to the database using the LTI data connector (not the Cake way!)
             //TODO: Could we do this in a more Cakey way?
