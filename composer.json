@@ -5,16 +5,15 @@
     "type": "project",
     "license": "GPL",
     "require": {
-        "php": ">=5.5.9",
-        "cakephp/cakephp": "~3.2",
+        "php": ">=5.6",
+        "cakephp/cakephp": "^3.2",
         "mobiledetect/mobiledetectlib": "2.*",
         "cakephp/migrations": "~1.0",
-        "cakephp/plugin-installer": "*",
-        "adurolms/lti-tool-provider": "^2.5"
+        "cakephp/plugin-installer": "*"
     },
     "require-dev": {
         "psy/psysh": "@stable",
-        "cakephp/debug_kit": "~3.2",
+        "cakephp/debug_kit": "^3.2",
         "cakephp/bake": "~1.1"
     },
     "suggest": {
@@ -33,9 +32,13 @@
         }
     },
     "scripts": {
-        "post-install-cmd": "App\\Console\\Installer::postInstall",
-        "post-autoload-dump": "Cake\\Composer\\Installer\\PluginInstaller::postAutoloadDump"
+        "post-install-cmd": "App\\Console\\Installer::postInstall"
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "cakephp/plugin-installer": true
+        }
+    }
 }
