@@ -45,6 +45,7 @@ class OptionsController extends AppController
 
             //Get all of the viewable options
             $options = $this->Options->getOptionsForView($choiceId);
+			$editableOptionsCount = 0;
         }
         
         $optionIndexesById = $this->Options->getOptionIndexesById($options);

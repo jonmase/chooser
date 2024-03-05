@@ -225,10 +225,10 @@ class UsersController extends AppController
                 //Set the roles values
                 //Start with blank values for each role
                 $nonViewRoles = $this->Users->ChoicesUsers->getNonViewRoles();
-                foreach($nonViewRoles as $role) {
-                    $choice->_joinData->$role['id'] = false;
+
+				foreach($nonViewRoles as $role) {
+                    $choice->_joinData[$role['id']] = false;
                 }
-                
                 //If user is admin, set only admin to true
                 if(array_search('admin', $rolesToSave) !== false) {
                     $choice->_joinData->admin = true;

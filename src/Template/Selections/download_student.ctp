@@ -4,7 +4,7 @@
 <h4>
     Responses: 
     <?php //echo $statistics['confirmed_count'] . " submitted (" . ($statistics['selection_count'] - $statistics['confirmed_count']) . " unsubmitted)"; ?>
-    <?php echo $statistics['confirmed_count']; ?>
+    <?php echo isset($statistics['confirmed_count'])?$statistics['confirmed_count']:0; ?>
 </h4>
 
 <h4>Options:  <?php echo count($options); ?></h4>
